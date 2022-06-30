@@ -9,7 +9,7 @@ namespace Concerto::Graphics::Wrapper
 {
 
 	AllocatedBuffer::AllocatedBuffer(Allocator& allocator,
-			std::size_t allocSize, VkBufferUsageFlags usage, VmaMemoryUsage memoryUsage)
+			std::size_t allocSize, VkBufferUsageFlags usage, VmaMemoryUsage memoryUsage) : _allocator(allocator)
 	{
 		VkBufferCreateInfo bufferInfo = {};
 		bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
@@ -26,5 +26,10 @@ namespace Concerto::Graphics::Wrapper
 		{
 			throw std::runtime_error("Failed to allocate command buffer");
 		}
+	}
+
+	AllocatedBuffer::~AllocatedBuffer()
+	{
+		vmaDestroyBuffer(_allocator._allocator, _buffer, _allocation);
 	}
 }

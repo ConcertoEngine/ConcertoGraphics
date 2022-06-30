@@ -45,6 +45,7 @@ namespace Concerto::Graphics::Wrapper
 		VkFormat getDepthFormat() const;
 
 	private:
+		Allocator &_allocator;
 		VkPhysicalDevice _physicalDevice;
 		VkDevice _device;
 		VkSurfaceKHR _surface;

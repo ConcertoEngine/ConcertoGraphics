@@ -5,7 +5,7 @@
 
 #include "wrapper/CommandBuffer.hpp"
 #include <stdexcept>
-
+#include <iostream>
 namespace Concerto::Graphics::Wrapper
 {
 	CommandBuffer::CommandBuffer(VkDevice device, VkCommandPool commandPool) : _device(device),

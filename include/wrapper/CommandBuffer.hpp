@@ -31,6 +31,6 @@ namespace Concerto::Graphics::Wrapper
 		VkCommandPool _commandPool;
 		VkCommandBuffer _commandBuffer;
 	};
-}
+} // namespace Concerto::Graphics::Wrapper
 
 #endif //CONCERTOGRAPHICS_COMMANDBUFFER_HPP

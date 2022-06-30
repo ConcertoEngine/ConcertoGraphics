@@ -26,8 +26,9 @@ namespace Concerto::Graphics::Wrapper
 
 		AllocatedBuffer& operator=(const AllocatedBuffer&) = delete;
 
-		~AllocatedBuffer() = default;
+		~AllocatedBuffer();
 
+		Allocator &_allocator;
 		VkBuffer _buffer {VK_NULL_HANDLE};
 		VmaAllocation _allocation {VK_NULL_HANDLE};
 	};

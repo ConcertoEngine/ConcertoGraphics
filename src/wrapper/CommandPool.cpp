@@ -5,6 +5,7 @@
 
 #include "wrapper/CommandPool.hpp"
 #include <stdexcept>
+#include <iostream>
 
 namespace Concerto::Graphics::Wrapper
 {
@@ -26,6 +27,7 @@ namespace Concerto::Graphics::Wrapper
 	CommandPool::~CommandPool()
 	{
 		vkDestroyCommandPool(_device, _commandPool, nullptr);
+		_commandPool = VK_NULL_HANDLE;
 	}
 
 	VkCommandPool CommandPool::get() const

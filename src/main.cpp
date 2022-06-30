@@ -18,6 +18,7 @@
 #include "VkBootstrap.h"
 #include "wrapper/VulkanInitializer.hpp"
 #include "wrapper/Allocator.hpp"
+#include <iostream>
 
 #define FRAME_OVERLAP 2
 using namespace Concerto::Graphics::Wrapper;
@@ -49,19 +50,18 @@ struct FrameData
 	FrameData(Allocator& allocator, VkDevice device, std::uint32_t queueFamily, DescriptorPool& pool,
 			DescriptorSetLayout& globalDescriptorSetLayout, DescriptorSetLayout& objectDescriptorSetLayout,
 			AllocatedBuffer& sceneParameterBuffer,
-			bool signaled = true) : _commandPool(device, queueFamily),
-									_mainCommandBuffer(device,
-											_commandPool.get()),
-									_presentSemaphore(device),
+			bool signaled = true) : _presentSemaphore(device),
+									_commandPool(device, queueFamily),
 									_renderSemaphore(device),
 									_renderFence(device, signaled),
+									_mainCommandBuffer(device, _commandPool.get()),
 									_cameraBuffer(makeAllocatedBuffer<GPUCameraData>(allocator,
 											VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
 											VMA_MEMORY_USAGE_CPU_TO_GPU)),
+									globalDescriptor(device, pool, globalDescriptorSetLayout),
 									_objectBuffer(makeAllocatedBuffer<GPUObjectData>(allocator, 1000,
 											VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
 											VMA_MEMORY_USAGE_CPU_TO_GPU)),
-									globalDescriptor(device, pool, globalDescriptorSetLayout),
 									objectDescriptor(device, pool, objectDescriptorSetLayout)
 	{
 
@@ -94,7 +94,11 @@ struct FrameData
 		vkUpdateDescriptorSets(device, 3, setWrites, 0, nullptr);
 	}
 
+	FrameData(FrameData&&) = default;
+
 	FrameData() = delete;
+
+	~FrameData() = default;
 
 	Semaphore _presentSemaphore, _renderSemaphore;
 	Fence _renderFence;
@@ -111,12 +115,14 @@ struct FrameData
 
 struct UploadContext
 {
-	UploadContext(VkDevice device, std::uint32_t queueFamily, bool signaled = true) : _commandPool(device, queueFamily),
+	UploadContext(VkDevice device, std::uint32_t queueFamily, bool signaled = true) : _uploadFence(device, signaled),
 																					  _commandBuffer(device,
 																							  _commandPool.get()),
-																					  _uploadFence(device, signaled)
+																					  _commandPool(device, queueFamily)
 	{
 	}
+
+	~UploadContext() = default;
 
 	Fence _uploadFence;
 	CommandPool _commandPool;
@@ -229,7 +235,6 @@ int main()
 	RenderPass _renderPass(_device, attachments, subPasses, dependencies);
 
 	FrameBuffer _frameBuffer(_device, _swapchain, _renderPass);
-	CommandPool _commandPool(_device, _graphicsQueueFamily);
 	UploadContext _uploadContext(_device, _graphicsQueueFamily);
 	std::vector<VkDescriptorPoolSize> sizes =
 			{
@@ -240,7 +245,6 @@ int main()
 			};
 	DescriptorPool _descriptorPool(_device, sizes);
 
-	std::vector<FrameData> _frameData;
 	std::vector<VkDescriptorSetLayoutBinding> bindings = {
 			{ VulkanInitializer::DescriptorSetLayoutBinding(
 					VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT, 0)
@@ -267,6 +271,8 @@ int main()
 	const std::size_t sceneParamBufferSize = FRAME_OVERLAP * padUniformBufferSize(sizeof(GPUSceneData), _gpuProperties);
 	AllocatedBuffer sceneParameterBuffer(_allocator, sceneParamBufferSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
 			VMA_MEMORY_USAGE_CPU_TO_GPU);
+	std::vector<FrameData> _frameData;
+	_frameData.reserve(FRAME_OVERLAP);
 	for (std::uint32_t i = 0; i < FRAME_OVERLAP; i++)
 	{
 		_frameData.emplace_back(_allocator, _device, _graphicsQueueFamily, _descriptorPool, _globalSetLayout,

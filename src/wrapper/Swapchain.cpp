@@ -11,7 +11,7 @@ namespace Concerto::Graphics::Wrapper
 {
 
 	Swapchain::Swapchain(Allocator& allocator, VkExtent2D windowExtent, VkPhysicalDevice physicalDevice, VkDevice device,
-			VkSurfaceKHR surface, VkInstance instance) : _windowExtent(windowExtent), _physicalDevice(physicalDevice), _device(device),
+			VkSurfaceKHR surface, VkInstance instance) : _allocator(allocator), _windowExtent(windowExtent), _physicalDevice(physicalDevice), _device(device),
 									_surface(surface), _swapChain(VK_NULL_HANDLE), _swapChainImages(), _swapChainImageViews()
 	{
 		vkb::SwapchainBuilder swapChainBuilder{ _physicalDevice, _device, _surface };
@@ -55,6 +55,7 @@ namespace Concerto::Graphics::Wrapper
 
 	Swapchain::~Swapchain()
 	{
+		vmaDestroyImage(_allocator._allocator, _depthImage._image, _depthImage._allocation);
 		vkDestroySwapchainKHR(_device, _swapChain, nullptr);
 	}
 
