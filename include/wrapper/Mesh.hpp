@@ -12,11 +12,12 @@
 
 namespace Concerto::Graphics::Wrapper
 {
-
 	struct Mesh {
-		std::vector<Vertex> _vertices;
-		AllocatedBuffer _vertexBuffer;
+		Mesh(Vertices vertices, Allocator& allocator, std::size_t allocSize,
+				VkBufferUsageFlags usage, VmaMemoryUsage memoryUsage);
+		Vertices _vertices;
 		bool LoadFromObj(const std::string &fileName, const std::string &materialPath);
+		AllocatedBuffer _vertexBuffer;
 	};
 
 } // Concerto::Graphics::Wrapper

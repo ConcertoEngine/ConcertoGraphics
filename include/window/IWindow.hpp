@@ -6,11 +6,14 @@
 #define CONCERTO_IWINDOW_HPP
 #include <string>
 #include <memory>
+#include <optional>
 
 namespace Concerto
 {
+	enum class Key
+	{
 
-
+	};
 	class IWindow
 	{
 	public:
@@ -80,6 +83,11 @@ namespace Concerto
 		 * @param disabled True if the cursor should be disabled, false otherwise
 		 */
 		virtual void setCursorDisabled(bool disabled) = 0;
+		/**
+		 * @brief Get an event
+		 * @return an empty optional if the key is not pressed, a filled optional otherwise
+		 */
+		virtual std::optional<Concerto::Key> popEvent() = 0;
 	};
 	using IWindowPtr = std::unique_ptr<IWindow>;
 }

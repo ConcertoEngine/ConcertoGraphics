@@ -57,6 +57,8 @@ namespace Concerto
 
 		void setCursorDisabled(bool disabled) override;
 
+		std::optional<Concerto::Key> popEvent() override;
+
 	private:
 		std::unique_ptr<GLFWwindow, std::function<void(GLFWwindow*)>> _window;
 	};

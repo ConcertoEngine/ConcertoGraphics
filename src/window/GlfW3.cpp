@@ -86,3 +86,9 @@ void* Concerto::GlfW3::getRawWindow()
 	return _window.get();
 }
 
+std::optional<Concerto::Key> Concerto::GlfW3::popEvent()
+{
+	glfwPollEvents();
+	return {};
+}
+

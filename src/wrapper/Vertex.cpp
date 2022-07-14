@@ -9,7 +9,7 @@ namespace Concerto::Graphics::Wrapper
 {
 	VertexInputDescription Vertex::getVertexDescription()
 	{
-		VertexInputDescription description;
+		VertexInputDescription description {};
 
 		//we will have just 1 vertex buffer binding, with a per-vertex rate
 		VkVertexInputBindingDescription mainBinding = {};
@@ -33,25 +33,16 @@ namespace Concerto::Graphics::Wrapper
 		normalAttribute.format = VK_FORMAT_R32G32B32_SFLOAT;
 		normalAttribute.offset = offsetof(Vertex, normal);
 
-		//Position will be stored at Location 2
+		//Color will be stored at Location 2
 		VkVertexInputAttributeDescription colorAttribute = {};
 		colorAttribute.binding = 0;
 		colorAttribute.location = 2;
 		colorAttribute.format = VK_FORMAT_R32G32B32_SFLOAT;
 		colorAttribute.offset = offsetof(Vertex, color);
 
-		//UV will be stored at Location 2
-		VkVertexInputAttributeDescription uvAttribute = {};
-		uvAttribute.binding = 0;
-		uvAttribute.location = 3;
-		uvAttribute.format = VK_FORMAT_R32G32_SFLOAT;
-		uvAttribute.offset = offsetof(Vertex, uv);
-
-
 		description.attributes.push_back(positionAttribute);
 		description.attributes.push_back(normalAttribute);
 		description.attributes.push_back(colorAttribute);
-		description.attributes.push_back(uvAttribute);
 		return description;
 	}
 }

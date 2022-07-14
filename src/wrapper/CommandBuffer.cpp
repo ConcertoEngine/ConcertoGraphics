@@ -85,4 +85,10 @@ namespace Concerto::Graphics::Wrapper
 	{
 		vkCmdDraw(_commandBuffer, vertexCount, instanceCount, firstVertex, firstInstance);
 	}
+
+	void CommandBuffer::bindVertexBuffers(const AllocatedBuffer& buffer)
+	{
+		VkDeviceSize offset = 0;
+		vkCmdBindVertexBuffers(_commandBuffer, 0, 1, &buffer._buffer, &offset);
+	}
 }

@@ -7,6 +7,7 @@
 
 #include "vulkan/vulkan.h"
 #include "Pipeline.hpp"
+#include "AllocatedBuffer.hpp"
 
 namespace Concerto::Graphics::Wrapper
 {
@@ -38,6 +39,8 @@ namespace Concerto::Graphics::Wrapper
 		void endRenderPass();
 
 		void bindPipeline(VkPipelineBindPoint pipelineBindPoint, Pipeline& pipeline);
+
+		void bindVertexBuffers(const AllocatedBuffer &buffer);
 
 		void draw(std::uint32_t vertexCount, std::uint32_t instanceCount, std::uint32_t firstVertex, std::uint32_t firstInstance);
 

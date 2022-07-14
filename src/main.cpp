@@ -4,6 +4,7 @@
 #define VMA_IMPLEMENTATION
 #define VMA_VULKAN_VERSION 1000000
 #define VKB_DEBUG
+
 #include "wrapper/Vertex.hpp"
 #include "wrapper/Swapchain.hpp"
 #include "wrapper/RenderPass.hpp"
@@ -26,21 +27,24 @@
 #include "wrapper/PipelineLayout.hpp"
 #include "window/GlfW3.hpp"
 #include "wrapper/Swapchain.hpp"
+#include "wrapper/Mesh.hpp"
 #include <iostream>
 
-VkInstance _instance {VK_NULL_HANDLE};
+VkInstance _instance{ VK_NULL_HANDLE };
 VkDebugUtilsMessengerEXT _debug_messenger;
-VkPhysicalDevice _chosenGPU {VK_NULL_HANDLE};
-VkDevice _device {VK_NULL_HANDLE};
-VkSurfaceKHR _surface {VK_NULL_HANDLE};
+VkPhysicalDevice _chosenGPU{ VK_NULL_HANDLE };
+VkDevice _device{ VK_NULL_HANDLE };
+VkSurfaceKHR _surface{ VK_NULL_HANDLE };
 int _frameNumber = 0;
 VkExtent2D windowExtent = { 1280, 720 };
 using namespace Concerto;
 using namespace Concerto::Graphics;
 using namespace Concerto::Graphics::Wrapper;
-void draw(Fence &_renderFence, Swapchain &swapchain, Semaphore &_presentSemaphore, Semaphore &_renderSemaphore,
-		CommandBuffer &commandBuffer, RenderPass &renderpass, FrameBuffer &frameBuffer, VkQueue _graphicsQueue,
-		Pipeline &_trianglePipeline);
+
+void draw(Fence& _renderFence, Swapchain& swapchain, Semaphore& _presentSemaphore, Semaphore& _renderSemaphore,
+		CommandBuffer& commandBuffer, RenderPass& renderpass, FrameBuffer& frameBuffer, VkQueue _graphicsQueue,
+		Pipeline& _trianglePipeline, Mesh&);
+
 int main()
 {
 	const char* appName = "Concerto";
@@ -54,12 +58,14 @@ int main()
 			.require_api_version(1, 1, 0)
 			.build();
 	auto system_info_ret = vkb::SystemInfo::get_system_info();
-	if (!system_info_ret) {
+	if (!system_info_ret)
+	{
 		std::cerr << system_info_ret.error().message() << std::endl;
 		return -1;
 	}
 	auto system_info = system_info_ret.value();
-	if (system_info.validation_layers_available){
+	if (system_info.validation_layers_available)
+	{
 		_builder.enable_validation_layers();
 	}
 	_instance = instance.value().instance;
@@ -81,7 +87,7 @@ int main()
 	Allocator _allocator(_physicalDevice, _device, _instance);
 	Swapchain swapchain(_allocator, windowExtent, _physicalDevice, _device, vkSurface, _instance);
 
-	CommandPool commandPool(_device , _graphicsQueueFamily);
+	CommandPool commandPool(_device, _graphicsQueueFamily);
 	CommandBuffer commandBuffer(_device, commandPool.get());
 
 	// Renderpass
@@ -112,27 +118,30 @@ int main()
 	dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
 	dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
 
-	RenderPass renderPass(_device, {color_attachment}, {subpass}, {dependency});
+	RenderPass renderPass(_device, { color_attachment }, { subpass }, { dependency });
 	// Renderpass
 	FrameBuffer frameBuffer(_device, swapchain, renderPass);
 
 	// Pilpline
 	ShaderModule triangleFragShader(R"(.\shaders\colored_triangle.frag.spv)", _device);
-	ShaderModule triangleVertexShader(R"(.\shaders\colored_triangle.vert.spv)", _device);
+	ShaderModule triangleVertexShader(R"(.\shaders\tri_mesh.vert.spv)", _device);
 	PipelineLayout _trianglePipelineLayout(_device, 0, {});
 
 	PipelineInfo pipelineInfo;
 
 	pipelineInfo._shaderStages.push_back(
 			VulkanInitializer::PipelineShaderStageCreateInfo(VK_SHADER_STAGE_VERTEX_BIT, triangleVertexShader.getShaderModule()));
-
 	pipelineInfo._shaderStages.push_back(
 			VulkanInitializer::PipelineShaderStageCreateInfo(VK_SHADER_STAGE_FRAGMENT_BIT, triangleFragShader.getShaderModule()));
 
-
-	//vertex input controls how to read vertices from vertex buffers. We aren't using it yet
+	VertexInputDescription vertexDescription = Vertex::getVertexDescription();
 	pipelineInfo._vertexInputInfo = VulkanInitializer::VertexInputStateCreateInfo();
+	pipelineInfo._vertexInputInfo.pVertexAttributeDescriptions = vertexDescription.attributes.data();
+	pipelineInfo._vertexInputInfo.vertexAttributeDescriptionCount = vertexDescription.attributes.size();
 
+	pipelineInfo._vertexInputInfo.pVertexBindingDescriptions = vertexDescription.bindings.data();
+	pipelineInfo._vertexInputInfo.vertexBindingDescriptionCount = vertexDescription.bindings.size();
+	pipelineInfo._vertexInputInfo.flags = 0;
 	//input assembly is the configuration for drawing triangle lists, strips, or individual points.
 	//we are just going to draw triangle list
 	pipelineInfo._inputAssembly = VulkanInitializer::InputAssemblyCreateInfo(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
@@ -160,23 +169,40 @@ int main()
 	//use the triangle layout we created
 	pipelineInfo._pipelineLayout = _trianglePipelineLayout.get();
 
- 	Pipeline _trianglePipeline(_device, pipelineInfo);
+	Pipeline _trianglePipeline(_device, pipelineInfo);
 	_trianglePipeline.buildPipeline(renderPass.get()); //TODO RAII
 	// Render loop
+
 	Semaphore _presentSemaphore(_device);
 	Semaphore _renderSemaphore(_device);
 	Fence _renderFence(_device);
 
+	Vertices _vertices;
+	_vertices.resize(3);
+	_vertices[0].position = { 1.f, 1.f, 0.0f };
+	_vertices[1].position = { -1.f, 1.f, 0.0f };
+	_vertices[2].position = { 0.f, -1.f, 0.0f };
+
+	_vertices[0].color = { 1.f, 0.f, 0.0f }; //pure green
+	_vertices[1].color = { 1.f, 0.f, 0.0f }; //pure green
+	_vertices[2].color = { 1.f, 0.f, 0.0f }; //pure green
+	std::size_t allocSize = _vertices.size() * sizeof(Vertex);
+	Mesh _triangleMesh(std::move(_vertices), _allocator, allocSize,
+			VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
+			VMA_MEMORY_USAGE_CPU_TO_GPU);
+
 	while (true)
 	{
-		draw(_renderFence, swapchain, _presentSemaphore, _renderSemaphore, commandBuffer, renderPass, frameBuffer, _graphicsQueue, _trianglePipeline);
+		window->popEvent();
+		draw(_renderFence, swapchain, _presentSemaphore, _renderSemaphore, commandBuffer, renderPass, frameBuffer,
+				_graphicsQueue, _trianglePipeline, _triangleMesh);
 	}
 	// Render loop
 }
 
-void draw(Fence &_renderFence, Swapchain &swapchain, Semaphore &_presentSemaphore, Semaphore &_renderSemaphore,
-		CommandBuffer &commandBuffer, RenderPass &renderpass, FrameBuffer &frameBuffer, VkQueue _graphicsQueue,
-		Pipeline &_trianglePipeline)
+void draw(Fence& _renderFence, Swapchain& swapchain, Semaphore& _presentSemaphore, Semaphore& _renderSemaphore,
+		CommandBuffer& commandBuffer, RenderPass& renderpass, FrameBuffer& frameBuffer, VkQueue _graphicsQueue,
+		Pipeline& _trianglePipeline, Mesh& mesh)
 {
 	_renderFence.wait(1000000000);
 	_renderFence.reset();
@@ -185,7 +211,7 @@ void draw(Fence &_renderFence, Swapchain &swapchain, Semaphore &_presentSemaphor
 	commandBuffer.begin();
 	VkClearValue clearValue;
 	float flash = std::abs(std::sin(_frameNumber / 120.f));
-	clearValue.color = { { 0.0f, 0.0f, flash, 1.0f } };
+	clearValue.color = {{ 0.0f, 0.0f, flash, 1.0f }};
 
 	VkRenderPassBeginInfo rpInfo = {};
 	rpInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
@@ -202,13 +228,17 @@ void draw(Fence &_renderFence, Swapchain &swapchain, Semaphore &_presentSemaphor
 	rpInfo.pClearValues = &clearValue;
 	commandBuffer.beginRenderPass(rpInfo);
 	commandBuffer.bindPipeline(VK_PIPELINE_BIND_POINT_GRAPHICS, _trianglePipeline);
-	commandBuffer.draw(3, 1, 0, 0);
+
+	commandBuffer.bindVertexBuffers(mesh._vertexBuffer);
+	commandBuffer.draw(mesh._vertices.size(), 1, 0, 0);
+
+
 	commandBuffer.endRenderPass();
 	commandBuffer.end();
 
 	VkSubmitInfo submit = {};
 	VkPipelineStageFlags waitStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-	auto vkPresentSemaphore =  _presentSemaphore.get();
+	auto vkPresentSemaphore = _presentSemaphore.get();
 	auto vkRenderSemaphore = _renderSemaphore.get();
 	auto vkCommandBuffer = commandBuffer.get();
 
@@ -240,7 +270,7 @@ void draw(Fence &_renderFence, Swapchain &swapchain, Semaphore &_presentSemaphor
 
 	presentInfo.pImageIndices = &swapchainImageIndex;
 
-	if(vkQueuePresentKHR(_graphicsQueue, &presentInfo) != VK_SUCCESS)
+	if (vkQueuePresentKHR(_graphicsQueue, &presentInfo) != VK_SUCCESS)
 	{
 		throw std::runtime_error("vkQueuePresentKHR fail");
 	}

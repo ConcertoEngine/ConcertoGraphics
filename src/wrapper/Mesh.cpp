@@ -5,12 +5,26 @@
 #include <iostream>
 
 #include "wrapper/Mesh.hpp"
+
 #define TINYOBJLOADER_IMPLEMENTATION
+
 #include "tiny_obj_loader.h"
 
 namespace Concerto::Graphics::Wrapper
 {
-	bool Mesh::LoadFromObj(const std::string& fileName, const std::string &materialPath)
+	Mesh::Mesh(Vertices vertices, Allocator& allocator, std::size_t allocSize, VkBufferUsageFlags usage,
+			VmaMemoryUsage memoryUsage) : _vertices(std::move(vertices)),
+										  _vertexBuffer(allocator, allocSize, usage, memoryUsage)
+	{
+		void* data;
+		vmaMapMemory(allocator._allocator, _vertexBuffer._allocation, &data);
+
+		std::memcpy(data, _vertices.data(), allocSize);
+
+		vmaUnmapMemory(allocator._allocator, _vertexBuffer._allocation);
+	}
+
+	bool Mesh::LoadFromObj(const std::string& fileName, const std::string& materialPath)
 	{
 		std::string err;
 		tinyobj::ObjReaderConfig readerConfig;
@@ -79,7 +93,7 @@ namespace Concerto::Graphics::Wrapper
 					tinyobj::real_t uy = attrib.texcoords[2 * idx.texcoord_index + 1];
 
 					new_vert.uv.x = ux;
-					new_vert.uv.y = 1-uy;
+					new_vert.uv.y = 1 - uy;
 					_vertices.push_back(new_vert);
 				}
 				index_offset += fv;
@@ -87,4 +101,6 @@ namespace Concerto::Graphics::Wrapper
 		}
 		return true;
 	}
+
+
 } // Concerto::Graphics::Wrapper

@@ -30,6 +30,7 @@ namespace Concerto::Graphics::Wrapper
 
 		static VertexInputDescription getVertexDescription();
 	};
+	using Vertices = std::vector<Vertex>;
 
 } // Concerto
 
