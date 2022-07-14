@@ -81,6 +81,11 @@ namespace Concerto::Graphics::Wrapper
 		vkCmdBindPipeline(_commandBuffer, pipelineBindPoint, pipeline.get());
 	}
 
+	void CommandBuffer::bindPipeline(VkPipelineBindPoint pipelineBindPoint, VkPipeline pipeline)
+	{
+		vkCmdBindPipeline(_commandBuffer, pipelineBindPoint, pipeline);
+	}
+
 	void CommandBuffer::draw(std::uint32_t vertexCount, std::uint32_t instanceCount, std::uint32_t firstVertex, std::uint32_t firstInstance)
 	{
 		vkCmdDraw(_commandBuffer, vertexCount, instanceCount, firstVertex, firstInstance);
@@ -95,5 +100,10 @@ namespace Concerto::Graphics::Wrapper
 	void CommandBuffer::updatePushConstants(PipelineLayout& pipelineLayout, MeshPushConstants& meshPushConstants)
 	{
 		vkCmdPushConstants(_commandBuffer, pipelineLayout.get(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(MeshPushConstants), &meshPushConstants);
+	}
+
+	void CommandBuffer::updatePushConstants(VkPipelineLayout pipelineLayout, MeshPushConstants& meshPushConstants)
+	{
+		vkCmdPushConstants(_commandBuffer, pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(MeshPushConstants), &meshPushConstants);
 	}
 }

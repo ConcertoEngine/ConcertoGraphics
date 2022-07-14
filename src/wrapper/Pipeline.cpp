@@ -95,12 +95,6 @@ namespace Concerto::Graphics::Wrapper
 		return colorBlending;
 	}
 
-	void Pipeline::createMaterial(const std::string& name, VkPipelineLayout pipelineLayout)
-	{
-		Material material(pipelineLayout);
-		_materials.emplace(name, material);
-	}
-
 	Pipeline::~Pipeline()
 	{
 		vkDestroyPipeline(_device, _pipeline, nullptr);

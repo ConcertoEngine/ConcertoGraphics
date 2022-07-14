@@ -4,9 +4,10 @@
 #define VMA_IMPLEMENTATION
 #define VMA_VULKAN_VERSION 1000000
 #define VKB_DEBUG
+
 #include "MeshPushConstants.hpp"
 #include "glm/glm.hpp"
-#include <glm/gtx/transform.hpp>
+#include "glm/gtx/transform.hpp"
 #include "wrapper/Vertex.hpp"
 #include "wrapper/Swapchain.hpp"
 #include "wrapper/RenderPass.hpp"
@@ -31,6 +32,7 @@
 #include "wrapper/Swapchain.hpp"
 #include "wrapper/Mesh.hpp"
 #include <iostream>
+#include <unordered_map>
 
 VkInstance _instance{ VK_NULL_HANDLE };
 VkDebugUtilsMessengerEXT _debug_messenger;
@@ -39,14 +41,43 @@ VkDevice _device{ VK_NULL_HANDLE };
 VkSurfaceKHR _surface{ VK_NULL_HANDLE };
 int _frameNumber = 0;
 VkExtent2D windowExtent = { 1280, 720 };
+
 using namespace Concerto;
 using namespace Concerto::Graphics;
 using namespace Concerto::Graphics::Wrapper;
 
 void draw(Fence& _renderFence, Swapchain& swapchain, Semaphore& _presentSemaphore, Semaphore& _renderSemaphore,
-		CommandBuffer& commandBuffer, RenderPass& renderpass, FrameBuffer& frameBuffer, VkQueue _graphicsQueue,
-		Pipeline& meshPipeline, Mesh&, PipelineLayout &);
+		CommandBuffer& commandBuffer, RenderPass& renderpass, FrameBuffer& frameBuffer, VkQueue _graphicsQueue);
 
+struct Material
+{
+	Material(VkPipelineLayout pipelineLayout, VkPipeline pipeline) : _pipelineLayout(pipelineLayout), _pipeline(pipeline)
+	{
+	}
+
+	Material() : _pipelineLayout(VK_NULL_HANDLE)
+	{
+	}
+	VkPipeline _pipeline;
+	VkPipelineLayout _pipelineLayout;
+};
+
+struct RenderObject
+{
+	explicit RenderObject(std::unique_ptr<Mesh> mesh, VkPipelineLayout pipelineLayout, VkPipeline pipeline) : mesh(std::move(mesh)), material(pipelineLayout, pipeline),
+																		transformMatrix()
+	{
+
+	}
+
+	std::unique_ptr<Mesh> mesh;
+	Material material;
+	glm::mat4 transformMatrix;
+};
+
+std::vector<std::unique_ptr<RenderObject>> _renderables;
+
+void drawObjects(CommandBuffer &commandBuffer);
 int main()
 {
 	const char* appName = "Concerto";
@@ -144,12 +175,15 @@ int main()
 	VkSubpassDependency depth_dependency = {};
 	depth_dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
 	depth_dependency.dstSubpass = 0;
-	depth_dependency.srcStageMask = VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT | VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT;
+	depth_dependency.srcStageMask =
+			VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT | VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT;
 	depth_dependency.srcAccessMask = 0;
-	depth_dependency.dstStageMask = VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT | VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT;
+	depth_dependency.dstStageMask =
+			VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT | VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT;
 	depth_dependency.dstAccessMask = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
 
-	RenderPass renderPass(_device, { color_attachment, depth_attachment }, { subpass }, { dependency, depth_dependency });
+	RenderPass renderPass(_device, { color_attachment, depth_attachment }, { subpass },
+			{ dependency, depth_dependency });
 	// Renderpass
 	FrameBuffer frameBuffer(_device, swapchain, renderPass);
 
@@ -161,9 +195,11 @@ int main()
 	PipelineInfo pipelineInfo;
 
 	pipelineInfo._shaderStages.push_back(
-			VulkanInitializer::PipelineShaderStageCreateInfo(VK_SHADER_STAGE_VERTEX_BIT, triangleVertexShader.getShaderModule()));
+			VulkanInitializer::PipelineShaderStageCreateInfo(VK_SHADER_STAGE_VERTEX_BIT,
+					triangleVertexShader.getShaderModule()));
 	pipelineInfo._shaderStages.push_back(
-			VulkanInitializer::PipelineShaderStageCreateInfo(VK_SHADER_STAGE_FRAGMENT_BIT, triangleFragShader.getShaderModule()));
+			VulkanInitializer::PipelineShaderStageCreateInfo(VK_SHADER_STAGE_FRAGMENT_BIT,
+					triangleFragShader.getShaderModule()));
 
 	VertexInputDescription vertexDescription = Vertex::getVertexDescription();
 	pipelineInfo._vertexInputInfo = VulkanInitializer::VertexInputStateCreateInfo();
@@ -186,32 +222,61 @@ int main()
 	pipelineInfo._pipelineLayout = meshPipelineLayout.get();
 	pipelineInfo._depthStencil = VulkanInitializer::DepthStencilCreateInfo(true, true, VK_COMPARE_OP_LESS_OR_EQUAL);
 
-	Pipeline _trianglePipeline(_device, pipelineInfo);
-	_trianglePipeline.buildPipeline(renderPass.get()); //TODO RAII
+	Pipeline _meshPipeline(_device, pipelineInfo);
+	_meshPipeline.buildPipeline(renderPass.get()); //TODO RAII
 
 	// Render loop
 
 	Semaphore _presentSemaphore(_device);
 	Semaphore _renderSemaphore(_device);
 	Fence _renderFence(_device);
-
-	auto obj = ".\\assets\\monkey_flat.obj";
-	Mesh monkey(obj, _allocator,
+	std::unique_ptr<Mesh> monkeyMesh = std::make_unique<Mesh>(".\\assets\\monkey_flat.obj", _allocator,
 			VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
-	VMA_MEMORY_USAGE_CPU_TO_GPU);
-
+			VMA_MEMORY_USAGE_CPU_TO_GPU);
+	_renderables.emplace_back(std::make_unique<RenderObject>(std::move(monkeyMesh), meshPipelineLayout.get(), _meshPipeline.get()));
 	while (true)
 	{
 		window->popEvent();
 		draw(_renderFence, swapchain, _presentSemaphore, _renderSemaphore, commandBuffer, renderPass, frameBuffer,
-				_graphicsQueue, _trianglePipeline, monkey, meshPipelineLayout);
+				_graphicsQueue);
 	}
 	// Render loop
 }
 
+void drawObjects(CommandBuffer &commandBuffer)
+{
+	glm::vec3 camPos = { 0.f,0.f,-2.f };
+
+	glm::mat4 view = glm::translate(glm::mat4(1.f), camPos);
+	glm::mat4 projection = glm::perspective(glm::radians(70.f), 1700.f / 900.f, 0.1f, 200.0f);
+	projection[1][1] *= -1;
+
+	Mesh* lastMesh = nullptr;
+	Material* lastMaterial = nullptr;
+	for (auto &object : _renderables)
+	{
+		if (&object->material != lastMaterial)
+		{
+			commandBuffer.bindPipeline(VK_PIPELINE_BIND_POINT_GRAPHICS, object->material._pipeline);
+			lastMaterial = &object->material;
+		}
+		glm::mat4 model = glm::mat4{ 1.0f };;
+		glm::mat4 mesh_matrix = projection * view * model;
+
+		MeshPushConstants constants{};
+		constants.render_matrix = mesh_matrix;
+		commandBuffer.updatePushConstants(object->material._pipelineLayout, constants);
+		if (object->mesh.get() != lastMesh)
+		{
+			commandBuffer.bindVertexBuffers(object->mesh->_vertexBuffer);
+			lastMesh = object->mesh.get();
+		}
+		commandBuffer.draw(object->mesh->_vertices.size(), 1, 0, 0);
+	}
+}
+
 void draw(Fence& _renderFence, Swapchain& swapchain, Semaphore& _presentSemaphore, Semaphore& _renderSemaphore,
-		CommandBuffer& commandBuffer, RenderPass& renderpass, FrameBuffer& frameBuffer, VkQueue _graphicsQueue,
-		Pipeline& meshPipeline, Mesh& mesh, PipelineLayout &meshPipelineLayout)
+		CommandBuffer& commandBuffer, RenderPass& renderpass, FrameBuffer& frameBuffer, VkQueue _graphicsQueue)
 {
 	_renderFence.wait(1000000000);
 	_renderFence.reset();
@@ -223,35 +288,13 @@ void draw(Fence& _renderFence, Swapchain& swapchain, Semaphore& _presentSemaphor
 	float flash = std::abs(std::sin(_frameNumber / 120.f));
 	clearValue.color = {{ 0.0f, 0.0f, flash, 1.0f }};
 	depthClear.depthStencil.depth = 1.f;
-	VkClearValue clearValues[] = {clearValue, depthClear};
-	VkRenderPassBeginInfo rpInfo = VulkanInitializer::RenderPassBeginInfo(renderpass.get(), windowExtent, frameBuffer[swapchainImageIndex]);
+	VkClearValue clearValues[] = { clearValue, depthClear };
+	VkRenderPassBeginInfo rpInfo = VulkanInitializer::RenderPassBeginInfo(renderpass.get(), windowExtent,
+			frameBuffer[swapchainImageIndex]);
 	rpInfo.clearValueCount = 2;
 	rpInfo.pClearValues = &clearValues[0];
 	commandBuffer.beginRenderPass(rpInfo);
-	commandBuffer.bindPipeline(VK_PIPELINE_BIND_POINT_GRAPHICS, meshPipeline);
-
-	commandBuffer.bindVertexBuffers(mesh._vertexBuffer);
-	glm::vec3 camPos = { 0.f,0.f,-2.f };
-
-	glm::mat4 view = glm::translate(glm::mat4(1.f), camPos);
-	//camera projection
-	glm::mat4 projection = glm::perspective(glm::radians(70.f), 1700.f / 900.f, 0.1f, 200.0f);
-	projection[1][1] *= -1;
-	//model rotation
-	glm::mat4 model = glm::rotate(glm::mat4{ 1.0f }, glm::radians(_frameNumber * 0.4f), glm::vec3(0, 1, 0));
-
-	//calculate final mesh matrix
-	glm::mat4 mesh_matrix = projection * view * model;
-
-	MeshPushConstants constants{};
-	constants.render_matrix = mesh_matrix;
-
-	//upload the matrix to the GPU via push constants
-	commandBuffer.updatePushConstants(meshPipelineLayout, constants);
-
-	commandBuffer.draw(mesh._vertices.size(), 1, 0, 0);
-
-
+	drawObjects(commandBuffer);
 	commandBuffer.endRenderPass();
 	commandBuffer.end();
 

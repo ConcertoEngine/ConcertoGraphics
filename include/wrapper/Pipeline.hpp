@@ -12,15 +12,11 @@
 #include "PipelineInfo.hpp"
 #include "PipelineLayout.hpp"
 #include "DescriptorSet.hpp"
+#include "glm/glm.hpp"
 
 namespace Concerto::Graphics::Wrapper
 {
-	struct Material
-	{
-		Material(VkPipelineLayout pipelineLayout) : _pipelineLayout(pipelineLayout) {}
-		DescriptorSet _descriptorSet;
-		VkPipelineLayout _pipelineLayout;
-	};
+
 
 	class Pipeline
 	{
@@ -37,14 +33,13 @@ namespace Concerto::Graphics::Wrapper
 
 		~Pipeline();
 
-		VkPipeline get() const;
+		[[nodiscard]] VkPipeline get() const;
+
 		VkPipeline buildPipeline(VkRenderPass renderPass);
 
-		VkPipelineViewportStateCreateInfo buildViewportState() const;
+		[[nodiscard]] VkPipelineViewportStateCreateInfo buildViewportState() const;
 
-		VkPipelineColorBlendStateCreateInfo buildColorBlendState() const;
-
-		void createMaterial(const std::string& name, VkPipelineLayout pipelineLayout);
+		[[nodiscard]] VkPipelineColorBlendStateCreateInfo buildColorBlendState() const;
 
 		struct CreateInfo
 		{
@@ -57,7 +52,6 @@ namespace Concerto::Graphics::Wrapper
 		VkPipeline _pipeline;
 		PipelineInfo _pipelineInfo;
 		CreateInfo _createInfo;
-		std::unordered_map<std::string, Material> _materials;
 	};
 
 } // Concerto

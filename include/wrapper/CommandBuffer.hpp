@@ -10,6 +10,7 @@
 #include "AllocatedBuffer.hpp"
 #include "PipelineLayout.hpp"
 #include "MeshPushConstants.hpp"
+
 namespace Concerto::Graphics::Wrapper
 {
 	class CommandBuffer
@@ -41,9 +42,15 @@ namespace Concerto::Graphics::Wrapper
 
 		void bindPipeline(VkPipelineBindPoint pipelineBindPoint, Pipeline& pipeline);
 
-		void bindVertexBuffers(const AllocatedBuffer &buffer);
-		void updatePushConstants(PipelineLayout &pipelineLayout, MeshPushConstants &meshPushConstants);
-		void draw(std::uint32_t vertexCount, std::uint32_t instanceCount, std::uint32_t firstVertex, std::uint32_t firstInstance);
+		void bindPipeline(VkPipelineBindPoint pipelineBindPoint, VkPipeline pipeline);
+
+		void bindVertexBuffers(const AllocatedBuffer& buffer);
+
+		void updatePushConstants(PipelineLayout& pipelineLayout, MeshPushConstants& meshPushConstants);
+		void updatePushConstants(VkPipelineLayout pipelineLayout, MeshPushConstants& meshPushConstants);
+
+		void draw(std::uint32_t vertexCount, std::uint32_t instanceCount, std::uint32_t firstVertex,
+				std::uint32_t firstInstance);
 
 	private:
 		VkDevice _device;

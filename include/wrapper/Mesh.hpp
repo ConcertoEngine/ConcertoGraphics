@@ -9,6 +9,7 @@
 #include <string>
 #include "AllocatedBuffer.hpp"
 #include "Vertex.hpp"
+#include "glm/glm.hpp"
 
 namespace Concerto::Graphics::Wrapper
 {
@@ -27,7 +28,6 @@ namespace Concerto::Graphics::Wrapper
 		AllocatedBuffer _vertexBuffer;
 	private:
 	};
-
 } // Concerto::Graphics::Wrapper
 
 #endif //CONCERTOGRAPHICS_MESH_HPP

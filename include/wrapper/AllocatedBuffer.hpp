@@ -7,6 +7,7 @@
 
 #include <vulkan/vulkan.h>
 #include <cstddef>
+#include <iostream>
 #include "Allocator.hpp"
 #include "vk_mem_alloc.h"
 
@@ -22,7 +23,7 @@ namespace Concerto::Graphics::Wrapper
 
 		AllocatedBuffer(const AllocatedBuffer&) = delete;
 
-		AllocatedBuffer& operator=(AllocatedBuffer&&) = default;
+		AllocatedBuffer& operator=(AllocatedBuffer&&) = delete;
 
 		AllocatedBuffer& operator=(const AllocatedBuffer&) = delete;
 
