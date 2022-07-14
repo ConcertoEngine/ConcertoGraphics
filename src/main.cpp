@@ -107,11 +107,31 @@ int main()
 	color_attachment_ref.attachment = 0;
 	color_attachment_ref.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
+	VkAttachmentDescription depth_attachment = {};
+	// Depth attachment
+	depth_attachment.flags = 0;
+	depth_attachment.format = swapchain.getDepthFormat();
+	depth_attachment.samples = VK_SAMPLE_COUNT_1_BIT;
+	depth_attachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+	depth_attachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+	depth_attachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+	depth_attachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+	depth_attachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+	depth_attachment.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+
+	VkAttachmentReference depth_attachment_ref = {};
+	depth_attachment_ref.attachment = 1;
+	depth_attachment_ref.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+
+	//we are going to create 1 subpass, which is the minimum you can do
 	VkSubpassDescription subpass = {};
 	subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
 	subpass.colorAttachmentCount = 1;
 	subpass.pColorAttachments = &color_attachment_ref;
+	//hook the depth attachment into the subpass
+	subpass.pDepthStencilAttachment = &depth_attachment_ref;
 
+	//1 dependency, which is from "outside" into the subpass. And we can read or write color
 	VkSubpassDependency dependency = {};
 	dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
 	dependency.dstSubpass = 0;
@@ -120,7 +140,16 @@ int main()
 	dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
 	dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
 
-	RenderPass renderPass(_device, { color_attachment }, { subpass }, { dependency });
+	//dependency from outside to the subpass, making this subpass dependent on the previous renderpasses
+	VkSubpassDependency depth_dependency = {};
+	depth_dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
+	depth_dependency.dstSubpass = 0;
+	depth_dependency.srcStageMask = VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT | VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT;
+	depth_dependency.srcAccessMask = 0;
+	depth_dependency.dstStageMask = VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT | VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT;
+	depth_dependency.dstAccessMask = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
+
+	RenderPass renderPass(_device, { color_attachment, depth_attachment }, { subpass }, { dependency, depth_dependency });
 	// Renderpass
 	FrameBuffer frameBuffer(_device, swapchain, renderPass);
 
@@ -155,6 +184,7 @@ int main()
 	pipelineInfo._multisampling = VulkanInitializer::MultisamplingStateCreateInfo();
 	pipelineInfo._colorBlendAttachment = VulkanInitializer::ColorBlendAttachmentState();
 	pipelineInfo._pipelineLayout = meshPipelineLayout.get();
+	pipelineInfo._depthStencil = VulkanInitializer::DepthStencilCreateInfo(true, true, VK_COMPARE_OP_LESS_OR_EQUAL);
 
 	Pipeline _trianglePipeline(_device, pipelineInfo);
 	_trianglePipeline.buildPipeline(renderPass.get()); //TODO RAII
@@ -165,19 +195,6 @@ int main()
 	Semaphore _renderSemaphore(_device);
 	Fence _renderFence(_device);
 
-	Vertices _vertices;
-	_vertices.resize(3);
-	_vertices[0].position = { 1.f, 1.f, 0.0f };
-	_vertices[1].position = { -1.f, 1.f, 0.0f };
-	_vertices[2].position = { 0.f, -1.f, 0.0f };
-
-	_vertices[0].color = { 0.f, 0.f, 1.0f }; //pure green
-	_vertices[1].color = { 0.f, 1.f, 0.0f }; //pure green
-	_vertices[2].color = { 1.f, 0.f, 0.0f }; //pure green
-	std::size_t allocSize = _vertices.size() * sizeof(Vertex);
-//	Mesh _triangleMesh(std::move(_vertices), _allocator, allocSize,
-//			VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
-//			VMA_MEMORY_USAGE_CPU_TO_GPU);
 	auto obj = ".\\assets\\monkey_flat.obj";
 	Mesh monkey(obj, _allocator,
 			VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
@@ -202,22 +219,14 @@ void draw(Fence& _renderFence, Swapchain& swapchain, Semaphore& _presentSemaphor
 	commandBuffer.reset();
 	commandBuffer.begin();
 	VkClearValue clearValue;
+	VkClearValue depthClear;
 	float flash = std::abs(std::sin(_frameNumber / 120.f));
 	clearValue.color = {{ 0.0f, 0.0f, flash, 1.0f }};
-
-	VkRenderPassBeginInfo rpInfo = {};
-	rpInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-	rpInfo.pNext = nullptr;
-
-	rpInfo.renderPass = renderpass.get();
-	rpInfo.renderArea.offset.x = 0;
-	rpInfo.renderArea.offset.y = 0;
-	rpInfo.renderArea.extent = windowExtent;
-	rpInfo.framebuffer = frameBuffer[swapchainImageIndex];
-
-	//connect clear values
-	rpInfo.clearValueCount = 1;
-	rpInfo.pClearValues = &clearValue;
+	depthClear.depthStencil.depth = 1.f;
+	VkClearValue clearValues[] = {clearValue, depthClear};
+	VkRenderPassBeginInfo rpInfo = VulkanInitializer::RenderPassBeginInfo(renderpass.get(), windowExtent, frameBuffer[swapchainImageIndex]);
+	rpInfo.clearValueCount = 2;
+	rpInfo.pClearValues = &clearValues[0];
 	commandBuffer.beginRenderPass(rpInfo);
 	commandBuffer.bindPipeline(VK_PIPELINE_BIND_POINT_GRAPHICS, meshPipeline);
 

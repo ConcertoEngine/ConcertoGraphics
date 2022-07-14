@@ -13,12 +13,12 @@ namespace Concerto::Graphics::Wrapper
 
 		for (int i = 0; i < swapchain.getImageCount(); i++)
 		{
-			VkImageView attachments[1];
+			VkImageView attachments[2];
 			attachments[0] = swapchain.getImageViews()[i];
-//			attachments[1] = swapchain.getDepthImageView();
+			attachments[1] = swapchain.getDepthImageView();
 
 			fb_info.pAttachments = attachments;
-			fb_info.attachmentCount = 1;
+			fb_info.attachmentCount = 2;
 			if(vkCreateFramebuffer(device, &fb_info, nullptr, &_frameBuffers[i]) != VK_SUCCESS)
 			{
 				throw std::runtime_error("failed to create framebuffer!");
