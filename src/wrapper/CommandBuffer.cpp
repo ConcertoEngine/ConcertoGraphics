@@ -32,5 +32,57 @@ namespace Concerto::Graphics::Wrapper
 	CommandBuffer::~CommandBuffer()
 	{
 		vkFreeCommandBuffers(_device, _commandPool, 1, &_commandBuffer);
+		_commandBuffer = VK_NULL_HANDLE;
+	}
+
+	void CommandBuffer::reset()
+	{
+		if (vkResetCommandBuffer(_commandBuffer, 0) != VK_SUCCESS)
+		{
+			throw std::runtime_error("vkResetCommandBuffer fail");
+		}
+	}
+
+	void CommandBuffer::begin()
+	{
+		VkCommandBufferBeginInfo cmdBeginInfo = {};
+
+		cmdBeginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+		cmdBeginInfo.pNext = nullptr;
+		cmdBeginInfo.pInheritanceInfo = nullptr;
+		cmdBeginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+
+		if (vkBeginCommandBuffer(_commandBuffer, &cmdBeginInfo) != VK_SUCCESS)
+		{
+			throw std::runtime_error("vkBeginCommandBuffer fail");
+		}
+	}
+
+	void CommandBuffer::end()
+	{
+		if (vkEndCommandBuffer(_commandBuffer) != VK_SUCCESS)
+		{
+			throw std::runtime_error("vkEndCommandBuffer fail");
+		}
+	}
+
+	void CommandBuffer::beginRenderPass(VkRenderPassBeginInfo info)
+	{
+		vkCmdBeginRenderPass(_commandBuffer, &info, VK_SUBPASS_CONTENTS_INLINE);
+	}
+
+	void CommandBuffer::endRenderPass()
+	{
+		vkCmdEndRenderPass(_commandBuffer);
+	}
+
+	void CommandBuffer::bindPipeline(VkPipelineBindPoint pipelineBindPoint, Pipeline& pipeline)
+	{
+		vkCmdBindPipeline(_commandBuffer, pipelineBindPoint, pipeline.get());
+	}
+
+	void CommandBuffer::draw(std::uint32_t vertexCount, std::uint32_t instanceCount, std::uint32_t firstVertex, std::uint32_t firstInstance)
+	{
+		vkCmdDraw(_commandBuffer, vertexCount, instanceCount, firstVertex, firstInstance);
 	}
 }

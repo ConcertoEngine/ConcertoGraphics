@@ -24,7 +24,7 @@ namespace Concerto::Graphics::Wrapper
 		RenderPass& operator=(const RenderPass&) = delete;
 
 		~RenderPass();
-		[[nodiscard]] VkRenderPass getRenderPass() const;
+		[[nodiscard]] VkRenderPass get() const;
 
 	private:
 		VkRenderPass _renderPass;

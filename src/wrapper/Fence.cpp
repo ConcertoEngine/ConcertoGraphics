@@ -23,10 +23,27 @@ namespace Concerto::Graphics::Wrapper
 	Fence::~Fence()
 	{
 		vkDestroyFence(_device, _fence, nullptr);
+		_fence = VK_NULL_HANDLE;
 	}
 
 	VkFence Fence::get() const
 	{
 		return _fence;
+	}
+
+	void Fence::wait(std::uint64_t timeout)
+	{
+		if (vkWaitForFences(_device, 1, &_fence, true, timeout) != VK_SUCCESS)
+		{
+			throw std::runtime_error("vkWaitForFences fail");
+		}
+	}
+
+	void Fence::reset()
+	{
+		if (vkResetFences(_device, 1, &_fence) != VK_SUCCESS)
+		{
+			throw std::runtime_error("vkResetFences fail");
+		}
 	}
 } // namespace Concerto::Graphics::Wrapper

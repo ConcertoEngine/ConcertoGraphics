@@ -24,6 +24,7 @@ namespace Concerto::Graphics::Wrapper
 
 		~Semaphore();
 
+		VkSemaphore get() const;
 	private:
 		VkDevice _device;
 		VkSemaphore _semaphore;

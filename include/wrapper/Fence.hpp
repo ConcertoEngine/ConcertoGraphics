@@ -24,11 +24,13 @@ namespace Concerto::Graphics::Wrapper
 
 		~Fence();
 		VkFence get() const;
+		void wait(std::uint64_t timeout);
+		void reset();
 
 
 	private:
 		VkDevice _device;
-		VkFence _fence;
+		VkFence _fence{};
 	};
 } // namespace Concerto::Graphics::Wrapper
 

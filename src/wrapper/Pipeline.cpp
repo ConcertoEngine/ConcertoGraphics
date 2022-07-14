@@ -10,8 +10,8 @@
 namespace Concerto::Graphics::Wrapper
 {
 
-	Pipeline::Pipeline(VkDevice& device, const PipeLineInfo& pipeLineInfo) : _device(device),
-																			 _pipeLineInfo(pipeLineInfo),
+	Pipeline::Pipeline(VkDevice& device, const PipelineInfo& pipeLineInfo) : _device(device),
+																			 _pipelineInfo(pipeLineInfo),
 																			 _createInfo()
 	{
 		_createInfo.viewportState = buildViewportState();
@@ -20,33 +20,49 @@ namespace Concerto::Graphics::Wrapper
 		_createInfo.pipelineCreateInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
 	}
 
-	VkPipeline Pipeline::buildPipeline(const VkRenderPass& renderPass) const
+	VkPipeline Pipeline::buildPipeline(VkRenderPass renderPass)
 	{
-		VkGraphicsPipelineCreateInfo pipelineInfo = {};
-		VkPipelineViewportStateCreateInfo viewportStateCreateInfo = buildViewportState();
-		VkPipelineColorBlendStateCreateInfo colorBlendStateCreateInfo = buildColorBlendState();
-		VkPipeline newPipeline{};
+		VkGraphicsPipelineCreateInfo pipelineInfo{};
+		VkPipelineColorBlendStateCreateInfo colorBlending{};
+		VkPipelineViewportStateCreateInfo viewportState{};
+		VkPipelineColorBlendAttachmentState colorBlendAttachment(VulkanInitializer::ColorBlendAttachmentState());
+
+		viewportState.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
+		viewportState.pNext = nullptr;
+		viewportState.viewportCount = 1;
+		viewportState.pViewports = &_pipelineInfo._viewport;
+		viewportState.scissorCount = 1;
+		viewportState.pScissors = &_pipelineInfo._scissor;
+
+		colorBlending.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
+		colorBlending.pNext = nullptr;
+		colorBlending.logicOpEnable = VK_FALSE;
+		colorBlending.logicOp = VK_LOGIC_OP_COPY;
+		colorBlending.attachmentCount = 1;
+		colorBlending.pAttachments = &colorBlendAttachment;
+
 		pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
 		pipelineInfo.pNext = nullptr;
+
 		pipelineInfo.stageCount = _pipelineInfo._shaderStages.size();
 		pipelineInfo.pStages = _pipelineInfo._shaderStages.data();
 		pipelineInfo.pVertexInputState = &_pipelineInfo._vertexInputInfo;
 		pipelineInfo.pInputAssemblyState = &_pipelineInfo._inputAssembly;
-		pipelineInfo.pViewportState = &viewportStateCreateInfo;
+		pipelineInfo.pViewportState = &viewportState;
 		pipelineInfo.pRasterizationState = &_pipelineInfo._rasterizer;
 		pipelineInfo.pMultisampleState = &_pipelineInfo._multisampling;
-		pipelineInfo.pColorBlendState = &colorBlendStateCreateInfo;
+		pipelineInfo.pColorBlendState = &colorBlending;
 		pipelineInfo.layout = _pipelineInfo._pipelineLayout;
 		pipelineInfo.renderPass = renderPass;
 		pipelineInfo.subpass = 0;
 		pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
-		pipelineInfo.pDepthStencilState = &_pipelineInfo._depthStencil;
-		if (vkCreateGraphicsPipelines(_device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &newPipeline) != VK_SUCCESS)
+
+		if (vkCreateGraphicsPipelines(_device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &_pipeline) != VK_SUCCESS)
 		{
 			std::cerr << "failed to create pipeline\n";
 			return VK_NULL_HANDLE;
 		}
-		return newPipeline;
+		return _pipeline;
 	}
 
 	VkPipelineViewportStateCreateInfo Pipeline::buildViewportState() const
@@ -76,5 +92,22 @@ namespace Concerto::Graphics::Wrapper
 		colorBlending.attachmentCount = 1;
 		colorBlending.pAttachments = &colorBlendAttachment;
 		return colorBlending;
+	}
+
+	void Pipeline::createMaterial(const std::string& name, VkPipelineLayout pipelineLayout)
+	{
+		Material material(pipelineLayout);
+		_materials.emplace(name, material);
+	}
+
+	Pipeline::~Pipeline()
+	{
+		vkDestroyPipeline(_device, _pipeline, nullptr);
+		_pipeline = VK_NULL_HANDLE;
+	}
+
+	VkPipeline Pipeline::get() const
+	{
+		return _pipeline;
 	}
 }

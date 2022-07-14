@@ -23,13 +23,12 @@ namespace Concerto::Graphics::Wrapper
 
 	struct Vertex
 	{
-
 		glm::vec3 position;
 		glm::vec3 normal;
 		glm::vec3 color;
 		glm::vec2 uv;
 
-		VertexInputDescription getVertexDescription();
+		static VertexInputDescription getVertexDescription();
 	};
 
 } // Concerto

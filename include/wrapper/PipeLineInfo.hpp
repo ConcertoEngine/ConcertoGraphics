@@ -10,7 +10,7 @@
 namespace Concerto::Graphics::Wrapper
 {
 
-	struct PipeLineInfo
+	struct PipelineInfo
 	{
 		std::vector<VkPipelineShaderStageCreateInfo> _shaderStages;
 		VkPipelineVertexInputStateCreateInfo _vertexInputInfo;

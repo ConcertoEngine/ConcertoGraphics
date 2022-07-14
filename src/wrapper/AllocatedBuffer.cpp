@@ -31,5 +31,6 @@ namespace Concerto::Graphics::Wrapper
 	AllocatedBuffer::~AllocatedBuffer()
 	{
 		vmaDestroyBuffer(_allocator._allocator, _buffer, _allocation);
+		_buffer = VK_NULL_HANDLE;
 	}
 }

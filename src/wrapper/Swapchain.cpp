@@ -2,11 +2,13 @@
 // Created by arthur on 11/06/22.
 //
 
-#define VMA_IMPLEMENTATION
-#include "wrapper/Swapchain.hpp"
+
+#include "wrapper/Swapchain.hpp"*
+#include "vulkan/vulkan.h"
 #include "VkBootstrap.h"
 #include "vk_mem_alloc.h"
 #include "wrapper/VulkanInitializer.hpp"
+
 namespace Concerto::Graphics::Wrapper
 {
 
@@ -57,6 +59,7 @@ namespace Concerto::Graphics::Wrapper
 	{
 		vmaDestroyImage(_allocator._allocator, _depthImage._image, _depthImage._allocation);
 		vkDestroySwapchainKHR(_device, _swapChain, nullptr);
+		_swapChain = VK_NULL_HANDLE;
 	}
 
 	std::uint32_t Swapchain::getImageCount() const
@@ -97,5 +100,20 @@ namespace Concerto::Graphics::Wrapper
 	VkFormat Swapchain::getDepthFormat() const
 	{
 		return _depthFormat;
+	}
+
+	std::uint32_t Swapchain::acquireNextImage(Semaphore& semaphore, Fence &fence, std::uint64_t timeout)
+	{
+		std::uint32_t index = 0;
+		if (vkAcquireNextImageKHR(_device, _swapChain, timeout, semaphore.get(), nullptr, &index) != VK_SUCCESS)
+		{
+			throw std::runtime_error("vkAcquireNextImageKHR fail");
+		}
+		return index;
+	}
+
+	VkSwapchainKHR Swapchain::get() const
+	{
+		return _swapChain;
 	}
 }

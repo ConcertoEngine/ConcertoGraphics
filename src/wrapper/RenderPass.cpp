@@ -14,18 +14,15 @@ namespace Concerto::Graphics::Wrapper
 			_renderPass(VK_NULL_HANDLE), _device(device), _attachments(attachments), _subpasses(subpasses),
 			_dependencies(dependencies)
 	{
-		VkRenderPassCreateInfo render_pass_info = {
-				VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO,
-				nullptr,
-				0,
-				static_cast<std::uint32_t>(_attachments.size()),
-				_attachments.data(),
-				static_cast<std::uint32_t>(_subpasses.size()),
-				_subpasses.data(),
-				static_cast<std::uint32_t>(_dependencies.size()),
-				_dependencies.data()
+		VkRenderPassCreateInfo render_pass_info = {};
+		render_pass_info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
+		render_pass_info.attachmentCount = attachments.size();
+		render_pass_info.pAttachments = attachments.data();
+		render_pass_info.subpassCount = subpasses.size();
+		render_pass_info.pSubpasses = subpasses.data();
+		render_pass_info.dependencyCount = dependencies.size();
+		render_pass_info.pDependencies = dependencies.data();
 
-		};
 		if (vkCreateRenderPass(_device, &render_pass_info, nullptr, &_renderPass) != VK_SUCCESS)
 		{
 			throw std::runtime_error("failed to create render pass!");
@@ -35,9 +32,10 @@ namespace Concerto::Graphics::Wrapper
 	RenderPass::~RenderPass()
 	{
 		vkDestroyRenderPass(_device, _renderPass, nullptr);
+		_renderPass = VK_NULL_HANDLE;
 	}
 
-	VkRenderPass RenderPass::getRenderPass() const
+	VkRenderPass RenderPass::get() const
 	{
 		return _renderPass;
 	}

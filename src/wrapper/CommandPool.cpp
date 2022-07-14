@@ -11,7 +11,7 @@ namespace Concerto::Graphics::Wrapper
 {
 	CommandPool::CommandPool(VkDevice device, std::uint32_t queueFamily) : _device(device), _queueFamily(queueFamily)
 	{
-		VkCommandPoolCreateInfo info = {};
+		VkCommandPoolCreateInfo info {};
 		info.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
 		info.pNext = nullptr;
 		info.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;

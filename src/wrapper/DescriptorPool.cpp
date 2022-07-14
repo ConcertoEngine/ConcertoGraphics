@@ -26,6 +26,7 @@ namespace Concerto::Graphics::Wrapper
 	DescriptorPool::~DescriptorPool()
 	{
 		vkDestroyDescriptorPool(_device, _pool, nullptr);
+		_pool = VK_NULL_HANDLE;
 	}
 
 	VkDescriptorPool DescriptorPool::get() const

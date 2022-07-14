@@ -6,6 +6,7 @@
 #define CONCERTOGRAPHICS_COMMANDBUFFER_HPP
 
 #include "vulkan/vulkan.h"
+#include "Pipeline.hpp"
 
 namespace Concerto::Graphics::Wrapper
 {
@@ -25,6 +26,20 @@ namespace Concerto::Graphics::Wrapper
 		~CommandBuffer();
 
 		VkCommandBuffer get() const;
+
+		void reset();
+
+		void begin();
+
+		void end();
+
+		void beginRenderPass(VkRenderPassBeginInfo info);
+
+		void endRenderPass();
+
+		void bindPipeline(VkPipelineBindPoint pipelineBindPoint, Pipeline& pipeline);
+
+		void draw(std::uint32_t vertexCount, std::uint32_t instanceCount, std::uint32_t firstVertex, std::uint32_t firstInstance);
 
 	private:
 		VkDevice _device;

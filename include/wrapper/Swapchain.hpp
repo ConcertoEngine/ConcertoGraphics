@@ -9,6 +9,8 @@
 #include "vulkan/vulkan.h"
 #include "AllocatedImage.hpp"
 #include "Allocator.hpp"
+#include "Semaphore.hpp"
+#include "Fence.hpp"
 
 namespace Concerto::Graphics::Wrapper
 {
@@ -28,6 +30,8 @@ namespace Concerto::Graphics::Wrapper
 
 		~Swapchain();
 
+		VkSwapchainKHR get() const;
+
 		[[nodiscard]] std::uint32_t getImageCount() const;
 
 		[[nodiscard]] const std::vector<VkImage>& getImages() const;
@@ -43,6 +47,9 @@ namespace Concerto::Graphics::Wrapper
 		VkFormat getImageFormat() const;
 
 		VkFormat getDepthFormat() const;
+
+		std::uint32_t acquireNextImage(Semaphore &semaphore, Fence &fence, std::uint64_t timeout);
+
 
 	private:
 		Allocator &_allocator;

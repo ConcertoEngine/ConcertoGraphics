@@ -24,5 +24,11 @@ namespace Concerto::Graphics::Wrapper
 	Semaphore::~Semaphore()
 	{
 		vkDestroySemaphore(_device, _semaphore, nullptr);
+		_semaphore = VK_NULL_HANDLE;
+	}
+
+	VkSemaphore Semaphore::get() const
+	{
+		return _semaphore;
 	}
 } // namespace Concerto::Graphics::Wrapper

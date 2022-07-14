@@ -9,17 +9,16 @@ namespace Concerto::Graphics::Wrapper
 {
 	FrameBuffer::FrameBuffer(VkDevice device, Swapchain& swapchain, RenderPass& renderPass) : _frameBuffers(swapchain.getImageCount()), _swapchain(swapchain), _renderPass(renderPass), _device(device)
 	{
-		VkFramebufferCreateInfo fb_info = VulkanInitializer::FramebufferCreateInfo(renderPass.getRenderPass(), swapchain.getExtent());
+		VkFramebufferCreateInfo fb_info = VulkanInitializer::FramebufferCreateInfo(renderPass.get(), swapchain.getExtent());
 
 		for (int i = 0; i < swapchain.getImageCount(); i++)
 		{
-
-			VkImageView attachments[2];
+			VkImageView attachments[1];
 			attachments[0] = swapchain.getImageViews()[i];
-			attachments[1] = swapchain.getDepthImageView();
+//			attachments[1] = swapchain.getDepthImageView();
 
 			fb_info.pAttachments = attachments;
-			fb_info.attachmentCount = 2;
+			fb_info.attachmentCount = 1;
 			if(vkCreateFramebuffer(device, &fb_info, nullptr, &_frameBuffers[i]) != VK_SUCCESS)
 			{
 				throw std::runtime_error("failed to create framebuffer!");
@@ -34,5 +33,10 @@ namespace Concerto::Graphics::Wrapper
 			vkDestroyFramebuffer(_device, _frameBuffers[i], nullptr);
 			vkDestroyImageView(_device, _swapchain.getImageViews()[i], nullptr);
 		}
+	}
+
+	VkFramebuffer FrameBuffer::operator[](std::size_t s)
+	{
+		return _frameBuffers[s];
 	}
 }

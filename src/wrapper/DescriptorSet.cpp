@@ -9,7 +9,7 @@ namespace Concerto::Graphics::Wrapper
 {
 
 	DescriptorSet::DescriptorSet(VkDevice device, DescriptorPool& pool,
-			DescriptorSetLayout& descriptorSetLayout)
+			DescriptorSetLayout& descriptorSetLayout) : _device(device)
 	{
 		VkDescriptorSetAllocateInfo allocInfo = {};
 		auto layout = descriptorSetLayout.get();
@@ -29,4 +29,5 @@ namespace Concerto::Graphics::Wrapper
 	{
 		return _set;
 	}
+
 }

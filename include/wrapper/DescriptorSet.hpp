@@ -14,6 +14,7 @@ namespace Concerto::Graphics::Wrapper
 	class DescriptorSet
 	{
 	public:
+		DescriptorSet() = default;
 		DescriptorSet(VkDevice device, DescriptorPool& pool,
 				DescriptorSetLayout& descriptorSetLayout);
 
@@ -31,6 +32,7 @@ namespace Concerto::Graphics::Wrapper
 
 	private:
 		VkDescriptorSet _set = { VK_NULL_HANDLE };
+		VkDevice _device;
 	};
 }
 

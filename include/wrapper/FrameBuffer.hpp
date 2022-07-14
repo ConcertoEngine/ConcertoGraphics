@@ -26,6 +26,7 @@ namespace Concerto::Graphics::Wrapper
 
 		~FrameBuffer();
 
+		VkFramebuffer operator[](std::size_t);
 	private:
 		std::vector<VkFramebuffer> _frameBuffers;
 		Swapchain &_swapchain;
