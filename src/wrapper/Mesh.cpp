@@ -8,14 +8,18 @@
 
 #define TINYOBJLOADER_IMPLEMENTATION
 
+#include <filesystem>
+#include <stdexcept>a
 #include "tiny_obj_loader.h"
-
 namespace Concerto::Graphics::Wrapper
 {
 	Mesh::Mesh(Vertices vertices, Allocator& allocator, std::size_t allocSize, VkBufferUsageFlags usage,
-			VmaMemoryUsage memoryUsage) : _vertices(std::move(vertices)),
+			VmaMemoryUsage memoryUsage) : _isLoaded(!vertices.empty()),
+										  _vertices(std::move(vertices)),
 										  _vertexBuffer(allocator, allocSize, usage, memoryUsage)
 	{
+		if (!_isLoaded)
+			throw std::runtime_error("Empty vertices");
 		void* data;
 		vmaMapMemory(allocator._allocator, _vertexBuffer._allocation, &data);
 
@@ -24,7 +28,23 @@ namespace Concerto::Graphics::Wrapper
 		vmaUnmapMemory(allocator._allocator, _vertexBuffer._allocation);
 	}
 
-	bool Mesh::LoadFromObj(const std::string& fileName, const std::string& materialPath)
+	Mesh::Mesh(const std::string& file, Allocator& allocator, VkBufferUsageFlags usage,
+			VmaMemoryUsage memoryUsage) : _isLoaded(
+			loadFromObj(file, std::filesystem::path(file).parent_path().string())),
+										  _vertexBuffer(allocator, _vertices.size() * sizeof(Vertex), usage,
+												  memoryUsage)
+	{
+		if (!_isLoaded)
+			throw std::runtime_error("Empty vertices");
+		void* data;
+		vmaMapMemory(allocator._allocator, _vertexBuffer._allocation, &data);
+
+		std::memcpy(data, _vertices.data(), _vertices.size() * sizeof(Vertex));
+
+		vmaUnmapMemory(allocator._allocator, _vertexBuffer._allocation);
+	}
+
+	bool Mesh::loadFromObj(const std::string& fileName, const std::string& materialPath)
 	{
 		std::string err;
 		tinyobj::ObjReaderConfig readerConfig;

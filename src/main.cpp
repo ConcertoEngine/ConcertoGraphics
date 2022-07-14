@@ -4,6 +4,7 @@
 #define VMA_IMPLEMENTATION
 #define VMA_VULKAN_VERSION 1000000
 #define VKB_DEBUG
+#include "MeshPushConstants.hpp"
 #include "glm/glm.hpp"
 #include <glm/gtx/transform.hpp>
 #include "wrapper/Vertex.hpp"
@@ -45,12 +46,6 @@ using namespace Concerto::Graphics::Wrapper;
 void draw(Fence& _renderFence, Swapchain& swapchain, Semaphore& _presentSemaphore, Semaphore& _renderSemaphore,
 		CommandBuffer& commandBuffer, RenderPass& renderpass, FrameBuffer& frameBuffer, VkQueue _graphicsQueue,
 		Pipeline& meshPipeline, Mesh&, PipelineLayout &);
-
-struct MeshPushConstants
-{
-	glm::vec4 data;
-	glm::mat4 render_matrix;
-};
 
 int main()
 {
@@ -180,15 +175,19 @@ int main()
 	_vertices[1].color = { 0.f, 1.f, 0.0f }; //pure green
 	_vertices[2].color = { 1.f, 0.f, 0.0f }; //pure green
 	std::size_t allocSize = _vertices.size() * sizeof(Vertex);
-	Mesh _triangleMesh(std::move(_vertices), _allocator, allocSize,
+//	Mesh _triangleMesh(std::move(_vertices), _allocator, allocSize,
+//			VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
+//			VMA_MEMORY_USAGE_CPU_TO_GPU);
+	auto obj = ".\\assets\\monkey_flat.obj";
+	Mesh monkey(obj, _allocator,
 			VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
-			VMA_MEMORY_USAGE_CPU_TO_GPU);
+	VMA_MEMORY_USAGE_CPU_TO_GPU);
 
 	while (true)
 	{
 		window->popEvent();
 		draw(_renderFence, swapchain, _presentSemaphore, _renderSemaphore, commandBuffer, renderPass, frameBuffer,
-				_graphicsQueue, _trianglePipeline, _triangleMesh, meshPipelineLayout);
+				_graphicsQueue, _trianglePipeline, monkey, meshPipelineLayout);
 	}
 	// Render loop
 }
@@ -239,7 +238,7 @@ void draw(Fence& _renderFence, Swapchain& swapchain, Semaphore& _presentSemaphor
 	constants.render_matrix = mesh_matrix;
 
 	//upload the matrix to the GPU via push constants
-	vkCmdPushConstants(commandBuffer.get(), meshPipelineLayout.get(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(MeshPushConstants), &constants);
+	commandBuffer.updatePushConstants(meshPipelineLayout, constants);
 
 	commandBuffer.draw(mesh._vertices.size(), 1, 0, 0);
 

@@ -91,4 +91,9 @@ namespace Concerto::Graphics::Wrapper
 		VkDeviceSize offset = 0;
 		vkCmdBindVertexBuffers(_commandBuffer, 0, 1, &buffer._buffer, &offset);
 	}
+
+	void CommandBuffer::updatePushConstants(PipelineLayout& pipelineLayout, MeshPushConstants& meshPushConstants)
+	{
+		vkCmdPushConstants(_commandBuffer, pipelineLayout.get(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(MeshPushConstants), &meshPushConstants);
+	}
 }

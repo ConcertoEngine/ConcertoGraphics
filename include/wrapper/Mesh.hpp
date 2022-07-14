@@ -12,12 +12,20 @@
 
 namespace Concerto::Graphics::Wrapper
 {
-	struct Mesh {
+	struct Mesh
+	{
 		Mesh(Vertices vertices, Allocator& allocator, std::size_t allocSize,
 				VkBufferUsageFlags usage, VmaMemoryUsage memoryUsage);
+
+		Mesh(const std::string& file, Allocator& allocator, VkBufferUsageFlags usage, VmaMemoryUsage memoryUsage);
+
 		Vertices _vertices;
-		bool LoadFromObj(const std::string &fileName, const std::string &materialPath);
+
+		bool loadFromObj(const std::string& fileName, const std::string& materialPath);
+
+		bool _isLoaded;
 		AllocatedBuffer _vertexBuffer;
+	private:
 	};
 
 } // Concerto::Graphics::Wrapper
