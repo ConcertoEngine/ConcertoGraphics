@@ -4,6 +4,7 @@
 
 #include "wrapper/PipelineLayout.hpp"
 #include <stdexcept>
+#include "wrapper/VulkanInitializer.hpp"
 
 namespace Concerto::Graphics::Wrapper
 {
@@ -25,10 +26,10 @@ namespace Concerto::Graphics::Wrapper
 		pipelineLayoutCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
 		pipelineLayoutCreateInfo.pNext = nullptr;
 		pipelineLayoutCreateInfo.flags = 0;
-		pipelineLayoutCreateInfo.pPushConstantRanges = &push_constant;
-		pipelineLayoutCreateInfo.pushConstantRangeCount = 0; //TODO reset
 		pipelineLayoutCreateInfo.setLayoutCount = descriptorSetLayouts.size();
 		pipelineLayoutCreateInfo.pSetLayouts = set_layout.data();
+		pipelineLayoutCreateInfo.pushConstantRangeCount = 1;
+		pipelineLayoutCreateInfo.pPushConstantRanges = &push_constant;
 
 		if (vkCreatePipelineLayout(device, &pipelineLayoutCreateInfo, nullptr, &_pipelineLayout) != VK_SUCCESS)
 		{

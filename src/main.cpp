@@ -4,7 +4,8 @@
 #define VMA_IMPLEMENTATION
 #define VMA_VULKAN_VERSION 1000000
 #define VKB_DEBUG
-
+#include "glm/glm.hpp"
+#include <glm/gtx/transform.hpp>
 #include "wrapper/Vertex.hpp"
 #include "wrapper/Swapchain.hpp"
 #include "wrapper/RenderPass.hpp"
@@ -43,7 +44,13 @@ using namespace Concerto::Graphics::Wrapper;
 
 void draw(Fence& _renderFence, Swapchain& swapchain, Semaphore& _presentSemaphore, Semaphore& _renderSemaphore,
 		CommandBuffer& commandBuffer, RenderPass& renderpass, FrameBuffer& frameBuffer, VkQueue _graphicsQueue,
-		Pipeline& _trianglePipeline, Mesh&);
+		Pipeline& meshPipeline, Mesh&, PipelineLayout &);
+
+struct MeshPushConstants
+{
+	glm::vec4 data;
+	glm::mat4 render_matrix;
+};
 
 int main()
 {
@@ -125,7 +132,7 @@ int main()
 	// Pilpline
 	ShaderModule triangleFragShader(R"(.\shaders\colored_triangle.frag.spv)", _device);
 	ShaderModule triangleVertexShader(R"(.\shaders\tri_mesh.vert.spv)", _device);
-	PipelineLayout _trianglePipelineLayout(_device, 0, {});
+	PipelineLayout meshPipelineLayout = makePipelineLayout<MeshPushConstants>(_device, {});
 
 	PipelineInfo pipelineInfo;
 
@@ -138,39 +145,25 @@ int main()
 	pipelineInfo._vertexInputInfo = VulkanInitializer::VertexInputStateCreateInfo();
 	pipelineInfo._vertexInputInfo.pVertexAttributeDescriptions = vertexDescription.attributes.data();
 	pipelineInfo._vertexInputInfo.vertexAttributeDescriptionCount = vertexDescription.attributes.size();
-
 	pipelineInfo._vertexInputInfo.pVertexBindingDescriptions = vertexDescription.bindings.data();
 	pipelineInfo._vertexInputInfo.vertexBindingDescriptionCount = vertexDescription.bindings.size();
-	pipelineInfo._vertexInputInfo.flags = 0;
-	//input assembly is the configuration for drawing triangle lists, strips, or individual points.
-	//we are just going to draw triangle list
 	pipelineInfo._inputAssembly = VulkanInitializer::InputAssemblyCreateInfo(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
-
-	//build viewport and scissor from the swapchain extents
 	pipelineInfo._viewport.x = 0.0f;
 	pipelineInfo._viewport.y = 0.0f;
 	pipelineInfo._viewport.width = (float)windowExtent.width;
 	pipelineInfo._viewport.height = (float)windowExtent.height;
 	pipelineInfo._viewport.minDepth = 0.0f;
 	pipelineInfo._viewport.maxDepth = 1.0f;
-
 	pipelineInfo._scissor.offset = { 0, 0 };
 	pipelineInfo._scissor.extent = windowExtent;
-
-	//configure the rasterizer to draw filled triangles
 	pipelineInfo._rasterizer = VulkanInitializer::RasterizationStateCreateInfo(VK_POLYGON_MODE_FILL);
-
-	//we don't use multisampling, so just run the default one
 	pipelineInfo._multisampling = VulkanInitializer::MultisamplingStateCreateInfo();
-
-	//a single blend attachment with no blending and writing to RGBA
 	pipelineInfo._colorBlendAttachment = VulkanInitializer::ColorBlendAttachmentState();
-
-	//use the triangle layout we created
-	pipelineInfo._pipelineLayout = _trianglePipelineLayout.get();
+	pipelineInfo._pipelineLayout = meshPipelineLayout.get();
 
 	Pipeline _trianglePipeline(_device, pipelineInfo);
 	_trianglePipeline.buildPipeline(renderPass.get()); //TODO RAII
+
 	// Render loop
 
 	Semaphore _presentSemaphore(_device);
@@ -183,8 +176,8 @@ int main()
 	_vertices[1].position = { -1.f, 1.f, 0.0f };
 	_vertices[2].position = { 0.f, -1.f, 0.0f };
 
-	_vertices[0].color = { 1.f, 0.f, 0.0f }; //pure green
-	_vertices[1].color = { 1.f, 0.f, 0.0f }; //pure green
+	_vertices[0].color = { 0.f, 0.f, 1.0f }; //pure green
+	_vertices[1].color = { 0.f, 1.f, 0.0f }; //pure green
 	_vertices[2].color = { 1.f, 0.f, 0.0f }; //pure green
 	std::size_t allocSize = _vertices.size() * sizeof(Vertex);
 	Mesh _triangleMesh(std::move(_vertices), _allocator, allocSize,
@@ -195,14 +188,14 @@ int main()
 	{
 		window->popEvent();
 		draw(_renderFence, swapchain, _presentSemaphore, _renderSemaphore, commandBuffer, renderPass, frameBuffer,
-				_graphicsQueue, _trianglePipeline, _triangleMesh);
+				_graphicsQueue, _trianglePipeline, _triangleMesh, meshPipelineLayout);
 	}
 	// Render loop
 }
 
 void draw(Fence& _renderFence, Swapchain& swapchain, Semaphore& _presentSemaphore, Semaphore& _renderSemaphore,
 		CommandBuffer& commandBuffer, RenderPass& renderpass, FrameBuffer& frameBuffer, VkQueue _graphicsQueue,
-		Pipeline& _trianglePipeline, Mesh& mesh)
+		Pipeline& meshPipeline, Mesh& mesh, PipelineLayout &meshPipelineLayout)
 {
 	_renderFence.wait(1000000000);
 	_renderFence.reset();
@@ -227,9 +220,27 @@ void draw(Fence& _renderFence, Swapchain& swapchain, Semaphore& _presentSemaphor
 	rpInfo.clearValueCount = 1;
 	rpInfo.pClearValues = &clearValue;
 	commandBuffer.beginRenderPass(rpInfo);
-	commandBuffer.bindPipeline(VK_PIPELINE_BIND_POINT_GRAPHICS, _trianglePipeline);
+	commandBuffer.bindPipeline(VK_PIPELINE_BIND_POINT_GRAPHICS, meshPipeline);
 
 	commandBuffer.bindVertexBuffers(mesh._vertexBuffer);
+	glm::vec3 camPos = { 0.f,0.f,-2.f };
+
+	glm::mat4 view = glm::translate(glm::mat4(1.f), camPos);
+	//camera projection
+	glm::mat4 projection = glm::perspective(glm::radians(70.f), 1700.f / 900.f, 0.1f, 200.0f);
+	projection[1][1] *= -1;
+	//model rotation
+	glm::mat4 model = glm::rotate(glm::mat4{ 1.0f }, glm::radians(_frameNumber * 0.4f), glm::vec3(0, 1, 0));
+
+	//calculate final mesh matrix
+	glm::mat4 mesh_matrix = projection * view * model;
+
+	MeshPushConstants constants{};
+	constants.render_matrix = mesh_matrix;
+
+	//upload the matrix to the GPU via push constants
+	vkCmdPushConstants(commandBuffer.get(), meshPipelineLayout.get(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(MeshPushConstants), &constants);
+
 	commandBuffer.draw(mesh._vertices.size(), 1, 0, 0);
 
 

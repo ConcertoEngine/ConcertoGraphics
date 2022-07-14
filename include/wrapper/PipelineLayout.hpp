@@ -23,7 +23,7 @@ namespace Concerto::Graphics::Wrapper
 		VkPipelineLayout get() const;
 	private:
 		VkDevice _device;
-		VkPipelineLayout _pipelineLayout;
+		VkPipelineLayout _pipelineLayout{};
 	};
 
 	template<typename T>
