@@ -33,6 +33,7 @@
 #include "wrapper/Mesh.hpp"
 #include <iostream>
 #include <unordered_map>
+#include <array>
 
 VkInstance _instance{ VK_NULL_HANDLE };
 VkDebugUtilsMessengerEXT _debug_messenger;
@@ -46,26 +47,97 @@ using namespace Concerto;
 using namespace Concerto::Graphics;
 using namespace Concerto::Graphics::Wrapper;
 
-void draw(Fence& _renderFence, Swapchain& swapchain, Semaphore& _presentSemaphore, Semaphore& _renderSemaphore,
-		CommandBuffer& commandBuffer, RenderPass& renderpass, FrameBuffer& frameBuffer, VkQueue _graphicsQueue);
 
 struct Material
 {
-	Material(VkPipelineLayout pipelineLayout, VkPipeline pipeline) : _pipelineLayout(pipelineLayout), _pipeline(pipeline)
+	Material(VkPipelineLayout pipelineLayout, VkPipeline pipeline) : _pipelineLayout(pipelineLayout),
+																	 _pipeline(pipeline)
 	{
 	}
 
 	Material() : _pipelineLayout(VK_NULL_HANDLE)
 	{
 	}
+
 	VkPipeline _pipeline;
 	VkPipelineLayout _pipelineLayout;
 };
 
+struct FrameData
+{
+	FrameData(Allocator& allocator, VkDevice device, std::uint32_t queueFamily, //DescriptorPool& pool,
+			//DescriptorSetLayout& globalDescriptorSetLayout, DescriptorSetLayout& objectDescriptorSetLayout,
+			//AllocatedBuffer& sceneParameterBuffer,
+			bool signaled = true) : _presentSemaphore(device),
+									_commandPool(device, queueFamily),
+									_renderSemaphore(device),
+									_renderFence(device, signaled),
+									_mainCommandBuffer(device, _commandPool.get())//,
+//									_cameraBuffer(makeAllocatedBuffer<GPUCameraData>(allocator,
+//											VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+//											VMA_MEMORY_USAGE_CPU_TO_GPU)),
+//									globalDescriptor(device, pool, globalDescriptorSetLayout),
+//									_objectBuffer(makeAllocatedBuffer<GPUObjectData>(allocator, 1000,
+//											VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
+//											VMA_MEMORY_USAGE_CPU_TO_GPU)),
+//									objectDescriptor(device, pool, objectDescriptorSetLayout)
+	{
+
+//		VkDescriptorBufferInfo cameraInfo;
+//		cameraInfo.buffer = _cameraBuffer._buffer;
+//		cameraInfo.offset = 0;
+//		cameraInfo.range = sizeof(GPUCameraData);
+//
+//		VkDescriptorBufferInfo sceneInfo;
+//		sceneInfo.buffer = sceneParameterBuffer._buffer;
+//		sceneInfo.offset = 0;
+//		sceneInfo.range = sizeof(GPUSceneData);
+//
+//		VkDescriptorBufferInfo objectBufferInfo;
+//		objectBufferInfo.buffer = _objectBuffer._buffer;
+//		objectBufferInfo.offset = 0;
+//		objectBufferInfo.range = sizeof(GPUObjectData) * 1000;
+//
+//		VkWriteDescriptorSet cameraWrite = VulkanInitializer::WriteDescriptorBuffer(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+//				globalDescriptor.get(), &cameraInfo, 0);
+//
+//		VkWriteDescriptorSet sceneWrite = VulkanInitializer::WriteDescriptorBuffer(
+//				VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, globalDescriptor.get(), &sceneInfo, 1);
+//
+//		VkWriteDescriptorSet objectWrite = VulkanInitializer::WriteDescriptorBuffer(VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
+//				objectDescriptor.get(), &objectBufferInfo, 0);
+//
+//		VkWriteDescriptorSet setWrites[] = { cameraWrite, sceneWrite, objectWrite };
+//
+//		vkUpdateDescriptorSets(device, 3, setWrites, 0, nullptr);
+	}
+
+	FrameData(FrameData&&) = default;
+
+	FrameData() = delete;
+
+	~FrameData() = default;
+
+	Semaphore _presentSemaphore, _renderSemaphore;
+	Fence _renderFence;
+
+	CommandPool _commandPool;
+	CommandBuffer _mainCommandBuffer;
+
+//	AllocatedBuffer _cameraBuffer;
+//	DescriptorSet globalDescriptor;
+//
+//	AllocatedBuffer _objectBuffer;
+//	DescriptorSet objectDescriptor;
+};
+
+using Frames = std::array<FrameData, 2>;
+
 struct RenderObject
 {
-	explicit RenderObject(std::unique_ptr<Mesh> mesh, VkPipelineLayout pipelineLayout, VkPipeline pipeline) : mesh(std::move(mesh)), material(pipelineLayout, pipeline),
-																		transformMatrix()
+	explicit RenderObject(std::unique_ptr<Mesh> mesh, VkPipelineLayout pipelineLayout, VkPipeline pipeline) : mesh(
+			std::move(mesh)), material(pipelineLayout, pipeline),
+																											  transformMatrix()
 	{
 
 	}
@@ -77,7 +149,11 @@ struct RenderObject
 
 std::vector<std::unique_ptr<RenderObject>> _renderables;
 
-void drawObjects(CommandBuffer &commandBuffer);
+void drawObjects(CommandBuffer& commandBuffer);
+
+void
+draw(Swapchain& swapchain, RenderPass& renderpass, FrameBuffer& frameBuffer, VkQueue _graphicsQueue, FrameData& frame);
+
 int main()
 {
 	const char* appName = "Concerto";
@@ -119,9 +195,6 @@ int main()
 
 	Allocator _allocator(_physicalDevice, _device, _instance);
 	Swapchain swapchain(_allocator, windowExtent, _physicalDevice, _device, vkSurface, _instance);
-
-	CommandPool commandPool(_device, _graphicsQueueFamily);
-	CommandBuffer commandBuffer(_device, commandPool.get());
 
 	// Renderpass
 	VkAttachmentDescription color_attachment = {};
@@ -186,7 +259,12 @@ int main()
 			{ dependency, depth_dependency });
 	// Renderpass
 	FrameBuffer frameBuffer(_device, swapchain, renderPass);
-
+	// Commands
+	Frames frames = {
+			FrameData(_allocator, _device, _graphicsQueueFamily, true),
+			FrameData(_allocator, _device, _graphicsQueueFamily, true)
+	};
+	// Commands
 	// Pilpline
 	ShaderModule triangleFragShader(R"(.\shaders\colored_triangle.frag.spv)", _device);
 	ShaderModule triangleVertexShader(R"(.\shaders\tri_mesh.vert.spv)", _device);
@@ -233,19 +311,19 @@ int main()
 	std::unique_ptr<Mesh> monkeyMesh = std::make_unique<Mesh>(".\\assets\\monkey_flat.obj", _allocator,
 			VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
 			VMA_MEMORY_USAGE_CPU_TO_GPU);
-	_renderables.emplace_back(std::make_unique<RenderObject>(std::move(monkeyMesh), meshPipelineLayout.get(), _meshPipeline.get()));
+	_renderables.emplace_back(
+			std::make_unique<RenderObject>(std::move(monkeyMesh), meshPipelineLayout.get(), _meshPipeline.get()));
 	while (true)
 	{
 		window->popEvent();
-		draw(_renderFence, swapchain, _presentSemaphore, _renderSemaphore, commandBuffer, renderPass, frameBuffer,
-				_graphicsQueue);
+		draw(swapchain, renderPass, frameBuffer, _graphicsQueue, frames[_frameNumber % frames.size()]);
 	}
 	// Render loop
 }
 
-void drawObjects(CommandBuffer &commandBuffer)
+void drawObjects(CommandBuffer& commandBuffer)
 {
-	glm::vec3 camPos = { 0.f,0.f,-2.f };
+	glm::vec3 camPos = { 0.f, 0.f, -2.f };
 
 	glm::mat4 view = glm::translate(glm::mat4(1.f), camPos);
 	glm::mat4 projection = glm::perspective(glm::radians(70.f), 1700.f / 900.f, 0.1f, 200.0f);
@@ -253,7 +331,7 @@ void drawObjects(CommandBuffer &commandBuffer)
 
 	Mesh* lastMesh = nullptr;
 	Material* lastMaterial = nullptr;
-	for (auto &object : _renderables)
+	for (auto& object: _renderables)
 	{
 		if (&object->material != lastMaterial)
 		{
@@ -275,14 +353,15 @@ void drawObjects(CommandBuffer &commandBuffer)
 	}
 }
 
-void draw(Fence& _renderFence, Swapchain& swapchain, Semaphore& _presentSemaphore, Semaphore& _renderSemaphore,
-		CommandBuffer& commandBuffer, RenderPass& renderpass, FrameBuffer& frameBuffer, VkQueue _graphicsQueue)
+void
+draw(Swapchain& swapchain, RenderPass& renderpass, FrameBuffer& frameBuffer, VkQueue _graphicsQueue, FrameData& frame)
 {
-	_renderFence.wait(1000000000);
-	_renderFence.reset();
-	std::uint32_t swapchainImageIndex = swapchain.acquireNextImage(_presentSemaphore, _renderFence, 1000000000);
-	commandBuffer.reset();
-	commandBuffer.begin();
+	frame._renderFence.wait(1000000000);
+	frame._renderFence.reset();
+	std::uint32_t swapchainImageIndex = swapchain.acquireNextImage(frame._presentSemaphore, frame._renderFence,
+			1000000000);
+	frame._mainCommandBuffer.reset();
+	frame._mainCommandBuffer.begin();
 	VkClearValue clearValue;
 	VkClearValue depthClear;
 	float flash = std::abs(std::sin(_frameNumber / 120.f));
@@ -293,16 +372,16 @@ void draw(Fence& _renderFence, Swapchain& swapchain, Semaphore& _presentSemaphor
 			frameBuffer[swapchainImageIndex]);
 	rpInfo.clearValueCount = 2;
 	rpInfo.pClearValues = &clearValues[0];
-	commandBuffer.beginRenderPass(rpInfo);
-	drawObjects(commandBuffer);
-	commandBuffer.endRenderPass();
-	commandBuffer.end();
+	frame._mainCommandBuffer.beginRenderPass(rpInfo);
+	drawObjects(frame._mainCommandBuffer);
+	frame._mainCommandBuffer.endRenderPass();
+	frame._mainCommandBuffer.end();
 
 	VkSubmitInfo submit = {};
 	VkPipelineStageFlags waitStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-	auto vkPresentSemaphore = _presentSemaphore.get();
-	auto vkRenderSemaphore = _renderSemaphore.get();
-	auto vkCommandBuffer = commandBuffer.get();
+	auto vkPresentSemaphore = frame._presentSemaphore.get();
+	auto vkRenderSemaphore = frame._renderSemaphore.get();
+	auto vkCommandBuffer = frame._mainCommandBuffer.get();
 
 	submit.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 	submit.pNext = nullptr;
@@ -314,7 +393,7 @@ void draw(Fence& _renderFence, Swapchain& swapchain, Semaphore& _presentSemaphor
 	submit.commandBufferCount = 1;
 	submit.pCommandBuffers = &vkCommandBuffer;
 	//TODO Create an object Queue
-	if (vkQueueSubmit(_graphicsQueue, 1, &submit, _renderFence.get()) != VK_SUCCESS)
+	if (vkQueueSubmit(_graphicsQueue, 1, &submit, frame._renderFence.get()) != VK_SUCCESS)
 	{
 		throw std::runtime_error("vkQueueSubmit fail");
 	}
