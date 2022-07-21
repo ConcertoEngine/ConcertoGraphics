@@ -7,29 +7,40 @@
 
 #include <cstddef>
 #include <vector>
+#include <functional>
 #include "vulkan/vulkan.h"
 #include "DescriptorSetLayout.hpp"
+
 namespace Concerto::Graphics::Wrapper
 {
 	class PipelineLayout
 	{
 	public:
-		PipelineLayout(VkDevice device, std::size_t size, const std::vector<DescriptorSetLayout>& descriptorSetLayouts);
+		PipelineLayout(VkDevice device, std::size_t size,
+				const std::vector<std::reference_wrapper<DescriptorSetLayout>>& descriptorSetLayouts);
+
 		PipelineLayout(PipelineLayout&&) = default;
+
 		PipelineLayout(const PipelineLayout&) = delete;
+
 		PipelineLayout& operator=(PipelineLayout&&) = default;
+
 		PipelineLayout& operator=(const PipelineLayout&) = delete;
+
 		~PipelineLayout();
+
 		VkPipelineLayout get() const;
+
 	private:
 		VkDevice _device;
 		VkPipelineLayout _pipelineLayout{};
 	};
 
 	template<typename T>
-	PipelineLayout makePipelineLayout(VkDevice device, const std::vector<DescriptorSetLayout>& descriptorSetLayouts)
+	PipelineLayout makePipelineLayout(VkDevice device,
+			const std::vector<std::reference_wrapper<DescriptorSetLayout>>& descriptorSetLayouts)
 	{
-		return {device, sizeof(T), descriptorSetLayouts};
+		return { device, sizeof(T), descriptorSetLayouts };
 	}
 } // Concerto::Graphics::Wrapper
 

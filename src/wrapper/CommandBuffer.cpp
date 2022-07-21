@@ -6,6 +6,7 @@
 #include "wrapper/CommandBuffer.hpp"
 #include <stdexcept>
 #include <iostream>
+
 namespace Concerto::Graphics::Wrapper
 {
 	CommandBuffer::CommandBuffer(VkDevice device, VkCommandPool commandPool) : _device(device),
@@ -86,7 +87,8 @@ namespace Concerto::Graphics::Wrapper
 		vkCmdBindPipeline(_commandBuffer, pipelineBindPoint, pipeline);
 	}
 
-	void CommandBuffer::draw(std::uint32_t vertexCount, std::uint32_t instanceCount, std::uint32_t firstVertex, std::uint32_t firstInstance)
+	void CommandBuffer::draw(std::uint32_t vertexCount, std::uint32_t instanceCount, std::uint32_t firstVertex,
+			std::uint32_t firstInstance)
 	{
 		vkCmdDraw(_commandBuffer, vertexCount, instanceCount, firstVertex, firstInstance);
 	}
@@ -99,11 +101,29 @@ namespace Concerto::Graphics::Wrapper
 
 	void CommandBuffer::updatePushConstants(PipelineLayout& pipelineLayout, MeshPushConstants& meshPushConstants)
 	{
-		vkCmdPushConstants(_commandBuffer, pipelineLayout.get(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(MeshPushConstants), &meshPushConstants);
+		vkCmdPushConstants(_commandBuffer, pipelineLayout.get(), VK_SHADER_STAGE_VERTEX_BIT, 0,
+				sizeof(MeshPushConstants), &meshPushConstants);
 	}
 
 	void CommandBuffer::updatePushConstants(VkPipelineLayout pipelineLayout, MeshPushConstants& meshPushConstants)
 	{
-		vkCmdPushConstants(_commandBuffer, pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(MeshPushConstants), &meshPushConstants);
+		vkCmdPushConstants(_commandBuffer, pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(MeshPushConstants),
+				&meshPushConstants);
+	}
+
+	void CommandBuffer::bindDescriptorSets(VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout pipelineLayout,
+			std::uint32_t firstSet, std::uint32_t descriptorSetCount, DescriptorSet& descriptorSet, std::uint32_t dynamicOffsets)
+	{
+		auto vkDescriptorSet = descriptorSet.get();
+		vkCmdBindDescriptorSets(_commandBuffer, pipelineBindPoint, pipelineLayout, firstSet, descriptorSetCount,
+				&vkDescriptorSet, 1, &dynamicOffsets);
+	}
+
+	void CommandBuffer::bindDescriptorSets(VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout pipelineLayout,
+			std::uint32_t firstSet, std::uint32_t descriptorSetCount, DescriptorSet& descriptorSet)
+	{
+		auto vkDescriptorSet = descriptorSet.get();
+		vkCmdBindDescriptorSets(_commandBuffer, pipelineBindPoint, pipelineLayout, firstSet, descriptorSetCount,
+				&vkDescriptorSet, 0, nullptr);
 	}
 }

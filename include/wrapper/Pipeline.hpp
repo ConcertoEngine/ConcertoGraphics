@@ -21,7 +21,7 @@ namespace Concerto::Graphics::Wrapper
 	class Pipeline
 	{
 	public:
-		explicit Pipeline(VkDevice& device, const PipelineInfo& pipeLineInfo);
+		explicit Pipeline(VkDevice& device, PipelineInfo  pipeLineInfo);
 
 		Pipeline(Pipeline&&) = default;
 
@@ -49,7 +49,7 @@ namespace Concerto::Graphics::Wrapper
 		};
 	private:
 		VkDevice& _device;
-		VkPipeline _pipeline;
+		VkPipeline _pipeline{};
 		PipelineInfo _pipelineInfo;
 		CreateInfo _createInfo;
 	};

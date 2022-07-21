@@ -15,7 +15,7 @@ namespace Concerto::Graphics::Wrapper
 		pool_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
 		pool_info.flags = 0;
 		pool_info.maxSets = 10;
-		pool_info.poolSizeCount = (std::uint32_t)poolSizes.size();
+		pool_info.poolSizeCount = poolSizes.size();
 		pool_info.pPoolSizes = poolSizes.data();
 		if (vkCreateDescriptorPool(device, &pool_info, nullptr, &_pool) != VK_SUCCESS)
 		{

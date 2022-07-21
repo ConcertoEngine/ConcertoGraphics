@@ -44,9 +44,16 @@ namespace Concerto::Graphics::Wrapper
 
 		void bindPipeline(VkPipelineBindPoint pipelineBindPoint, VkPipeline pipeline);
 
+		void bindDescriptorSets(VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout pipelineLayout,
+				std::uint32_t firstSet, std::uint32_t descriptorSetCount, DescriptorSet& descriptorSet,
+				std::uint32_t dynamicOffsets);
+		void bindDescriptorSets(VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout pipelineLayout,
+				std::uint32_t firstSet, std::uint32_t descriptorSetCount, DescriptorSet& descriptorSet);
+
 		void bindVertexBuffers(const AllocatedBuffer& buffer);
 
 		void updatePushConstants(PipelineLayout& pipelineLayout, MeshPushConstants& meshPushConstants);
+
 		void updatePushConstants(VkPipelineLayout pipelineLayout, MeshPushConstants& meshPushConstants);
 
 		void draw(std::uint32_t vertexCount, std::uint32_t instanceCount, std::uint32_t firstVertex,
