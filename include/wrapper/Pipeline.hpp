@@ -12,7 +12,6 @@
 #include "PipelineInfo.hpp"
 #include "PipelineLayout.hpp"
 #include "DescriptorSet.hpp"
-#include "glm/glm.hpp"
 
 namespace Concerto::Graphics::Wrapper
 {

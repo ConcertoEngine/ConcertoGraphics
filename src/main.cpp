@@ -6,7 +6,7 @@
 #define VKB_DEBUG
 
 #include "MeshPushConstants.hpp"
-#include "glm/glm.hpp"
+#include "glm/vec3.hpp"
 #include "glm/gtx/transform.hpp"
 #include "wrapper/Vertex.hpp"
 #include "wrapper/Swapchain.hpp"
@@ -22,14 +22,13 @@
 #include "wrapper/Semaphore.hpp"
 #include "window/GlfW3.hpp"
 #include "VkBootstrap.h"
+#include "vulkan/vulkan.h"
 #include "wrapper/VulkanInitializer.hpp"
 #include "wrapper/Allocator.hpp"
 #include "wrapper/ShaderModule.hpp"
 #include "wrapper/Pipeline.hpp"
 #include "wrapper/PipelineInfo.hpp"
 #include "wrapper/PipelineLayout.hpp"
-#include "window/GlfW3.hpp"
-#include "wrapper/Swapchain.hpp"
 #include "wrapper/Mesh.hpp"
 #include <iostream>
 #include <unordered_map>
@@ -55,8 +54,18 @@ struct Material
 	{
 	}
 
-	Material() : _pipelineLayout(VK_NULL_HANDLE)
+	Material() : _pipelineLayout(VK_NULL_HANDLE), _pipeline(VK_NULL_HANDLE)
 	{
+	}
+
+	bool operator==(const Material& other) const
+	{
+		return _pipelineLayout == other._pipelineLayout && _pipeline == other._pipeline;
+	}
+
+	bool operator!=(const Material& other) const
+	{
+		return !(*this == other);
 	}
 
 	VkPipeline _pipeline;
@@ -192,12 +201,12 @@ int main()
 	IWindowPtr window = std::make_unique<GlfW3>(appName, windowExtent.width, windowExtent.height);
 
 	VkSurfaceKHR vkSurface{ VK_NULL_HANDLE };
-	vkb::InstanceBuilder _builder;
-	auto instance = _builder.set_app_name(appName)
+	vkb::InstanceBuilder instanceBuilder;
+	instanceBuilder.use_default_debug_messenger();
+	instanceBuilder.set_app_name(appName)
 			.request_validation_layers(true)
 			.use_default_debug_messenger()
-			.require_api_version(1, 1, 0)
-			.build();
+			.require_api_version(1, 1, 0);
 	auto system_info_ret = vkb::SystemInfo::get_system_info();
 	if (!system_info_ret)
 	{
@@ -205,10 +214,11 @@ int main()
 		return -1;
 	}
 	auto system_info = system_info_ret.value();
-	if (system_info.validation_layers_available)
+	if (system_info.is_layer_available("VK_LAYER_LUNARG_api_dump"))
 	{
-		_builder.enable_validation_layers();
+//		instanceBuilder.enable_layer("VK_LAYER_LUNARG_api_dump");
 	}
+	auto instance = instanceBuilder.build();
 	_instance = instance.value().instance;
 	glfwCreateWindowSurface(_instance, (GLFWwindow*)window->getRawWindow(), nullptr, &vkSurface);
 	vkb::PhysicalDeviceSelector selector(instance.value());
@@ -298,7 +308,7 @@ int main()
 	FrameBuffer frameBuffer(_device, swapchain, renderPass);
 	// Commands
 	VkDescriptorSetLayoutBinding camBufferBind = VulkanInitializer::DescriptorSetLayoutBinding(
-			VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,VK_SHADER_STAGE_VERTEX_BIT,0);
+			VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT, 0);
 	VkDescriptorSetLayoutBinding sceneBind = VulkanInitializer::DescriptorSetLayoutBinding(
 			VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 1);
 	VkDescriptorSetLayoutBinding objectBind = VulkanInitializer::DescriptorSetLayoutBinding(
@@ -324,19 +334,17 @@ int main()
 	};
 	// Commands
 	// Pilpline
-	ShaderModule triangleFragShader(R"(.\shaders\default_lit.frag.spv)", _device);
-	ShaderModule triangleVertexShader(R"(.\shaders\tri_mesh_descriptors.vert.spv)", _device);
-	PipelineLayout meshPipelineLayout = makePipelineLayout<MeshPushConstants>(_device, { globalSetLayout, objectSetLayout });
+	ShaderModule triangleVertexShader(R"(.\shaders\tri_mesh.vert.spv)", _device);
+	std::cout.flush();
+	PipelineLayout meshPipelineLayout = makePipelineLayout<MeshPushConstants>(_device,
+			{ globalSetLayout, objectSetLayout });
 
 	PipelineInfo pipelineInfo;
 
 	pipelineInfo._shaderStages.push_back(
 			VulkanInitializer::PipelineShaderStageCreateInfo(VK_SHADER_STAGE_VERTEX_BIT,
 					triangleVertexShader.getShaderModule()));
-	pipelineInfo._shaderStages.push_back(
-			VulkanInitializer::PipelineShaderStageCreateInfo(VK_SHADER_STAGE_FRAGMENT_BIT,
-					triangleFragShader.getShaderModule()));
-
+	std::cout.flush();
 	VertexInputDescription vertexDescription = Vertex::getVertexDescription();
 	pipelineInfo._vertexInputInfo = VulkanInitializer::VertexInputStateCreateInfo();
 	pipelineInfo._vertexInputInfo.pVertexAttributeDescriptions = vertexDescription.attributes.data();
@@ -357,11 +365,11 @@ int main()
 	pipelineInfo._colorBlendAttachment = VulkanInitializer::ColorBlendAttachmentState();
 	pipelineInfo._pipelineLayout = meshPipelineLayout.get();
 	pipelineInfo._depthStencil = VulkanInitializer::DepthStencilCreateInfo(true, true, VK_COMPARE_OP_LESS_OR_EQUAL);
-
+	std::cout.flush();
 	Pipeline _meshPipeline(_device, pipelineInfo);
 	_meshPipeline.buildPipeline(renderPass.get()); //TODO RAII
 	// Render loop
-
+	std::cout.flush();
 	Semaphore _presentSemaphore(_device);
 	Semaphore _renderSemaphore(_device);
 	Fence _renderFence(_device);
@@ -371,6 +379,7 @@ int main()
 	_renderables.emplace_back(
 			std::make_unique<RenderObject>(std::move(monkeyMesh), meshPipelineLayout.get(), _meshPipeline.get()));
 
+	std::cout.flush();
 	while (true)
 	{
 		window->popEvent();
@@ -383,7 +392,7 @@ int main()
 void
 drawObjects(Allocator& allocator, CommandBuffer& commandBuffer, FrameData& frame, AllocatedBuffer& sceneParameterBuffer)
 {
-	glm::vec3 camPos = { 0.f,-6.f,-10.f };
+	glm::vec3 camPos = { 0.f, -6.f, -10.f };
 
 	glm::mat4 view = glm::translate(glm::mat4(1.f), camPos);
 	glm::mat4 projection = glm::perspective(glm::radians(70.f), 1700.f / 900.f, 0.1f, 200.0f);
@@ -427,13 +436,14 @@ drawObjects(Allocator& allocator, CommandBuffer& commandBuffer, FrameData& frame
 	auto* objectSSBO = (GPUObjectData*)objectData;
 	for (std::size_t i = 0; i < _renderables.size(); i++)
 	{
-		objectSSBO[i].modelMatrix = _renderables[i]->transformMatrix;
+		objectSSBO[i].modelMatrix = glm::mat4{ 1.0f };
 	}
 	vmaUnmapMemory(allocator._allocator, frame._objectBuffer._allocation);
 	for (std::size_t i = 0; i < _renderables.size(); i++)
 	{
-		RenderObject &object = *_renderables[i];
-		if ((int)&object.material != (int)lastMaterial)
+		RenderObject& object = *_renderables[i];
+
+		if (lastMaterial == nullptr || object.material != *lastMaterial)
 		{
 			std::uint32_t uniform_offset = pad_uniform_buffer_size(sizeof(GPUSceneData)) * frameIndex;
 			commandBuffer.bindPipeline(VK_PIPELINE_BIND_POINT_GRAPHICS, object.material._pipeline);
@@ -443,10 +453,9 @@ drawObjects(Allocator& allocator, CommandBuffer& commandBuffer, FrameData& frame
 			commandBuffer.bindDescriptorSets(VK_PIPELINE_BIND_POINT_GRAPHICS, object.material._pipelineLayout, 1, 1,
 					frame.objectDescriptor);
 		}
-		glm::mat4 mesh_matrix = projection * view * object.transformMatrix;
-
+		glm::mat4 mesh_matrix = object.transformMatrix;
 		MeshPushConstants constants{};
-		constants.render_matrix = object.transformMatrix;
+		constants.render_matrix = glm::mat4{ 1.0f };
 		commandBuffer.updatePushConstants(object.material._pipelineLayout, constants);
 		if (object.mesh.get() != lastMesh)
 		{
