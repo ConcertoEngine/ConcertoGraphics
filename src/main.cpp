@@ -334,6 +334,7 @@ int main()
 	};
 	// Commands
 	// Pilpline
+	ShaderModule fragShader("shaders/default_lit.frag.spv", _device);
 	ShaderModule triangleVertexShader(R"(.\shaders\tri_mesh.vert.spv)", _device);
 	std::cout.flush();
 	PipelineLayout meshPipelineLayout = makePipelineLayout<MeshPushConstants>(_device,
@@ -344,6 +345,9 @@ int main()
 	pipelineInfo._shaderStages.push_back(
 			VulkanInitializer::PipelineShaderStageCreateInfo(VK_SHADER_STAGE_VERTEX_BIT,
 					triangleVertexShader.getShaderModule()));
+	pipelineInfo._shaderStages.push_back(
+			VulkanInitializer::PipelineShaderStageCreateInfo(VK_SHADER_STAGE_FRAGMENT_BIT,
+					fragShader.getShaderModule()));
 	std::cout.flush();
 	VertexInputDescription vertexDescription = Vertex::getVertexDescription();
 	pipelineInfo._vertexInputInfo = VulkanInitializer::VertexInputStateCreateInfo();
