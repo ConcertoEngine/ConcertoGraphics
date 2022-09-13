@@ -2,16 +2,17 @@
 // Created by arthur on 09/06/22.
 //
 
-#include <iostream>
-
-#include "wrapper/Mesh.hpp"
-
 #define TINYOBJLOADER_IMPLEMENTATION
-
+#include <iostream>
 #include <filesystem>
-#include <stdexcept>a
+#include <stdexcept>
+
 #include "tiny_obj_loader.h"
-namespace Concerto::Graphics::Wrapper
+#include "Mesh.hpp"
+
+using namespace Concerto::Graphics::Wrapper;
+
+namespace Concerto::Graphics
 {
 	Mesh::Mesh(Vertices vertices, Allocator& allocator, std::size_t allocSize, VkBufferUsageFlags usage,
 			VmaMemoryUsage memoryUsage) : _isLoaded(!vertices.empty()),

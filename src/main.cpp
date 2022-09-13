@@ -8,14 +8,12 @@
 #include "MeshPushConstants.hpp"
 #include "glm/vec3.hpp"
 #include "glm/gtx/transform.hpp"
-#include "wrapper/Vertex.hpp"
+#include "Vertex.hpp"
 #include "wrapper/Swapchain.hpp"
 #include "wrapper/RenderPass.hpp"
 #include "wrapper/FrameBuffer.hpp"
 #include "wrapper/CommandBuffer.hpp"
-#include "wrapper/CommandPool.hpp"
 #include "wrapper/Fence.hpp"
-#include "wrapper/DescriptorSet.hpp"
 #include "wrapper/DescriptorSetLayout.hpp"
 #include "wrapper/DescriptorPool.hpp"
 #include "wrapper/AllocatedBuffer.hpp"
@@ -29,7 +27,12 @@
 #include "wrapper/Pipeline.hpp"
 #include "wrapper/PipelineInfo.hpp"
 #include "wrapper/PipelineLayout.hpp"
-#include "wrapper/Mesh.hpp"
+#include "Mesh.hpp"
+#include "wrapper/Queue.hpp"
+#include "Frame.hpp"
+#include "Material.hpp"
+#include "RenderObject.hpp"
+#include "GPUData.hpp"
 #include <iostream>
 #include <unordered_map>
 #include <array>
@@ -45,52 +48,9 @@ VkPhysicalDeviceProperties _gpuProperties{};
 using namespace Concerto;
 using namespace Concerto::Graphics;
 using namespace Concerto::Graphics::Wrapper;
-#define MAX_OBJECTS 1000
 
-struct Material
-{
-	Material(VkPipelineLayout pipelineLayout, VkPipeline pipeline) : _pipelineLayout(pipelineLayout),
-																	 _pipeline(pipeline)
-	{
-	}
-
-	Material() : _pipelineLayout(VK_NULL_HANDLE), _pipeline(VK_NULL_HANDLE)
-	{
-	}
-
-	bool operator==(const Material& other) const
-	{
-		return _pipelineLayout == other._pipelineLayout && _pipeline == other._pipeline;
-	}
-
-	bool operator!=(const Material& other) const
-	{
-		return !(*this == other);
-	}
-
-	VkPipeline _pipeline;
-	VkPipelineLayout _pipelineLayout;
-};
-
-
-struct GPUCameraData
-{
-	glm::mat4 view;
-	glm::mat4 proj;
-	glm::mat4 viewproj;
-};
-struct GPUObjectData
-{
-	glm::mat4 modelMatrix;
-};
-struct GPUSceneData
-{
-	glm::vec4 fogColor; // w is for exponent
-	glm::vec4 fogDistances; //x for min, y for max, zw unused.
-	glm::vec4 ambientColor;
-	glm::vec4 sunlightDirection; //w for sun power
-	glm::vec4 sunlightColor;
-};
+using Frames = std::array<FrameData, 2>;
+std::vector<std::unique_ptr<RenderObject>> _renderables;
 
 std::size_t pad_uniform_buffer_size(size_t originalSize)
 {
@@ -103,96 +63,11 @@ std::size_t pad_uniform_buffer_size(size_t originalSize)
 	return alignedSize;
 }
 
-struct FrameData
-{
-	FrameData(Allocator& allocator, VkDevice device, std::uint32_t queueFamily, DescriptorPool& pool,
-			DescriptorSetLayout& globalDescriptorSetLayout, DescriptorSetLayout& objectDescriptorSetLayout,
-			AllocatedBuffer& sceneParameterBuffer,
-			bool signaled = true) : _presentSemaphore(device),
-									_commandPool(device, queueFamily),
-									_renderSemaphore(device),
-									_renderFence(device, signaled),
-									_mainCommandBuffer(device, _commandPool.get()),
-									_cameraBuffer(makeAllocatedBuffer<GPUCameraData>(allocator,
-											VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
-											VMA_MEMORY_USAGE_CPU_TO_GPU)),
-									globalDescriptor(device, pool, globalDescriptorSetLayout),
-									_objectBuffer(makeAllocatedBuffer<GPUObjectData>(allocator, MAX_OBJECTS,
-											VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
-											VMA_MEMORY_USAGE_CPU_TO_GPU)),
-									objectDescriptor(device, pool, objectDescriptorSetLayout)
-	{
-
-		VkDescriptorBufferInfo cameraInfo;
-		cameraInfo.buffer = _cameraBuffer._buffer;
-		cameraInfo.offset = 0;
-		cameraInfo.range = sizeof(GPUCameraData);
-
-		VkDescriptorBufferInfo sceneInfo;
-		sceneInfo.buffer = sceneParameterBuffer._buffer;
-		sceneInfo.offset = 0;
-		sceneInfo.range = sizeof(GPUSceneData);
-
-		VkDescriptorBufferInfo objectBufferInfo;
-		objectBufferInfo.buffer = _objectBuffer._buffer;
-		objectBufferInfo.offset = 0;
-		objectBufferInfo.range = sizeof(GPUObjectData) * MAX_OBJECTS;
-
-		VkWriteDescriptorSet cameraWrite = VulkanInitializer::WriteDescriptorBuffer(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-				globalDescriptor.get(), &cameraInfo, 0);
-
-		VkWriteDescriptorSet sceneWrite = VulkanInitializer::WriteDescriptorBuffer(
-				VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, globalDescriptor.get(), &sceneInfo, 1);
-
-		VkWriteDescriptorSet objectWrite = VulkanInitializer::WriteDescriptorBuffer(VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
-				objectDescriptor.get(), &objectBufferInfo, 0);
-
-		VkWriteDescriptorSet setWrites[] = { cameraWrite, sceneWrite, objectWrite };
-
-		vkUpdateDescriptorSets(device, 3, setWrites, 0, nullptr);
-	}
-
-	FrameData(FrameData&&) = default;
-
-	FrameData() = delete;
-
-	~FrameData() = default;
-
-	Semaphore _presentSemaphore, _renderSemaphore;
-	Fence _renderFence;
-
-	CommandPool _commandPool;
-	CommandBuffer _mainCommandBuffer;
-
-	AllocatedBuffer _cameraBuffer;
-	DescriptorSet globalDescriptor;
-
-	AllocatedBuffer _objectBuffer;
-	DescriptorSet objectDescriptor;
-};
-
-using Frames = std::array<FrameData, 2>;
-
-struct RenderObject
-{
-	explicit RenderObject(std::unique_ptr<Mesh> mesh, VkPipelineLayout pipelineLayout, VkPipeline pipeline) : mesh(
-			std::move(mesh)), material(pipelineLayout, pipeline), transformMatrix()
-	{
-
-	}
-
-	std::unique_ptr<Mesh> mesh;
-	Material material;
-	glm::mat4 transformMatrix;
-};
-
-std::vector<std::unique_ptr<RenderObject>> _renderables;
-
 void drawObjects(CommandBuffer& commandBuffer, AllocatedBuffer& sceneParameterBuffer);
 
 void
-draw(Allocator& allocator, Swapchain& swapchain, RenderPass& renderpass, FrameBuffer& frameBuffer,
-		VkQueue _graphicsQueue, FrameData& frame, AllocatedBuffer& sceneParameterBuffer);
+draw(Allocator& allocator, Swapchain& swapchain, RenderPass& renderpass, FrameBuffer& frameBuffer, FrameData& frame,
+		AllocatedBuffer& sceneParameterBuffer, Queue& queue);
 
 
 int main()
@@ -336,7 +211,6 @@ int main()
 	// Pilpline
 	ShaderModule fragShader("shaders/default_lit.frag.spv", _device);
 	ShaderModule triangleVertexShader(R"(.\shaders\tri_mesh.vert.spv)", _device);
-	std::cout.flush();
 	PipelineLayout meshPipelineLayout = makePipelineLayout<MeshPushConstants>(_device,
 			{ globalSetLayout, objectSetLayout });
 
@@ -348,7 +222,6 @@ int main()
 	pipelineInfo._shaderStages.push_back(
 			VulkanInitializer::PipelineShaderStageCreateInfo(VK_SHADER_STAGE_FRAGMENT_BIT,
 					fragShader.getShaderModule()));
-	std::cout.flush();
 	VertexInputDescription vertexDescription = Vertex::getVertexDescription();
 	pipelineInfo._vertexInputInfo = VulkanInitializer::VertexInputStateCreateInfo();
 	pipelineInfo._vertexInputInfo.pVertexAttributeDescriptions = vertexDescription.attributes.data();
@@ -369,11 +242,9 @@ int main()
 	pipelineInfo._colorBlendAttachment = VulkanInitializer::ColorBlendAttachmentState();
 	pipelineInfo._pipelineLayout = meshPipelineLayout.get();
 	pipelineInfo._depthStencil = VulkanInitializer::DepthStencilCreateInfo(true, true, VK_COMPARE_OP_LESS_OR_EQUAL);
-	std::cout.flush();
 	Pipeline _meshPipeline(_device, pipelineInfo);
 	_meshPipeline.buildPipeline(renderPass.get()); //TODO RAII
 	// Render loop
-	std::cout.flush();
 	Semaphore _presentSemaphore(_device);
 	Semaphore _renderSemaphore(_device);
 	Fence _renderFence(_device);
@@ -383,12 +254,12 @@ int main()
 	_renderables.emplace_back(
 			std::make_unique<RenderObject>(std::move(monkeyMesh), meshPipelineLayout.get(), _meshPipeline.get()));
 
-	std::cout.flush();
+	Queue queue(vkbDevice);
 	while (true)
 	{
 		window->popEvent();
-		draw(_allocator, swapchain, renderPass, frameBuffer, _graphicsQueue, frames[_frameNumber % frames.size()],
-				_sceneParameterBuffer);
+		draw(_allocator, swapchain, renderPass, frameBuffer, frames[_frameNumber % frames.size()],
+				_sceneParameterBuffer, queue);
 	}
 	// Render loop
 }
@@ -458,9 +329,9 @@ drawObjects(Allocator& allocator, CommandBuffer& commandBuffer, FrameData& frame
 					frame.objectDescriptor);
 		}
 		glm::mat4 mesh_matrix = object.transformMatrix;
-		MeshPushConstants constants{};
-		constants.render_matrix = glm::mat4{ 1.0f };
-		commandBuffer.updatePushConstants(object.material._pipelineLayout, constants);
+//		MeshPushConstants constants{};
+//		constants.render_matrix = glm::mat4{ 1.0f };
+//		commandBuffer.updatePushConstants(object.material._pipelineLayout, constants);
 		if (object.mesh.get() != lastMesh)
 		{
 			commandBuffer.bindVertexBuffers(object.mesh->_vertexBuffer);
@@ -471,8 +342,8 @@ drawObjects(Allocator& allocator, CommandBuffer& commandBuffer, FrameData& frame
 }
 
 void
-draw(Allocator& allocator, Swapchain& swapchain, RenderPass& renderpass, FrameBuffer& frameBuffer,
-		VkQueue _graphicsQueue, FrameData& frame, AllocatedBuffer& sceneParameterBuffer)
+draw(Allocator& allocator, Swapchain& swapchain, RenderPass& renderpass, FrameBuffer& frameBuffer, FrameData& frame,
+		AllocatedBuffer& sceneParameterBuffer, Queue& queue)
 {
 	frame._renderFence.wait(1000000000);
 	frame._renderFence.reset();
@@ -480,60 +351,27 @@ draw(Allocator& allocator, Swapchain& swapchain, RenderPass& renderpass, FrameBu
 			1000000000);
 	frame._mainCommandBuffer.reset();
 	frame._mainCommandBuffer.begin();
-	VkClearValue clearValue;
-	VkClearValue depthClear;
-	float flash = std::abs(std::sin(_frameNumber / 120.f));
-	clearValue.color = {{ 0.0f, 0.0f, flash, 1.0f }};
-	depthClear.depthStencil.depth = 1.f;
-	VkClearValue clearValues[] = { clearValue, depthClear };
-	VkRenderPassBeginInfo rpInfo = VulkanInitializer::RenderPassBeginInfo(renderpass.get(), windowExtent,
-			frameBuffer[swapchainImageIndex]);
-	rpInfo.clearValueCount = 2;
-	rpInfo.pClearValues = &clearValues[0];
-	frame._mainCommandBuffer.beginRenderPass(rpInfo);
-	drawObjects(allocator, frame._mainCommandBuffer, frame, sceneParameterBuffer);
-	frame._mainCommandBuffer.endRenderPass();
+	{
+		VkClearValue clearValue;
+		VkClearValue depthClear;
+		float flash = std::abs(std::sin(_frameNumber / 120.f));
+		clearValue.color = {{ 0.0f, 0.0f, flash, 1.0f }};
+		depthClear.depthStencil.depth = 1.f;
+		VkClearValue clearValues[] = { clearValue, depthClear };
+		VkRenderPassBeginInfo rpInfo = VulkanInitializer::RenderPassBeginInfo(renderpass.get(), windowExtent,
+				frameBuffer[swapchainImageIndex]);
+		rpInfo.clearValueCount = 2;
+		rpInfo.pClearValues = &clearValues[0];
+		frame._mainCommandBuffer.beginRenderPass(rpInfo);
+		{
+			drawObjects(allocator, frame._mainCommandBuffer, frame, sceneParameterBuffer);
+		}
+		frame._mainCommandBuffer.endRenderPass();
+	}
 	frame._mainCommandBuffer.end();
 
-	VkSubmitInfo submit = {};
-	VkPipelineStageFlags waitStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-	auto vkPresentSemaphore = frame._presentSemaphore.get();
-	auto vkRenderSemaphore = frame._renderSemaphore.get();
-	auto vkCommandBuffer = frame._mainCommandBuffer.get();
-
-	submit.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-	submit.pNext = nullptr;
-	submit.pWaitDstStageMask = &waitStage;
-	submit.waitSemaphoreCount = 1;
-	submit.pWaitSemaphores = &vkPresentSemaphore;
-	submit.signalSemaphoreCount = 1;
-	submit.pSignalSemaphores = &vkRenderSemaphore;
-	submit.commandBufferCount = 1;
-	submit.pCommandBuffers = &vkCommandBuffer;
-	//TODO Create an object Queue
-	if (vkQueueSubmit(_graphicsQueue, 1, &submit, frame._renderFence.get()) != VK_SUCCESS)
-	{
-		throw std::runtime_error("vkQueueSubmit fail");
-	}
-
-	VkPresentInfoKHR presentInfo = {};
-	auto vkSwapchain = swapchain.get();
-	presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
-	presentInfo.pNext = nullptr;
-
-	presentInfo.pSwapchains = &vkSwapchain;
-	presentInfo.swapchainCount = 1;
-
-	presentInfo.pWaitSemaphores = &vkRenderSemaphore;
-	presentInfo.waitSemaphoreCount = 1;
-
-	presentInfo.pImageIndices = &swapchainImageIndex;
-
-	if (vkQueuePresentKHR(_graphicsQueue, &presentInfo) != VK_SUCCESS)
-	{
-		throw std::runtime_error("vkQueuePresentKHR fail");
-	}
-
+	queue.Submit(frame);
+	queue.Present(frame, swapchain, swapchainImageIndex);
 	//increase the number of frames drawn
 	_frameNumber++;
 }

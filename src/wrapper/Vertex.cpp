@@ -2,10 +2,9 @@
 // Created by arthur on 09/06/22.
 //
 
+#include "Vertex.hpp"
 
-#include "wrapper/Vertex.hpp"
-
-namespace Concerto::Graphics::Wrapper
+namespace Concerto::Graphics
 {
 	VertexInputDescription Vertex::getVertexDescription()
 	{
