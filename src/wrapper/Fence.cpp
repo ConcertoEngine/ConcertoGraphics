@@ -3,11 +3,11 @@
 //
 
 
-#include "wrapper/Fence.hpp"
 #include <stdexcept>
+#include "wrapper/Fence.hpp"
+
 namespace Concerto::Graphics::Wrapper
 {
-
 	Fence::Fence(VkDevice device, bool signaled) : _device(device)
 	{
 		VkFenceCreateInfo info = {};

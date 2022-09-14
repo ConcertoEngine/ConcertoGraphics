@@ -40,9 +40,7 @@ namespace Concerto::Graphics::Wrapper
 
 	void Queue::Present(const FrameData& frame, Swapchain& swapchain, std::uint32_t swapchainImageIndex)
 	{
-		auto vkPresentSemaphore = frame._presentSemaphore.get();
 		auto vkRenderSemaphore = frame._renderSemaphore.get();
-		auto vkCommandBuffer = frame._mainCommandBuffer.get();
 		auto vkSwapchain = swapchain.get();
 
 		VkPresentInfoKHR present = {};

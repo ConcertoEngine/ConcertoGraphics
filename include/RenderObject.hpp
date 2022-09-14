@@ -13,8 +13,8 @@ namespace Concerto::Graphics
 {
 	struct RenderObject
 	{
-		explicit RenderObject(std::unique_ptr<Mesh> mesh, VkPipelineLayout pipelineLayout, VkPipeline pipeline) : mesh(
-				std::move(mesh)), material(pipelineLayout, pipeline), transformMatrix()
+		explicit RenderObject(std::unique_ptr<Mesh> mesh, VkPipelineLayout pipelineLayout, VkPipeline pipeline, const glm::mat4& transformMatrix) : mesh(
+				std::move(mesh)), material(pipelineLayout, pipeline), transformMatrix(transformMatrix)
 		{
 
 		}

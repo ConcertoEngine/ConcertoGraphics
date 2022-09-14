@@ -33,6 +33,7 @@
 #include "Material.hpp"
 #include "RenderObject.hpp"
 #include "GPUData.hpp"
+#include "Utils.hpp"
 #include <iostream>
 #include <unordered_map>
 #include <array>
@@ -51,17 +52,6 @@ using namespace Concerto::Graphics::Wrapper;
 
 using Frames = std::array<FrameData, 2>;
 std::vector<std::unique_ptr<RenderObject>> _renderables;
-
-std::size_t pad_uniform_buffer_size(size_t originalSize)
-{
-	size_t minUboAlignment = _gpuProperties.limits.minUniformBufferOffsetAlignment;
-	size_t alignedSize = originalSize;
-	if (minUboAlignment > 0)
-	{
-		alignedSize = (alignedSize + minUboAlignment - 1) & ~(minUboAlignment - 1);
-	}
-	return alignedSize;
-}
 
 void drawObjects(CommandBuffer& commandBuffer, AllocatedBuffer& sceneParameterBuffer);
 
@@ -198,7 +188,8 @@ int main()
 					{ VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,         10 }
 			};
 	DescriptorPool descriptorPool(_device, sizes);
-	const std::size_t sceneParamBufferSize = 2 * pad_uniform_buffer_size(sizeof(GPUSceneData));
+	const std::size_t sceneParamBufferSize =
+			2 * PadUniformBuffer(sizeof(GPUSceneData), _gpuProperties.limits.minUniformBufferOffsetAlignment);
 	AllocatedBuffer _sceneParameterBuffer(_allocator, sceneParamBufferSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
 			VMA_MEMORY_USAGE_CPU_TO_GPU);
 	Frames frames = {
@@ -252,7 +243,8 @@ int main()
 			VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
 			VMA_MEMORY_USAGE_CPU_TO_GPU);
 	_renderables.emplace_back(
-			std::make_unique<RenderObject>(std::move(monkeyMesh), meshPipelineLayout.get(), _meshPipeline.get()));
+			std::make_unique<RenderObject>(std::move(monkeyMesh), meshPipelineLayout.get(), _meshPipeline.get(),
+					glm::mat4{ 1.0f }));
 
 	Queue queue(vkbDevice);
 	while (true)
@@ -267,6 +259,7 @@ int main()
 void
 drawObjects(Allocator& allocator, CommandBuffer& commandBuffer, FrameData& frame, AllocatedBuffer& sceneParameterBuffer)
 {
+	auto minimumAlignment = _gpuProperties.limits.minUniformBufferOffsetAlignment;
 	glm::vec3 camPos = { 0.f, -6.f, -10.f };
 
 	glm::mat4 view = glm::translate(glm::mat4(1.f), camPos);
@@ -282,45 +275,27 @@ drawObjects(Allocator& allocator, CommandBuffer& commandBuffer, FrameData& frame
 	camData.viewproj = projection * view;
 	static GPUSceneData _sceneParameters;
 
-	void* data;
-	vmaMapMemory(allocator._allocator, frame._cameraBuffer._allocation, &data);
-
-	std::memcpy(data, &camData, sizeof(GPUCameraData));
-
-	vmaUnmapMemory(allocator._allocator, frame._cameraBuffer._allocation);
+	MapAndCopy(allocator, frame._cameraBuffer, camData);
 
 	float framed = (_frameNumber / 120.f);
 
 	_sceneParameters.ambientColor = { sin(framed), 0, cos(framed), 1 };
 
-	char* sceneData;
-	vmaMapMemory(allocator._allocator, sceneParameterBuffer._allocation, (void**)&sceneData);
-
 	int frameIndex = _frameNumber % 2;
-
-	sceneData += pad_uniform_buffer_size(sizeof(GPUSceneData)) * frameIndex;
-
-	std::memcpy(sceneData, &_sceneParameters, sizeof(GPUSceneData));
-
-	vmaUnmapMemory(allocator._allocator, sceneParameterBuffer._allocation);
-
-
-	void* objectData;
-	vmaMapMemory(allocator._allocator, frame._objectBuffer._allocation, &objectData);
-
-	auto* objectSSBO = (GPUObjectData*)objectData;
-	for (std::size_t i = 0; i < _renderables.size(); i++)
-	{
-		objectSSBO[i].modelMatrix = glm::mat4{ 1.0f };
-	}
-	vmaUnmapMemory(allocator._allocator, frame._objectBuffer._allocation);
+	MapAndCopy(allocator, sceneParameterBuffer, _sceneParameters,
+			PadUniformBuffer(sizeof(GPUSceneData), minimumAlignment) * frameIndex);
+	MapAndCopy<GPUObjectData, std::unique_ptr<RenderObject>>(allocator, frame._objectBuffer, _renderables,
+			[](GPUObjectData& gpuObjectData, std::unique_ptr<RenderObject>& renderObject)
+			{
+				gpuObjectData.modelMatrix = renderObject->transformMatrix;
+			});
 	for (std::size_t i = 0; i < _renderables.size(); i++)
 	{
 		RenderObject& object = *_renderables[i];
 
 		if (lastMaterial == nullptr || object.material != *lastMaterial)
 		{
-			std::uint32_t uniform_offset = pad_uniform_buffer_size(sizeof(GPUSceneData)) * frameIndex;
+			std::uint32_t uniform_offset = PadUniformBuffer(sizeof(GPUSceneData), minimumAlignment) * frameIndex;
 			commandBuffer.bindPipeline(VK_PIPELINE_BIND_POINT_GRAPHICS, object.material._pipeline);
 			lastMaterial = &object.material;
 			commandBuffer.bindDescriptorSets(VK_PIPELINE_BIND_POINT_GRAPHICS, object.material._pipelineLayout, 0, 1,
