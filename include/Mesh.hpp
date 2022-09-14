@@ -20,10 +20,10 @@ namespace Concerto::Graphics
 
 		Mesh(const std::string& file, Wrapper::Allocator& allocator, VkBufferUsageFlags usage, VmaMemoryUsage memoryUsage);
 
-		Vertices _vertices;
 
 		bool loadFromObj(const std::string& fileName, const std::string& materialPath);
 
+		Vertices _vertices;
 		bool _isLoaded;
 		Wrapper::AllocatedBuffer _vertexBuffer;
 	};

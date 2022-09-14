@@ -7,7 +7,9 @@
 
 #include "glm/vec4.hpp"
 #include "glm/mat4x4.hpp"
-#include "vulkan/vulkan.h"
+#include "wrapper/Fence.hpp"
+#include "wrapper/CommandPool.hpp"
+#include "wrapper/CommandBuffer.hpp"
 
 namespace Concerto::Graphics
 {
@@ -34,9 +36,19 @@ namespace Concerto::Graphics
 
 	struct UploadContext
 	{
-		VkFence _uploadFence = VK_NULL_HANDLE;
-		VkCommandPool _commandPool = VK_NULL_HANDLE;
-		VkCommandBuffer _commandBuffer = VK_NULL_HANDLE;
+		UploadContext(VkDevice device, std::uint32_t queueFamily, VkCommandPool commandPool) : _uploadFence(device),
+																							   _commandPool(
+																									   device,
+																									   queueFamily),
+																							   _commandBuffer(
+																									   device,
+																									   commandPool)
+		{
+		}
+
+		Wrapper::Fence _uploadFence;
+		Wrapper::CommandPool _commandPool;
+		Wrapper::CommandBuffer _commandBuffer;
 	};
 }
 #endif //CONCERTOGRAPHICS_GPUDATA_HPP

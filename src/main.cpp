@@ -236,8 +236,8 @@ int main()
 	Pipeline _meshPipeline(_device, pipelineInfo);
 	_meshPipeline.buildPipeline(renderPass.get()); //TODO RAII
 	// Render loop
-	Semaphore _presentSemaphore(_device);
-	Semaphore _renderSemaphore(_device);
+	CommandPool uploadCommandPool(_device, _graphicsQueueFamily);
+	UploadContext uploadContext(_device, _graphicsQueueFamily, uploadCommandPool.get());
 	Fence _renderFence(_device);
 	std::unique_ptr<Mesh> monkeyMesh = std::make_unique<Mesh>(".\\assets\\monkey_flat.obj", _allocator,
 			VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,

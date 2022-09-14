@@ -21,6 +21,15 @@ namespace Concerto::Graphics
 		vmaUnmapMemory(allocator._allocator, buffer._allocation);
 	}
 
+	template<typename T>
+	void MapAndCopy(Wrapper::Allocator& allocator, Wrapper::AllocatedBuffer& buffer, T* object, std::size_t size)
+	{
+		void* data;
+		vmaMapMemory(allocator._allocator, buffer._allocation, &data);
+		std::memcpy(data, object, size);
+		vmaUnmapMemory(allocator._allocator, buffer._allocation);
+	}
+
 	template<typename DestBuffer, typename SrcObj>
 	void MapAndCopy(Wrapper::Allocator& allocator, Wrapper::AllocatedBuffer& buffer, std::vector<SrcObj>& objects,
 			std::function<void(DestBuffer& destBuffer, SrcObj& srcObj)> && copyFunc)

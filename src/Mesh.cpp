@@ -3,12 +3,14 @@
 //
 
 #define TINYOBJLOADER_IMPLEMENTATION
+
 #include <iostream>
 #include <filesystem>
 #include <stdexcept>
 
-#include "tiny_obj_loader.h"
 #include "Mesh.hpp"
+#include "tiny_obj_loader.h"
+#include "Utils.hpp"
 
 using namespace Concerto::Graphics::Wrapper;
 
@@ -21,12 +23,7 @@ namespace Concerto::Graphics
 	{
 		if (!_isLoaded)
 			throw std::runtime_error("Empty vertices");
-		void* data;
-		vmaMapMemory(allocator._allocator, _vertexBuffer._allocation, &data);
-
-		std::memcpy(data, _vertices.data(), allocSize);
-
-		vmaUnmapMemory(allocator._allocator, _vertexBuffer._allocation);
+		MapAndCopy(allocator, _vertexBuffer, _vertices.data(), allocSize);
 	}
 
 	Mesh::Mesh(const std::string& file, Allocator& allocator, VkBufferUsageFlags usage,
@@ -37,12 +34,7 @@ namespace Concerto::Graphics
 	{
 		if (!_isLoaded)
 			throw std::runtime_error("Empty vertices");
-		void* data;
-		vmaMapMemory(allocator._allocator, _vertexBuffer._allocation, &data);
-
-		std::memcpy(data, _vertices.data(), _vertices.size() * sizeof(Vertex));
-
-		vmaUnmapMemory(allocator._allocator, _vertexBuffer._allocation);
+		MapAndCopy(allocator, _vertexBuffer, _vertices.data(), _vertices.size() * sizeof(Vertex));
 	}
 
 	bool Mesh::loadFromObj(const std::string& fileName, const std::string& materialPath)
