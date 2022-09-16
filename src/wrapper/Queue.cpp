@@ -2,6 +2,7 @@
 // Created by arthur on 13/09/2022.
 //
 #include "wrapper/Queue.hpp"
+#include "wrapper/CommandBuffer.hpp"
 
 namespace Concerto::Graphics::Wrapper
 {
@@ -21,7 +22,7 @@ namespace Concerto::Graphics::Wrapper
 		VkPipelineStageFlags waitStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
 		auto vkPresentSemaphore = frame._presentSemaphore.get();
 		auto vkRenderSemaphore = frame._renderSemaphore.get();
-		auto vkCommandBuffer = frame._mainCommandBuffer.get();
+		auto vkCommandBuffer = frame._mainCommandBuffer->get();
 		VkSubmitInfo submit = {};
 		submit.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 		submit.pNext = nullptr;
@@ -56,6 +57,11 @@ namespace Concerto::Graphics::Wrapper
 		{
 			throw std::runtime_error("vkQueuePresentKHR fail");
 		}
+	}
+
+	VkQueue* Queue::get()
+	{
+		return &_queue;
 	}
 }
 

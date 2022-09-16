@@ -23,6 +23,9 @@ namespace Concerto::Graphics::Wrapper
 
 		~CommandPool();
 		VkCommandPool get() const;
+
+		void reset();
+
 	private:
 		VkDevice _device;
 		VkCommandPool _commandPool;

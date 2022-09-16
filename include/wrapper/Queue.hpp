@@ -18,7 +18,7 @@ namespace Concerto::Graphics::Wrapper
 		std::uint32_t GetFamilyIndex() const;
 		void Submit(const FrameData& frame);
 		void Present(const FrameData& frame, Swapchain& swapchain, std::uint32_t swapchainImageIndex);
-
+		VkQueue *get();
 	private:
 		vkb::Device _device;
 		VkQueue _queue;

@@ -5,7 +5,7 @@
 
 #include "wrapper/CommandBuffer.hpp"
 #include <stdexcept>
-#include <iostream>
+#include "wrapper/VulkanInitializer.hpp"
 
 namespace Concerto::Graphics::Wrapper
 {
@@ -112,7 +112,8 @@ namespace Concerto::Graphics::Wrapper
 	}
 
 	void CommandBuffer::bindDescriptorSets(VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout pipelineLayout,
-			std::uint32_t firstSet, std::uint32_t descriptorSetCount, DescriptorSet& descriptorSet, std::uint32_t dynamicOffsets)
+			std::uint32_t firstSet, std::uint32_t descriptorSetCount, DescriptorSet& descriptorSet,
+			std::uint32_t dynamicOffsets)
 	{
 		auto vkDescriptorSet = descriptorSet.get();
 		vkCmdBindDescriptorSets(_commandBuffer, pipelineBindPoint, pipelineLayout, firstSet, descriptorSetCount,
@@ -125,5 +126,33 @@ namespace Concerto::Graphics::Wrapper
 		auto vkDescriptorSet = descriptorSet.get();
 		vkCmdBindDescriptorSets(_commandBuffer, pipelineBindPoint, pipelineLayout, firstSet, descriptorSetCount,
 				&vkDescriptorSet, 0, nullptr);
+	}
+
+	void CommandBuffer::ImmediateSubmit(Fence& fence, CommandPool& commandPool, Queue& queue,
+			std::function<void(CommandBuffer&)>&& function)
+	{
+		VkSubmitInfo submitInfo = VulkanInitializer::SubmitInfo(&_commandBuffer);
+		begin();
+		{
+			function(*this);
+		}
+		end();
+
+		if (vkQueueSubmit(*queue.get(), 1, &submitInfo, fence.get()) != VK_SUCCESS)
+		{
+			throw std::runtime_error("vkQueueSubmit fail");
+		}
+		fence.wait(9999999999);
+		fence.reset();
+		commandPool.reset();
+	}
+
+	void CommandBuffer::CopyBuffer(AllocatedBuffer& src, AllocatedBuffer& dest, std::size_t size)
+	{
+		VkBufferCopy copyRegion = {};
+		copyRegion.srcOffset = 0;
+		copyRegion.dstOffset = 0;
+		copyRegion.size = size;
+		vkCmdCopyBuffer(_commandBuffer, src._buffer, dest._buffer, 1, &copyRegion);
 	}
 }

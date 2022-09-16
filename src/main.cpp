@@ -34,6 +34,7 @@
 #include "RenderObject.hpp"
 #include "GPUData.hpp"
 #include "Utils.hpp"
+#include "UploadContext.hpp"
 #include <iostream>
 #include <unordered_map>
 #include <array>
@@ -235,18 +236,18 @@ int main()
 	pipelineInfo._depthStencil = VulkanInitializer::DepthStencilCreateInfo(true, true, VK_COMPARE_OP_LESS_OR_EQUAL);
 	Pipeline _meshPipeline(_device, pipelineInfo);
 	_meshPipeline.buildPipeline(renderPass.get()); //TODO RAII
-	// Render loop
-	CommandPool uploadCommandPool(_device, _graphicsQueueFamily);
-	UploadContext uploadContext(_device, _graphicsQueueFamily, uploadCommandPool.get());
+	Queue queue(vkbDevice);
+	UploadContext uploadContext(_device, _graphicsQueueFamily);
 	Fence _renderFence(_device);
 	std::unique_ptr<Mesh> monkeyMesh = std::make_unique<Mesh>(".\\assets\\monkey_flat.obj", _allocator,
-			VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
-			VMA_MEMORY_USAGE_CPU_TO_GPU);
-	_renderables.emplace_back(
+			VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
+			VMA_MEMORY_USAGE_GPU_ONLY);
+	monkeyMesh->Upload(uploadContext._commandBuffer, uploadContext._commandPool, uploadContext._uploadFence, queue, _allocator);
+	auto& renderObj = _renderables.emplace_back(
 			std::make_unique<RenderObject>(std::move(monkeyMesh), meshPipelineLayout.get(), _meshPipeline.get(),
 					glm::mat4{ 1.0f }));
 
-	Queue queue(vkbDevice);
+	// Render loop
 	while (true)
 	{
 		window->popEvent();
@@ -324,8 +325,8 @@ draw(Allocator& allocator, Swapchain& swapchain, RenderPass& renderpass, FrameBu
 	frame._renderFence.reset();
 	std::uint32_t swapchainImageIndex = swapchain.acquireNextImage(frame._presentSemaphore, frame._renderFence,
 			1000000000);
-	frame._mainCommandBuffer.reset();
-	frame._mainCommandBuffer.begin();
+	frame._mainCommandBuffer->reset();
+	frame._mainCommandBuffer->begin();
 	{
 		VkClearValue clearValue;
 		VkClearValue depthClear;
@@ -337,13 +338,13 @@ draw(Allocator& allocator, Swapchain& swapchain, RenderPass& renderpass, FrameBu
 				frameBuffer[swapchainImageIndex]);
 		rpInfo.clearValueCount = 2;
 		rpInfo.pClearValues = &clearValues[0];
-		frame._mainCommandBuffer.beginRenderPass(rpInfo);
+		frame._mainCommandBuffer->beginRenderPass(rpInfo);
 		{
-			drawObjects(allocator, frame._mainCommandBuffer, frame, sceneParameterBuffer);
+			drawObjects(allocator, *frame._mainCommandBuffer, frame, sceneParameterBuffer);
 		}
-		frame._mainCommandBuffer.endRenderPass();
+		frame._mainCommandBuffer->endRenderPass();
 	}
-	frame._mainCommandBuffer.end();
+	frame._mainCommandBuffer->end();
 
 	queue.Submit(frame);
 	queue.Present(frame, swapchain, swapchainImageIndex);

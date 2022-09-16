@@ -8,6 +8,7 @@
 #include <filesystem>
 #include <stdexcept>
 
+#include "Wrapper/CommandBuffer.hpp"
 #include "Mesh.hpp"
 #include "tiny_obj_loader.h"
 #include "Utils.hpp"
@@ -23,7 +24,7 @@ namespace Concerto::Graphics
 	{
 		if (!_isLoaded)
 			throw std::runtime_error("Empty vertices");
-		MapAndCopy(allocator, _vertexBuffer, _vertices.data(), allocSize);
+//		MapAndCopy(allocator, _vertexBuffer, _vertices.data(), allocSize);
 	}
 
 	Mesh::Mesh(const std::string& file, Allocator& allocator, VkBufferUsageFlags usage,
@@ -34,7 +35,7 @@ namespace Concerto::Graphics
 	{
 		if (!_isLoaded)
 			throw std::runtime_error("Empty vertices");
-		MapAndCopy(allocator, _vertexBuffer, _vertices.data(), _vertices.size() * sizeof(Vertex));
+//		MapAndCopy(allocator, _vertexBuffer, _vertices.data(), _vertices.size() * sizeof(Vertex));
 	}
 
 	bool Mesh::loadFromObj(const std::string& fileName, const std::string& materialPath)
@@ -113,6 +114,22 @@ namespace Concerto::Graphics
 			}
 		}
 		return true;
+	}
+
+	void Mesh::Upload(CommandBuffer& commandBuffer, CommandPool& commandPool, Fence& fence, Queue& queue,
+			Allocator& allocator)
+	{
+		if (!_isLoaded)
+			throw std::runtime_error("Empty vertices");
+		AllocatedBuffer stagingBuffer(makeAllocatedBuffer<Vertex>(allocator, _vertices.size() * sizeof(Vertex),
+				VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+				VMA_MEMORY_USAGE_CPU_ONLY));
+		commandBuffer.ImmediateSubmit(fence, commandPool, queue, [&](CommandBuffer &cb)
+		{
+			MapAndCopy(allocator, stagingBuffer, _vertices.data(), _vertices.size() * sizeof(Vertex));
+			cb.CopyBuffer(stagingBuffer, _vertexBuffer, _vertices.size() * sizeof(Vertex));
+		});
+
 	}
 
 

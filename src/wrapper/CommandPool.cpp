@@ -35,4 +35,12 @@ namespace Concerto::Graphics::Wrapper
 		return _commandPool;
 	}
 
+	void CommandPool::reset()
+	{
+		if (vkResetCommandPool(_device, _commandPool, 0) != VK_SUCCESS)
+		{
+			throw std::runtime_error("vkResetCommandPool fail");
+		}
+	}
+
 }

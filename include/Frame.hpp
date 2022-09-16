@@ -5,19 +5,25 @@
 #ifndef CONCERTOGRAPHICS_FRAME_HPP
 #define CONCERTOGRAPHICS_FRAME_HPP
 
+#include <memory>
+#include "wrapper/AllocatedBuffer.hpp"
 #include "wrapper/Allocator.hpp"
+#include "wrapper/DescriptorSet.hpp"
 #include "wrapper/DescriptorSetLayout.hpp"
-#include "wrapper/Semaphore.hpp"
+#include "wrapper/DescriptorPool.hpp"
 #include "wrapper/Fence.hpp"
-#include "wrapper/CommandBuffer.hpp"
-#include "wrapper/CommandPool.hpp"
-
+#include "wrapper/Semaphore.hpp"
 #include "GPUData.hpp"
 
 #define MAX_OBJECTS 1000
 
 namespace Concerto::Graphics
 {
+	namespace Wrapper
+	{
+		class CommandBuffer;
+		class CommandPool;
+	}
 	struct FrameData
 	{
 		FrameData(Wrapper::Allocator& allocator, VkDevice device, std::uint32_t queueFamily, Wrapper::DescriptorPool& pool,
@@ -34,8 +40,8 @@ namespace Concerto::Graphics
 		Wrapper::Semaphore _presentSemaphore, _renderSemaphore;
 		Wrapper::Fence _renderFence;
 
-		Wrapper::CommandPool _commandPool;
-		Wrapper::CommandBuffer _mainCommandBuffer;
+		std::unique_ptr<Wrapper::CommandPool> _commandPool;
+		std::unique_ptr<Wrapper::CommandBuffer> _mainCommandBuffer;
 
 		Wrapper::AllocatedBuffer _cameraBuffer;
 		Wrapper::DescriptorSet globalDescriptor;

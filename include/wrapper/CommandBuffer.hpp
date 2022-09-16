@@ -5,11 +5,14 @@
 #ifndef CONCERTOGRAPHICS_COMMANDBUFFER_HPP
 #define CONCERTOGRAPHICS_COMMANDBUFFER_HPP
 
+#include <functional>
 #include "vulkan/vulkan.h"
 #include "Pipeline.hpp"
 #include "AllocatedBuffer.hpp"
 #include "PipelineLayout.hpp"
 #include "MeshPushConstants.hpp"
+#include "CommandPool.hpp"
+#include "Queue.hpp"
 
 namespace Concerto::Graphics::Wrapper
 {
@@ -47,6 +50,7 @@ namespace Concerto::Graphics::Wrapper
 		void bindDescriptorSets(VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout pipelineLayout,
 				std::uint32_t firstSet, std::uint32_t descriptorSetCount, DescriptorSet& descriptorSet,
 				std::uint32_t dynamicOffsets);
+
 		void bindDescriptorSets(VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout pipelineLayout,
 				std::uint32_t firstSet, std::uint32_t descriptorSetCount, DescriptorSet& descriptorSet);
 
@@ -58,6 +62,11 @@ namespace Concerto::Graphics::Wrapper
 
 		void draw(std::uint32_t vertexCount, std::uint32_t instanceCount, std::uint32_t firstVertex,
 				std::uint32_t firstInstance);
+
+		void ImmediateSubmit(Fence& fence, CommandPool& commandPool, Queue& queue,
+				std::function<void(CommandBuffer&)>&& function);
+
+		void CopyBuffer(AllocatedBuffer& src, AllocatedBuffer& dest, std::size_t size);
 
 	private:
 		VkDevice _device;

@@ -4,6 +4,8 @@
 
 #include "Frame.hpp"
 #include "wrapper/VulkanInitializer.hpp"
+#include "wrapper/CommandBuffer.hpp"
+#include "wrapper/CommandPool.hpp"
 
 namespace Concerto::Graphics
 {
@@ -11,8 +13,11 @@ namespace Concerto::Graphics
 	Graphics::FrameData::FrameData(Wrapper::Allocator& allocator, VkDevice device, std::uint32_t queueFamily,
 			Wrapper::DescriptorPool& pool, Wrapper::DescriptorSetLayout& globalDescriptorSetLayout,
 			Wrapper::DescriptorSetLayout& objectDescriptorSetLayout, Wrapper::AllocatedBuffer& sceneParameterBuffer,
-			bool signaled) : _presentSemaphore(device), _commandPool(device, queueFamily), _renderSemaphore(device),
-							 _renderFence(device, signaled), _mainCommandBuffer(device, _commandPool.get()),
+			bool signaled) : _presentSemaphore(device),
+							 _commandPool(std::make_unique<Wrapper::CommandPool>(device, queueFamily)),
+							 _renderSemaphore(device),
+							 _renderFence(device, signaled),
+							 _mainCommandBuffer(std::make_unique<Wrapper::CommandBuffer>(device, _commandPool->get())),
 							 _cameraBuffer(makeAllocatedBuffer<GPUCameraData>(allocator,
 									 VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
 									 VMA_MEMORY_USAGE_CPU_TO_GPU)),
