@@ -313,7 +313,7 @@ typedef double real_t;
     std::map<std::string, std::string>::const_iterator it =
         unknown_parameter.find(key);
 
-    if (it != unknown_parameter.end()) {
+    if (it != unknown_parameter.End()) {
       return it->second;
     }
     return std::string();
@@ -403,7 +403,7 @@ typedef double real_t;
 		//
 
 		// NOTE(syoyo): array index is based on the appearance order.
-		// To get a corresponding skin weight for a specific vertex id `vid`,
+		// To Get a corresponding skin weight for a specific vertex id `vid`,
 		// Need to reconstruct a look up table: `skin_weight_t::vertex_id` == `vid`
 		// (e.g. using std::map, std::unordered_map)
 		std::vector<skin_weight_t> skin_weights;
@@ -839,7 +839,7 @@ static inline int parseInt(const char **token) {
 // Tries to parse a floating point number located at s.
 //
 // s_end should be a location in the string where reading should absolutely
-// stop. For example at the end of the string, to prevent buffer overflows.
+// stop. For example at the End of the string, to prevent buffer overflows.
 //
 // Parses the following EBNF grammar:
 //   sign    = "+" | "-" ;
@@ -874,7 +874,7 @@ static bool tryParseDouble(const char *s, const char *s_end, double *result) {
   // thus we must take care to convert the exponent/and or the
   // mantissa to a * 2^E, where a is the mantissa and E is the
   // exponent.
-  // To get the final double we will use ldexp, it requires the
+  // To Get the final double we will use ldexp, it requires the
   // exponent to be in base 2.
   int exponent = 0;
 
@@ -1287,7 +1287,7 @@ bool ParseTextureNameAndOption(std::string *texname, texture_option_t *texopt,
 
       token += strspn(token, " \t");  // skip space
 #else
-      // Read filename until line end to parse filename containing whitespace
+      // Read filename until line End to parse filename containing whitespace
       // TODO(syoyo): Support parsing texture option flag after the filename.
       texture_name = std::string(token);
       token += texture_name.length();
@@ -2813,7 +2813,7 @@ bool LoadObj(attrib_t *attrib, std::vector<shape_t> *shapes,
         ss << names[1];
 
         // tinyobjloader does not support multiple groups for a primitive.
-        // Currently we concatinate multiple group names with a space to get
+        // Currently we concatinate multiple group names with a space to Get
         // single group name.
 
         for (size_t i = 2; i < names.size(); i++) {
@@ -3290,7 +3290,7 @@ bool ObjReader::ParseFromFile(const std::string &filename,
 
   if (config.mtl_search_path.empty()) {
     //
-    // split at last '/'(for unixish system) or '\\'(for windows) to get
+    // split at last '/'(for unixish system) or '\\'(for windows) to Get
     // the base directory of .obj file
     //
     size_t pos = filename.find_last_of("/\\");

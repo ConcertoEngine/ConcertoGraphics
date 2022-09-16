@@ -23,7 +23,7 @@ namespace Concerto::Graphics::Wrapper
 		DescriptorPool& operator=(const DescriptorPool&) = default;
 
 		~DescriptorPool();
-		VkDescriptorPool get() const;
+		VkDescriptorPool Get() const;
 
 	private:
 		VkDevice _device;

@@ -20,9 +20,9 @@ namespace Concerto::Graphics::Wrapper
 	void Queue::Submit(const FrameData& frame)
 	{
 		VkPipelineStageFlags waitStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-		auto vkPresentSemaphore = frame._presentSemaphore.get();
-		auto vkRenderSemaphore = frame._renderSemaphore.get();
-		auto vkCommandBuffer = frame._mainCommandBuffer->get();
+		auto vkPresentSemaphore = frame._presentSemaphore.Get();
+		auto vkRenderSemaphore = frame._renderSemaphore.Get();
+		auto vkCommandBuffer = frame._mainCommandBuffer->Get();
 		VkSubmitInfo submit = {};
 		submit.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 		submit.pNext = nullptr;
@@ -33,7 +33,7 @@ namespace Concerto::Graphics::Wrapper
 		submit.pSignalSemaphores = &vkRenderSemaphore;
 		submit.commandBufferCount = 1;
 		submit.pCommandBuffers = &vkCommandBuffer;
-		if (vkQueueSubmit(_queue, 1, &submit, frame._renderFence.get()) != VK_SUCCESS)
+		if (vkQueueSubmit(_queue, 1, &submit, frame._renderFence.Get()) != VK_SUCCESS)
 		{
 			throw std::runtime_error("vkQueueSubmit fail");
 		}
@@ -41,8 +41,8 @@ namespace Concerto::Graphics::Wrapper
 
 	void Queue::Present(const FrameData& frame, Swapchain& swapchain, std::uint32_t swapchainImageIndex)
 	{
-		auto vkRenderSemaphore = frame._renderSemaphore.get();
-		auto vkSwapchain = swapchain.get();
+		auto vkRenderSemaphore = frame._renderSemaphore.Get();
+		auto vkSwapchain = swapchain.Get();
 
 		VkPresentInfoKHR present = {};
 		present.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
@@ -59,7 +59,7 @@ namespace Concerto::Graphics::Wrapper
 		}
 	}
 
-	VkQueue* Queue::get()
+	VkQueue* Queue::Get()
 	{
 		return &_queue;
 	}

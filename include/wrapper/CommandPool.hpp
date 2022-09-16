@@ -22,7 +22,7 @@ namespace Concerto::Graphics::Wrapper
 		CommandPool& operator=(const CommandPool&) = delete;
 
 		~CommandPool();
-		VkCommandPool get() const;
+		VkCommandPool Get() const;
 
 		void reset();
 

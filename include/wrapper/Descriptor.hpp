@@ -25,7 +25,7 @@ namespace Concerto::Graphics::Wrapper
 
 		~Descriptor() = default;
 
-		VkDescriptorPool get() const;
+		VkDescriptorPool Get() const;
 
 	private:
 		VkDescriptorPool _pool;

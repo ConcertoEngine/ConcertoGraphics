@@ -232,10 +232,10 @@ int main()
 	pipelineInfo._rasterizer = VulkanInitializer::RasterizationStateCreateInfo(VK_POLYGON_MODE_FILL);
 	pipelineInfo._multisampling = VulkanInitializer::MultisamplingStateCreateInfo();
 	pipelineInfo._colorBlendAttachment = VulkanInitializer::ColorBlendAttachmentState();
-	pipelineInfo._pipelineLayout = meshPipelineLayout.get();
+	pipelineInfo._pipelineLayout = meshPipelineLayout.Get();
 	pipelineInfo._depthStencil = VulkanInitializer::DepthStencilCreateInfo(true, true, VK_COMPARE_OP_LESS_OR_EQUAL);
 	Pipeline _meshPipeline(_device, pipelineInfo);
-	_meshPipeline.buildPipeline(renderPass.get()); //TODO RAII
+	_meshPipeline.buildPipeline(renderPass.Get()); //TODO RAII
 	Queue queue(vkbDevice);
 	UploadContext uploadContext(_device, _graphicsQueueFamily);
 	Fence _renderFence(_device);
@@ -244,7 +244,7 @@ int main()
 			VMA_MEMORY_USAGE_GPU_ONLY);
 	monkeyMesh->Upload(uploadContext._commandBuffer, uploadContext._commandPool, uploadContext._uploadFence, queue, _allocator);
 	auto& renderObj = _renderables.emplace_back(
-			std::make_unique<RenderObject>(std::move(monkeyMesh), meshPipelineLayout.get(), _meshPipeline.get(),
+			std::make_unique<RenderObject>(std::move(monkeyMesh), meshPipelineLayout.Get(), _meshPipeline.Get(),
 					glm::mat4{ 1.0f }));
 
 	// Render loop
@@ -297,23 +297,23 @@ drawObjects(Allocator& allocator, CommandBuffer& commandBuffer, FrameData& frame
 		if (lastMaterial == nullptr || object.material != *lastMaterial)
 		{
 			std::uint32_t uniform_offset = PadUniformBuffer(sizeof(GPUSceneData), minimumAlignment) * frameIndex;
-			commandBuffer.bindPipeline(VK_PIPELINE_BIND_POINT_GRAPHICS, object.material._pipeline);
+			commandBuffer.BindPipeline(VK_PIPELINE_BIND_POINT_GRAPHICS, object.material._pipeline);
 			lastMaterial = &object.material;
-			commandBuffer.bindDescriptorSets(VK_PIPELINE_BIND_POINT_GRAPHICS, object.material._pipelineLayout, 0, 1,
+			commandBuffer.BindDescriptorSets(VK_PIPELINE_BIND_POINT_GRAPHICS, object.material._pipelineLayout, 0, 1,
 					frame.globalDescriptor, uniform_offset);
-			commandBuffer.bindDescriptorSets(VK_PIPELINE_BIND_POINT_GRAPHICS, object.material._pipelineLayout, 1, 1,
+			commandBuffer.BindDescriptorSets(VK_PIPELINE_BIND_POINT_GRAPHICS, object.material._pipelineLayout, 1, 1,
 					frame.objectDescriptor);
 		}
 		glm::mat4 mesh_matrix = object.transformMatrix;
 //		MeshPushConstants constants{};
 //		constants.render_matrix = glm::mat4{ 1.0f };
-//		commandBuffer.updatePushConstants(object.material._pipelineLayout, constants);
+//		commandBuffer.UpdatePushConstants(object.material._pipelineLayout, constants);
 		if (object.mesh.get() != lastMesh)
 		{
-			commandBuffer.bindVertexBuffers(object.mesh->_vertexBuffer);
+			commandBuffer.BindVertexBuffers(object.mesh->_vertexBuffer);
 			lastMesh = object.mesh.get();
 		}
-		commandBuffer.draw(object.mesh->_vertices.size(), 1, 0, i);
+		commandBuffer.Draw(object.mesh->_vertices.size(), 1, 0, i);
 	}
 }
 
@@ -325,8 +325,8 @@ draw(Allocator& allocator, Swapchain& swapchain, RenderPass& renderpass, FrameBu
 	frame._renderFence.reset();
 	std::uint32_t swapchainImageIndex = swapchain.acquireNextImage(frame._presentSemaphore, frame._renderFence,
 			1000000000);
-	frame._mainCommandBuffer->reset();
-	frame._mainCommandBuffer->begin();
+	frame._mainCommandBuffer->Reset();
+	frame._mainCommandBuffer->Begin();
 	{
 		VkClearValue clearValue;
 		VkClearValue depthClear;
@@ -334,17 +334,17 @@ draw(Allocator& allocator, Swapchain& swapchain, RenderPass& renderpass, FrameBu
 		clearValue.color = {{ 0.0f, 0.0f, flash, 1.0f }};
 		depthClear.depthStencil.depth = 1.f;
 		VkClearValue clearValues[] = { clearValue, depthClear };
-		VkRenderPassBeginInfo rpInfo = VulkanInitializer::RenderPassBeginInfo(renderpass.get(), windowExtent,
+		VkRenderPassBeginInfo rpInfo = VulkanInitializer::RenderPassBeginInfo(renderpass.Get(), windowExtent,
 				frameBuffer[swapchainImageIndex]);
 		rpInfo.clearValueCount = 2;
 		rpInfo.pClearValues = &clearValues[0];
-		frame._mainCommandBuffer->beginRenderPass(rpInfo);
+		frame._mainCommandBuffer->BeginRenderPass(rpInfo);
 		{
 			drawObjects(allocator, *frame._mainCommandBuffer, frame, sceneParameterBuffer);
 		}
-		frame._mainCommandBuffer->endRenderPass();
+		frame._mainCommandBuffer->EndRenderPass();
 	}
-	frame._mainCommandBuffer->end();
+	frame._mainCommandBuffer->End();
 
 	queue.Submit(frame);
 	queue.Present(frame, swapchain, swapchainImageIndex);

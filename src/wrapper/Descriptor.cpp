@@ -24,7 +24,7 @@ namespace Concerto::Graphics::Wrapper
 		}
 	}
 
-	VkDescriptorPool Descriptor::get() const
+	VkDescriptorPool Descriptor::Get() const
 	{
 		return _pool;
 	}

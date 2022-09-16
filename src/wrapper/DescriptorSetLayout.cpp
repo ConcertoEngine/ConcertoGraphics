@@ -31,7 +31,7 @@ namespace Concerto::Graphics::Wrapper
 		std::cout << "~DescriptorSetLayout" << std::endl;
 	}
 
-	VkDescriptorSetLayout DescriptorSetLayout::get() const
+	VkDescriptorSetLayout DescriptorSetLayout::Get() const
 	{
 		return _layout;
 	}

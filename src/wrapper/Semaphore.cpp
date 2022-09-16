@@ -27,7 +27,7 @@ namespace Concerto::Graphics::Wrapper
 		_semaphore = VK_NULL_HANDLE;
 	}
 
-	VkSemaphore Semaphore::get() const
+	VkSemaphore Semaphore::Get() const
 	{
 		return _semaphore;
 	}

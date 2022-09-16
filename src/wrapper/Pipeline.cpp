@@ -103,7 +103,7 @@ namespace Concerto::Graphics::Wrapper
 		_pipeline = VK_NULL_HANDLE;
 	}
 
-	VkPipeline Pipeline::get() const
+	VkPipeline Pipeline::Get() const
 	{
 		return _pipeline;
 	}

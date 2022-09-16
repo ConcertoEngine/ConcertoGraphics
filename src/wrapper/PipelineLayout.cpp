@@ -18,7 +18,7 @@ namespace Concerto::Graphics::Wrapper
 		set_layout.reserve(descriptorSetLayouts.size());
 		for (const auto & descriptorSetLayout : descriptorSetLayouts)
 		{
-			set_layout.push_back(descriptorSetLayout.get().get());
+			set_layout.push_back(descriptorSetLayout.get().Get());
 		}
 		push_constant.offset = 0;
 		push_constant.size = size;
@@ -42,7 +42,7 @@ namespace Concerto::Graphics::Wrapper
 		_pipelineLayout = VK_NULL_HANDLE;
 	}
 
-	VkPipelineLayout PipelineLayout::get() const
+	VkPipelineLayout PipelineLayout::Get() const
 	{
 		return _pipelineLayout;
 	}

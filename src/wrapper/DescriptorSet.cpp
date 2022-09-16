@@ -12,10 +12,10 @@ namespace Concerto::Graphics::Wrapper
 			DescriptorSetLayout& descriptorSetLayout) : _device(device)
 	{
 		VkDescriptorSetAllocateInfo allocInfo = {};
-		auto layout = descriptorSetLayout.get();
+		auto layout = descriptorSetLayout.Get();
 		allocInfo.pNext = nullptr;
 		allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-		allocInfo.descriptorPool = pool.get();
+		allocInfo.descriptorPool = pool.Get();
 		allocInfo.descriptorSetCount = 1;
 		allocInfo.pSetLayouts = &layout;
 
@@ -25,7 +25,7 @@ namespace Concerto::Graphics::Wrapper
 		}
 	}
 
-	VkDescriptorSet DescriptorSet::get() const
+	VkDescriptorSet DescriptorSet::Get() const
 	{
 		return _set;
 	}

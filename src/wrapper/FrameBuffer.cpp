@@ -9,7 +9,7 @@ namespace Concerto::Graphics::Wrapper
 {
 	FrameBuffer::FrameBuffer(VkDevice device, Swapchain& swapchain, RenderPass& renderPass) : _frameBuffers(swapchain.getImageCount()), _swapchain(swapchain), _renderPass(renderPass), _device(device)
 	{
-		VkFramebufferCreateInfo fb_info = VulkanInitializer::FramebufferCreateInfo(renderPass.get(), swapchain.getExtent());
+		VkFramebufferCreateInfo fb_info = VulkanInitializer::FramebufferCreateInfo(renderPass.Get(), swapchain.getExtent());
 
 		for (int i = 0; i < swapchain.getImageCount(); i++)
 		{

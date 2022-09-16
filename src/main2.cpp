@@ -67,12 +67,12 @@
 //									_commandPool(device, queueFamily),
 //									_renderSemaphore(device),
 //									_renderFence(device, signaled),
-//									_mainCommandBuffer(device, _commandPool.get()),
-//									_cameraBuffer(makeAllocatedBuffer<GPUCameraData>(allocator,
+//									_mainCommandBuffer(device, _commandPool.Get()),
+//									_cameraBuffer(MakeAllocatedBuffer<GPUCameraData>(allocator,
 //											VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
 //											VMA_MEMORY_USAGE_CPU_TO_GPU)),
 //									globalDescriptor(device, pool, globalDescriptorSetLayout),
-//									_objectBuffer(makeAllocatedBuffer<GPUObjectData>(allocator, 1000,
+//									_objectBuffer(MakeAllocatedBuffer<GPUObjectData>(allocator, 1000,
 //											VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
 //											VMA_MEMORY_USAGE_CPU_TO_GPU)),
 //									objectDescriptor(device, pool, objectDescriptorSetLayout)
@@ -94,13 +94,13 @@
 //		objectBufferInfo.range = sizeof(GPUObjectData) * 1000;
 //
 //		VkWriteDescriptorSet cameraWrite = VulkanInitializer::WriteDescriptorBuffer(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-//				globalDescriptor.get(), &cameraInfo, 0);
+//				globalDescriptor.Get(), &cameraInfo, 0);
 //
 //		VkWriteDescriptorSet sceneWrite = VulkanInitializer::WriteDescriptorBuffer(
-//				VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, globalDescriptor.get(), &sceneInfo, 1);
+//				VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, globalDescriptor.Get(), &sceneInfo, 1);
 //
 //		VkWriteDescriptorSet objectWrite = VulkanInitializer::WriteDescriptorBuffer(VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
-//				objectDescriptor.get(), &objectBufferInfo, 0);
+//				objectDescriptor.Get(), &objectBufferInfo, 0);
 //
 //		VkWriteDescriptorSet setWrites[] = { cameraWrite, sceneWrite, objectWrite };
 //
@@ -130,7 +130,7 @@
 //{
 //	UploadContext(VkDevice device, std::uint32_t queueFamily, bool signaled = true) : _uploadFence(device, signaled),
 //																					  _commandBuffer(device,
-//																							  _commandPool.get()),
+//																							  _commandPool.Get()),
 //																					  _commandPool(device, queueFamily)
 //	{
 //	}
@@ -314,7 +314,7 @@
 //			{ _globalSetLayout, _objectSetLayout });
 ////	PipelineLayout texturedPipLayout = makePipelineLayout<MeshPushConstants>(_device,
 ////			{ _globalSetLayout, _objectSetLayout, _singleTextureSetLayout });
-//	pipelineInfo._pipelineLayout = meshPipLayout.get();
+//	pipelineInfo._pipelineLayout = meshPipLayout.Get();
 //	pipelineInfo._vertexInputInfo = VulkanInitializer::VertexInputStateCreateInfo();
 //	pipelineInfo._inputAssembly = VulkanInitializer::InputAssemblyCreateInfo(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
 //	pipelineInfo.viewport = { 0, 0, static_cast<float>(windowExtent.width), static_cast<float>(windowExtent.height),
@@ -330,12 +330,12 @@
 //	pipelineInfo._vertexInputInfo.vertexBindingDescriptionCount = vertexDescription.bindings.size();
 //
 //	Pipeline meshPipeline(_device, pipelineInfo);
-//	meshPipeline.createMaterial("defaultmesh", meshPipLayout.get());
+//	meshPipeline.createMaterial("defaultmesh", meshPipLayout.Get());
 ////	pipelineInfo._shaderStages = {
 ////			VulkanInitializer::PipelineShaderStageCreateInfo(VK_SHADER_STAGE_VERTEX_BIT, meshVertShader.getShaderModule()),
 ////			VulkanInitializer::PipelineShaderStageCreateInfo(VK_SHADER_STAGE_FRAGMENT_BIT, _texturedMeshShader.getShaderModule())
 ////	};
-////	pipelineInfo._pipelineLayout = texturedPipLayout.get();
+////	pipelineInfo._pipelineLayout = texturedPipLayout.Get();
 ////	Pipeline texPipeline(_device, pipelineInfo);
 ////	texPipeline.createMaterial("texturedmesh", std::move(texturedPipLayout));
 //	while(true) {

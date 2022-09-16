@@ -25,7 +25,7 @@ namespace Concerto::Graphics::Wrapper
 		}
 	}
 
-	VkCommandBuffer CommandBuffer::get() const
+	VkCommandBuffer CommandBuffer::Get() const
 	{
 		return _commandBuffer;
 	}
@@ -36,7 +36,7 @@ namespace Concerto::Graphics::Wrapper
 		_commandBuffer = VK_NULL_HANDLE;
 	}
 
-	void CommandBuffer::reset()
+	void CommandBuffer::Reset()
 	{
 		if (vkResetCommandBuffer(_commandBuffer, 0) != VK_SUCCESS)
 		{
@@ -44,7 +44,7 @@ namespace Concerto::Graphics::Wrapper
 		}
 	}
 
-	void CommandBuffer::begin()
+	void CommandBuffer::Begin()
 	{
 		VkCommandBufferBeginInfo cmdBeginInfo = {};
 
@@ -59,7 +59,7 @@ namespace Concerto::Graphics::Wrapper
 		}
 	}
 
-	void CommandBuffer::end()
+	void CommandBuffer::End()
 	{
 		if (vkEndCommandBuffer(_commandBuffer) != VK_SUCCESS)
 		{
@@ -67,63 +67,63 @@ namespace Concerto::Graphics::Wrapper
 		}
 	}
 
-	void CommandBuffer::beginRenderPass(VkRenderPassBeginInfo info)
+	void CommandBuffer::BeginRenderPass(VkRenderPassBeginInfo info)
 	{
 		vkCmdBeginRenderPass(_commandBuffer, &info, VK_SUBPASS_CONTENTS_INLINE);
 	}
 
-	void CommandBuffer::endRenderPass()
+	void CommandBuffer::EndRenderPass()
 	{
 		vkCmdEndRenderPass(_commandBuffer);
 	}
 
-	void CommandBuffer::bindPipeline(VkPipelineBindPoint pipelineBindPoint, Pipeline& pipeline)
+	void CommandBuffer::BindPipeline(VkPipelineBindPoint pipelineBindPoint, Pipeline& pipeline)
 	{
-		vkCmdBindPipeline(_commandBuffer, pipelineBindPoint, pipeline.get());
+		vkCmdBindPipeline(_commandBuffer, pipelineBindPoint, pipeline.Get());
 	}
 
-	void CommandBuffer::bindPipeline(VkPipelineBindPoint pipelineBindPoint, VkPipeline pipeline)
+	void CommandBuffer::BindPipeline(VkPipelineBindPoint pipelineBindPoint, VkPipeline pipeline)
 	{
 		vkCmdBindPipeline(_commandBuffer, pipelineBindPoint, pipeline);
 	}
 
-	void CommandBuffer::draw(std::uint32_t vertexCount, std::uint32_t instanceCount, std::uint32_t firstVertex,
+	void CommandBuffer::Draw(std::uint32_t vertexCount, std::uint32_t instanceCount, std::uint32_t firstVertex,
 			std::uint32_t firstInstance)
 	{
 		vkCmdDraw(_commandBuffer, vertexCount, instanceCount, firstVertex, firstInstance);
 	}
 
-	void CommandBuffer::bindVertexBuffers(const AllocatedBuffer& buffer)
+	void CommandBuffer::BindVertexBuffers(const AllocatedBuffer& buffer)
 	{
 		VkDeviceSize offset = 0;
 		vkCmdBindVertexBuffers(_commandBuffer, 0, 1, &buffer._buffer, &offset);
 	}
 
-	void CommandBuffer::updatePushConstants(PipelineLayout& pipelineLayout, MeshPushConstants& meshPushConstants)
+	void CommandBuffer::UpdatePushConstants(PipelineLayout& pipelineLayout, MeshPushConstants& meshPushConstants)
 	{
-		vkCmdPushConstants(_commandBuffer, pipelineLayout.get(), VK_SHADER_STAGE_VERTEX_BIT, 0,
+		vkCmdPushConstants(_commandBuffer, pipelineLayout.Get(), VK_SHADER_STAGE_VERTEX_BIT, 0,
 				sizeof(MeshPushConstants), &meshPushConstants);
 	}
 
-	void CommandBuffer::updatePushConstants(VkPipelineLayout pipelineLayout, MeshPushConstants& meshPushConstants)
+	void CommandBuffer::UpdatePushConstants(VkPipelineLayout pipelineLayout, MeshPushConstants& meshPushConstants)
 	{
 		vkCmdPushConstants(_commandBuffer, pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(MeshPushConstants),
 				&meshPushConstants);
 	}
 
-	void CommandBuffer::bindDescriptorSets(VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout pipelineLayout,
+	void CommandBuffer::BindDescriptorSets(VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout pipelineLayout,
 			std::uint32_t firstSet, std::uint32_t descriptorSetCount, DescriptorSet& descriptorSet,
 			std::uint32_t dynamicOffsets)
 	{
-		auto vkDescriptorSet = descriptorSet.get();
+		auto vkDescriptorSet = descriptorSet.Get();
 		vkCmdBindDescriptorSets(_commandBuffer, pipelineBindPoint, pipelineLayout, firstSet, descriptorSetCount,
 				&vkDescriptorSet, 1, &dynamicOffsets);
 	}
 
-	void CommandBuffer::bindDescriptorSets(VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout pipelineLayout,
+	void CommandBuffer::BindDescriptorSets(VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout pipelineLayout,
 			std::uint32_t firstSet, std::uint32_t descriptorSetCount, DescriptorSet& descriptorSet)
 	{
-		auto vkDescriptorSet = descriptorSet.get();
+		auto vkDescriptorSet = descriptorSet.Get();
 		vkCmdBindDescriptorSets(_commandBuffer, pipelineBindPoint, pipelineLayout, firstSet, descriptorSetCount,
 				&vkDescriptorSet, 0, nullptr);
 	}
@@ -132,13 +132,13 @@ namespace Concerto::Graphics::Wrapper
 			std::function<void(CommandBuffer&)>&& function)
 	{
 		VkSubmitInfo submitInfo = VulkanInitializer::SubmitInfo(&_commandBuffer);
-		begin();
+		Begin();
 		{
 			function(*this);
 		}
-		end();
+		End();
 
-		if (vkQueueSubmit(*queue.get(), 1, &submitInfo, fence.get()) != VK_SUCCESS)
+		if (vkQueueSubmit(*queue.Get(), 1, &submitInfo, fence.Get()) != VK_SUCCESS)
 		{
 			throw std::runtime_error("vkQueueSubmit fail");
 		}

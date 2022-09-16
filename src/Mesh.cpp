@@ -121,7 +121,7 @@ namespace Concerto::Graphics
 	{
 		if (!_isLoaded)
 			throw std::runtime_error("Empty vertices");
-		AllocatedBuffer stagingBuffer(makeAllocatedBuffer<Vertex>(allocator, _vertices.size() * sizeof(Vertex),
+		AllocatedBuffer stagingBuffer(MakeAllocatedBuffer<Vertex>(allocator, _vertices.size() * sizeof(Vertex),
 				VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
 				VMA_MEMORY_USAGE_CPU_ONLY));
 		commandBuffer.ImmediateSubmit(fence, commandPool, queue, [&](CommandBuffer &cb)

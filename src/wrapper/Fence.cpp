@@ -26,7 +26,7 @@ namespace Concerto::Graphics::Wrapper
 		_fence = VK_NULL_HANDLE;
 	}
 
-	VkFence Fence::get() const
+	VkFence Fence::Get() const
 	{
 		return _fence;
 	}

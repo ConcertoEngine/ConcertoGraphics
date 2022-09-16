@@ -105,14 +105,14 @@ namespace Concerto::Graphics::Wrapper
 	std::uint32_t Swapchain::acquireNextImage(Semaphore& semaphore, Fence &fence, std::uint64_t timeout)
 	{
 		std::uint32_t index = 0;
-		if (vkAcquireNextImageKHR(_device, _swapChain, timeout, semaphore.get(), nullptr, &index) != VK_SUCCESS)
+		if (vkAcquireNextImageKHR(_device, _swapChain, timeout, semaphore.Get(), nullptr, &index) != VK_SUCCESS)
 		{
 			throw std::runtime_error("vkAcquireNextImageKHR fail");
 		}
 		return index;
 	}
 
-	VkSwapchainKHR Swapchain::get() const
+	VkSwapchainKHR Swapchain::Get() const
 	{
 		return _swapChain;
 	}

@@ -24,7 +24,7 @@ namespace Concerto::Graphics::Wrapper
 		DescriptorSetLayout& operator=(const DescriptorSetLayout&) = default;
 
 		~DescriptorSetLayout();
-		[[nodiscard]] VkDescriptorSetLayout get() const;
+		[[nodiscard]] VkDescriptorSetLayout Get() const;
 
 	private:
 		VkDevice _device;

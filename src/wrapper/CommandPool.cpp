@@ -30,7 +30,7 @@ namespace Concerto::Graphics::Wrapper
 		_commandPool = VK_NULL_HANDLE;
 	}
 
-	VkCommandPool CommandPool::get() const
+	VkCommandPool CommandPool::Get() const
 	{
 		return _commandPool;
 	}

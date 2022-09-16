@@ -31,36 +31,36 @@ namespace Concerto::Graphics::Wrapper
 
 		~CommandBuffer();
 
-		VkCommandBuffer get() const;
+		VkCommandBuffer Get() const;
 
-		void reset();
+		void Reset();
 
-		void begin();
+		void Begin();
 
-		void end();
+		void End();
 
-		void beginRenderPass(VkRenderPassBeginInfo info);
+		void BeginRenderPass(VkRenderPassBeginInfo info);
 
-		void endRenderPass();
+		void EndRenderPass();
 
-		void bindPipeline(VkPipelineBindPoint pipelineBindPoint, Pipeline& pipeline);
+		void BindPipeline(VkPipelineBindPoint pipelineBindPoint, Pipeline& pipeline);
 
-		void bindPipeline(VkPipelineBindPoint pipelineBindPoint, VkPipeline pipeline);
+		void BindPipeline(VkPipelineBindPoint pipelineBindPoint, VkPipeline pipeline);
 
-		void bindDescriptorSets(VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout pipelineLayout,
+		void BindDescriptorSets(VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout pipelineLayout,
 				std::uint32_t firstSet, std::uint32_t descriptorSetCount, DescriptorSet& descriptorSet,
 				std::uint32_t dynamicOffsets);
 
-		void bindDescriptorSets(VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout pipelineLayout,
+		void BindDescriptorSets(VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout pipelineLayout,
 				std::uint32_t firstSet, std::uint32_t descriptorSetCount, DescriptorSet& descriptorSet);
 
-		void bindVertexBuffers(const AllocatedBuffer& buffer);
+		void BindVertexBuffers(const AllocatedBuffer& buffer);
 
-		void updatePushConstants(PipelineLayout& pipelineLayout, MeshPushConstants& meshPushConstants);
+		void UpdatePushConstants(PipelineLayout& pipelineLayout, MeshPushConstants& meshPushConstants);
 
-		void updatePushConstants(VkPipelineLayout pipelineLayout, MeshPushConstants& meshPushConstants);
+		void UpdatePushConstants(VkPipelineLayout pipelineLayout, MeshPushConstants& meshPushConstants);
 
-		void draw(std::uint32_t vertexCount, std::uint32_t instanceCount, std::uint32_t firstVertex,
+		void Draw(std::uint32_t vertexCount, std::uint32_t instanceCount, std::uint32_t firstVertex,
 				std::uint32_t firstInstance);
 
 		void ImmediateSubmit(Fence& fence, CommandPool& commandPool, Queue& queue,

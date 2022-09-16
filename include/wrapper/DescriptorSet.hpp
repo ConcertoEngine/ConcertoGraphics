@@ -28,7 +28,7 @@ namespace Concerto::Graphics::Wrapper
 
 		~DescriptorSet() = default;
 
-		VkDescriptorSet get() const;
+		VkDescriptorSet Get() const;
 
 	private:
 		VkDescriptorSet _set = { VK_NULL_HANDLE };

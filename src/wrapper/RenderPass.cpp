@@ -35,7 +35,7 @@ namespace Concerto::Graphics::Wrapper
 		_renderPass = VK_NULL_HANDLE;
 	}
 
-	VkRenderPass RenderPass::get() const
+	VkRenderPass RenderPass::Get() const
 	{
 		return _renderPass;
 	}

@@ -23,7 +23,7 @@ namespace Concerto::Graphics::Wrapper
 		Fence& operator=(const Fence&) = delete;
 
 		~Fence();
-		VkFence get() const;
+		VkFence Get() const;
 		void wait(std::uint64_t timeout);
 		void reset();
 

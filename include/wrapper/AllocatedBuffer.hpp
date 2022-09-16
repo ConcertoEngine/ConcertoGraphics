@@ -10,7 +10,6 @@
 #include "vk_mem_alloc.h"
 #include "Allocator.hpp"
 #include "Fence.hpp"
-//#include "CommandBuffer.hpp"
 #include "CommandPool.hpp"
 
 namespace Concerto::Graphics::Wrapper
@@ -38,7 +37,7 @@ namespace Concerto::Graphics::Wrapper
 
 	template<typename T>
 	AllocatedBuffer
-	makeAllocatedBuffer(Allocator& allocator, VkBufferUsageFlags usage,
+	MakeAllocatedBuffer(Allocator& allocator, VkBufferUsageFlags usage,
 			VmaMemoryUsage memoryUsage)
 	{
 		return { allocator, sizeof(T), usage, memoryUsage };
@@ -46,7 +45,7 @@ namespace Concerto::Graphics::Wrapper
 
 	template<typename T>
 	AllocatedBuffer
-	makeAllocatedBuffer(Allocator& allocator, std::size_t objNumber,
+	MakeAllocatedBuffer(Allocator& allocator, std::size_t objNumber,
 			VkBufferUsageFlags usage, VmaMemoryUsage memoryUsage)
 	{
 		return { allocator, sizeof(T) * objNumber, usage, memoryUsage };

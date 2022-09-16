@@ -17,12 +17,12 @@ namespace Concerto::Graphics
 							 _commandPool(std::make_unique<Wrapper::CommandPool>(device, queueFamily)),
 							 _renderSemaphore(device),
 							 _renderFence(device, signaled),
-							 _mainCommandBuffer(std::make_unique<Wrapper::CommandBuffer>(device, _commandPool->get())),
-							 _cameraBuffer(makeAllocatedBuffer<GPUCameraData>(allocator,
+							 _mainCommandBuffer(std::make_unique<Wrapper::CommandBuffer>(device, _commandPool->Get())),
+							 _cameraBuffer(MakeAllocatedBuffer<GPUCameraData>(allocator,
 									 VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
 									 VMA_MEMORY_USAGE_CPU_TO_GPU)),
 							 globalDescriptor(device, pool, globalDescriptorSetLayout),
-							 _objectBuffer(makeAllocatedBuffer<GPUObjectData>(allocator, MAX_OBJECTS,
+							 _objectBuffer(MakeAllocatedBuffer<GPUObjectData>(allocator, MAX_OBJECTS,
 									 VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
 									 VMA_MEMORY_USAGE_CPU_TO_GPU)),
 							 objectDescriptor(device, pool, objectDescriptorSetLayout)
@@ -45,14 +45,14 @@ namespace Concerto::Graphics
 
 		VkWriteDescriptorSet cameraWrite = VulkanInitializer::WriteDescriptorBuffer(
 				VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-				globalDescriptor.get(), &cameraInfo, 0);
+				globalDescriptor.Get(), &cameraInfo, 0);
 
 		VkWriteDescriptorSet sceneWrite = VulkanInitializer::WriteDescriptorBuffer(
-				VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, globalDescriptor.get(), &sceneInfo, 1);
+				VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, globalDescriptor.Get(), &sceneInfo, 1);
 
 		VkWriteDescriptorSet objectWrite = VulkanInitializer::WriteDescriptorBuffer(
 				VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
-				objectDescriptor.get(), &objectBufferInfo, 0);
+				objectDescriptor.Get(), &objectBufferInfo, 0);
 
 		VkWriteDescriptorSet setWrites[] = { cameraWrite, sceneWrite, objectWrite };
 

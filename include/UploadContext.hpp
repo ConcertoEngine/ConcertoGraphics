@@ -19,7 +19,7 @@ namespace Concerto::Graphics
 																			queueFamily),
 																	_commandBuffer(
 																			device,
-																			_commandPool.get())
+																			_commandPool.Get())
 		{
 		}
 

@@ -30,7 +30,7 @@ namespace Concerto::Graphics::Wrapper
 
 		~Swapchain();
 
-		VkSwapchainKHR get() const;
+		VkSwapchainKHR Get() const;
 
 		[[nodiscard]] std::uint32_t getImageCount() const;
 

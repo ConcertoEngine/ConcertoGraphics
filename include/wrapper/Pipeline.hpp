@@ -32,7 +32,7 @@ namespace Concerto::Graphics::Wrapper
 
 		~Pipeline();
 
-		[[nodiscard]] VkPipeline get() const;
+		[[nodiscard]] VkPipeline Get() const;
 
 		VkPipeline buildPipeline(VkRenderPass renderPass);
 
