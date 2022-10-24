@@ -4,7 +4,9 @@
 
 #ifndef CONCERTOGRAPHICS_MATERIAL_HPP
 #define CONCERTOGRAPHICS_MATERIAL_HPP
+
 #include "vulkan/vulkan.h"
+#include "wrapper/DescriptorSet.hpp"
 
 namespace Concerto::Graphics
 {
@@ -31,6 +33,7 @@ namespace Concerto::Graphics
 
 		VkPipeline _pipeline;
 		VkPipelineLayout _pipelineLayout;
+		Wrapper::DescriptorSet _textureSet;
 	};
 }
 #endif //CONCERTOGRAPHICS_MATERIAL_HPP

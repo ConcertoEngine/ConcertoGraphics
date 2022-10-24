@@ -28,12 +28,11 @@ namespace Concerto::Graphics::Wrapper
 	{
 		vkDestroyDescriptorSetLayout(_device, _layout, nullptr);
 		_layout = VK_NULL_HANDLE;
-		std::cout << "~DescriptorSetLayout" << std::endl;
 	}
 
-	VkDescriptorSetLayout DescriptorSetLayout::Get() const
+	VkDescriptorSetLayout* DescriptorSetLayout::Get()
 	{
-		return _layout;
+		return &_layout;
 	}
 
 }

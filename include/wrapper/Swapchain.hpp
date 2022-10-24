@@ -62,7 +62,7 @@ namespace Concerto::Graphics::Wrapper
 		std::vector<VkImageView> _swapChainImageViews;
 		VkFormat _swapChainImageFormat;
 		VkFormat _depthFormat;
-		AllocatedImage _depthImage{};
+		AllocatedImage _depthImage;
 		VkImageView _depthImageView{};
 	};
 

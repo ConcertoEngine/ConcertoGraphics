@@ -18,7 +18,7 @@ namespace Concerto::Graphics::Wrapper
 		set_layout.reserve(descriptorSetLayouts.size());
 		for (const auto & descriptorSetLayout : descriptorSetLayouts)
 		{
-			set_layout.push_back(descriptorSetLayout.get().Get());
+			set_layout.push_back(*descriptorSetLayout.get().Get());
 		}
 		push_constant.offset = 0;
 		push_constant.size = size;
@@ -46,4 +46,5 @@ namespace Concerto::Graphics::Wrapper
 	{
 		return _pipelineLayout;
 	}
+
 }

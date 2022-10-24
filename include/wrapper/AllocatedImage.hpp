@@ -7,11 +7,27 @@
 
 #include <vulkan/vulkan.h>
 #include <vk_mem_alloc.h>
+#include "VulkanInitializer.hpp"
+#include "Allocator.hpp"
+#include <string>
 
+namespace Concerto::Graphics
+{
+	class UploadContext;
+}
 namespace Concerto::Graphics::Wrapper
 {
+	class CommandBuffer;
+
+	class Queue;
+
 	struct AllocatedImage
 	{
+		AllocatedImage(VkExtent2D extent, VkFormat depthFormat, Allocator& allocator);
+
+		AllocatedImage(const std::string& file, VkExtent2D extent, Allocator& allocator, CommandBuffer& commandBuffer,
+				UploadContext& uploadContext, Queue& queue);
+
 		AllocatedImage() = default;
 
 		AllocatedImage(AllocatedImage&&) = default;
@@ -23,10 +39,11 @@ namespace Concerto::Graphics::Wrapper
 		AllocatedImage& operator=(const AllocatedImage&) = delete;
 
 		~AllocatedImage() = default;
-		VkImage _image;
-		VmaAllocation _allocation;
-	};
 
+		VkFormat imageFormat;
+		VkImage _image{};
+		VmaAllocation _allocation{};
+	};
 }
 
 #endif //CONCERTOGRAPHICS_ALLOCATEDIMAGE_HPP

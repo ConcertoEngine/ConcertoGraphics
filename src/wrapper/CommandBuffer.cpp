@@ -115,17 +115,15 @@ namespace Concerto::Graphics::Wrapper
 			std::uint32_t firstSet, std::uint32_t descriptorSetCount, DescriptorSet& descriptorSet,
 			std::uint32_t dynamicOffsets)
 	{
-		auto vkDescriptorSet = descriptorSet.Get();
 		vkCmdBindDescriptorSets(_commandBuffer, pipelineBindPoint, pipelineLayout, firstSet, descriptorSetCount,
-				&vkDescriptorSet, 1, &dynamicOffsets);
+				descriptorSet.Get(), 1, &dynamicOffsets);
 	}
 
 	void CommandBuffer::BindDescriptorSets(VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout pipelineLayout,
 			std::uint32_t firstSet, std::uint32_t descriptorSetCount, DescriptorSet& descriptorSet)
 	{
-		auto vkDescriptorSet = descriptorSet.Get();
 		vkCmdBindDescriptorSets(_commandBuffer, pipelineBindPoint, pipelineLayout, firstSet, descriptorSetCount,
-				&vkDescriptorSet, 0, nullptr);
+				descriptorSet.Get(), 0, nullptr);
 	}
 
 	void CommandBuffer::ImmediateSubmit(Fence& fence, CommandPool& commandPool, Queue& queue,

@@ -5,8 +5,10 @@
 #ifndef CONCERTOGRAPHICS_DESCRIPTORPOOL_HPP
 #define CONCERTOGRAPHICS_DESCRIPTORPOOL_HPP
 
-#include "vulkan/vulkan.h"
 #include <vector>
+#include "vulkan/vulkan.h"
+#include "wrapper/DescriptorSet.hpp"
+
 namespace Concerto::Graphics::Wrapper
 {
 	class DescriptorPool
@@ -22,8 +24,11 @@ namespace Concerto::Graphics::Wrapper
 
 		DescriptorPool& operator=(const DescriptorPool&) = default;
 
+		DescriptorSet AllocateDescriptorSet(DescriptorSetLayout& setLayout);
+
 		~DescriptorPool();
-		VkDescriptorPool Get() const;
+
+		[[nodiscard]] VkDescriptorPool* Get();
 
 	private:
 		VkDevice _device;

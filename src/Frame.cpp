@@ -45,14 +45,14 @@ namespace Concerto::Graphics
 
 		VkWriteDescriptorSet cameraWrite = VulkanInitializer::WriteDescriptorBuffer(
 				VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-				globalDescriptor.Get(), &cameraInfo, 0);
+				*globalDescriptor.Get(), &cameraInfo, 0);
 
 		VkWriteDescriptorSet sceneWrite = VulkanInitializer::WriteDescriptorBuffer(
-				VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, globalDescriptor.Get(), &sceneInfo, 1);
+				VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, *globalDescriptor.Get(), &sceneInfo, 1);
 
 		VkWriteDescriptorSet objectWrite = VulkanInitializer::WriteDescriptorBuffer(
 				VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
-				objectDescriptor.Get(), &objectBufferInfo, 0);
+				*objectDescriptor.Get(), &objectBufferInfo, 0);
 
 		VkWriteDescriptorSet setWrites[] = { cameraWrite, sceneWrite, objectWrite };
 

@@ -29,8 +29,13 @@ namespace Concerto::Graphics::Wrapper
 		_pool = VK_NULL_HANDLE;
 	}
 
-	VkDescriptorPool DescriptorPool::Get() const
+	VkDescriptorPool* DescriptorPool::Get()
 	{
-		return _pool;
+		return &_pool;
+	}
+
+	DescriptorSet DescriptorPool::AllocateDescriptorSet(DescriptorSetLayout& setLayout)
+	{
+		return DescriptorSet(_device, *this, setLayout);
 	}
 }
