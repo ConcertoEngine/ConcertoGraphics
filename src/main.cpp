@@ -273,17 +273,17 @@ int main()
 			uploadContext._commandBuffer, uploadContext, queue, VK_IMAGE_ASPECT_COLOR_BIT, _device);
 	textures.emplace("empire_diffuse", texture);
 	// Monkey Mesh
-//	{
-//		std::unique_ptr<Mesh> monkeyMesh = std::make_unique<Mesh>(".\\assets\\monkey_flat.obj", _allocator,
-//				VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
-//				VMA_MEMORY_USAGE_GPU_ONLY);
-//		monkeyMesh->Upload(uploadContext._commandBuffer, uploadContext._commandPool, uploadContext._uploadFence, queue,
-//				_allocator);
-//		auto& renderObj = _renderables.emplace_back(
-//				std::make_unique<RenderObject>(std::move(monkeyMesh), meshPipelineLayout.Get(),
-//						coloredShaderPipeline.Get(),
-//						glm::mat4{ 1.0f }));
-//	}
+	{
+		std::unique_ptr<Mesh> monkeyMesh = std::make_unique<Mesh>(".\\assets\\monkey_flat.obj", _allocator,
+				VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
+				VMA_MEMORY_USAGE_GPU_ONLY);
+		monkeyMesh->Upload(uploadContext._commandBuffer, uploadContext._commandPool, uploadContext._uploadFence, queue,
+				_allocator);
+		auto& renderObj = _renderables.emplace_back(
+				std::make_unique<RenderObject>(std::move(monkeyMesh), meshPipelineLayout.Get(),
+						coloredShaderPipeline.Get(),
+						glm::mat4{ 1.0f }));
+	}
 	// Lost empire
 	{
 		std::unique_ptr<Mesh> empireMesh = std::make_unique<Mesh>(".\\assets\\lost_empire.obj", _allocator,
@@ -370,10 +370,6 @@ drawObjects(Allocator& allocator, CommandBuffer& commandBuffer, FrameData& frame
 		}
 		glm::mat4 mesh_matrix = object.transformMatrix;
 
-//		MeshPushConstants constants;
-//		constants.render_matrix = mesh_matrix;
-//		commandBuffer.UpdatePushConstants(object.material._pipelineLayout, constants);
-		//upload the mesh to the gpu via pushconstants
 		if (object.mesh.get() != lastMesh)
 		{
 			commandBuffer.BindVertexBuffers(object.mesh->_vertexBuffer);

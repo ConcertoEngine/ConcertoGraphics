@@ -53,11 +53,11 @@ namespace Concerto::Graphics::Wrapper
 		stbi_image_free(pixels);
 
 		VkExtent3D imageExtent = {
-				extent.width,
-				extent.height,
+				static_cast<uint32_t>(textureWidth),
+				static_cast<uint32_t>(textureHeight),
 				1
 		};
-		VkImageCreateInfo dimg_info = VulkanInitializer::ImageCreateInfo(VK_FORMAT_R8G8B8A8_SRGB,
+			VkImageCreateInfo dimg_info = VulkanInitializer::ImageCreateInfo(VK_FORMAT_R8G8B8A8_SRGB,
 				VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT, imageExtent);
 		VmaAllocationCreateInfo dimg_allocinfo = {};
 		dimg_allocinfo.usage = VMA_MEMORY_USAGE_GPU_ONLY;
