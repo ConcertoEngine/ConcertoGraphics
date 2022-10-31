@@ -5,22 +5,23 @@
 #define VMA_VULKAN_VERSION 1000000
 #define VKB_DEBUG
 
-#include "MeshPushConstants.hpp"
-#include "glm/vec3.hpp"
+#include <iostream>
+#include <unordered_map>
+#include <array>
 #include "glm/gtx/transform.hpp"
+#include "VulkanRenderer.hpp"
+#include "MeshPushConstants.hpp"
 #include "Vertex.hpp"
+#include "vulkan/vulkan.h"
+#include "window/GlfW3.hpp"
+#include "wrapper/Device.hpp"
 #include "wrapper/Swapchain.hpp"
 #include "wrapper/RenderPass.hpp"
 #include "wrapper/FrameBuffer.hpp"
 #include "wrapper/CommandBuffer.hpp"
-#include "wrapper/Fence.hpp"
 #include "wrapper/DescriptorSetLayout.hpp"
 #include "wrapper/DescriptorPool.hpp"
 #include "wrapper/AllocatedBuffer.hpp"
-#include "wrapper/Semaphore.hpp"
-#include "window/GlfW3.hpp"
-#include "VkBootstrap.h"
-#include "vulkan/vulkan.h"
 #include "wrapper/VulkanInitializer.hpp"
 #include "wrapper/Allocator.hpp"
 #include "wrapper/ShaderModule.hpp"
@@ -29,6 +30,8 @@
 #include "wrapper/PipelineLayout.hpp"
 #include "wrapper/Queue.hpp"
 #include "wrapper/Sampler.hpp"
+#include "wrapper/Instance.hpp"
+#include "wrapper/PhysicalDevice.hpp"
 #include "Mesh.hpp"
 #include "Frame.hpp"
 #include "Material.hpp"
@@ -37,21 +40,17 @@
 #include "Utils.hpp"
 #include "UploadContext.hpp"
 #include "Texture.hpp"
-#include <iostream>
-#include <unordered_map>
-#include <array>
 
-VkInstance _instance{ VK_NULL_HANDLE };
-VkDebugUtilsMessengerEXT _debug_messenger;
-VkPhysicalDevice _chosenGPU{ VK_NULL_HANDLE };
-VkDevice _device{ VK_NULL_HANDLE };
-VkSurfaceKHR _surface{ VK_NULL_HANDLE };
-int _frameNumber = 0;
-VkExtent2D windowExtent = { 1280, 720 };
-VkPhysicalDeviceProperties _gpuProperties{};
 using namespace Concerto;
 using namespace Concerto::Graphics;
 using namespace Concerto::Graphics::Wrapper;
+
+VkInstance _instance{ VK_NULL_HANDLE };
+VkDevice _device{ VK_NULL_HANDLE };
+int _frameNumber = 0;
+VkExtent2D windowExtent = { 1280, 720 };
+VkPhysicalDeviceProperties _gpuProperties{};
+
 
 using Frames = std::array<FrameData, 2>;
 std::vector<std::unique_ptr<RenderObject>> _renderables;
@@ -66,63 +65,46 @@ draw(Allocator& allocator, Swapchain& swapchain, RenderPass& renderpass, FrameBu
 
 int main()
 {
+#if defined(_WIN32)
+	std::vector<const char*> extensions = { "VK_KHR_surface", "VK_KHR_win32_surface" };
+#elif defined(__linux__)
+	std::vector<const char*> extensions = { "VK_KHR_surface", "VK_KHR_xcb_surface", "VK_KHR_xlib_surface", "VK_KHR_wayland_surface" };
+#endif
 	const char* appName = "Concerto";
+	std::vector<const char*> layers = { "VK_LAYER_KHRONOS_validation" /*, "VK_LAYER_LUNARG_api_dump"*/};
 	IWindowPtr window = std::make_unique<GlfW3>(appName, windowExtent.width, windowExtent.height);
-
+	Instance instance("Concerto", "ConcertoVulkan", { 1, 1, 0 }, { 1, 0, 0, }, { 1, 0, 0 }, extensions, layers);
 	VkSurfaceKHR vkSurface{ VK_NULL_HANDLE };
-	vkb::InstanceBuilder instanceBuilder;
-	instanceBuilder.use_default_debug_messenger();
-	instanceBuilder.set_app_name(appName)
-			.request_validation_layers(true)
-			.use_default_debug_messenger()
-			.require_api_version(1, 1, 0)
-			.set_debug_callback([](VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
-					VkDebugUtilsMessageTypeFlagsEXT messageType,
-					const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
-					void* pUserData)
-			{
-				std::cerr << "validation layer: " << pCallbackData->pMessage << std::endl;
-				return VK_FALSE;
-			});
-	auto system_info_ret = vkb::SystemInfo::get_system_info();
-	if (!system_info_ret)
+	auto res = glfwCreateWindowSurface(*instance.Get(), (GLFWwindow*)window->getRawWindow(), nullptr, &vkSurface);
+	std::span<PhysicalDevice> devices = instance.EnumeratePhysicalDevices();
+	if (devices.empty())
 	{
-		std::cerr << system_info_ret.error().message() << std::endl;
+		std::cerr << "No GPU found" << std::endl;
 		return -1;
 	}
-	auto system_info = system_info_ret.value();
-	if (system_info.is_layer_available("VK_LAYER_LUNARG_api_dump"))
-	{
-//		instanceBuilder.enable_layer("VK_LAYER_LUNARG_api_dump");
-	}
-	auto instance = instanceBuilder.build();
-	_instance = instance.value().instance;
-	glfwCreateWindowSurface(_instance, (GLFWwindow*)window->getRawWindow(), nullptr, &vkSurface);
-	vkb::PhysicalDeviceSelector selector(instance.value());
-	vkb::PhysicalDevice physicalDevice = selector.set_minimum_version(1, 1)
-			.set_surface(vkSurface)
-			.select()
-			.value();
-	vkb::DeviceBuilder deviceBuilder(physicalDevice);
-	VkPhysicalDeviceShaderDrawParametersFeatures shader_draw_parameters_features = {};
-	shader_draw_parameters_features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_DRAW_PARAMETERS_FEATURES;
-	shader_draw_parameters_features.pNext = nullptr;
-	shader_draw_parameters_features.shaderDrawParameters = VK_TRUE;
-	vkb::Device vkbDevice = deviceBuilder.add_pNext(&shader_draw_parameters_features).build().value();
-	_device = vkbDevice.device;
-	VkPhysicalDevice _physicalDevice = physicalDevice.physical_device;
-	VkQueue _graphicsQueue = vkbDevice.get_queue(vkb::QueueType::graphics).value();
-	uint32_t _graphicsQueueFamily = vkbDevice.get_queue_index(vkb::QueueType::graphics).value();
+	PhysicalDevice& physicalDevice = devices[0];
+	physicalDevice.SetSurface(vkSurface);
+	std::vector<const char*> deviceExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
+	Device device(physicalDevice,deviceExtensions);
 
-	vkGetPhysicalDeviceProperties(_physicalDevice, &_gpuProperties);
-	std::cout << "The GPU has  a minimum buffer alignment of : "
-			  << _gpuProperties.limits.minUniformBufferOffsetAlignment << std::endl;
+	if (res != VK_SUCCESS)
+	{
+		std::cerr << "Failed to create window surface code : " << res << std::endl;
+		return -1;
+	}
+
+	_gpuProperties = physicalDevice.GetProperties();
+	VkPhysicalDevice _physicalDevice = *physicalDevice.Get();
+	VkQueue _graphicsQueue = *device.GetQueue(Queue::Type::Graphics).Get();
+	_device = *device.Get();
+	_instance = *instance.Get();
+	uint32_t _graphicsQueueFamily = device.GetQueue(Queue::Type::Graphics).GetFamilyIndex();
 	Allocator _allocator(_physicalDevice, _device, _instance);
-	Swapchain swapchain(_allocator, windowExtent, _physicalDevice, _device, vkSurface, _instance);
+	Swapchain swapchain(_allocator, windowExtent, physicalDevice, device, _instance);
 
 	// Renderpass
 	VkAttachmentDescription color_attachment = {};
-	color_attachment.format = swapchain.getImageFormat();
+	color_attachment.format = swapchain.GetImageFormat();
 	color_attachment.samples = VK_SAMPLE_COUNT_1_BIT;
 	color_attachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
 	color_attachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
@@ -138,7 +120,7 @@ int main()
 	VkAttachmentDescription depth_attachment = {};
 	// Depth attachment
 	depth_attachment.flags = 0;
-	depth_attachment.format = swapchain.getDepthFormat();
+	depth_attachment.format = swapchain.GetDepthFormat();
 	depth_attachment.samples = VK_SAMPLE_COUNT_1_BIT;
 	depth_attachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
 	depth_attachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
@@ -265,11 +247,11 @@ int main()
 	meshPipelineInfo._pipelineLayout = texturedSetLayout.Get();
 	Pipeline texturedPipeline(_device, meshPipelineInfo);
 	texturedPipeline.buildPipeline(renderPass.Get());
-	//
-	Queue queue(vkbDevice);
+
+	Queue queue(device, _graphicsQueueFamily);
 	UploadContext uploadContext(_device, _graphicsQueueFamily);
 //	Fence _renderFence(_device);
-	auto texture = std::make_shared<Texture>(".\\assets\\lost_empire-RGBA.png", windowExtent, _allocator,
+	auto texture = std::make_shared<Texture>(".\\assets\\lost_empire-RGBA.png", _allocator,
 			uploadContext._commandBuffer, uploadContext, queue, VK_IMAGE_ASPECT_COLOR_BIT, _device);
 	textures.emplace("empire_diffuse", texture);
 	// Monkey Mesh
@@ -296,16 +278,7 @@ int main()
 						glm::mat4{ 1.0f }));
 		Sampler sampler(_device, VK_FILTER_NEAREST);
 		renderObj->material._textureSet = descriptorPool.AllocateDescriptorSet(singleTextureSetLayout);
-		//write to the descriptor set so that it points to our empire_diffuse texture
-		VkDescriptorImageInfo imageBufferInfo;
-		imageBufferInfo.sampler = *sampler.Get();
-		imageBufferInfo.imageView = *texture->_imageView.Get();
-		imageBufferInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-
-		VkWriteDescriptorSet texture1 = VulkanInitializer::WriteDescriptorImage(
-				VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, *renderObj->material._textureSet.Get(), &imageBufferInfo, 0);
-
-		vkUpdateDescriptorSets(_device, 1, &texture1, 0, nullptr);
+		renderObj->material._textureSet.WriteImageSamplerDescriptor(sampler, texture->_imageView);
 	}
 
 	// Render loop
@@ -385,7 +358,7 @@ draw(Allocator& allocator, Swapchain& swapchain, RenderPass& renderpass, FrameBu
 {
 	frame._renderFence.wait(1000000000);
 	frame._renderFence.reset();
-	std::uint32_t swapchainImageIndex = swapchain.acquireNextImage(frame._presentSemaphore, frame._renderFence,
+	std::uint32_t swapchainImageIndex = swapchain.AcquireNextImage(frame._presentSemaphore, frame._renderFence,
 			1000000000);
 	frame._mainCommandBuffer->Reset();
 	frame._mainCommandBuffer->Begin();

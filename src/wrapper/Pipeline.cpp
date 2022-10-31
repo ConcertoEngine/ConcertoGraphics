@@ -2,9 +2,10 @@
 // Created by arthur on 10/06/22.
 //
 
-
+#include <cassert>
 #include <iostream>
 #include <utility>
+
 #include "wrapper/Pipeline.hpp"
 #include "wrapper/VulkanInitializer.hpp"
 
@@ -99,12 +100,15 @@ namespace Concerto::Graphics::Wrapper
 
 	Pipeline::~Pipeline()
 	{
+		assert(_device != VK_NULL_HANDLE);
+		assert(_pipeline != VK_NULL_HANDLE);
 		vkDestroyPipeline(_device, _pipeline, nullptr);
 		_pipeline = VK_NULL_HANDLE;
 	}
 
 	VkPipeline Pipeline::Get() const
 	{
+		assert(_pipeline != VK_NULL_HANDLE);
 		return _pipeline;
 	}
 }

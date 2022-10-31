@@ -11,17 +11,30 @@
 
 namespace Concerto::Graphics::Wrapper
 {
+	class Device;
+
 	class Queue
 	{
 	public:
-		Queue(const vkb::Device& device);
+		enum class Type
+		{
+			Compute, Graphics, Transfer
+		};
+
+		explicit Queue(Device& device, std::uint32_t queueFamilyIndex);
+
 		std::uint32_t GetFamilyIndex() const;
+
 		void Submit(const FrameData& frame);
+
 		void Present(const FrameData& frame, Swapchain& swapchain, std::uint32_t swapchainImageIndex);
-		VkQueue *Get();
+
+		VkQueue* Get();
+
 	private:
-		vkb::Device _device;
+		Device& _device;
 		VkQueue _queue;
+		std::uint32_t _queueFamilyIndex;
 	};
 
 }

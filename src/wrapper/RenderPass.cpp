@@ -4,6 +4,7 @@
 
 
 #include <stdexcept>
+#include <cassert>
 
 #include "wrapper/RenderPass.hpp"
 
@@ -37,6 +38,7 @@ namespace Concerto::Graphics::Wrapper
 
 	VkRenderPass RenderPass::Get() const
 	{
+		assert(_renderPass != VK_NULL_HANDLE);
 		return _renderPass;
 	}
 } // Concerto::Graphics::Wrapper

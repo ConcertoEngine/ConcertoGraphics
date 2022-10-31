@@ -5,7 +5,7 @@
 #ifndef CONCERTOGRAPHICS_IMAGEVIEW_HPP
 #define CONCERTOGRAPHICS_IMAGEVIEW_HPP
 
-#include "AllocatedImage.hpp"
+#include "Image.hpp"
 
 namespace Concerto::Graphics::Wrapper
 {
@@ -14,7 +14,15 @@ namespace Concerto::Graphics::Wrapper
 	public:
 		ImageView() = default;
 
-		ImageView(AllocatedImage& image, VkImageAspectFlags aspectFlags, VkDevice device);
+		ImageView(Image& image, VkImageAspectFlags aspectFlags, VkDevice device);
+
+		ImageView(const ImageView&) = delete;
+
+		ImageView(ImageView&&) noexcept;
+
+		ImageView& operator=(const ImageView&) = delete;
+
+		ImageView& operator=(ImageView&&) noexcept;
 
 		~ImageView();
 
@@ -22,7 +30,7 @@ namespace Concerto::Graphics::Wrapper
 
 	private:
 		VkImageView _imageView{ VK_NULL_HANDLE };
-		VkDevice _device;
+		VkDevice _device{ VK_NULL_HANDLE };
 	};
 }
 

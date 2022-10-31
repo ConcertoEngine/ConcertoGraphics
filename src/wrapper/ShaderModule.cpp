@@ -2,9 +2,9 @@
 // Created by arthur on 10/06/22.
 //
 
-
+#include <cassert>
 #include <fstream>
-#include <exception>
+
 #include "wrapper/ShaderModule.hpp"
 
 namespace Concerto::Graphics::Wrapper
@@ -48,6 +48,7 @@ namespace Concerto::Graphics::Wrapper
 
 	VkShaderModule ShaderModule::getShaderModule()
 	{
+		assert(_shaderModule != VK_NULL_HANDLE);
 		return _shaderModule;
 	}
 }

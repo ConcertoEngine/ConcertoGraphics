@@ -2,6 +2,8 @@
 // Created by arthur on 24/10/2022.
 //
 
+#include <cassert>
+
 #include "wrapper/Sampler.hpp"
 #include "wrapper/VulkanInitializer.hpp"
 
@@ -18,6 +20,7 @@ namespace Concerto::Graphics::Wrapper
 
 	VkSampler* Sampler::Get()
 	{
+		assert(_sampler != VK_NULL_HANDLE);
 		return &_sampler;
 	}
 }

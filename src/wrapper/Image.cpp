@@ -5,7 +5,7 @@
 
 #include <stb_image.h>
 #include "wrapper/AllocatedBuffer.hpp"
-#include "wrapper/AllocatedImage.hpp"
+#include "wrapper/Image.hpp"
 #include "wrapper/CommandBuffer.hpp"
 #include "UploadContext.hpp"
 #include "wrapper/Queue.hpp"
@@ -13,8 +13,8 @@
 
 namespace Concerto::Graphics::Wrapper
 {
-	AllocatedImage::AllocatedImage(VkExtent2D extent, VkFormat depthFormat, Allocator& allocator) : imageFormat(
-			depthFormat)
+	Image::Image(VkExtent2D extent, VkFormat depthFormat, Allocator& allocator) :
+			_imageFormat(depthFormat), _isAllocated(true), _allocator(allocator._allocator)
 	{
 		VkExtent3D depthImageExtent = {
 				extent.width,
@@ -34,9 +34,9 @@ namespace Concerto::Graphics::Wrapper
 		}
 	}
 
-	AllocatedImage::AllocatedImage(const std::string& file, VkExtent2D extent, Allocator& allocator,
+	Image::Image(const std::string& file, Allocator& allocator,
 			CommandBuffer& commandBuffer, UploadContext& uploadContext, Queue& queue) :
-			imageFormat(VK_FORMAT_R8G8B8A8_SRGB)
+			_imageFormat(VK_FORMAT_R8G8B8A8_SRGB), _isAllocated(true), _allocator(allocator._allocator)
 	{
 		int textureWidth, textureHeight, textureChannels;
 		stbi_uc* pixels = stbi_load(file.c_str(), &textureWidth, &textureHeight, &textureChannels, STBI_rgb_alpha);
@@ -57,7 +57,7 @@ namespace Concerto::Graphics::Wrapper
 				static_cast<uint32_t>(textureHeight),
 				1
 		};
-			VkImageCreateInfo dimg_info = VulkanInitializer::ImageCreateInfo(VK_FORMAT_R8G8B8A8_SRGB,
+		VkImageCreateInfo dimg_info = VulkanInitializer::ImageCreateInfo(VK_FORMAT_R8G8B8A8_SRGB,
 				VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT, imageExtent);
 		VmaAllocationCreateInfo dimg_allocinfo = {};
 		dimg_allocinfo.usage = VMA_MEMORY_USAGE_GPU_ONLY;
@@ -88,7 +88,7 @@ namespace Concerto::Graphics::Wrapper
 					imageBarrier_toTransfer.srcAccessMask = 0;
 					imageBarrier_toTransfer.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
 
-					//barrier the image into the transfer-receive layout
+					//barrier the image into the Transfer-receive layout
 					vkCmdPipelineBarrier(cb.Get(), VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT, 0,
 							0, nullptr, 0, nullptr, 1, &imageBarrier_toTransfer);
 
@@ -120,5 +120,34 @@ namespace Concerto::Graphics::Wrapper
 							VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, 0, 0, nullptr, 0, nullptr, 1,
 							&imageBarrier_toReadable);
 				});
+	}
+
+	Image::Image(VkImage image, VkFormat imageFormat) : _image(image), _isAllocated(false),
+														_allocator(VK_NULL_HANDLE),
+														_imageFormat(imageFormat)
+	{
+
+	}
+
+	Image::~Image()
+	{
+		if (!_isAllocated)
+			return;
+		assert(_allocator != VK_NULL_HANDLE);
+		assert(_image != VK_NULL_HANDLE);
+		assert(_allocation != VK_NULL_HANDLE);
+		vmaDestroyImage(_allocator, _image, _allocation);
+		_image = VK_NULL_HANDLE;
+	}
+
+	VkImage* Image::Get()
+	{
+		assert(_image != VK_NULL_HANDLE);
+		return &_image;
+	}
+
+	VkFormat Image::GetFormat() const
+	{
+		return _imageFormat;
 	}
 }

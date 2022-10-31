@@ -2,9 +2,10 @@
 // Created by arthur on 15/06/22.
 //
 
+#include <cassert>
+#include <stdexcept>
 
 #include "wrapper/Semaphore.hpp"
-#include <stdexcept>
 
 namespace Concerto::Graphics::Wrapper
 {
@@ -29,6 +30,7 @@ namespace Concerto::Graphics::Wrapper
 
 	VkSemaphore Semaphore::Get() const
 	{
+		assert(_semaphore != VK_NULL_HANDLE);
 		return _semaphore;
 	}
 } // namespace Concerto::Graphics::Wrapper

@@ -2,9 +2,10 @@
 // Created by arthur on 30/06/2022.
 //
 
-#include "wrapper/PipelineLayout.hpp"
+#include <cassert>
 #include <stdexcept>
-#include "wrapper/VulkanInitializer.hpp"
+
+#include "wrapper/PipelineLayout.hpp"
 
 namespace Concerto::Graphics::Wrapper
 {
@@ -38,12 +39,15 @@ namespace Concerto::Graphics::Wrapper
 
 	PipelineLayout::~PipelineLayout()
 	{
+		assert(_device != VK_NULL_HANDLE);
+		assert(_pipelineLayout != VK_NULL_HANDLE);
 		vkDestroyPipelineLayout(_device, _pipelineLayout, nullptr);
 		_pipelineLayout = VK_NULL_HANDLE;
 	}
 
 	VkPipelineLayout PipelineLayout::Get() const
 	{
+		assert(_pipelineLayout != VK_NULL_HANDLE);
 		return _pipelineLayout;
 	}
 

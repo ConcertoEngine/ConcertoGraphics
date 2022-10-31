@@ -2,10 +2,11 @@
 // Created by arthur on 16/06/22.
 //
 
+#include <cassert>
+#include <stdexcept>
 
 #include "wrapper/DescriptorSetLayout.hpp"
-#include <stdexcept>
-#include <iostream>
+
 namespace Concerto::Graphics::Wrapper
 {
 
@@ -32,6 +33,7 @@ namespace Concerto::Graphics::Wrapper
 
 	VkDescriptorSetLayout* DescriptorSetLayout::Get()
 	{
+		assert(_layout != VK_NULL_HANDLE);
 		return &_layout;
 	}
 

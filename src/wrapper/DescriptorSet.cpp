@@ -2,10 +2,14 @@
 // Created by arthur on 16/06/22.
 //
 
-
+#include <cassert>
 #include <stdexcept>
+
 #include "wrapper/DescriptorSet.hpp"
+#include "wrapper/DescriptorSetLayout.hpp"
 #include "wrapper/DescriptorPool.hpp"
+#include "wrapper/Sampler.hpp"
+#include "wrapper/ImageView.hpp"
 
 namespace Concerto::Graphics::Wrapper
 {
@@ -28,12 +32,26 @@ namespace Concerto::Graphics::Wrapper
 
 	VkDescriptorSet* DescriptorSet::Get()
 	{
+		assert(_set != VK_NULL_HANDLE);
 		return &_set;
 	}
 
 	bool DescriptorSet::IsValid() const
 	{
 		return _set != VK_NULL_HANDLE;
+	}
+
+	void DescriptorSet::WriteImageSamplerDescriptor(Sampler& sampler, ImageView& imageView, VkImageLayout imageLayout)
+	{
+		VkDescriptorImageInfo imageBufferInfo;
+		imageBufferInfo.sampler = *sampler.Get();
+		imageBufferInfo.imageView = *imageView.Get();
+		imageBufferInfo.imageLayout = imageLayout;
+
+		VkWriteDescriptorSet texture1 = VulkanInitializer::WriteDescriptorImage(
+				VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, _set, &imageBufferInfo, 0);
+
+		vkUpdateDescriptorSets(_device, 1, &texture1, 0, nullptr);
 	}
 
 }

@@ -1,20 +1,23 @@
 //
 // Created by arthur on 13/09/2022.
 //
+
+#include <cassert>
+
 #include "wrapper/Queue.hpp"
 #include "wrapper/CommandBuffer.hpp"
+#include "wrapper/Device.hpp"
 
 namespace Concerto::Graphics::Wrapper
 {
-	Queue::Queue(const vkb::Device& device) : _device(device),
-											  _queue(_device.get_queue(vkb::QueueType::graphics).value())
+	Queue::Queue(Device& device, std::uint32_t queueFamilyIndex) : _device(device), _queueFamilyIndex(queueFamilyIndex)
 	{
-
+		vkGetDeviceQueue(*_device.Get(), _queueFamilyIndex, 0, &_queue);
 	}
 
 	std::uint32_t Queue::GetFamilyIndex() const
 	{
-		return _device.get_queue_index(vkb::QueueType::graphics).value();
+		return _queueFamilyIndex;
 	}
 
 	void Queue::Submit(const FrameData& frame)
@@ -61,6 +64,7 @@ namespace Concerto::Graphics::Wrapper
 
 	VkQueue* Queue::Get()
 	{
+		assert(_queue != VK_NULL_HANDLE);
 		return &_queue;
 	}
 }

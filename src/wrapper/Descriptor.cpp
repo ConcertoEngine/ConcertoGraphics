@@ -3,14 +3,16 @@
 //
 
 
-#include "wrapper/Descriptor.hpp"
-#include <cstdint>
+#include <cassert>
 #include <stdexcept>
+
+#include "wrapper/Descriptor.hpp"
 
 namespace Concerto::Graphics::Wrapper
 {
 
-	Descriptor::Descriptor(VkDevice device, std::vector<VkDescriptorPoolSize> poolSizes, std::vector<VkDescriptorSetLayoutBinding> bindings)
+	Descriptor::Descriptor(VkDevice device, std::vector<VkDescriptorPoolSize> poolSizes,
+			std::vector<VkDescriptorSetLayoutBinding> bindings)
 	{
 		VkDescriptorPoolCreateInfo pool_info = {};
 		pool_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
@@ -26,6 +28,7 @@ namespace Concerto::Graphics::Wrapper
 
 	VkDescriptorPool Descriptor::Get() const
 	{
+		assert(_pool != VK_NULL_HANDLE);
 		return _pool;
 	}
 }

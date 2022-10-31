@@ -6,64 +6,67 @@
 #define CONCERTOGRAPHICS_SWAPCHAIN_HPP
 
 #include <vector>
+#include <optional>
+#include <span>
 #include "vulkan/vulkan.h"
-#include "AllocatedImage.hpp"
+#include "Image.hpp"
 #include "Allocator.hpp"
 #include "Semaphore.hpp"
 #include "Fence.hpp"
+#include "ImageView.hpp"
 
 namespace Concerto::Graphics::Wrapper
 {
+	class Device;
+
+	class PhysicalDevice;
+
 	class Swapchain
 	{
 	public:
-		Swapchain(Allocator& allocator, VkExtent2D windowExtent, VkPhysicalDevice physicalDevice, VkDevice device,
-				VkSurfaceKHR surface, VkInstance instance);
+		Swapchain(Allocator& allocator, VkExtent2D windowExtent, PhysicalDevice& physicalDevice, Device& device,
+				VkInstance instance);
 
 		Swapchain(Swapchain&&) = default;
 
 		Swapchain(const Swapchain&) = delete;
 
-		Swapchain& operator=(Swapchain&&) = default;
+		Swapchain& operator=(Swapchain&&) = delete;
 
 		Swapchain& operator=(const Swapchain&) = delete;
 
 		~Swapchain();
 
-		VkSwapchainKHR Get() const;
+		[[nodiscard]] VkSwapchainKHR Get() const;
 
-		[[nodiscard]] std::uint32_t getImageCount() const;
+		[[nodiscard]] std::span<Image> GetImages();
 
-		[[nodiscard]] const std::vector<VkImage>& getImages() const;
+		[[nodiscard]] std::span<ImageView> GetImageViews();
 
-		[[nodiscard]] const std::vector<VkImageView>& getImageViews() const;
+		[[nodiscard]] VkExtent2D GetExtent() const;
 
-		[[nodiscard]] std::uint32_t getImageViewCount() const;
+		[[nodiscard]] const ImageView& GetDepthImageView() const;
 
-		VkExtent2D getExtent() const;
+		[[nodiscard]] ImageView& GetDepthImageView();
 
-		VkImageView getDepthImageView() const;
+		[[nodiscard]] VkFormat GetImageFormat() const;
 
-		VkFormat getImageFormat() const;
+		[[nodiscard]] VkFormat GetDepthFormat() const;
 
-		VkFormat getDepthFormat() const;
-
-		std::uint32_t acquireNextImage(Semaphore &semaphore, Fence &fence, std::uint64_t timeout);
-
+		std::uint32_t AcquireNextImage(Semaphore& semaphore, Fence& fence, std::uint64_t timeout);
 
 	private:
-		Allocator &_allocator;
-		VkPhysicalDevice _physicalDevice;
-		VkDevice _device;
-		VkSurfaceKHR _surface;
+		mutable std::optional<std::vector<Image>> _swapChainImages;
+		mutable std::optional<std::vector<ImageView>> _swapChainImageViews;
+		Allocator& _allocator;
+		PhysicalDevice& _physicalDevice;
+		Device& _device;
 		VkExtent2D _windowExtent;
 		VkSwapchainKHR _swapChain{};
-		std::vector<VkImage> _swapChainImages;
-		std::vector<VkImageView> _swapChainImageViews;
 		VkFormat _swapChainImageFormat;
 		VkFormat _depthFormat;
-		AllocatedImage _depthImage;
-		VkImageView _depthImageView{};
+		Image _depthImage;
+		ImageView _depthImageView;
 	};
 
 } // Concerto::Graphics::Wrapper

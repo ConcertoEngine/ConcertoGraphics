@@ -27,6 +27,7 @@ namespace Concerto::Graphics::Wrapper
 
 	VkCommandBuffer CommandBuffer::Get() const
 	{
+		assert(_commandBuffer != VK_NULL_HANDLE);
 		return _commandBuffer;
 	}
 

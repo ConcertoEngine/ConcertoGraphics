@@ -2,20 +2,24 @@
 // Created by arthur on 12/06/22.
 //
 
+#include <cassert>
 
 #include "wrapper/FrameBuffer.hpp"
 #include "wrapper/VulkanInitializer.hpp"
+
 namespace Concerto::Graphics::Wrapper
 {
-	FrameBuffer::FrameBuffer(VkDevice device, Swapchain& swapchain, RenderPass& renderPass) : _frameBuffers(swapchain.getImageCount()), _swapchain(swapchain), _renderPass(renderPass), _device(device)
+	FrameBuffer::FrameBuffer(VkDevice device, Swapchain& swapchain, RenderPass& renderPass) : _frameBuffers(
+			swapchain.GetImages().size()), _swapchain(swapchain), _renderPass(renderPass), _device(device)
 	{
-		VkFramebufferCreateInfo fb_info = VulkanInitializer::FramebufferCreateInfo(renderPass.Get(), swapchain.getExtent());
+		VkFramebufferCreateInfo fb_info = VulkanInitializer::FramebufferCreateInfo(renderPass.Get(),
+				swapchain.GetExtent());
 
-		for (int i = 0; i < swapchain.getImageCount(); i++)
+		for (int i = 0; i < swapchain.GetImages().size(); i++)
 		{
 			VkImageView attachments[2];
-			attachments[0] = swapchain.getImageViews()[i];
-			attachments[1] = swapchain.getDepthImageView();
+			attachments[0] = *swapchain.GetImageViews()[i].Get();
+			attachments[1] = *swapchain.GetDepthImageView().Get();
 
 			fb_info.pAttachments = attachments;
 			fb_info.attachmentCount = 2;
@@ -28,15 +32,17 @@ namespace Concerto::Graphics::Wrapper
 
 	FrameBuffer::~FrameBuffer()
 	{
-		for (int i = 0; i < _frameBuffers.size(); i++)
+		for (VkFramebuffer _frameBuffer : _frameBuffers)
 		{
-			vkDestroyFramebuffer(_device, _frameBuffers[i], nullptr);
-			vkDestroyImageView(_device, _swapchain.getImageViews()[i], nullptr);
+			vkDestroyFramebuffer(_device, _frameBuffer, nullptr);
 		}
+		_frameBuffers.clear();
 	}
 
 	VkFramebuffer FrameBuffer::operator[](std::size_t s)
 	{
+		assert(s < _frameBuffers.size());
+		assert(_frameBuffers[s] != VK_NULL_HANDLE);
 		return _frameBuffers[s];
 	}
 }

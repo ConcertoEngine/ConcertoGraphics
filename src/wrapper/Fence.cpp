@@ -2,8 +2,9 @@
 // Created by arthur on 15/06/22.
 //
 
-
+#include <cassert>
 #include <stdexcept>
+
 #include "wrapper/Fence.hpp"
 
 namespace Concerto::Graphics::Wrapper
@@ -28,6 +29,7 @@ namespace Concerto::Graphics::Wrapper
 
 	VkFence Fence::Get() const
 	{
+		assert(_fence != VK_NULL_HANDLE);
 		return _fence;
 	}
 

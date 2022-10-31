@@ -6,11 +6,17 @@
 #define CONCERTOGRAPHICS_DESCRIPTORSET_HPP
 
 #include "vulkan/vulkan.h"
-#include "DescriptorSetLayout.hpp"
 
 namespace Concerto::Graphics::Wrapper
 {
 	class DescriptorPool;
+
+	class DescriptorSetLayout;
+
+	class Sampler;
+
+	class ImageView;
+
 	class DescriptorSet
 	{
 	public:
@@ -32,6 +38,9 @@ namespace Concerto::Graphics::Wrapper
 		VkDescriptorSet* Get();
 
 		[[nodiscard]] bool IsValid() const;
+
+		void WriteImageSamplerDescriptor(Sampler& sampler, ImageView& imageView,
+				VkImageLayout imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 
 	private:
 		VkDescriptorSet _set = { VK_NULL_HANDLE };

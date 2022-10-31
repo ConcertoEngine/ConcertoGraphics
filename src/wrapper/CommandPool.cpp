@@ -2,10 +2,11 @@
 // Created by arthur on 14/06/22.
 //
 
-
-#include "wrapper/CommandPool.hpp"
+#include <cassert>
 #include <stdexcept>
 #include <iostream>
+
+#include "wrapper/CommandPool.hpp"
 
 namespace Concerto::Graphics::Wrapper
 {
@@ -32,6 +33,7 @@ namespace Concerto::Graphics::Wrapper
 
 	VkCommandPool CommandPool::Get() const
 	{
+		assert(_commandPool != VK_NULL_HANDLE);
 		return _commandPool;
 	}
 

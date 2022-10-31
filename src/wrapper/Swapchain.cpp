@@ -2,100 +2,121 @@
 // Created by arthur on 11/06/22.
 //
 
+#include <cassert>
 
 #include "wrapper/Swapchain.hpp"
 #include "vulkan/vulkan.h"
-#include "VkBootstrap.h"
 #include "vk_mem_alloc.h"
 #include "wrapper/VulkanInitializer.hpp"
-#include "wrapper/VulkanInitializer.hpp"
+#include "wrapper/PhysicalDevice.hpp"
+#include "wrapper/Device.hpp"
+#include "wrapper/ImageView.hpp"
 
 namespace Concerto::Graphics::Wrapper
 {
 
-	Swapchain::Swapchain(Allocator& allocator, VkExtent2D windowExtent, VkPhysicalDevice physicalDevice,
-			VkDevice device, VkSurfaceKHR surface, VkInstance instance) :
+	Swapchain::Swapchain(Allocator& allocator, VkExtent2D windowExtent, PhysicalDevice& physicalDevice,
+			Device& device, VkInstance instance) :
 			_allocator(allocator), _windowExtent(windowExtent),
 			_physicalDevice(physicalDevice), _device(device),
-			_surface(surface), _swapChain(VK_NULL_HANDLE),
+			_swapChain(VK_NULL_HANDLE),
 			_swapChainImages(),
 			_depthImage(windowExtent, VK_FORMAT_D32_SFLOAT, allocator),
-			_swapChainImageViews()
+			_depthImageView(_depthImage, VK_IMAGE_ASPECT_DEPTH_BIT, *device.Get()),
+			_swapChainImageViews(),
+			_swapChainImageFormat(VK_FORMAT_B8G8R8A8_SRGB)
 	{
-		vkb::SwapchainBuilder swapChainBuilder{ _physicalDevice, _device, _surface };
-		vkb::Swapchain vkbSwapChain = swapChainBuilder
-				.use_default_format_selection()
-						//use vsync present mode VK_PRESENT_MODE_FIFO_KHR
-				.set_desired_present_mode(VK_PRESENT_MODE_IMMEDIATE_KHR)
-				.set_desired_extent(_windowExtent.width, _windowExtent.height)
-				.build()
-				.value();
-		_swapChain = vkbSwapChain.swapchain;
-		_swapChainImages = vkbSwapChain.get_images().value();
-		_swapChainImageViews = vkbSwapChain.get_image_views().value();
-		_swapChainImageFormat = vkbSwapChain.image_format;
-		_depthFormat = VK_FORMAT_D32_SFLOAT;
+		PhysicalDevice::SurfaceSupportDetails surfaceSupportDetails = physicalDevice.GetSurfaceSupportDetails();
+		VkSwapchainCreateInfoKHR swapChainCreateInfo{};
+		std::uint32_t imageCount = surfaceSupportDetails.capabilities.minImageCount + 1;
+		if (surfaceSupportDetails.capabilities.maxImageCount > 0 &&
+			imageCount > surfaceSupportDetails.capabilities.maxImageCount)
+			imageCount = surfaceSupportDetails.capabilities.maxImageCount;
 
-		VkImageViewCreateInfo dview_info = VulkanInitializer::ImageViewCreateInfo(_depthFormat, _depthImage._image,
-				VK_IMAGE_ASPECT_DEPTH_BIT);;
-
-		if (vkCreateImageView(_device, &dview_info, nullptr, &_depthImageView) != VK_SUCCESS)
-		{
-			throw std::runtime_error("Failed to create depth image view");
-		}
+		swapChainCreateInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
+		swapChainCreateInfo.surface = physicalDevice.GetSurface();
+		swapChainCreateInfo.minImageCount = imageCount;
+		swapChainCreateInfo.imageFormat = _swapChainImageFormat;
+		swapChainCreateInfo.imageColorSpace = VK_COLOR_SPACE_SRGB_NONLINEAR_KHR;
+		swapChainCreateInfo.imageExtent = _windowExtent;
+		swapChainCreateInfo.imageArrayLayers = 1;
+		swapChainCreateInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+		swapChainCreateInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
+		swapChainCreateInfo.preTransform = VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR;
+		swapChainCreateInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
+		swapChainCreateInfo.presentMode = VK_PRESENT_MODE_IMMEDIATE_KHR;
+		swapChainCreateInfo.clipped = VK_TRUE;
+		swapChainCreateInfo.oldSwapchain = VK_NULL_HANDLE;
+		if (vkCreateSwapchainKHR(*device.Get(), &swapChainCreateInfo, nullptr, &_swapChain) != VK_SUCCESS)
+			throw std::runtime_error("failed to create swap chain!");
 	}
 
 	Swapchain::~Swapchain()
 	{
-		vmaDestroyImage(_allocator._allocator, _depthImage._image, _depthImage._allocation);
-		vkDestroySwapchainKHR(_device, _swapChain, nullptr);
+		vkDestroySwapchainKHR(*_device.Get(), _swapChain, nullptr);
 		_swapChain = VK_NULL_HANDLE;
 	}
 
-	std::uint32_t Swapchain::getImageCount() const
+	std::span<Image> Swapchain::GetImages()
 	{
-		return _swapChainImages.size();
+		if(_swapChainImages.has_value())
+			return _swapChainImages.value();
+		std::uint32_t imageCount;
+		std::vector<VkImage> swapChainImages;
+		vkGetSwapchainImagesKHR(*_device.Get(), _swapChain, &imageCount, nullptr);
+		swapChainImages.resize(imageCount);
+		vkGetSwapchainImagesKHR(*_device.Get(), _swapChain, &imageCount, swapChainImages.data());
+		std::vector<Image> images;
+		images.reserve(imageCount);
+		for (auto& image : swapChainImages)
+			images.emplace_back(image, _swapChainImageFormat);
+		_swapChainImages = std::move(images);
+		return _swapChainImages.value();
 	}
 
-	const std::vector<VkImage>& Swapchain::getImages() const
+	std::span<ImageView> Swapchain::GetImageViews()
 	{
-		return _swapChainImages;
+		if(_swapChainImageViews)
+			return _swapChainImageViews.value();
+		std::vector<ImageView> swapChainImageViews;
+		swapChainImageViews.reserve(GetImages().size());
+		for(auto& image : GetImages())
+			swapChainImageViews.emplace_back(image, VK_IMAGE_ASPECT_COLOR_BIT, *_device.Get());
+		_swapChainImageViews = std::move(swapChainImageViews);
+		return _swapChainImageViews.value();
 	}
 
-	const std::vector<VkImageView>& Swapchain::getImageViews() const
-	{
-		return _swapChainImageViews;
-	}
-
-	std::uint32_t Swapchain::getImageViewCount() const
-	{
-		return _swapChainImageViews.size();
-	}
-
-	VkExtent2D Swapchain::getExtent() const
+	VkExtent2D Swapchain::GetExtent() const
 	{
 		return _windowExtent;
 	}
 
-	VkImageView Swapchain::getDepthImageView() const
+	const ImageView& Swapchain::GetDepthImageView() const
 	{
 		return _depthImageView;
 	}
 
-	VkFormat Swapchain::getImageFormat() const
+	ImageView& Swapchain::GetDepthImageView()
 	{
+		return _depthImageView;
+	}
+
+	VkFormat Swapchain::GetImageFormat() const
+	{
+
 		return _swapChainImageFormat;
 	}
 
-	VkFormat Swapchain::getDepthFormat() const
+	VkFormat Swapchain::GetDepthFormat() const
 	{
-		return _depthFormat;
+		return _depthImage.GetFormat();
 	}
 
-	std::uint32_t Swapchain::acquireNextImage(Semaphore& semaphore, Fence& fence, std::uint64_t timeout)
+	std::uint32_t Swapchain::AcquireNextImage(Semaphore& semaphore, Fence& fence, std::uint64_t timeout)
 	{
 		std::uint32_t index = 0;
-		if (vkAcquireNextImageKHR(_device, _swapChain, timeout, semaphore.Get(), nullptr, &index) != VK_SUCCESS)
+		if (vkAcquireNextImageKHR(*_device.Get(), _swapChain, timeout, semaphore.Get(), VK_NULL_HANDLE, &index) !=
+			VK_SUCCESS)
 		{
 			throw std::runtime_error("vkAcquireNextImageKHR fail");
 		}
@@ -104,6 +125,7 @@ namespace Concerto::Graphics::Wrapper
 
 	VkSwapchainKHR Swapchain::Get() const
 	{
+		assert(_swapChain != VK_NULL_HANDLE);
 		return _swapChain;
 	}
 }
