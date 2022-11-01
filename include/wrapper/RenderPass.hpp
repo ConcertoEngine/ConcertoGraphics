@@ -9,11 +9,11 @@
 #include "vulkan/vulkan.h"
 namespace Concerto::Graphics::Wrapper
 {
-
+	class Swapchain;
 	class RenderPass
 	{
 	public:
-		RenderPass(VkDevice device, std::vector<VkAttachmentDescription> attachments, std::vector<VkSubpassDescription> subpasses, std::vector<VkSubpassDependency> dependencies);
+		RenderPass(VkDevice device, Swapchain& swapchain);
 
 		RenderPass(RenderPass&&) = default;
 
