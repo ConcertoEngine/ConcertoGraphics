@@ -5,15 +5,20 @@
 #ifndef CONCERTOGRAPHICS_DESCRIPTOR_HPP
 #define CONCERTOGRAPHICS_DESCRIPTOR_HPP
 
-#include "vulkan/vulkan.h"
 #include <vector>
+#include "vulkan/vulkan.h"
+#include "wrapper/Object.hpp"
+#include "wrapper/Device.hpp"
 
 namespace Concerto::Graphics::Wrapper
 {
-	class Descriptor
+	class Device;
+
+	class Descriptor : public Object<VkDescriptorPool>
 	{
 	public:
-		Descriptor(VkDevice device, std::vector<VkDescriptorPoolSize> poolSizes, std::vector<VkDescriptorSetLayoutBinding> bindings);
+		Descriptor(Device& device, std::vector<VkDescriptorPoolSize> poolSizes,
+				const std::vector<VkDescriptorSetLayoutBinding>& bindings);
 
 		Descriptor(Descriptor&&) = default;
 
@@ -24,11 +29,6 @@ namespace Concerto::Graphics::Wrapper
 		Descriptor& operator=(const Descriptor&) = delete;
 
 		~Descriptor() = default;
-
-		VkDescriptorPool Get() const;
-
-	private:
-		VkDescriptorPool _pool;
 	};
 } // namespace Concerto::Graphics::Wrapper
 

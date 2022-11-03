@@ -8,14 +8,14 @@
 #include "wrapper/DescriptorSet.hpp"
 #include "wrapper/DescriptorSetLayout.hpp"
 #include "wrapper/DescriptorPool.hpp"
+#include "wrapper/Device.hpp"
 #include "wrapper/Sampler.hpp"
 #include "wrapper/ImageView.hpp"
 
 namespace Concerto::Graphics::Wrapper
 {
-
-	DescriptorSet::DescriptorSet(VkDevice device, DescriptorPool& pool,
-			DescriptorSetLayout& descriptorSetLayout) : _device(device)
+	DescriptorSet::DescriptorSet(Device& device, DescriptorPool& pool,
+			DescriptorSetLayout& descriptorSetLayout) :  Object<VkDescriptorSet>(device)
 	{
 		VkDescriptorSetAllocateInfo allocInfo = {};
 		allocInfo.pNext = nullptr;
@@ -24,21 +24,10 @@ namespace Concerto::Graphics::Wrapper
 		allocInfo.descriptorSetCount = 1;
 		allocInfo.pSetLayouts = descriptorSetLayout.Get();
 
-		if (vkAllocateDescriptorSets(device, &allocInfo, &_set) != VK_SUCCESS)
+		if (vkAllocateDescriptorSets(*device.Get(), &allocInfo, &_handle) != VK_SUCCESS)
 		{
 			throw std::runtime_error("Unable to allocate descriptor sets");
 		}
-	}
-
-	VkDescriptorSet* DescriptorSet::Get()
-	{
-		assert(_set != VK_NULL_HANDLE);
-		return &_set;
-	}
-
-	bool DescriptorSet::IsValid() const
-	{
-		return _set != VK_NULL_HANDLE;
 	}
 
 	void DescriptorSet::WriteImageSamplerDescriptor(Sampler& sampler, ImageView& imageView, VkImageLayout imageLayout)
@@ -49,9 +38,11 @@ namespace Concerto::Graphics::Wrapper
 		imageBufferInfo.imageLayout = imageLayout;
 
 		VkWriteDescriptorSet texture1 = VulkanInitializer::WriteDescriptorImage(
-				VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, _set, &imageBufferInfo, 0);
+				VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, _handle, &imageBufferInfo, 0);
 
-		vkUpdateDescriptorSets(_device, 1, &texture1, 0, nullptr);
+		vkUpdateDescriptorSets(*_device->Get(), 1, &texture1, 0, nullptr);
 	}
+
+
 
 }

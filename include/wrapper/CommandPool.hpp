@@ -4,14 +4,18 @@
 
 #ifndef CONCERTOGRAPHICS_COMMANDPOOL_HPP
 #define CONCERTOGRAPHICS_COMMANDPOOL_HPP
-#include "vulkan/vulkan.h"
+
 #include <cstdint>
+#include "vulkan/vulkan.h"
+#include "Object.hpp"
+
 namespace Concerto::Graphics::Wrapper
 {
-	class CommandPool
+	class Device;
+	class CommandPool : public Object<VkCommandPool>
 	{
 	public:
-		CommandPool(VkDevice device, std::uint32_t queueFamily);
+		CommandPool(Device& device, std::uint32_t queueFamily);
 
 		CommandPool(CommandPool&&) = default;
 
@@ -22,13 +26,10 @@ namespace Concerto::Graphics::Wrapper
 		CommandPool& operator=(const CommandPool&) = delete;
 
 		~CommandPool();
-		VkCommandPool Get() const;
 
 		void reset();
 
 	private:
-		VkDevice _device;
-		VkCommandPool _commandPool;
 		std::uint32_t _queueFamily;
 	};
 }

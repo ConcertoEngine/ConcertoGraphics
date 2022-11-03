@@ -7,13 +7,18 @@
 
 #include <vector>
 #include "vulkan/vulkan.h"
+#include "wrapper/Object.hpp"
+
 namespace Concerto::Graphics::Wrapper
 {
 	class Swapchain;
-	class RenderPass
+
+	class Device;
+
+	class RenderPass : public Object<VkRenderPass>
 	{
 	public:
-		RenderPass(VkDevice device, Swapchain& swapchain);
+		RenderPass(Device& device, Swapchain& swapchain);
 
 		RenderPass(RenderPass&&) = default;
 
@@ -24,11 +29,8 @@ namespace Concerto::Graphics::Wrapper
 		RenderPass& operator=(const RenderPass&) = delete;
 
 		~RenderPass();
-		[[nodiscard]] VkRenderPass Get() const;
 
 	private:
-		VkRenderPass _renderPass;
-		VkDevice _device;
 		std::vector<VkAttachmentDescription> _attachments;
 		std::vector<VkSubpassDescription> _subpasses;
 		std::vector<VkSubpassDependency> _dependencies;

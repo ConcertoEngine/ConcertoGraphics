@@ -6,13 +6,16 @@
 #define CONCERTOGRAPHICS_SEMAPHORE_HPP
 
 #include "vulkan/vulkan.hpp"
+#include "wrapper/Object.hpp"
 
 namespace Concerto::Graphics::Wrapper
 {
-	class Semaphore
+	class Device;
+
+	class Semaphore : public Object<VkSemaphore>
 	{
 	public:
-		explicit Semaphore(VkDevice device);
+		explicit Semaphore(Device& device);
 
 		Semaphore(Semaphore&&) = default;
 
@@ -23,11 +26,6 @@ namespace Concerto::Graphics::Wrapper
 		Semaphore& operator=(const Semaphore&) = delete;
 
 		~Semaphore();
-
-		VkSemaphore Get() const;
-	private:
-		VkDevice _device;
-		VkSemaphore _semaphore;
 	};
 } // namespace Concerto::Graphics::Wrapper
 

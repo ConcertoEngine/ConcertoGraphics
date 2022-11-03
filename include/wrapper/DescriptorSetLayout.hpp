@@ -5,30 +5,27 @@
 #ifndef CONCERTOGRAPHICS_DESCRIPTORSETLAYOUT_HPP
 #define CONCERTOGRAPHICS_DESCRIPTORSETLAYOUT_HPP
 
-#include "vulkan/vulkan.h"
 #include <vector>
+#include "vulkan/vulkan.h"
+#include "wrapper/Object.hpp"
 
 namespace Concerto::Graphics::Wrapper
 {
-	class DescriptorSetLayout
+	class Device;
+	class DescriptorSetLayout : public Object<VkDescriptorSetLayout>
 	{
 	public:
-		DescriptorSetLayout(VkDevice device, std::vector<VkDescriptorSetLayoutBinding> bindings);
+		DescriptorSetLayout(Device& device, std::vector<VkDescriptorSetLayoutBinding> bindings);
 
 		DescriptorSetLayout(DescriptorSetLayout&&) = default;
 
-		DescriptorSetLayout(const DescriptorSetLayout&) = default;
+		DescriptorSetLayout(const DescriptorSetLayout&) = delete;
 
 		DescriptorSetLayout& operator=(DescriptorSetLayout&&) = default;
 
-		DescriptorSetLayout& operator=(const DescriptorSetLayout&) = default;
+		DescriptorSetLayout& operator=(const DescriptorSetLayout&) = delete;
 
 		~DescriptorSetLayout();
-		[[nodiscard]] VkDescriptorSetLayout* Get();
-
-	private:
-		VkDevice _device;
-		VkDescriptorSetLayout _layout;
 	};
 }
 

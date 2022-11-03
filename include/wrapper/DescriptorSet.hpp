@@ -6,6 +6,7 @@
 #define CONCERTOGRAPHICS_DESCRIPTORSET_HPP
 
 #include "vulkan/vulkan.h"
+#include "wrapper/Object.hpp"
 
 namespace Concerto::Graphics::Wrapper
 {
@@ -17,34 +18,26 @@ namespace Concerto::Graphics::Wrapper
 
 	class ImageView;
 
-	class DescriptorSet
+	class Device;
+
+	class DescriptorSet : public Object<VkDescriptorSet>
 	{
 	public:
-		DescriptorSet() = default;
-
-		DescriptorSet(VkDevice device, DescriptorPool& pool,
+		DescriptorSet(Device& device, DescriptorPool& pool,
 				DescriptorSetLayout& descriptorSetLayout);
 
 		DescriptorSet(DescriptorSet&&) = default;
 
-		DescriptorSet(const DescriptorSet&) = default;
+		DescriptorSet(const DescriptorSet&) = delete;
 
 		DescriptorSet& operator=(DescriptorSet&&) = default;
 
-		DescriptorSet& operator=(const DescriptorSet&) = default;
+		DescriptorSet& operator=(const DescriptorSet&) = delete;
 
 		~DescriptorSet() = default;
-
-		VkDescriptorSet* Get();
-
-		[[nodiscard]] bool IsValid() const;
-
+		
 		void WriteImageSamplerDescriptor(Sampler& sampler, ImageView& imageView,
 				VkImageLayout imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-
-	private:
-		VkDescriptorSet _set = { VK_NULL_HANDLE };
-		VkDevice _device;
 	};
 }
 

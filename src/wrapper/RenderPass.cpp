@@ -8,11 +8,11 @@
 
 #include "wrapper/RenderPass.hpp"
 #include "wrapper/Swapchain.hpp"
+#include "wrapper/Device.hpp"
 
 namespace Concerto::Graphics::Wrapper
 {
-	RenderPass::RenderPass(VkDevice device, Swapchain& swapchain) :
-			_renderPass(VK_NULL_HANDLE), _device(device)
+	RenderPass::RenderPass(Device& device, Swapchain& swapchain) : Object<VkRenderPass>(device)
 	{
 		VkAttachmentDescription color_attachment = {};
 		color_attachment.format = swapchain.GetImageFormat();
@@ -72,7 +72,7 @@ namespace Concerto::Graphics::Wrapper
 				VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT | VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT;
 		depth_dependency.dstAccessMask = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
 
-		VkAttachmentDescription attachments[] = {color_attachment, depth_attachment};];
+		VkAttachmentDescription attachments[] = {color_attachment, depth_attachment};
 		VkRenderPassCreateInfo render_pass_info = {};
 		render_pass_info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
 		render_pass_info.attachmentCount = 2;
@@ -82,7 +82,7 @@ namespace Concerto::Graphics::Wrapper
 		render_pass_info.dependencyCount = 1;
 		render_pass_info.pDependencies = &depth_dependency;
 
-		if (vkCreateRenderPass(_device, &render_pass_info, nullptr, &_renderPass) != VK_SUCCESS)
+		if (vkCreateRenderPass(*_device->Get(), &render_pass_info, nullptr, &_handle) != VK_SUCCESS)
 		{
 			throw std::runtime_error("failed to create render pass!");
 		}
@@ -90,13 +90,7 @@ namespace Concerto::Graphics::Wrapper
 
 	RenderPass::~RenderPass()
 	{
-		vkDestroyRenderPass(_device, _renderPass, nullptr);
-		_renderPass = VK_NULL_HANDLE;
+		vkDestroyRenderPass(*_device->Get(), _handle, nullptr);
 	}
 
-	VkRenderPass RenderPass::Get() const
-	{
-		assert(_renderPass != VK_NULL_HANDLE);
-		return _renderPass;
-	}
 } // Concerto::Graphics::Wrapper

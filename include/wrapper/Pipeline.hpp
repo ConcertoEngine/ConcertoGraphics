@@ -8,6 +8,7 @@
 #include <unordered_map>
 #include <string>
 #include "vulkan/vulkan.h"
+#include "wrapper/Object.hpp"
 #include "Viewport.hpp"
 #include "PipelineInfo.hpp"
 #include "PipelineLayout.hpp"
@@ -16,29 +17,28 @@
 namespace Concerto::Graphics::Wrapper
 {
 
+	class Device;
 
-	class Pipeline
+	class Pipeline : public Object<VkPipeline>
 	{
 	public:
-		explicit Pipeline(VkDevice& device, PipelineInfo  pipeLineInfo);
+		explicit Pipeline(Device& device, PipelineInfo pipeLineInfo);
 
 		Pipeline(Pipeline&&) = default;
 
 		Pipeline(const Pipeline&) = delete;
 
-		Pipeline& operator=(Pipeline&&) = delete;
+		Pipeline& operator=(Pipeline&&) = default;
 
 		Pipeline& operator=(const Pipeline&) = delete;
 
 		~Pipeline();
 
-		[[nodiscard]] VkPipeline Get() const;
+		VkPipeline BuildPipeline(VkRenderPass renderPass);
 
-		VkPipeline buildPipeline(VkRenderPass renderPass);
+		[[nodiscard]] VkPipelineViewportStateCreateInfo BuildViewportState() const;
 
-		[[nodiscard]] VkPipelineViewportStateCreateInfo buildViewportState() const;
-
-		[[nodiscard]] VkPipelineColorBlendStateCreateInfo buildColorBlendState() const;
+		[[nodiscard]] VkPipelineColorBlendStateCreateInfo BuildColorBlendState() const;
 
 		struct CreateInfo
 		{
@@ -47,8 +47,6 @@ namespace Concerto::Graphics::Wrapper
 			VkGraphicsPipelineCreateInfo pipelineCreateInfo;
 		};
 	private:
-		VkDevice& _device;
-		VkPipeline _pipeline{};
 		PipelineInfo _pipelineInfo;
 		CreateInfo _createInfo;
 	};

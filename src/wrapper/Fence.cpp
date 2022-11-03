@@ -6,16 +6,17 @@
 #include <stdexcept>
 
 #include "wrapper/Fence.hpp"
+#include "wrapper/Device.hpp"
 
 namespace Concerto::Graphics::Wrapper
 {
-	Fence::Fence(VkDevice device, bool signaled) : _device(device)
+	Fence::Fence(Device& device, bool signaled) : Object<VkFence>(device)
 	{
 		VkFenceCreateInfo info = {};
 		info.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
 		info.pNext = nullptr;
 		info.flags = signaled ? VK_FENCE_CREATE_SIGNALED_BIT : 0;
-		if (vkCreateFence(_device, &info, nullptr, &_fence) != VK_SUCCESS)
+		if (vkCreateFence(*_device->Get(), &info, nullptr, &_handle) != VK_SUCCESS)
 		{
 			throw std::runtime_error("Failed to create fence");
 		}
@@ -23,19 +24,12 @@ namespace Concerto::Graphics::Wrapper
 
 	Fence::~Fence()
 	{
-		vkDestroyFence(_device, _fence, nullptr);
-		_fence = VK_NULL_HANDLE;
-	}
-
-	VkFence Fence::Get() const
-	{
-		assert(_fence != VK_NULL_HANDLE);
-		return _fence;
+		vkDestroyFence(*_device->Get(), _handle, nullptr);
 	}
 
 	void Fence::wait(std::uint64_t timeout)
 	{
-		if (vkWaitForFences(_device, 1, &_fence, true, timeout) != VK_SUCCESS)
+		if (vkWaitForFences(*_device->Get(), 1, &_handle, true, timeout) != VK_SUCCESS)
 		{
 			throw std::runtime_error("vkWaitForFences fail");
 		}
@@ -43,7 +37,7 @@ namespace Concerto::Graphics::Wrapper
 
 	void Fence::reset()
 	{
-		if (vkResetFences(_device, 1, &_fence) != VK_SUCCESS)
+		if (vkResetFences(*_device->Get(), 1, &_handle) != VK_SUCCESS)
 		{
 			throw std::runtime_error("vkResetFences fail");
 		}

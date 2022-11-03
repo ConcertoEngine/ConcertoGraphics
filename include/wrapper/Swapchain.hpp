@@ -9,6 +9,7 @@
 #include <optional>
 #include <span>
 #include "vulkan/vulkan.h"
+#include "wrapper/Object.hpp"
 #include "Image.hpp"
 #include "Allocator.hpp"
 #include "Semaphore.hpp"
@@ -21,11 +22,10 @@ namespace Concerto::Graphics::Wrapper
 
 	class PhysicalDevice;
 
-	class Swapchain
+	class Swapchain : public Object<VkSwapchainKHR>
 	{
 	public:
-		Swapchain(Allocator& allocator, VkExtent2D windowExtent, PhysicalDevice& physicalDevice, Device& device,
-				VkInstance instance);
+		Swapchain(Device& device, Allocator& allocator, VkExtent2D windowExtent, PhysicalDevice& physicalDevice);
 
 		Swapchain(Swapchain&&) = default;
 
@@ -36,8 +36,6 @@ namespace Concerto::Graphics::Wrapper
 		Swapchain& operator=(const Swapchain&) = delete;
 
 		~Swapchain();
-
-		[[nodiscard]] VkSwapchainKHR Get() const;
 
 		[[nodiscard]] std::span<Image> GetImages();
 
@@ -58,13 +56,8 @@ namespace Concerto::Graphics::Wrapper
 	private:
 		mutable std::optional<std::vector<Image>> _swapChainImages;
 		mutable std::optional<std::vector<ImageView>> _swapChainImageViews;
-		Allocator& _allocator;
-		PhysicalDevice& _physicalDevice;
-		Device& _device;
 		VkExtent2D _windowExtent;
-		VkSwapchainKHR _swapChain{};
 		VkFormat _swapChainImageFormat;
-		VkFormat _depthFormat;
 		Image _depthImage;
 		ImageView _depthImageView;
 	};

@@ -1,18 +1,19 @@
 //
-// Created by arthu on 21/06/2022.
+// Created by arthur on 21/06/2022.
 //
 
-#include "wrapper/Allocator.hpp"
-#include <assert.h>
+#include <cassert>
 #include <stdexcept>
+#include "wrapper/Allocator.hpp"
+#include "wrapper/Instance.hpp"
 namespace Concerto::Graphics::Wrapper
 {
-	Allocator::Allocator(VkPhysicalDevice physicalDevice, VkDevice device, VkInstance instance) : _allocator(VK_NULL_HANDLE)
+	Allocator::Allocator(VkPhysicalDevice physicalDevice, VkDevice device, Instance& instance) : _allocator(VK_NULL_HANDLE)
 	{
 		VmaAllocatorCreateInfo allocatorInfo = {};
 		allocatorInfo.physicalDevice = physicalDevice;
 		allocatorInfo.device = device;
-		allocatorInfo.instance = instance;
+		allocatorInfo.instance = *instance.Get();
 		if (vmaCreateAllocator(&allocatorInfo, &_allocator) != VK_SUCCESS)
 		{
 			throw std::runtime_error("VMA : Unable to create allocator");

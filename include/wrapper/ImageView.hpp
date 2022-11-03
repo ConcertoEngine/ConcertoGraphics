@@ -5,32 +5,26 @@
 #ifndef CONCERTOGRAPHICS_IMAGEVIEW_HPP
 #define CONCERTOGRAPHICS_IMAGEVIEW_HPP
 
-#include "Image.hpp"
-
+#include "vulkan/vulkan.h"
+#include "wrapper/Object.hpp"
 namespace Concerto::Graphics::Wrapper
 {
-	class ImageView
+	class Device;
+	class Image;
+	class ImageView : public Object<VkImageView>
 	{
 	public:
-		ImageView() = default;
-
-		ImageView(Image& image, VkImageAspectFlags aspectFlags, VkDevice device);
+		ImageView(Device& device, Image& image, VkImageAspectFlags aspectFlags);
 
 		ImageView(const ImageView&) = delete;
 
-		ImageView(ImageView&&) noexcept;
+		ImageView(ImageView&&) noexcept = default;
 
 		ImageView& operator=(const ImageView&) = delete;
 
-		ImageView& operator=(ImageView&&) noexcept;
+		ImageView& operator=(ImageView&&) noexcept = default;
 
 		~ImageView();
-
-		VkImageView* Get();
-
-	private:
-		VkImageView _imageView{ VK_NULL_HANDLE };
-		VkDevice _device{ VK_NULL_HANDLE };
 	};
 }
 

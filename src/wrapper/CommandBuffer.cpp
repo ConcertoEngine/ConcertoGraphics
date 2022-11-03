@@ -3,13 +3,14 @@
 //
 
 
-#include "wrapper/CommandBuffer.hpp"
 #include <stdexcept>
+#include "wrapper/CommandBuffer.hpp"
+#include "wrapper/Device.hpp"
 #include "wrapper/VulkanInitializer.hpp"
 
 namespace Concerto::Graphics::Wrapper
 {
-	CommandBuffer::CommandBuffer(VkDevice device, VkCommandPool commandPool) : _device(device),
+	CommandBuffer::CommandBuffer(Device& device, VkCommandPool commandPool) : _device(device),
 																			   _commandPool(commandPool)
 	{
 		VkCommandBufferAllocateInfo info = {};
@@ -19,7 +20,7 @@ namespace Concerto::Graphics::Wrapper
 		info.commandBufferCount = 1;
 		info.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
 
-		if (vkAllocateCommandBuffers(_device, &info, &_commandBuffer) != VK_SUCCESS)
+		if (vkAllocateCommandBuffers(*_device.Get(), &info, &_commandBuffer) != VK_SUCCESS)
 		{
 			throw std::runtime_error("Failed to allocate command buffer");
 		}
@@ -33,7 +34,7 @@ namespace Concerto::Graphics::Wrapper
 
 	CommandBuffer::~CommandBuffer()
 	{
-		vkFreeCommandBuffers(_device, _commandPool, 1, &_commandBuffer);
+		vkFreeCommandBuffers(*_device.Get(), _commandPool, 1, &_commandBuffer);
 		_commandBuffer = VK_NULL_HANDLE;
 	}
 
@@ -80,7 +81,7 @@ namespace Concerto::Graphics::Wrapper
 
 	void CommandBuffer::BindPipeline(VkPipelineBindPoint pipelineBindPoint, Pipeline& pipeline)
 	{
-		vkCmdBindPipeline(_commandBuffer, pipelineBindPoint, pipeline.Get());
+		vkCmdBindPipeline(_commandBuffer, pipelineBindPoint, *pipeline.Get());
 	}
 
 	void CommandBuffer::BindPipeline(VkPipelineBindPoint pipelineBindPoint, VkPipeline pipeline)
@@ -102,7 +103,7 @@ namespace Concerto::Graphics::Wrapper
 
 	void CommandBuffer::UpdatePushConstants(PipelineLayout& pipelineLayout, MeshPushConstants& meshPushConstants)
 	{
-		vkCmdPushConstants(_commandBuffer, pipelineLayout.Get(), VK_SHADER_STAGE_VERTEX_BIT, 0,
+		vkCmdPushConstants(_commandBuffer, *pipelineLayout.Get(), VK_SHADER_STAGE_VERTEX_BIT, 0,
 				sizeof(MeshPushConstants), &meshPushConstants);
 	}
 
@@ -137,7 +138,7 @@ namespace Concerto::Graphics::Wrapper
 		}
 		End();
 
-		if (vkQueueSubmit(*queue.Get(), 1, &submitInfo, fence.Get()) != VK_SUCCESS)
+		if (vkQueueSubmit(*queue.Get(), 1, &submitInfo, *fence.Get()) != VK_SUCCESS)
 		{
 			throw std::runtime_error("vkQueueSubmit fail");
 		}

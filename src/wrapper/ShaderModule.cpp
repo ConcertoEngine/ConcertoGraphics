@@ -6,11 +6,12 @@
 #include <fstream>
 
 #include "wrapper/ShaderModule.hpp"
+#include "wrapper/Device.hpp"
 
 namespace Concerto::Graphics::Wrapper
 {
 
-	ShaderModule::ShaderModule(const std::string& shaderPath, VkDevice device) : _device(device), _shaderModule(VK_NULL_HANDLE)
+	ShaderModule::ShaderModule(Device& device, const std::string& shaderPath) : Object<VkShaderModule>(device)
 	{
 		loadShaderModule(shaderPath);
 		createShaderModule();
@@ -18,8 +19,7 @@ namespace Concerto::Graphics::Wrapper
 
 	ShaderModule::~ShaderModule()
 	{
-		vkDestroyShaderModule(_device, _shaderModule, nullptr);
-		_shaderModule = VK_NULL_HANDLE;
+		vkDestroyShaderModule(*_device->Get(), _handle, nullptr);
 	}
 
 	void ShaderModule::loadShaderModule(const std::string& shaderPath)
@@ -40,15 +40,9 @@ namespace Concerto::Graphics::Wrapper
 
 	void ShaderModule::createShaderModule()
 	{
-		if (vkCreateShaderModule(_device, &_shaderModuleCreateInfo, nullptr, &_shaderModule) != VK_SUCCESS)
+		if (vkCreateShaderModule(*_device->Get(), &_shaderModuleCreateInfo, nullptr, &_handle) != VK_SUCCESS)
 		{
 			throw std::runtime_error("Failed to create shader module");
 		}
-	}
-
-	VkShaderModule ShaderModule::getShaderModule()
-	{
-		assert(_shaderModule != VK_NULL_HANDLE);
-		return _shaderModule;
 	}
 }

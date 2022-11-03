@@ -7,32 +7,31 @@
 
 #include <vector>
 #include "vulkan/vulkan.h"
+#include "wrapper/Object.hpp"
 #include "wrapper/DescriptorSet.hpp"
 
 namespace Concerto::Graphics::Wrapper
 {
-	class DescriptorPool
+	class Device;
+
+	class DescriptorPool : public Object<VkDescriptorPool>
 	{
 	public:
-		DescriptorPool(VkDevice device, std::vector<VkDescriptorPoolSize> poolSizes);
+		explicit DescriptorPool(Device& device);
+
+		DescriptorPool(Device& device, std::vector<VkDescriptorPoolSize> poolSizes);
 
 		DescriptorPool(DescriptorPool&&) = default;
 
-		DescriptorPool(const DescriptorPool&) = default;
+		DescriptorPool(const DescriptorPool&) = delete;
 
 		DescriptorPool& operator=(DescriptorPool&&) = default;
 
-		DescriptorPool& operator=(const DescriptorPool&) = default;
+		DescriptorPool& operator=(const DescriptorPool&) = delete;
 
 		DescriptorSet AllocateDescriptorSet(DescriptorSetLayout& setLayout);
 
 		~DescriptorPool();
-
-		[[nodiscard]] VkDescriptorPool* Get();
-
-	private:
-		VkDevice _device;
-		VkDescriptorPool _pool;
 	};
 }
 

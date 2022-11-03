@@ -6,6 +6,7 @@
 #define CONCERTOGRAPHICS_COMMANDBUFFER_HPP
 
 #include <functional>
+
 #include "vulkan/vulkan.h"
 #include "Pipeline.hpp"
 #include "AllocatedBuffer.hpp"
@@ -16,10 +17,11 @@
 
 namespace Concerto::Graphics::Wrapper
 {
+	class Device;
 	class CommandBuffer
 	{
 	public:
-		explicit CommandBuffer(VkDevice device, VkCommandPool commandPool);
+		explicit CommandBuffer(Device& device, VkCommandPool commandPool);
 
 		CommandBuffer(CommandBuffer&&) = default;
 
@@ -69,7 +71,7 @@ namespace Concerto::Graphics::Wrapper
 		void CopyBuffer(AllocatedBuffer& src, AllocatedBuffer& dest, std::size_t size);
 
 	private:
-		VkDevice _device;
+		Device& _device;
 		VkCommandPool _commandPool;
 		VkCommandBuffer _commandBuffer;
 	};

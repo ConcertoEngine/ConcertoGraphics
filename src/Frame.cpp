@@ -6,18 +6,19 @@
 #include "wrapper/VulkanInitializer.hpp"
 #include "wrapper/CommandBuffer.hpp"
 #include "wrapper/CommandPool.hpp"
+#include "wrapper/Device.hpp"
 
 namespace Concerto::Graphics
 {
-
-	Graphics::FrameData::FrameData(Wrapper::Allocator& allocator, VkDevice device, std::uint32_t queueFamily,
+	using namespace Concerto::Graphics::Wrapper;
+	Graphics::FrameData::FrameData(Device& device, Wrapper::Allocator& allocator, std::uint32_t queueFamily,
 			Wrapper::DescriptorPool& pool, Wrapper::DescriptorSetLayout& globalDescriptorSetLayout,
 			Wrapper::DescriptorSetLayout& objectDescriptorSetLayout, Wrapper::AllocatedBuffer& sceneParameterBuffer,
 			bool signaled) : _presentSemaphore(device),
 							 _commandPool(std::make_unique<Wrapper::CommandPool>(device, queueFamily)),
 							 _renderSemaphore(device),
 							 _renderFence(device, signaled),
-							 _mainCommandBuffer(std::make_unique<Wrapper::CommandBuffer>(device, _commandPool->Get())),
+							 _mainCommandBuffer(std::make_unique<Wrapper::CommandBuffer>(device, *_commandPool->Get())),
 							 _cameraBuffer(MakeAllocatedBuffer<GPUCameraData>(allocator,
 									 VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
 									 VMA_MEMORY_USAGE_CPU_TO_GPU)),
@@ -56,6 +57,6 @@ namespace Concerto::Graphics
 
 		VkWriteDescriptorSet setWrites[] = { cameraWrite, sceneWrite, objectWrite };
 
-		vkUpdateDescriptorSets(device, 3, setWrites, 0, nullptr);
+		vkUpdateDescriptorSets(*device.Get(), 3, setWrites, 0, nullptr);
 	}
 }

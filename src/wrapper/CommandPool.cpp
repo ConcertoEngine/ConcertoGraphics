@@ -7,18 +7,20 @@
 #include <iostream>
 
 #include "wrapper/CommandPool.hpp"
+#include "wrapper/Device.hpp"
 
 namespace Concerto::Graphics::Wrapper
 {
-	CommandPool::CommandPool(VkDevice device, std::uint32_t queueFamily) : _device(device), _queueFamily(queueFamily)
+	CommandPool::CommandPool(Device& device, std::uint32_t queueFamily) : Object<VkCommandPool>(device),
+																		  _queueFamily(queueFamily)
 	{
-		VkCommandPoolCreateInfo info {};
+		VkCommandPoolCreateInfo info{};
 		info.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
 		info.pNext = nullptr;
 		info.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
 		info.queueFamilyIndex = queueFamily;
 
-		VkResult result = vkCreateCommandPool(_device, &info, nullptr, &_commandPool);
+		VkResult result = vkCreateCommandPool(*_device->Get(), &info, nullptr, &_handle);
 		if (result != VK_SUCCESS)
 		{
 			throw std::runtime_error("Failed to create command pool");
@@ -27,19 +29,13 @@ namespace Concerto::Graphics::Wrapper
 
 	CommandPool::~CommandPool()
 	{
-		vkDestroyCommandPool(_device, _commandPool, nullptr);
-		_commandPool = VK_NULL_HANDLE;
-	}
-
-	VkCommandPool CommandPool::Get() const
-	{
-		assert(_commandPool != VK_NULL_HANDLE);
-		return _commandPool;
+		vkDestroyCommandPool(*_device->Get(), _handle, nullptr);
+		_handle = VK_NULL_HANDLE;
 	}
 
 	void CommandPool::reset()
 	{
-		if (vkResetCommandPool(_device, _commandPool, 0) != VK_SUCCESS)
+		if (vkResetCommandPool(*_device->Get(), _handle, 0) != VK_SUCCESS)
 		{
 			throw std::runtime_error("vkResetCommandPool fail");
 		}

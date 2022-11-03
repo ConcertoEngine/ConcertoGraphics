@@ -8,35 +8,34 @@
 #include <string>
 #include <vector>
 #include "vulkan/vulkan.h"
+#include "wrapper/Object.hpp"
 
 namespace Concerto::Graphics::Wrapper
 {
-	class ShaderModule
+	class Device;
+
+	class ShaderModule : public Object<VkShaderModule>
 	{
 	public:
-		ShaderModule(const std::string& shaderPath, VkDevice device);
+		ShaderModule(Device& device, const std::string& shaderPath);
 
 		ShaderModule(ShaderModule&&) = default;
 
-		ShaderModule(const ShaderModule&) = default;
+		ShaderModule(const ShaderModule&) = delete;
 
 		ShaderModule& operator=(ShaderModule&&) = default;
 
-		ShaderModule& operator=(const ShaderModule&) = default;
+		ShaderModule& operator=(const ShaderModule&) = delete;
 
 		~ShaderModule();
-
-		VkShaderModule getShaderModule();
 
 	private:
 		void loadShaderModule(const std::string& shaderPath);
 
 		void createShaderModule();
 
-		VkShaderModule _shaderModule;
 		VkShaderModuleCreateInfo _shaderModuleCreateInfo{};
 		std::vector<std::uint32_t> _buffer;
-		VkDevice _device{};
 	};
 }
 

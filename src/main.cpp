@@ -40,19 +40,16 @@
 #include "Utils.hpp"
 #include "UploadContext.hpp"
 #include "Texture.hpp"
+#include "wrapper/Object.hpp"
 
 using namespace Concerto;
 using namespace Concerto::Graphics;
 using namespace Concerto::Graphics::Wrapper;
-
-VkInstance _instance{ VK_NULL_HANDLE };
-VkDevice _device{ VK_NULL_HANDLE };
+using Frames = std::array<FrameData, 2>;
 int _frameNumber = 0;
 VkExtent2D windowExtent = { 1280, 720 };
 VkPhysicalDeviceProperties _gpuProperties{};
 
-
-using Frames = std::array<FrameData, 2>;
 std::vector<std::unique_ptr<RenderObject>> _renderables;
 std::unordered_map<std::string, std::shared_ptr<Texture>> textures;
 
@@ -85,7 +82,7 @@ int main()
 	PhysicalDevice& physicalDevice = devices[0];
 	physicalDevice.SetSurface(vkSurface);
 	std::vector<const char*> deviceExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
-	Device device(physicalDevice,deviceExtensions);
+	Device device(physicalDevice, deviceExtensions);
 
 	if (res != VK_SUCCESS)
 	{
@@ -96,18 +93,12 @@ int main()
 	_gpuProperties = physicalDevice.GetProperties();
 	VkPhysicalDevice _physicalDevice = *physicalDevice.Get();
 	VkQueue _graphicsQueue = *device.GetQueue(Queue::Type::Graphics).Get();
-	_device = *device.Get();
-	_instance = *instance.Get();
 	uint32_t _graphicsQueueFamily = device.GetQueue(Queue::Type::Graphics).GetFamilyIndex();
-	Allocator _allocator(_physicalDevice, _device, _instance);
-	Swapchain swapchain(_allocator, windowExtent, physicalDevice, device, _instance);
+	Allocator _allocator(_physicalDevice, *device.Get(), instance);
+	Swapchain swapchain(device, _allocator, windowExtent, physicalDevice);
 
-	// Renderpass
-
-
-	RenderPass renderPass(_device, swapchain);
-	// Renderpass
-	FrameBuffer frameBuffer(_device, swapchain, renderPass);
+	RenderPass renderPass(device, swapchain);
+	FrameBuffer frameBuffer(device, swapchain, renderPass);
 	// Commands
 	VkDescriptorSetLayoutBinding camBufferBind = VulkanInitializer::DescriptorSetLayoutBinding(
 			VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT, 0);
@@ -117,85 +108,52 @@ int main()
 			VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_VERTEX_BIT, 0);
 	VkDescriptorSetLayoutBinding textureBind = VulkanInitializer::DescriptorSetLayoutBinding(
 			VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT, 0);
-	DescriptorSetLayout globalSetLayout(_device, { camBufferBind, sceneBind });
-	DescriptorSetLayout objectSetLayout(_device, { objectBind });
-	DescriptorSetLayout singleTextureSetLayout(_device, { textureBind });
+	DescriptorSetLayout globalSetLayout(device, { camBufferBind, sceneBind });
+	DescriptorSetLayout objectSetLayout(device, { objectBind });
+	DescriptorSetLayout singleTextureSetLayout(device, { textureBind });
 
-	std::vector<VkDescriptorPoolSize> sizes =
-			{
-					{ VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,         10 },
-					{ VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, 10 },
-					{ VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,         10 },
-					{ VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 10 }
-			};
-	DescriptorPool descriptorPool(_device, sizes);
+	DescriptorPool descriptorPool(device);
 	const std::size_t sceneParamBufferSize =
 			2 * PadUniformBuffer(sizeof(GPUSceneData), _gpuProperties.limits.minUniformBufferOffsetAlignment);
 	AllocatedBuffer _sceneParameterBuffer(_allocator, sceneParamBufferSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
 			VMA_MEMORY_USAGE_CPU_TO_GPU);
 	Frames frames = {
-			FrameData(_allocator, _device, _graphicsQueueFamily, descriptorPool, globalSetLayout, objectSetLayout,
+			FrameData(device, _allocator, _graphicsQueueFamily, descriptorPool, globalSetLayout, objectSetLayout,
 					_sceneParameterBuffer, true),
-			FrameData(_allocator, _device, _graphicsQueueFamily, descriptorPool, globalSetLayout, objectSetLayout,
+			FrameData(device, _allocator, _graphicsQueueFamily, descriptorPool, globalSetLayout, objectSetLayout,
 					_sceneParameterBuffer, true)
 	};
 	// Commands
 	// Pilpeline
-	ShaderModule colorMeshShader(R"(shaders/default_lit.frag.spv)", _device);
-	ShaderModule texturedMeshShader(R"(shaders/textured_lit.frag.spv)", _device);
-	ShaderModule meshVertShader(R"(shaders/tri_mesh_ssbo.vert.spv)", _device);
+	ShaderModule colorMeshShader(device, R"(shaders/default_lit.frag.spv)");
+	ShaderModule texturedMeshShader(device, R"(shaders/textured_lit.frag.spv)");
+	ShaderModule meshVertShader(device, R"(shaders/tri_mesh_ssbo.vert.spv)");
 
-	PipelineLayout meshPipelineLayout = makePipelineLayout<MeshPushConstants>(_device,
+	PipelineLayout meshPipelineLayout = makePipelineLayout<MeshPushConstants>(device,
 			{ globalSetLayout, objectSetLayout });
-	PipelineLayout texturedSetLayout = makePipelineLayout<MeshPushConstants>(_device,
+	PipelineLayout texturedSetLayout = makePipelineLayout<MeshPushConstants>(device,
 			{ globalSetLayout, objectSetLayout, singleTextureSetLayout });
 
-	PipelineInfo meshPipelineInfo;
-
-	meshPipelineInfo._shaderStages.push_back(
-			VulkanInitializer::PipelineShaderStageCreateInfo(VK_SHADER_STAGE_VERTEX_BIT,
-					meshVertShader.getShaderModule()));
-	meshPipelineInfo._shaderStages.push_back(
-			VulkanInitializer::PipelineShaderStageCreateInfo(VK_SHADER_STAGE_FRAGMENT_BIT,
-					colorMeshShader.getShaderModule()));
-	VertexInputDescription vertexDescription = Vertex::getVertexDescription();
-	meshPipelineInfo._vertexInputInfo = VulkanInitializer::VertexInputStateCreateInfo();
-	meshPipelineInfo._vertexInputInfo.pVertexAttributeDescriptions = vertexDescription.attributes.data();
-	meshPipelineInfo._vertexInputInfo.vertexAttributeDescriptionCount = vertexDescription.attributes.size();
-	meshPipelineInfo._vertexInputInfo.pVertexBindingDescriptions = vertexDescription.bindings.data();
-	meshPipelineInfo._vertexInputInfo.vertexBindingDescriptionCount = vertexDescription.bindings.size();
-	meshPipelineInfo._inputAssembly = VulkanInitializer::InputAssemblyCreateInfo(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
-	meshPipelineInfo._viewport.x = 0.0f;
-	meshPipelineInfo._viewport.y = 0.0f;
-	meshPipelineInfo._viewport.width = (float)windowExtent.width;
-	meshPipelineInfo._viewport.height = (float)windowExtent.height;
-	meshPipelineInfo._viewport.minDepth = 0.0f;
-	meshPipelineInfo._viewport.maxDepth = 1.0f;
-	meshPipelineInfo._scissor.offset = { 0, 0 };
-	meshPipelineInfo._scissor.extent = windowExtent;
-	meshPipelineInfo._rasterizer = VulkanInitializer::RasterizationStateCreateInfo(VK_POLYGON_MODE_FILL);
-	meshPipelineInfo._multisampling = VulkanInitializer::MultisamplingStateCreateInfo();
-	meshPipelineInfo._colorBlendAttachment = VulkanInitializer::ColorBlendAttachmentState();
-	meshPipelineInfo._pipelineLayout = meshPipelineLayout.Get();
-	meshPipelineInfo._depthStencil = VulkanInitializer::DepthStencilCreateInfo(true, true, VK_COMPARE_OP_LESS_OR_EQUAL);
-	Pipeline coloredShaderPipeline(_device, meshPipelineInfo);
-	coloredShaderPipeline.buildPipeline(renderPass.Get());
+	PipelineInfo meshPipelineInfo({ VulkanInitializer::PipelineShaderStageCreateInfo(VK_SHADER_STAGE_VERTEX_BIT,
+			*meshVertShader.Get()), VulkanInitializer::PipelineShaderStageCreateInfo(VK_SHADER_STAGE_FRAGMENT_BIT,
+			*colorMeshShader.Get()) }, windowExtent, meshPipelineLayout);
+	Pipeline coloredShaderPipeline(device, meshPipelineInfo);
+	coloredShaderPipeline.BuildPipeline(*renderPass.Get());
 	meshPipelineInfo._shaderStages.clear();
 	meshPipelineInfo._shaderStages.push_back(
 			VulkanInitializer::PipelineShaderStageCreateInfo(VK_SHADER_STAGE_VERTEX_BIT,
-					meshVertShader.getShaderModule()));
+					*meshVertShader.Get()));
 	meshPipelineInfo._shaderStages.push_back(
 			VulkanInitializer::PipelineShaderStageCreateInfo(VK_SHADER_STAGE_FRAGMENT_BIT,
-					texturedMeshShader.getShaderModule()));
-	meshPipelineInfo._pipelineLayout = texturedSetLayout.Get();
-	Pipeline texturedPipeline(_device, meshPipelineInfo);
-	texturedPipeline.buildPipeline(renderPass.Get());
+					*texturedMeshShader.Get()));
+	meshPipelineInfo._pipelineLayout = *texturedSetLayout.Get();
+	Pipeline texturedPipeline(device, meshPipelineInfo);
+	texturedPipeline.BuildPipeline(*renderPass.Get());
 
 	Queue queue(device, _graphicsQueueFamily);
-	UploadContext uploadContext(_device, _graphicsQueueFamily);
-//	Fence _renderFence(_device);
-	auto texture = std::make_shared<Texture>(".\\assets\\lost_empire-RGBA.png", _allocator,
-			uploadContext._commandBuffer, uploadContext, queue, VK_IMAGE_ASPECT_COLOR_BIT, _device);
+	UploadContext uploadContext(device, _graphicsQueueFamily);
+	auto texture = std::make_shared<Texture>(device, ".\\assets\\lost_empire-RGBA.png", _allocator,
+			uploadContext._commandBuffer, uploadContext, queue, VK_IMAGE_ASPECT_COLOR_BIT);
 	textures.emplace("empire_diffuse", texture);
 	// Monkey Mesh
 	{
@@ -205,8 +163,8 @@ int main()
 		monkeyMesh->Upload(uploadContext._commandBuffer, uploadContext._commandPool, uploadContext._uploadFence, queue,
 				_allocator);
 		auto& renderObj = _renderables.emplace_back(
-				std::make_unique<RenderObject>(std::move(monkeyMesh), meshPipelineLayout.Get(),
-						coloredShaderPipeline.Get(),
+				std::make_unique<RenderObject>(std::move(monkeyMesh), *meshPipelineLayout.Get(),
+						*coloredShaderPipeline.Get(),
 						glm::mat4{ 1.0f }));
 	}
 	// Lost empire
@@ -217,11 +175,11 @@ int main()
 		empireMesh->Upload(uploadContext._commandBuffer, uploadContext._commandPool, uploadContext._uploadFence, queue,
 				_allocator);
 		auto& renderObj = _renderables.emplace_back(
-				std::make_unique<RenderObject>(std::move(empireMesh), texturedSetLayout.Get(), texturedPipeline.Get(),
+				std::make_unique<RenderObject>(std::move(empireMesh), *texturedSetLayout.Get(), *texturedPipeline.Get(),
 						glm::mat4{ 1.0f }));
-		Sampler sampler(_device, VK_FILTER_NEAREST);
+		Sampler sampler(device, VK_FILTER_NEAREST);
 		renderObj->material._textureSet = descriptorPool.AllocateDescriptorSet(singleTextureSetLayout);
-		renderObj->material._textureSet.WriteImageSamplerDescriptor(sampler, texture->_imageView);
+		renderObj->material._textureSet->WriteImageSamplerDescriptor(sampler, texture->_imageView);
 	}
 
 	// Render loop
@@ -278,11 +236,15 @@ drawObjects(Allocator& allocator, CommandBuffer& commandBuffer, FrameData& frame
 					frame.globalDescriptor, uniform_offset);
 			commandBuffer.BindDescriptorSets(VK_PIPELINE_BIND_POINT_GRAPHICS, object.material._pipelineLayout, 1, 1,
 					frame.objectDescriptor);
-			if (*object.material._textureSet.Get() != VK_NULL_HANDLE)
+			if (object.material._textureSet->IsNull() == false)
 			{
 				commandBuffer.BindDescriptorSets(VK_PIPELINE_BIND_POINT_GRAPHICS, object.material._pipelineLayout, 2, 1,
-						object.material._textureSet);
+						*object.material._textureSet);
 			}
+//			{
+//				commandBuffer.BindDescriptorSets(VK_PIPELINE_BIND_POINT_GRAPHICS, object.material._pipelineLayout, 2, 1,
+//						*object.material._textureSet->Get());
+//			}
 		}
 		glm::mat4 mesh_matrix = object.transformMatrix;
 
@@ -311,7 +273,7 @@ draw(Allocator& allocator, Swapchain& swapchain, RenderPass& renderpass, FrameBu
 		clearValue.color = {{ 0.0f, 0.0f, 255, 1.0f }};
 		depthClear.depthStencil.depth = 1.f;
 		VkClearValue clearValues[] = { clearValue, depthClear };
-		VkRenderPassBeginInfo rpInfo = VulkanInitializer::RenderPassBeginInfo(renderpass.Get(), windowExtent,
+		VkRenderPassBeginInfo rpInfo = VulkanInitializer::RenderPassBeginInfo(*renderpass.Get(), windowExtent,
 				frameBuffer[swapchainImageIndex]);
 		rpInfo.clearValueCount = 2;
 		rpInfo.pClearValues = &clearValues[0];

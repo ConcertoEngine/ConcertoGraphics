@@ -8,18 +8,19 @@
 #include "wrapper/CommandPool.hpp"
 #include "wrapper/CommandBuffer.hpp"
 #include "wrapper/Fence.hpp"
+#include "wrapper/Device.hpp"
 
 namespace Concerto::Graphics
 {
 	struct UploadContext
 	{
-		UploadContext(VkDevice device, std::uint32_t queueFamily) : _uploadFence(device, false),
+		UploadContext(Wrapper::Device& device, std::uint32_t queueFamily) : _uploadFence(device, false),
 																	_commandPool(
 																			device,
 																			queueFamily),
 																	_commandBuffer(
 																			device,
-																			_commandPool.Get())
+																			*_commandPool.Get())
 		{
 		}
 

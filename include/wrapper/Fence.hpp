@@ -6,13 +6,16 @@
 #define CONCERTOGRAPHICS_FENCE_HPP
 
 #include "vulkan/vulkan.hpp"
+#include "wrapper/Object.hpp"
 
 namespace Concerto::Graphics::Wrapper
 {
-	class Fence
+	class Device;
+
+	class Fence : public Object<VkFence>
 	{
 	public:
-		Fence(VkDevice device, bool signaled = true);
+		explicit Fence(Device& device, bool signaled = true);
 
 		Fence(Fence&&) = default;
 
@@ -23,14 +26,10 @@ namespace Concerto::Graphics::Wrapper
 		Fence& operator=(const Fence&) = delete;
 
 		~Fence();
-		VkFence Get() const;
+
 		void wait(std::uint64_t timeout);
+
 		void reset();
-
-
-	private:
-		VkDevice _device;
-		VkFence _fence{};
 	};
 } // namespace Concerto::Graphics::Wrapper
 

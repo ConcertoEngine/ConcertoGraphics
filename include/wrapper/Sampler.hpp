@@ -6,17 +6,17 @@
 #define CONCERTOGRAPHICS_SAMPLER_HPP
 
 #include "vulkan/vulkan.h"
+#include "wrapper/Object.hpp"
 
 namespace Concerto::Graphics::Wrapper
 {
-	class Sampler
+	class Device;
+
+	class Sampler : public Object<VkSampler>
 	{
 	public:
-		Sampler(VkDevice device, VkFilter filter, VkSamplerAddressMode samplerAddressMode = VK_SAMPLER_ADDRESS_MODE_REPEAT);
-		VkSampler* Get();
-	private:
-		VkDevice _device;
-		VkSampler _sampler;
+		Sampler(Device& device, VkFilter filter,
+				VkSamplerAddressMode samplerAddressMode = VK_SAMPLER_ADDRESS_MODE_REPEAT);
 	};
 }
 

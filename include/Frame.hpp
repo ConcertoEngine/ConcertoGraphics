@@ -23,10 +23,11 @@ namespace Concerto::Graphics
 	{
 		class CommandBuffer;
 		class CommandPool;
+		class Device;
 	}
 	struct FrameData
 	{
-		FrameData(Wrapper::Allocator& allocator, VkDevice device, std::uint32_t queueFamily, Wrapper::DescriptorPool& pool,
+		FrameData(Wrapper::Device& device,Wrapper::Allocator& allocator, std::uint32_t queueFamily, Wrapper::DescriptorPool& pool,
 				Wrapper::DescriptorSetLayout& globalDescriptorSetLayout, Wrapper::DescriptorSetLayout& objectDescriptorSetLayout,
 				Wrapper::AllocatedBuffer& sceneParameterBuffer,
 				bool signaled = true);

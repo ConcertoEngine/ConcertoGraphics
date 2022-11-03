@@ -9,10 +9,11 @@
 
 namespace Concerto::Graphics::Wrapper
 {
+	class Instance
 	class Allocator
 	{
 	public:
-		Allocator(VkPhysicalDevice physicalDevice, VkDevice device, VkInstance instance);
+		Allocator(VkPhysicalDevice physicalDevice, VkDevice device, Instance& instance);
 		~Allocator();
 
 		VmaAllocator _allocator;

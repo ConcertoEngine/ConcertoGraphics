@@ -7,12 +7,33 @@
 #include <cassert>
 
 #include "wrapper/DescriptorPool.hpp"
+#include "wrapper/Device.hpp"
 
 namespace Concerto::Graphics::Wrapper
 {
+	DescriptorPool::DescriptorPool(Device& device) : Object<VkDescriptorPool>(device)
+	{
+		std::vector<VkDescriptorPoolSize> sizes =
+				{
+						{ VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,         10 },
+						{ VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, 10 },
+						{ VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,         10 },
+						{ VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 10 }
+				};
+		VkDescriptorPoolCreateInfo pool_info = {};
+		pool_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+		pool_info.flags = 0;
+		pool_info.maxSets = 10;
+		pool_info.poolSizeCount = sizes.size();
+		pool_info.pPoolSizes = sizes.data();
+		if (vkCreateDescriptorPool(*device.Get(), &pool_info, nullptr, &_handle) != VK_SUCCESS)
+		{
+			throw std::runtime_error("Failed to create descriptor pool");
+		}
+	}
 
-	DescriptorPool::DescriptorPool(VkDevice device, std::vector<VkDescriptorPoolSize> poolSizes) : _device(device),
-																								   _pool(VK_NULL_HANDLE)
+	DescriptorPool::DescriptorPool(Device& device, std::vector<VkDescriptorPoolSize> poolSizes)
+			: Object<VkDescriptorPool>(device)
 	{
 		VkDescriptorPoolCreateInfo pool_info = {};
 		pool_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
@@ -20,7 +41,7 @@ namespace Concerto::Graphics::Wrapper
 		pool_info.maxSets = 10;
 		pool_info.poolSizeCount = poolSizes.size();
 		pool_info.pPoolSizes = poolSizes.data();
-		if (vkCreateDescriptorPool(device, &pool_info, nullptr, &_pool) != VK_SUCCESS)
+		if (vkCreateDescriptorPool(*device.Get(), &pool_info, nullptr, &_handle) != VK_SUCCESS)
 		{
 			throw std::runtime_error("Failed to create descriptor pool");
 		}
@@ -28,18 +49,12 @@ namespace Concerto::Graphics::Wrapper
 
 	DescriptorPool::~DescriptorPool()
 	{
-		vkDestroyDescriptorPool(_device, _pool, nullptr);
-		_pool = VK_NULL_HANDLE;
+		vkDestroyDescriptorPool(*_device->Get(), _handle, nullptr);
 	}
 
-	VkDescriptorPool* DescriptorPool::Get()
-	{
-		assert(_pool != VK_NULL_HANDLE);
-		return &_pool;
-	}
 
 	DescriptorSet DescriptorPool::AllocateDescriptorSet(DescriptorSetLayout& setLayout)
 	{
-		return DescriptorSet(_device, *this, setLayout);
+		return {*_device, *this, setLayout};
 	}
 }

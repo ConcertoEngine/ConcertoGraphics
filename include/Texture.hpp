@@ -10,16 +10,17 @@
 #include "wrapper/Image.hpp"
 #include "wrapper/ImageView.hpp"
 #include "wrapper/CommandBuffer.hpp"
+#include "wrapper/Device.hpp"
 
 namespace Concerto::Graphics
 {
 	struct Texture
 	{
-		Texture(const std::string& file, Wrapper::Allocator& allocator,
+		Texture(Wrapper::Device& device, const std::string& file, Wrapper::Allocator& allocator,
 				Wrapper::CommandBuffer& commandBuffer, UploadContext& uploadContext, Wrapper::Queue& queue,
-				VkImageAspectFlags aspectFlags, VkDevice device) :
-				_image(file, allocator, commandBuffer, uploadContext, queue),
-				_imageView(_image, aspectFlags, device)
+				VkImageAspectFlags aspectFlags) :
+				_image(device, file, allocator, commandBuffer, uploadContext, queue),
+				_imageView(device, _image, aspectFlags)
 		{
 
 		}

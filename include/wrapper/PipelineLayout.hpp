@@ -9,14 +9,16 @@
 #include <vector>
 #include <functional>
 #include "vulkan/vulkan.h"
-#include "DescriptorSetLayout.hpp"
+#include "wrapper/Object.hpp"
+#include "wrapper/DescriptorSetLayout.hpp"
 
 namespace Concerto::Graphics::Wrapper
 {
-	class PipelineLayout
+	class Device;
+	class PipelineLayout : public Object<VkPipelineLayout>
 	{
 	public:
-		PipelineLayout(VkDevice device, std::size_t size,
+		PipelineLayout(Device& device, std::size_t size,
 				const std::vector<std::reference_wrapper<DescriptorSetLayout>>& descriptorSetLayouts);
 
 		PipelineLayout(PipelineLayout&&) = default;
@@ -28,16 +30,10 @@ namespace Concerto::Graphics::Wrapper
 		PipelineLayout& operator=(const PipelineLayout&) = delete;
 
 		~PipelineLayout();
-
-		VkPipelineLayout Get() const;
-
-	private:
-		VkDevice _device;
-		VkPipelineLayout _pipelineLayout{};
 	};
 
 	template<typename T>
-	PipelineLayout makePipelineLayout(VkDevice device,
+	PipelineLayout makePipelineLayout(Device& device,
 			const std::vector<std::reference_wrapper<DescriptorSetLayout>>& descriptorSetLayouts)
 	{
 		return { device, sizeof(T), descriptorSetLayouts };

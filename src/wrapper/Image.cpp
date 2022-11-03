@@ -13,7 +13,7 @@
 
 namespace Concerto::Graphics::Wrapper
 {
-	Image::Image(VkExtent2D extent, VkFormat depthFormat, Allocator& allocator) :
+	Image::Image(Device &device,VkExtent2D extent, VkFormat depthFormat, Allocator& allocator) : Object<VkImage>(device),
 			_imageFormat(depthFormat), _isAllocated(true), _allocator(allocator._allocator)
 	{
 		VkExtent3D depthImageExtent = {
@@ -27,15 +27,15 @@ namespace Concerto::Graphics::Wrapper
 		dimg_allocinfo.usage = VMA_MEMORY_USAGE_GPU_ONLY;
 		dimg_allocinfo.requiredFlags = VkMemoryPropertyFlags(VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
 
-		if (vmaCreateImage(allocator._allocator, &dimg_info, &dimg_allocinfo, &_image, &_allocation, nullptr) !=
+		if (vmaCreateImage(allocator._allocator, &dimg_info, &dimg_allocinfo, &_handle, &_allocation, nullptr) !=
 			VK_SUCCESS)
 		{
 			throw std::runtime_error("Failed to create image");
 		}
 	}
 
-	Image::Image(const std::string& file, Allocator& allocator,
-			CommandBuffer& commandBuffer, UploadContext& uploadContext, Queue& queue) :
+	Image::Image(Device &device,const std::string& file, Allocator& allocator,
+			CommandBuffer& commandBuffer, UploadContext& uploadContext, Queue& queue) : Object<VkImage>(device),
 			_imageFormat(VK_FORMAT_R8G8B8A8_SRGB), _isAllocated(true), _allocator(allocator._allocator)
 	{
 		int textureWidth, textureHeight, textureChannels;
@@ -62,7 +62,7 @@ namespace Concerto::Graphics::Wrapper
 		VmaAllocationCreateInfo dimg_allocinfo = {};
 		dimg_allocinfo.usage = VMA_MEMORY_USAGE_GPU_ONLY;
 
-		if (vmaCreateImage(allocator._allocator, &dimg_info, &dimg_allocinfo, &_image, &_allocation, nullptr) !=
+		if (vmaCreateImage(allocator._allocator, &dimg_info, &dimg_allocinfo, &_handle, &_allocation, nullptr) !=
 			VK_SUCCESS)
 		{
 			throw std::runtime_error("Failed to create image");
@@ -82,7 +82,7 @@ namespace Concerto::Graphics::Wrapper
 
 					imageBarrier_toTransfer.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 					imageBarrier_toTransfer.newLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
-					imageBarrier_toTransfer.image = _image;
+					imageBarrier_toTransfer.image = _handle;
 					imageBarrier_toTransfer.subresourceRange = range;
 
 					imageBarrier_toTransfer.srcAccessMask = 0;
@@ -104,7 +104,7 @@ namespace Concerto::Graphics::Wrapper
 					copyRegion.imageExtent = imageExtent;
 
 					//copy the buffer into the image
-					vkCmdCopyBufferToImage(cb.Get(), stagingBuffer._buffer, _image,
+					vkCmdCopyBufferToImage(cb.Get(), stagingBuffer._buffer, _handle,
 							VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &copyRegion);
 
 					VkImageMemoryBarrier imageBarrier_toReadable = imageBarrier_toTransfer;
@@ -122,11 +122,11 @@ namespace Concerto::Graphics::Wrapper
 				});
 	}
 
-	Image::Image(VkImage image, VkFormat imageFormat) : _image(image), _isAllocated(false),
+	Image::Image(Device &device, VkImage image, VkFormat imageFormat) : Object<VkImage>(device), _isAllocated(false),
 														_allocator(VK_NULL_HANDLE),
 														_imageFormat(imageFormat)
 	{
-
+		_handle = image;
 	}
 
 	Image::~Image()
@@ -134,16 +134,9 @@ namespace Concerto::Graphics::Wrapper
 		if (!_isAllocated)
 			return;
 		assert(_allocator != VK_NULL_HANDLE);
-		assert(_image != VK_NULL_HANDLE);
+		assert(_handle != VK_NULL_HANDLE);
 		assert(_allocation != VK_NULL_HANDLE);
-		vmaDestroyImage(_allocator, _image, _allocation);
-		_image = VK_NULL_HANDLE;
-	}
-
-	VkImage* Image::Get()
-	{
-		assert(_image != VK_NULL_HANDLE);
-		return &_image;
+		vmaDestroyImage(_allocator, _handle, _allocation);
 	}
 
 	VkFormat Image::GetFormat() const

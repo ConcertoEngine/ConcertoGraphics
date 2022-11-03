@@ -6,17 +6,18 @@
 #include <stdexcept>
 
 #include "wrapper/Semaphore.hpp"
+#include "wrapper/Device.hpp"
 
 namespace Concerto::Graphics::Wrapper
 {
 
-	Semaphore::Semaphore(VkDevice device) : _device(device)
+	Semaphore::Semaphore(Device& device) : Object<VkSemaphore>(device)
 	{
 		VkSemaphoreCreateInfo info = {};
 		info.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
 		info.pNext = nullptr;
 		info.flags = 0;
-		if (vkCreateSemaphore(_device, &info, nullptr, &_semaphore) != VK_SUCCESS)
+		if (vkCreateSemaphore(*_device->Get(), &info, nullptr, &_handle) != VK_SUCCESS)
 		{
 			throw std::runtime_error("Failed to create semaphore");
 		}
@@ -24,13 +25,6 @@ namespace Concerto::Graphics::Wrapper
 
 	Semaphore::~Semaphore()
 	{
-		vkDestroySemaphore(_device, _semaphore, nullptr);
-		_semaphore = VK_NULL_HANDLE;
-	}
-
-	VkSemaphore Semaphore::Get() const
-	{
-		assert(_semaphore != VK_NULL_HANDLE);
-		return _semaphore;
+		vkDestroySemaphore(*_device->Get(), _handle, nullptr);
 	}
 } // namespace Concerto::Graphics::Wrapper
