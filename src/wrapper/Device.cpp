@@ -10,9 +10,9 @@
 
 namespace Concerto::Graphics::Wrapper
 {
-	Device::Device(PhysicalDevice& physicalDevice, std::span<const char*> extentions) : _physicalDevice(physicalDevice), _device(VK_NULL_HANDLE)
+	Device::Device(PhysicalDevice& physicalDevice, std::span<const char*> extentions) : _physicalDevice(&physicalDevice), _device(VK_NULL_HANDLE)
 	{
-		std::span<VkQueueFamilyProperties> queueFamilyProperties = _physicalDevice.GetQueueFamilyProperties();
+		std::span<VkQueueFamilyProperties> queueFamilyProperties = _physicalDevice->GetQueueFamilyProperties();
 		std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
 		queueCreateInfos.reserve(queueFamilyProperties.size());
 
@@ -50,13 +50,13 @@ namespace Concerto::Graphics::Wrapper
 		createInfo.pNext = &shader_draw_parameters_features;
 		createInfo.enabledExtensionCount = extentions.size();
 		createInfo.ppEnabledExtensionNames = extentions.data();
-		if (vkCreateDevice(*_physicalDevice.Get(), &createInfo, nullptr, &_device) != VK_SUCCESS)
+		if (vkCreateDevice(*_physicalDevice->Get(), &createInfo, nullptr, &_device) != VK_SUCCESS)
 			throw std::runtime_error("failed to create logical device!");
 	}
 
 	std::uint32_t Device::GetQueueFamilyIndex(Queue::Type queueType)
 	{
-		std::span<VkQueueFamilyProperties> queueFamilyProperties = _physicalDevice.GetQueueFamilyProperties();
+		std::span<VkQueueFamilyProperties> queueFamilyProperties = _physicalDevice->GetQueueFamilyProperties();
 		std::uint32_t i = 0;
 		for (VkQueueFamilyProperties properties: queueFamilyProperties)
 		{
@@ -73,7 +73,7 @@ namespace Concerto::Graphics::Wrapper
 
 	std::uint32_t Device::GetQueueFamilyIndex(std::uint32_t flag)
 	{
-		std::span<VkQueueFamilyProperties> queueFamilyProperties = _physicalDevice.GetQueueFamilyProperties();
+		std::span<VkQueueFamilyProperties> queueFamilyProperties = _physicalDevice->GetQueueFamilyProperties();
 		std::uint32_t i = 0;
 		for (VkQueueFamilyProperties properties: queueFamilyProperties)
 		{

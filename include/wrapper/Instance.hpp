@@ -5,9 +5,9 @@
 #ifndef CONCERTOGRAPHICS_INSTANCE_HPP
 #define CONCERTOGRAPHICS_INSTANCE_HPP
 
-#include <string>
-#include <span>
 #include <optional>
+#include <span>
+#include <string>
 #include <vector>
 #include "vulkan/vulkan.h"
 #include "Version.hpp"
@@ -38,7 +38,6 @@ namespace Concerto::Graphics::Wrapper
 		[[nodiscard]] VkInstance* Get();
 
 		[[nodiscard]] std::span<PhysicalDevice> EnumeratePhysicalDevices() const;
-
 
 	private:
 		VkInstance _instance;

@@ -27,15 +27,13 @@ namespace Concerto::Graphics::Wrapper
 	public:
 		Swapchain(Device& device, Allocator& allocator, VkExtent2D windowExtent, PhysicalDevice& physicalDevice);
 
-		Swapchain(Swapchain&&) = default;
+		Swapchain(Swapchain&&) noexcept = default;
 
 		Swapchain(const Swapchain&) = delete;
 
-		Swapchain& operator=(Swapchain&&) = delete;
+		Swapchain& operator=(Swapchain&&) noexcept = default;
 
 		Swapchain& operator=(const Swapchain&) = delete;
-
-		~Swapchain();
 
 		[[nodiscard]] std::span<Image> GetImages();
 

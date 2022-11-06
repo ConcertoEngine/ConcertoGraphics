@@ -11,8 +11,11 @@
 
 namespace Concerto::Graphics::Wrapper
 {
-	CommandPool::CommandPool(Device& device, std::uint32_t queueFamily) : Object<VkCommandPool>(device),
-																		  _queueFamily(queueFamily)
+	CommandPool::CommandPool(Device& device, std::uint32_t queueFamily) : Object<VkCommandPool>(device,
+			[this]()
+			{
+				vkDestroyCommandPool(*_device->Get(), _handle, nullptr);
+			}), _queueFamily(queueFamily)
 	{
 		VkCommandPoolCreateInfo info{};
 		info.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
@@ -25,12 +28,6 @@ namespace Concerto::Graphics::Wrapper
 		{
 			throw std::runtime_error("Failed to create command pool");
 		}
-	}
-
-	CommandPool::~CommandPool()
-	{
-		vkDestroyCommandPool(*_device->Get(), _handle, nullptr);
-		_handle = VK_NULL_HANDLE;
 	}
 
 	void CommandPool::reset()

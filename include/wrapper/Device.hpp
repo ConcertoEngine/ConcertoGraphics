@@ -17,6 +17,8 @@ namespace Concerto::Graphics::Wrapper
 	class Device
 	{
 	public:
+		Device() = default;
+
 		explicit Device(PhysicalDevice& physicalDevice, std::span<const char*> extensions);
 
 		std::uint32_t GetQueueFamilyIndex(Queue::Type queueType);
@@ -28,7 +30,7 @@ namespace Concerto::Graphics::Wrapper
 		[[nodiscard]] VkDevice* Get();
 
 	private:
-		PhysicalDevice& _physicalDevice;
+		PhysicalDevice* _physicalDevice;
 		VkDevice _device;
 	};
 

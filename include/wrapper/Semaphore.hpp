@@ -24,8 +24,6 @@ namespace Concerto::Graphics::Wrapper
 		Semaphore& operator=(Semaphore&&) = default;
 
 		Semaphore& operator=(const Semaphore&) = delete;
-
-		~Semaphore();
 	};
 } // namespace Concerto::Graphics::Wrapper
 

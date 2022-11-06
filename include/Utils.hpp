@@ -16,18 +16,18 @@ namespace Concerto::Graphics
 	void MapAndCopy(Wrapper::Allocator& allocator, Wrapper::AllocatedBuffer& buffer, T& object)
 	{
 		void* data;
-		vmaMapMemory(allocator._allocator, buffer._allocation, &data);
+		vmaMapMemory(*allocator.Get(), buffer._allocation, &data);
 		std::memcpy(data, &object, sizeof(T));
-		vmaUnmapMemory(allocator._allocator, buffer._allocation);
+		vmaUnmapMemory(*allocator.Get(), buffer._allocation);
 	}
 
 	template<typename T>
 	void MapAndCopy(Wrapper::Allocator& allocator, Wrapper::AllocatedBuffer& buffer, T* object, std::size_t size)
 	{
 		void* data;
-		vmaMapMemory(allocator._allocator, buffer._allocation, &data);
+		vmaMapMemory(*allocator.Get(), buffer._allocation, &data);
 		std::memcpy(data, object, size);
-		vmaUnmapMemory(allocator._allocator, buffer._allocation);
+		vmaUnmapMemory(*allocator.Get(), buffer._allocation);
 	}
 
 	template<typename DestBuffer, typename SrcObj>
@@ -35,23 +35,23 @@ namespace Concerto::Graphics
 			std::function<void(DestBuffer& destBuffer, SrcObj& srcObj)> && copyFunc)
 	{
 		void* data;
-		vmaMapMemory(allocator._allocator, buffer._allocation, &data);
+		vmaMapMemory(*allocator.Get(), buffer._allocation, &data);
 		auto* destBuffer = reinterpret_cast<DestBuffer*>(data);
 		for(std::size_t i = 0; i < objects.size(); i++)
 		{
 			copyFunc(destBuffer[i], objects[i]);
 		}
-		vmaUnmapMemory(allocator._allocator, buffer._allocation);
+		vmaUnmapMemory(*allocator.Get(), buffer._allocation);
 	}
 
 	template<typename T>
 	void MapAndCopy(Wrapper::Allocator& allocator, Wrapper::AllocatedBuffer& buffer, T& object, std::size_t padding)
 	{
 		char* data;
-		vmaMapMemory(allocator._allocator, buffer._allocation, (void**)&data);
+		vmaMapMemory(*allocator.Get(), buffer._allocation, (void**)&data);
 		data += padding;
 		std::memcpy(data, &object, sizeof(T));
-		vmaUnmapMemory(allocator._allocator, buffer._allocation);
+		vmaUnmapMemory(*allocator.Get(), buffer._allocation);
 	}
 
 	inline std::size_t PadUniformBuffer(std::size_t size, std::size_t minUniformBufferOffsetAlignment)

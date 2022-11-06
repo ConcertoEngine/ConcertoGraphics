@@ -6,23 +6,24 @@
 #include <stdexcept>
 #include "wrapper/Allocator.hpp"
 #include "wrapper/Instance.hpp"
+#include "wrapper/PhysicalDevice.hpp"
+#include "wrapper/Device.hpp"
+
 namespace Concerto::Graphics::Wrapper
 {
-	Allocator::Allocator(VkPhysicalDevice physicalDevice, VkDevice device, Instance& instance) : _allocator(VK_NULL_HANDLE)
+	Allocator::Allocator(PhysicalDevice& physicalDevice, Device& device, Instance& instance) : Object<VmaAllocator>(
+			device, [this, &device, &instance]()
+			{
+				vmaDestroyAllocator(_handle);
+			})
 	{
 		VmaAllocatorCreateInfo allocatorInfo = {};
-		allocatorInfo.physicalDevice = physicalDevice;
-		allocatorInfo.device = device;
+		allocatorInfo.physicalDevice = *physicalDevice.Get();
+		allocatorInfo.device = *device.Get();
 		allocatorInfo.instance = *instance.Get();
-		if (vmaCreateAllocator(&allocatorInfo, &_allocator) != VK_SUCCESS)
+		if (vmaCreateAllocator(&allocatorInfo, &_handle) != VK_SUCCESS)
 		{
 			throw std::runtime_error("VMA : Unable to create allocator");
 		}
-		assert(_allocator);
-	}
-
-	Allocator::~Allocator()
-	{
-		vmaDestroyAllocator(_allocator);
 	}
 }

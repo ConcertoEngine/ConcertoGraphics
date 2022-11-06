@@ -26,9 +26,6 @@ namespace Concerto::Graphics::Wrapper
 		ShaderModule& operator=(ShaderModule&&) = default;
 
 		ShaderModule& operator=(const ShaderModule&) = delete;
-
-		~ShaderModule();
-
 	private:
 		void loadShaderModule(const std::string& shaderPath);
 

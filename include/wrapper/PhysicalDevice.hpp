@@ -23,7 +23,14 @@ namespace Concerto::Graphics::Wrapper
 			std::span<VkSurfaceFormatKHR> formats{};
 			std::span<VkPresentModeKHR> presentModes{};
 		};
-		PhysicalDevice(VkPhysicalDevice physicalDevice);
+
+		PhysicalDevice() = default;
+
+		explicit PhysicalDevice(VkPhysicalDevice physicalDevice);
+		PhysicalDevice(const PhysicalDevice&) = delete;
+		PhysicalDevice(PhysicalDevice&&) noexcept;
+		PhysicalDevice& operator=(const PhysicalDevice&) = delete;
+		PhysicalDevice& operator=(PhysicalDevice&&) noexcept;
 
 		[[nodiscard]] std::span<VkQueueFamilyProperties> GetQueueFamilyProperties() const;
 
@@ -46,7 +53,9 @@ namespace Concerto::Graphics::Wrapper
 		SurfaceSupportDetails GetSurfaceSupportDetails() const;
 
 		[[nodiscard]] VkPhysicalDevice* Get();
+
 		[[nodiscard]] VkSurfaceKHR GetSurface();
+
 		void SetSurface(VkSurfaceKHR surface);
 
 	private:
@@ -59,8 +68,8 @@ namespace Concerto::Graphics::Wrapper
 		mutable std::optional<VkSurfaceCapabilitiesKHR> _capabilities;
 		mutable std::optional<std::vector<VkSurfaceFormatKHR>> _formats;
 		mutable std::optional<std::vector<VkPresentModeKHR>> _presentModes;
-		VkPhysicalDevice _physicalDevice;
-		VkSurfaceKHR _surface;
+		VkPhysicalDevice _physicalDevice{ VK_NULL_HANDLE };
+		VkSurfaceKHR _surface{ VK_NULL_HANDLE };
 	};
 
 } // Concerto::Graphics::Wrapper

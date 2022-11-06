@@ -14,6 +14,20 @@ namespace Concerto::Graphics::Wrapper
 	template<typename vkType>
 	Object<vkType>::Object(Device& device) : _device(&device)
 	{
+
+	}
+
+	template<typename vkType>
+	Object<vkType>::Object(Device& device, std::function<void()>&& destroyHelper) : _device(&device),
+																					_destroyHelper(std::move(destroyHelper))
+
+	{
+	}
+	template<typename vkType>
+	Object<vkType>::~Object()
+	{
+		if (!IsNull() && _destroyHelper)
+			_destroyHelper();
 	}
 
 	template<typename vkType>

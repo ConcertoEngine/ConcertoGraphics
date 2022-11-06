@@ -20,17 +20,17 @@ namespace Concerto::Graphics::Wrapper
 		AllocatedBuffer(Allocator& allocator, std::size_t allocSize,
 				VkBufferUsageFlags usage, VmaMemoryUsage memoryUsage);
 
-		AllocatedBuffer(AllocatedBuffer&&) = default;
+		AllocatedBuffer(AllocatedBuffer&&) noexcept;
 
 		AllocatedBuffer(const AllocatedBuffer&) = delete;
 
-		AllocatedBuffer& operator=(AllocatedBuffer&&) = delete;
+		AllocatedBuffer& operator=(AllocatedBuffer&&) noexcept;
 
 		AllocatedBuffer& operator=(const AllocatedBuffer&) = delete;
 
 		~AllocatedBuffer();
 
-		Allocator &_allocator;
+		Allocator* _allocator;
 		VkBuffer _buffer {VK_NULL_HANDLE};
 		VmaAllocation _allocation {VK_NULL_HANDLE};
 	};

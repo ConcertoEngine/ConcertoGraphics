@@ -25,7 +25,7 @@ namespace Concerto::Graphics::Wrapper
 
 		DescriptorSetLayout& operator=(const DescriptorSetLayout&) = delete;
 
-		~DescriptorSetLayout();
+		~DescriptorSetLayout() = default;
 	};
 }
 

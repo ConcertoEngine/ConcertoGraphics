@@ -13,9 +13,10 @@
 namespace Concerto::Graphics::Wrapper
 {
 
-	Pipeline::Pipeline(Device& device, PipelineInfo  pipeLineInfo) : Object<VkPipeline>(device),
-																			 _pipelineInfo(std::move(pipeLineInfo)),
-																			 _createInfo()
+	Pipeline::Pipeline(Device& device, PipelineInfo pipeLineInfo) : Object<VkPipeline>(device, [this]()
+	{ vkDestroyPipeline(*_device->Get(), _handle, nullptr); }),
+																	_pipelineInfo(std::move(pipeLineInfo)),
+																	_createInfo()
 	{
 		_createInfo.viewportState = BuildViewportState();
 		_createInfo.colorBlend = BuildColorBlendState();
@@ -62,7 +63,8 @@ namespace Concerto::Graphics::Wrapper
 		pipelineInfo.pDepthStencilState = &_pipelineInfo._depthStencil;
 
 
-		if (vkCreateGraphicsPipelines(*_device->Get(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &_handle) != VK_SUCCESS)
+		if (vkCreateGraphicsPipelines(*_device->Get(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &_handle) !=
+			VK_SUCCESS)
 		{
 			std::cerr << "failed to create pipeline\n";
 			return VK_NULL_HANDLE;
@@ -97,12 +99,5 @@ namespace Concerto::Graphics::Wrapper
 		colorBlending.attachmentCount = 1;
 		colorBlending.pAttachments = &colorBlendAttachment;
 		return colorBlending;
-	}
-
-	Pipeline::~Pipeline()
-	{
-		assert(_device != VK_NULL_HANDLE);
-		assert(!IsNull());
-		vkDestroyPipeline(*_device->Get(), _handle, nullptr);
 	}
 }

@@ -23,11 +23,11 @@ namespace Concerto::Graphics::Wrapper
 	public:
 		explicit CommandBuffer(Device& device, VkCommandPool commandPool);
 
-		CommandBuffer(CommandBuffer&&) = default;
+		CommandBuffer(CommandBuffer&&) noexcept;
 
 		CommandBuffer(const CommandBuffer&) = delete;
 
-		CommandBuffer& operator=(CommandBuffer&&) = default;
+		CommandBuffer& operator=(CommandBuffer&&) noexcept;
 
 		CommandBuffer& operator=(const CommandBuffer&) = delete;
 
@@ -71,7 +71,7 @@ namespace Concerto::Graphics::Wrapper
 		void CopyBuffer(AllocatedBuffer& src, AllocatedBuffer& dest, std::size_t size);
 
 	private:
-		Device& _device;
+		Device* _device;
 		VkCommandPool _commandPool;
 		VkCommandBuffer _commandBuffer;
 	};

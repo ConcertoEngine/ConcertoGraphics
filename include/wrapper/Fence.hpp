@@ -25,8 +25,6 @@ namespace Concerto::Graphics::Wrapper
 
 		Fence& operator=(const Fence&) = delete;
 
-		~Fence();
-
 		void wait(std::uint64_t timeout);
 
 		void reset();

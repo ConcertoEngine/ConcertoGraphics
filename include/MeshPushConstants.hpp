@@ -1,9 +1,10 @@
 //
 // Created by arthur on 14/07/2022.
 //
-#include "glm/glm.hpp"
 #ifndef CONCERTOGRAPHICS_MESHPUSHCONSTANTS_HPP
 #define CONCERTOGRAPHICS_MESHPUSHCONSTANTS_HPP
+#include "glm/vec4.hpp"
+#include "glm/mat4x4.hpp"
 
 struct MeshPushConstants
 {

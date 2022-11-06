@@ -42,8 +42,6 @@ namespace Concerto::Graphics::Wrapper
 
 		Image& operator=(const Image&) = delete;
 
-		~Image();
-
 		VkFormat GetFormat() const;
 
 	private:

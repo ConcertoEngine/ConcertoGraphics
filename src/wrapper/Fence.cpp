@@ -10,7 +10,9 @@
 
 namespace Concerto::Graphics::Wrapper
 {
-	Fence::Fence(Device& device, bool signaled) : Object<VkFence>(device)
+	Fence::Fence(Device& device, bool signaled) : Object<VkFence>(device, [this](){
+		vkDestroyFence(*_device->Get(), _handle, nullptr);
+	})
 	{
 		VkFenceCreateInfo info = {};
 		info.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
@@ -20,11 +22,6 @@ namespace Concerto::Graphics::Wrapper
 		{
 			throw std::runtime_error("Failed to create fence");
 		}
-	}
-
-	Fence::~Fence()
-	{
-		vkDestroyFence(*_device->Get(), _handle, nullptr);
 	}
 
 	void Fence::wait(std::uint64_t timeout)

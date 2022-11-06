@@ -28,8 +28,6 @@ namespace Concerto::Graphics::Wrapper
 
 		RenderPass& operator=(const RenderPass&) = delete;
 
-		~RenderPass();
-
 	private:
 		std::vector<VkAttachmentDescription> _attachments;
 		std::vector<VkSubpassDescription> _subpasses;

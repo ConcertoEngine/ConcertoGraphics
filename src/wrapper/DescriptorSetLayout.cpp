@@ -12,7 +12,10 @@ namespace Concerto::Graphics::Wrapper
 {
 
 	DescriptorSetLayout::DescriptorSetLayout(Device& device, std::vector<VkDescriptorSetLayoutBinding> bindings)
-			: Object<VkDescriptorSetLayout>(device)
+			: Object<VkDescriptorSetLayout>(device, [this]()
+	{
+		vkDestroyDescriptorSetLayout(*_device->Get(), _handle, nullptr);
+	})
 	{
 		VkDescriptorSetLayoutCreateInfo createInfo{};
 		createInfo.flags = 0;
@@ -24,10 +27,5 @@ namespace Concerto::Graphics::Wrapper
 		{
 			throw std::runtime_error("failed to create descriptor set layout!");
 		}
-	}
-
-	DescriptorSetLayout::~DescriptorSetLayout()
-	{
-		vkDestroyDescriptorSetLayout(*_device->Get(), _handle, nullptr);
 	}
 }

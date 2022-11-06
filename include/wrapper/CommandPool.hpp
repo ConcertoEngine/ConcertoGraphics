@@ -25,8 +25,6 @@ namespace Concerto::Graphics::Wrapper
 
 		CommandPool& operator=(const CommandPool&) = delete;
 
-		~CommandPool();
-
 		void reset();
 
 	private:

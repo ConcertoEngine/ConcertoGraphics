@@ -32,8 +32,6 @@ namespace Concerto::Graphics::Wrapper
 
 		Pipeline& operator=(const Pipeline&) = delete;
 
-		~Pipeline();
-
 		VkPipeline BuildPipeline(VkRenderPass renderPass);
 
 		[[nodiscard]] VkPipelineViewportStateCreateInfo BuildViewportState() const;

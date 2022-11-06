@@ -23,8 +23,6 @@ namespace Concerto::Graphics::Wrapper
 		ImageView& operator=(const ImageView&) = delete;
 
 		ImageView& operator=(ImageView&&) noexcept = default;
-
-		~ImageView();
 	};
 }
 

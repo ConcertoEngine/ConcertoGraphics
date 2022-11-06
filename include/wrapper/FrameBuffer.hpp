@@ -8,35 +8,28 @@
 #include <vector>
 #include "vulkan/vulkan.hpp"
 #include "wrapper/Object.hpp"
-#include "wrapper/Swapchain.hpp"
-#include "wrapper/RenderPass.hpp"
 
 namespace Concerto::Graphics::Wrapper
 {
 	class Device;
 
-	class FrameBuffer // TODO: refactor this class
+	class RenderPass;
+
+	class ImageView;
+
+	class FrameBuffer : public Object<VkFramebuffer>
 	{
 	public:
-		FrameBuffer(Device& device, Swapchain& swapchain, RenderPass& renderPass);
+		FrameBuffer(Device& device, RenderPass& renderPass, ImageView& imageView, ImageView& depthImageView,
+				VkExtent2D extent);
 
-		FrameBuffer(FrameBuffer&&) = default;
+		FrameBuffer(FrameBuffer&&) noexcept = default;
 
 		FrameBuffer(const FrameBuffer&) = delete;
 
-		FrameBuffer& operator=(FrameBuffer&&) = default;
+		FrameBuffer& operator=(FrameBuffer&&) noexcept = default;
 
 		FrameBuffer& operator=(const FrameBuffer&) = delete;
-
-		~FrameBuffer();
-
-		VkFramebuffer operator[](std::size_t);
-
-	private:
-		std::vector<VkFramebuffer> _frameBuffers;
-		Swapchain& _swapchain;
-		RenderPass& _renderPass;
-		Device& _device;
 	};
 
 } // Concerto::Graphics::Wrapper

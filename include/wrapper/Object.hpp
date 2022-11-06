@@ -5,6 +5,7 @@
 #ifndef CONCERTOGRAPHICS_OBJECT_HPP
 #define CONCERTOGRAPHICS_OBJECT_HPP
 
+#include <functional>
 #include "vulkan/vulkan.h"
 
 namespace Concerto::Graphics::Wrapper
@@ -16,7 +17,7 @@ namespace Concerto::Graphics::Wrapper
 	{
 	public:
 		explicit Object(Device& device);
-
+		explicit Object(Device& device, std::function<void()>&& destroyHelper);
 		Object(const Object&) = delete;
 
 		Object(Object&&) noexcept;
@@ -25,7 +26,7 @@ namespace Concerto::Graphics::Wrapper
 
 		Object& operator=(Object&&) noexcept;
 
-		~Object() = default;
+		~Object();
 
 		/**
 		 * @brief Get the handle of the object
@@ -42,6 +43,8 @@ namespace Concerto::Graphics::Wrapper
 	protected:
 		vkType _handle{ VK_NULL_HANDLE };
 		Device* _device{ nullptr };
+	private:
+		std::function<void()> _destroyHelper;
 	};
 }
 

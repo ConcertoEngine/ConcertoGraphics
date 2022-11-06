@@ -11,9 +11,10 @@
 namespace Concerto::Graphics::Wrapper
 {
 
-	PipelineLayout::PipelineLayout(Device &device, std::size_t size,
+	PipelineLayout::PipelineLayout(Device& device, std::size_t size,
 			const std::vector<std::reference_wrapper<DescriptorSetLayout>>& descriptorSetLayouts)
-			: Object<VkPipelineLayout>(device)
+			: Object<VkPipelineLayout>(device, [this]()
+	{ vkDestroyPipelineLayout(*_device->Get(), _handle, nullptr); })
 	{
 		VkPipelineLayoutCreateInfo pipelineLayoutCreateInfo;
 		VkPushConstantRange push_constant;
@@ -37,12 +38,5 @@ namespace Concerto::Graphics::Wrapper
 		{
 			throw std::runtime_error("failed to create pipeline layout!");
 		}
-	}
-
-	PipelineLayout::~PipelineLayout()
-	{
-		assert(_device != VK_NULL_HANDLE);
-		assert(!IsNull());
-		vkDestroyPipelineLayout(*_device->Get(), _handle, nullptr);
 	}
 }

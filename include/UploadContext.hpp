@@ -14,15 +14,27 @@ namespace Concerto::Graphics
 {
 	struct UploadContext
 	{
+		UploadContext() = delete;
+
 		UploadContext(Wrapper::Device& device, std::uint32_t queueFamily) : _uploadFence(device, false),
-																	_commandPool(
-																			device,
-																			queueFamily),
-																	_commandBuffer(
-																			device,
-																			*_commandPool.Get())
+																			_commandPool(
+																					device,
+																					queueFamily),
+																			_commandBuffer(
+																					device,
+																					*_commandPool.Get())
 		{
 		}
+
+		~UploadContext() = default;
+
+		UploadContext(UploadContext&&) = default;
+
+		UploadContext(const UploadContext&) = delete;
+
+		UploadContext& operator=(UploadContext&&) = default;
+
+		UploadContext& operator=(const UploadContext&) = delete;
 
 		Wrapper::Fence _uploadFence;
 		Wrapper::CommandPool _commandPool;

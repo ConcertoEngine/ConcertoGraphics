@@ -5,6 +5,7 @@
 #include <cassert>
 #include <stdexcept>
 #include <vector>
+#include <utility>
 #include "wrapper/PhysicalDevice.hpp"
 
 namespace Concerto::Graphics::Wrapper
@@ -24,6 +25,37 @@ namespace Concerto::Graphics::Wrapper
 		vkGetPhysicalDeviceQueueFamilyProperties(_physicalDevice, &queueFamilyCount, queueFamilyProperties.data());
 		_queueFamilyProperties = std::move(queueFamilyProperties);
 		return _queueFamilyProperties.value();
+	}
+
+	PhysicalDevice::PhysicalDevice(PhysicalDevice&& other) noexcept
+	{
+		_queueFamilyProperties = std::exchange(other._queueFamilyProperties, std::nullopt);
+		_physicalDeviceProperties = std::exchange(other._physicalDeviceProperties, std::nullopt);
+		_physicalDeviceFeatures = std::exchange(other._physicalDeviceFeatures, std::nullopt);
+		_physicalDeviceMemoryProperties = std::exchange(other._physicalDeviceMemoryProperties, std::nullopt);
+		_extensionProperties = std::exchange(other._extensionProperties, std::nullopt);
+		_extensionPropertiesNames = std::exchange(other._extensionPropertiesNames, std::nullopt);
+		_capabilities = std::exchange(other._capabilities, std::nullopt);
+		_formats = std::exchange(other._formats, std::nullopt);
+		_presentModes = std::exchange(other._presentModes, std::nullopt);
+		_physicalDevice = std::exchange(other._physicalDevice, nullptr);
+		_surface = std::exchange(other._surface, VK_NULL_HANDLE);
+	}
+
+	PhysicalDevice& PhysicalDevice::operator=(PhysicalDevice&& other) noexcept
+	{
+		_queueFamilyProperties = std::exchange(other._queueFamilyProperties, std::nullopt);
+		_physicalDeviceProperties = std::exchange(other._physicalDeviceProperties, std::nullopt);
+		_physicalDeviceFeatures = std::exchange(other._physicalDeviceFeatures, std::nullopt);
+		_physicalDeviceMemoryProperties = std::exchange(other._physicalDeviceMemoryProperties, std::nullopt);
+		_extensionProperties = std::exchange(other._extensionProperties, std::nullopt);
+		_extensionPropertiesNames = std::exchange(other._extensionPropertiesNames, std::nullopt);
+		_capabilities = std::exchange(other._capabilities, std::nullopt);
+		_formats = std::exchange(other._formats, std::nullopt);
+		_presentModes = std::exchange(other._presentModes, std::nullopt);
+		_physicalDevice = std::exchange(other._physicalDevice, nullptr);
+		_surface = std::exchange(other._surface, VK_NULL_HANDLE);
+		return *this;
 	}
 
 	VkPhysicalDeviceProperties PhysicalDevice::GetProperties() const

@@ -16,7 +16,7 @@ namespace Concerto::Graphics::Wrapper
 {
 
 	Swapchain::Swapchain(Device& device, Allocator& allocator, VkExtent2D windowExtent, PhysicalDevice& physicalDevice)
-			: Object<VkSwapchainKHR>(device),
+			: Object<VkSwapchainKHR>(device, [this](){vkDestroySwapchainKHR(*_device->Get(), _handle, nullptr);}),
 			  _windowExtent(windowExtent),
 			  _swapChainImages(),
 			  _depthImage(device, windowExtent, VK_FORMAT_D32_SFLOAT, allocator),
@@ -47,11 +47,6 @@ namespace Concerto::Graphics::Wrapper
 		swapChainCreateInfo.oldSwapchain = VK_NULL_HANDLE;
 		if (vkCreateSwapchainKHR(*_device->Get(), &swapChainCreateInfo, nullptr, &_handle) != VK_SUCCESS)
 			throw std::runtime_error("failed to create swap chain!");
-	}
-
-	Swapchain::~Swapchain()
-	{
-		vkDestroySwapchainKHR(*_device->Get(), _handle, nullptr);
 	}
 
 	std::span<Image> Swapchain::GetImages()

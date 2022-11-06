@@ -28,8 +28,6 @@ namespace Concerto::Graphics::Wrapper
 		PipelineLayout& operator=(PipelineLayout&&) = default;
 
 		PipelineLayout& operator=(const PipelineLayout&) = delete;
-
-		~PipelineLayout();
 	};
 
 	template<typename T>

@@ -42,7 +42,4 @@ namespace Concerto::Graphics::Wrapper
 
 		vkUpdateDescriptorSets(*_device->Get(), 1, &texture1, 0, nullptr);
 	}
-
-
-
 }

@@ -4,14 +4,15 @@
 
 
 #include <stdexcept>
+#include <utility>
 #include "wrapper/CommandBuffer.hpp"
 #include "wrapper/Device.hpp"
 #include "wrapper/VulkanInitializer.hpp"
 
 namespace Concerto::Graphics::Wrapper
 {
-	CommandBuffer::CommandBuffer(Device& device, VkCommandPool commandPool) : _device(device),
-																			   _commandPool(commandPool)
+	CommandBuffer::CommandBuffer(Device& device, VkCommandPool commandPool) : _device(&device),
+																			  _commandPool(commandPool)
 	{
 		VkCommandBufferAllocateInfo info = {};
 		info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
@@ -20,10 +21,25 @@ namespace Concerto::Graphics::Wrapper
 		info.commandBufferCount = 1;
 		info.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
 
-		if (vkAllocateCommandBuffers(*_device.Get(), &info, &_commandBuffer) != VK_SUCCESS)
+		if (vkAllocateCommandBuffers(*_device->Get(), &info, &_commandBuffer) != VK_SUCCESS)
 		{
 			throw std::runtime_error("Failed to allocate command buffer");
 		}
+	}
+
+	CommandBuffer::CommandBuffer(CommandBuffer&& other) noexcept
+	{
+		_device = std::exchange(other._device, nullptr);
+		_commandPool = std::exchange(other._commandPool, VK_NULL_HANDLE);
+		_commandBuffer = std::exchange(other._commandBuffer, nullptr);
+	}
+
+	CommandBuffer& CommandBuffer::operator=(CommandBuffer&& other) noexcept
+	{
+		_device = std::exchange(other._device, nullptr);
+		_commandPool = std::exchange(other._commandPool, VK_NULL_HANDLE);
+		_commandBuffer = std::exchange(other._commandBuffer, nullptr);
+		return *this;
 	}
 
 	VkCommandBuffer CommandBuffer::Get() const
@@ -34,8 +50,8 @@ namespace Concerto::Graphics::Wrapper
 
 	CommandBuffer::~CommandBuffer()
 	{
-		vkFreeCommandBuffers(*_device.Get(), _commandPool, 1, &_commandBuffer);
-		_commandBuffer = VK_NULL_HANDLE;
+		if(_commandBuffer != VK_NULL_HANDLE)
+			vkFreeCommandBuffers(*_device->Get(), _commandPool, 1, &_commandBuffer);
 	}
 
 	void CommandBuffer::Reset()

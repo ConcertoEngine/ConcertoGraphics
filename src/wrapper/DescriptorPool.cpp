@@ -11,7 +11,10 @@
 
 namespace Concerto::Graphics::Wrapper
 {
-	DescriptorPool::DescriptorPool(Device& device) : Object<VkDescriptorPool>(device)
+	DescriptorPool::DescriptorPool(Device& device) : Object<VkDescriptorPool>(device, [this]()
+	{
+		vkDestroyDescriptorPool(*_device->Get(), _handle, nullptr);
+	})
 	{
 		std::vector<VkDescriptorPoolSize> sizes =
 				{
@@ -33,7 +36,10 @@ namespace Concerto::Graphics::Wrapper
 	}
 
 	DescriptorPool::DescriptorPool(Device& device, std::vector<VkDescriptorPoolSize> poolSizes)
-			: Object<VkDescriptorPool>(device)
+			: Object<VkDescriptorPool>(device, [this]()
+	{
+		vkDestroyDescriptorPool(*_device->Get(), _handle, nullptr);
+	})
 	{
 		VkDescriptorPoolCreateInfo pool_info = {};
 		pool_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
@@ -47,14 +53,9 @@ namespace Concerto::Graphics::Wrapper
 		}
 	}
 
-	DescriptorPool::~DescriptorPool()
-	{
-		vkDestroyDescriptorPool(*_device->Get(), _handle, nullptr);
-	}
-
 
 	DescriptorSet DescriptorPool::AllocateDescriptorSet(DescriptorSetLayout& setLayout)
 	{
-		return {*_device, *this, setLayout};
+		return { *_device, *this, setLayout };
 	}
 }

@@ -30,8 +30,6 @@ namespace Concerto::Graphics::Wrapper
 		DescriptorPool& operator=(const DescriptorPool&) = delete;
 
 		DescriptorSet AllocateDescriptorSet(DescriptorSetLayout& setLayout);
-
-		~DescriptorPool();
 	};
 }
 
