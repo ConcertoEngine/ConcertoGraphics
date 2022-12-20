@@ -15,7 +15,7 @@ namespace Concerto::Graphics::Wrapper
 			device, [this, &device, &instance]()
 			{
 				vmaDestroyAllocator(_handle);
-			})
+			}), _device(&device)
 	{
 		VmaAllocatorCreateInfo allocatorInfo = {};
 		allocatorInfo.physicalDevice = *physicalDevice.Get();
@@ -25,5 +25,11 @@ namespace Concerto::Graphics::Wrapper
 		{
 			throw std::runtime_error("VMA : Unable to create allocator");
 		}
+	}
+
+	Device& Allocator::GetDevice() const
+	{
+		assert(_device != nullptr);
+		return *_device;
 	}
 }

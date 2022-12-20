@@ -29,6 +29,8 @@ namespace Concerto::Graphics::Wrapper
 
 		[[nodiscard]] VkDevice* Get();
 
+		void WaitIdle() const;
+
 	private:
 		PhysicalDevice* _physicalDevice;
 		VkDevice _device;

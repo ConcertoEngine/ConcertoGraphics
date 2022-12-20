@@ -29,8 +29,10 @@ namespace Concerto::Graphics::Wrapper
 
 	CommandBuffer::~CommandBuffer()
 	{
-		if(_commandBuffer != VK_NULL_HANDLE)
-			vkFreeCommandBuffers(*_device->Get(), _commandPool, 1, &_commandBuffer);
+		if(_commandBuffer == VK_NULL_HANDLE)
+			return;
+		_device->WaitIdle();
+		vkFreeCommandBuffers(*_device->Get(), _commandPool, 1, &_commandBuffer);
 	}
 
 	CommandBuffer::CommandBuffer(CommandBuffer&& other) noexcept

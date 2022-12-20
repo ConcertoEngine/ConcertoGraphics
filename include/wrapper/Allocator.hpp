@@ -29,6 +29,14 @@ namespace Concerto::Graphics::Wrapper
 		Allocator& operator=(const Allocator&) = delete;
 
 		Allocator& operator=(Allocator&&) = default;
+
+		/**
+		 * @brief Returns the device used to create the allocator
+		 * @return
+		 */
+		Device& GetDevice() const;
+	private:
+		Device *_device;
 	};
 }
 

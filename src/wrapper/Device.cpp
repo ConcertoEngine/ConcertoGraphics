@@ -99,4 +99,9 @@ namespace Concerto::Graphics::Wrapper
 		return &_device;
 	}
 
+	void Device::WaitIdle() const
+	{
+		vkDeviceWaitIdle(_device);
+	}
+
 } // Concerto::Graphics::Wrapper

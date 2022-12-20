@@ -5,6 +5,7 @@
 #include <stdexcept>
 #include <utility>
 #include "wrapper/AllocatedBuffer.hpp"
+#include "wrapper/Device.hpp"
 
 namespace Concerto::Graphics::Wrapper
 {
@@ -43,7 +44,9 @@ namespace Concerto::Graphics::Wrapper
 
 	AllocatedBuffer::~AllocatedBuffer()
 	{
-		if (_buffer != VK_NULL_HANDLE)
-			vmaDestroyBuffer(*_allocator->Get(), _buffer, _allocation);
+		if (_buffer == VK_NULL_HANDLE)
+			return;
+		_allocator->GetDevice().WaitIdle();
+		vmaDestroyBuffer(*_allocator->Get(), _buffer, _allocation);
 	}
 }
