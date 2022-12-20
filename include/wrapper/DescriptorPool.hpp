@@ -14,6 +14,7 @@ namespace Concerto::Graphics::Wrapper
 {
 	class Device;
 
+
 	class DescriptorPool : public Object<VkDescriptorPool>
 	{
 	public:

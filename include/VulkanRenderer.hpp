@@ -9,12 +9,12 @@
 #include <optional>
 #include <unordered_map>
 #include <functional>
+#include "window/GlfW3.hpp"
 #include "Version.hpp"
 #include "wrapper/Instance.hpp"
 #include "wrapper/Device.hpp"
 #include "wrapper/PhysicalDevice.hpp"
 #include "wrapper/Allocator.hpp"
-#include "window/IWindow.hpp"
 #include "wrapper/Allocator.hpp"
 #include "wrapper/Swapchain.hpp"
 #include "wrapper/RenderPass.hpp"
@@ -37,14 +37,12 @@ namespace Concerto::Graphics
 	{
 		std::string applicationName;
 		Version applicationVersion;
-		std::uint32_t width;
-		std::uint32_t height;
 	};
 
 	class VulkanRenderer
 	{
 	public:
-		explicit VulkanRenderer(RendererInfo info);
+		explicit VulkanRenderer(RendererInfo info, GlfW3& window);
 
 		~VulkanRenderer() = default;
 
@@ -58,19 +56,19 @@ namespace Concerto::Graphics
 
 		VulkanRenderer* Instance();
 
-		void Draw();
+		void Draw(const Camera &camera);
 		void DrawObject(const std::string& modelPath, const std::string& texturePath, float px, float py, float pz, float rx,
 				float ry, float rz, float sx, float sy, float sz);
 	private:
 		RenderObject& LoadModelIfNotExist(const std::string& modelPath, const std::string& texturePath, float px, float py, float pz, float rx,
 				float ry, float rz, float sx, float sy, float sz);
 		Texture& CreateTextureIfNotExist(const std::string& texturePath);
-		void DrawObjects();
+		void DrawObjects(const Camera &camera);
 		std::vector<const char*> _deviceExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
+		GlfW3& _window;
 		RendererInfo _renderInfo;
 		VulkanRenderer* _instance{nullptr};
 		std::uint32_t _frameNumber{0};
-		IWindowPtr _window;
 		Wrapper::Instance _vulkanInstance;
 		VkSurfaceKHR _surface {VK_NULL_HANDLE};
 		Wrapper::PhysicalDevice _physicalDevice;

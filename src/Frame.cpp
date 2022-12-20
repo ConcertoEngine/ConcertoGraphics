@@ -19,7 +19,7 @@ namespace Concerto::Graphics
 							 _renderSemaphore(device),
 							 _renderFence(device, signaled),
 							 _mainCommandBuffer(std::make_unique<Wrapper::CommandBuffer>(device, *_commandPool->Get())),
-							 _cameraBuffer(MakeAllocatedBuffer<GPUCameraData>(allocator,
+							 _cameraBuffer(MakeAllocatedBuffer<Camera>(allocator,
 									 VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
 									 VMA_MEMORY_USAGE_CPU_TO_GPU)),
 							 globalDescriptor(device, pool, globalDescriptorSetLayout),
@@ -32,7 +32,7 @@ namespace Concerto::Graphics
 		VkDescriptorBufferInfo cameraInfo;
 		cameraInfo.buffer = _cameraBuffer._buffer;
 		cameraInfo.offset = 0;
-		cameraInfo.range = sizeof(GPUCameraData);
+		cameraInfo.range = sizeof(Camera);
 
 		VkDescriptorBufferInfo sceneInfo;
 		sceneInfo.buffer = sceneParameterBuffer._buffer;

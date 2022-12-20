@@ -18,7 +18,7 @@ namespace Concerto::Graphics::Wrapper
 	{
 		if (messageSeverity == VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT)
 		{
-			std::cout << "[Verbose] " << pCallbackData->pMessage << std::endl;
+//			std::cout << "[Verbose] " << pCallbackData->pMessage << std::endl;
 		}
 		else if (messageSeverity == VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT)
 		{

@@ -19,14 +19,14 @@
 #include <GLFW/glfw3.h>
 #include <GLFW/glfw3native.h>
 
-namespace Concerto
+namespace Concerto::Graphics
 {
-	class GlfW3 : public AWindow
+	class GlfW3 : public AWindow<GLFWwindow>
 	{
 	public:
-		void* getRawWindow() override;
+		GlfW3(const std::string& title, int width, int height);
 
-		GlfW3(const std::string& title, unsigned int width, unsigned int height);
+		void* GetRawWindow() override;
 
 		GlfW3() = delete;
 
@@ -40,28 +40,37 @@ namespace Concerto
 
 		~GlfW3() override;
 
-		std::size_t getWidth() final;
+		std::uint32_t GetWidth() final;
 
-		std::size_t getHeight() final;
-		//Math::Vector2d getCursorPosition() override;
+		std::uint32_t GetHeight() final;
 
-		void setTitle(const std::string& title) override;
+		void SetTitle(const std::string& title) override;
 
-		void setIcon(const std::string& path) override;
+		void SetIcon(const std::string& path) override;
 
-		void setCursorVisible(bool visible) override;
+		void SetCursorVisible(bool visible) override;
 
-		void setCursorPosition(int x, int y) override;
+		void SetCursorPosition(int x, int y) override;
 
-		void setCursorIcon(const std::string& path) override;
+		void SetCursorIcon(const std::string& path) override;
 
-		void setCursorDisabled(bool disabled) override;
+		void SetCursorDisabled(bool disabled) override;
 
-		std::optional<Concerto::Key> popEvent() override;
+		std::optional<Key> PopEvent() override;
 
+		bool ShouldClose() override;
+
+		void RegisterResizeCallback(std::function<void(AWindow& window)> callback) override;
+
+		void RegisterKeyCallback(std::function<void(AWindow& window, Key key, int scancode, int action, int mods)> callback) override;
+
+		void RegisterMouseButtonCallback(std::function<void(AWindow& window, int button, int action, int mods)> callback) override;
+
+		void RegisterCursorPosCallback(std::function<void(AWindow& window, double xpos, double ypos)> callback) override;
 	private:
 		std::unique_ptr<GLFWwindow, std::function<void(GLFWwindow*)>> _window;
 	};
+	using GLFW3WindowPtr = std::unique_ptr<GlfW3>;
 
 } // Concerto
 

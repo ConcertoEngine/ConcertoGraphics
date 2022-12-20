@@ -23,6 +23,8 @@ namespace Concerto::Graphics::Wrapper
 	public:
 		explicit CommandBuffer(Device& device, VkCommandPool commandPool);
 
+		~CommandBuffer();
+
 		CommandBuffer(CommandBuffer&&) noexcept;
 
 		CommandBuffer(const CommandBuffer&) = delete;
@@ -30,8 +32,6 @@ namespace Concerto::Graphics::Wrapper
 		CommandBuffer& operator=(CommandBuffer&&) noexcept;
 
 		CommandBuffer& operator=(const CommandBuffer&) = delete;
-
-		~CommandBuffer();
 
 		VkCommandBuffer Get() const;
 

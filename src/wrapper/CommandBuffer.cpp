@@ -27,6 +27,12 @@ namespace Concerto::Graphics::Wrapper
 		}
 	}
 
+	CommandBuffer::~CommandBuffer()
+	{
+		if(_commandBuffer != VK_NULL_HANDLE)
+			vkFreeCommandBuffers(*_device->Get(), _commandPool, 1, &_commandBuffer);
+	}
+
 	CommandBuffer::CommandBuffer(CommandBuffer&& other) noexcept
 	{
 		_device = std::exchange(other._device, nullptr);
@@ -48,11 +54,6 @@ namespace Concerto::Graphics::Wrapper
 		return _commandBuffer;
 	}
 
-	CommandBuffer::~CommandBuffer()
-	{
-		if(_commandBuffer != VK_NULL_HANDLE)
-			vkFreeCommandBuffers(*_device->Get(), _commandPool, 1, &_commandBuffer);
-	}
 
 	void CommandBuffer::Reset()
 	{

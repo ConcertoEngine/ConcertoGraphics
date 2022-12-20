@@ -5,7 +5,6 @@
 #ifndef CONCERTOGRAPHICS_QUEUE_HPP
 #define CONCERTOGRAPHICS_QUEUE_HPP
 
-#include "VkBootstrap.h"
 #include "Frame.hpp"
 #include "wrapper/Swapchain.hpp"
 #include "wrapper/Object.hpp"

@@ -3,10 +3,10 @@
 //
 #include "AWindow.hpp"
 
-Concerto::AWindow::AWindow(const std::string& title, unsigned int width, unsigned int height) : _title(title), _width(width), _height(height)
-{
-
-}
+//Concerto::AWindow::AWindow(const std::string& title, unsigned int width, unsigned int height) : _title(title), _width(width), _height(height)
+//{
+//
+//}
 
 //const Concerto::Math::Vector4f& Concerto::AWindow::getClearColor() const
 //{

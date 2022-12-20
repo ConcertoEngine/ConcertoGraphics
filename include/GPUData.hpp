@@ -10,12 +10,13 @@
 
 namespace Concerto::Graphics
 {
-	struct GPUCameraData
+	struct Camera
 	{
 		glm::mat4 view;
 		glm::mat4 proj;
 		glm::mat4 viewproj;
 	};
+	using GPUCameraData = Camera;
 
 	struct GPUObjectData
 	{

@@ -5,6 +5,10 @@
 #include <cassert>
 #include <vector>
 #include <iostream>
+//TODO : move to GLF3W window
+#define GLFW_INCLUDE_VULKAN
+#include "glm/gtx/string_cast.hpp"
+#include <GLFW/glfw3.h>
 #include "glm/glm.hpp"
 #include "glm/gtx/transform.hpp"
 #include "VulkanRenderer.hpp"
@@ -23,18 +27,17 @@ namespace Concerto::Graphics
 	std::vector<const char*> layers = { "VK_LAYER_KHRONOS_validation" /*, "VK_LAYER_LUNARG_api_dump"*/};
 	using namespace Wrapper;
 
-	VulkanRenderer::VulkanRenderer(RendererInfo info) : _renderInfo(std::move(info)),
-														_window(std::make_unique<GlfW3>(_renderInfo.applicationName,
-																_renderInfo.width, _renderInfo.height)),
-														_vulkanInstance(_renderInfo.applicationName, "Concerto",
-																{ 1, 2, 0 }, _renderInfo.applicationVersion,
-																{ 1, 0, 0 }, extensions, layers)
+	VulkanRenderer::VulkanRenderer(RendererInfo info, GlfW3& window) : _renderInfo(std::move(info)),
+																	   _window(window),
+																	   _vulkanInstance(_renderInfo.applicationName,
+																			   "Concerto",
+																			   { 1, 2, 0 },
+																			   _renderInfo.applicationVersion,
+																			   { 1, 0, 0 }, extensions, layers)
 	{
 		assert(_instance == nullptr);
-		assert(_renderInfo.width != 0);
-		assert(_renderInfo.height != 0);
 		_instance = this;
-		auto res = glfwCreateWindowSurface(*_vulkanInstance.Get(), (GLFWwindow*)_window->getRawWindow(), nullptr,
+		auto res = glfwCreateWindowSurface(*_vulkanInstance.Get(), (GLFWwindow*)_window.GetRawWindow(), nullptr,
 				&_surface); //TODO : Move this to Window
 		if (res != VK_SUCCESS)
 			throw std::runtime_error("Failed to create window surface");
@@ -50,7 +53,7 @@ namespace Concerto::Graphics
 		_graphicsQueueFamilyIndex = _device.GetQueue(Queue::Type::Graphics).GetFamilyIndex();
 		_allocator = std::move(Allocator(_physicalDevice, _device, _vulkanInstance));
 		_swapchain = std::move(
-				Swapchain(_device, _allocator.value(), { _renderInfo.width, _renderInfo.height }, _physicalDevice));
+				Swapchain(_device, _allocator.value(), { _window.GetWidth(), _window.GetHeight() }, _physicalDevice));
 		_renderPass = std::move(RenderPass(_device, _swapchain.value()));
 		auto swapchainImagesViews = _swapchain.value().GetImageViews();
 		auto& swapchainDepthImageView = _swapchain.value().GetDepthImageView();
@@ -58,7 +61,7 @@ namespace Concerto::Graphics
 		{
 			_frameBuffers.emplace_back(std::move(
 					FrameBuffer(_device, _renderPass.value(), swapchainImagesView, swapchainDepthImageView,
-							{ _renderInfo.width, _renderInfo.height })));
+							{ _window.GetWidth(), _window.GetHeight() })));
 		}
 		//TODO : Create an abstraction for the descriptor set
 		// Commands
@@ -97,7 +100,7 @@ namespace Concerto::Graphics
 				{ *_globalSetLayout, *_objectSetLayout, *_singleTextureSetLayout }));
 		PipelineInfo meshPipelineInfo({ VulkanInitializer::PipelineShaderStageCreateInfo(VK_SHADER_STAGE_VERTEX_BIT,
 				*_meshVertShader->Get()), VulkanInitializer::PipelineShaderStageCreateInfo(VK_SHADER_STAGE_FRAGMENT_BIT,
-				*_colorMeshShader->Get()) }, { _renderInfo.width, _renderInfo.height }, *_meshPipelineLayout);
+				*_colorMeshShader->Get()) }, { _window.GetWidth(), _window.GetHeight() }, *_meshPipelineLayout);
 		_coloredShaderPipeline = std::move(Pipeline(_device, meshPipelineInfo));
 		_coloredShaderPipeline->BuildPipeline(*_renderPass->Get());
 		meshPipelineInfo._shaderStages.clear();
@@ -120,9 +123,9 @@ namespace Concerto::Graphics
 		return _instance;
 	}
 
-	void VulkanRenderer::Draw()
+	void VulkanRenderer::Draw(const Camera &camera)
 	{
-		_window->popEvent();
+		_window.PopEvent();
 		FrameData& frame = _frames[_frameNumber % _frames.size()];
 		frame._renderFence.wait(1000000000);
 		frame._renderFence.reset();
@@ -137,12 +140,12 @@ namespace Concerto::Graphics
 			depthClear.depthStencil.depth = 1.f;
 			VkClearValue clearValues[] = { clearValue, depthClear };
 			VkRenderPassBeginInfo rpInfo = VulkanInitializer::RenderPassBeginInfo(*_renderPass->Get(),
-					{ _renderInfo.width, _renderInfo.height }, *_frameBuffers[swapchainImageIndex].Get());
+					{ _window.GetWidth(), _window.GetHeight() }, *_frameBuffers[swapchainImageIndex].Get());
 			rpInfo.clearValueCount = 2;
 			rpInfo.pClearValues = &clearValues[0];
 			frame._mainCommandBuffer->BeginRenderPass(rpInfo);
 			{
-				DrawObjects();
+				DrawObjects(camera);
 			}
 			frame._mainCommandBuffer->EndRenderPass();
 		}
@@ -182,8 +185,8 @@ namespace Concerto::Graphics
 			pipeline = *_texturedPipeline->Get();
 		}
 		glm::mat4 modelMatrix = glm::mat4(1.0f);
-		modelMatrix = glm::translate(modelMatrix, glm::vec3(px, py, pz));
-//		modelMatrix = glm::rotate(modelMatrix, glm::radians(rx), glm::vec3(rx, ry, rz));
+//		modelMatrix = glm::translate(modelMatrix, glm::vec3(px, py, pz));
+//		modelMatrix = glm::rotate(modelMatrix, glm::radians(0.f), glm::vec3(rx, ry, rz));
 //		modelMatrix = glm::scale(modelMatrix, glm::vec3(sx, sy, sz));
 
 		auto& renderObject = _renderObjects.emplace(modelPath,
@@ -205,32 +208,21 @@ namespace Concerto::Graphics
 			return *it->second;
 		auto texture = std::make_shared<Texture>(_device, texturePath, *_allocator,
 				_uploadContext->_commandBuffer, *_uploadContext, *_graphicsQueue, VK_IMAGE_ASPECT_COLOR_BIT);
-		return *_textures.emplace("texturePath", texture).first->second;
+		return *_textures.emplace(texturePath, texture).first->second;
 	}
 
-	void VulkanRenderer::DrawObjects()
+	void VulkanRenderer::DrawObjects(const Camera &camera)
 	{
 		FrameData& frame = _frames[_frameNumber % _frames.size()];
 		auto minimumAlignment = _gpuProperties.limits.minUniformBufferOffsetAlignment;
 
-		glm::mat4 view = glm::translate(glm::mat4(1.f), { 0.f, -6.f, -10.f });
-		glm::mat4 projection = glm::perspective(glm::radians(70.f), (float)_renderInfo.width / _renderInfo.height, 0.1f,
-				200.0f);
-		glm::mat4 model = glm::mat4(1.f);
-		glm::mat4 mvp = projection * view * model;
-
 		Mesh* lastMesh = nullptr;
 		Material* lastMaterial = nullptr;
 
-		GPUCameraData camData{};
-		camData.proj = projection;
-		camData.view = view;
-		camData.viewproj = mvp;
 		static GPUSceneData _sceneParameters;
+		MapAndCopy(*_allocator, frame._cameraBuffer, camera);
 
-		MapAndCopy(*_allocator, frame._cameraBuffer, camData);
-
-		_sceneParameters.ambientColor = { 255, 0, 255, 1 };
+		_sceneParameters.ambientColor = { 255, 0, 0, 0 };
 
 		int frameIndex = _frameNumber % 2;
 		MapAndCopy(*_allocator, *_sceneParameterBuffer, _sceneParameters,
@@ -264,7 +256,6 @@ namespace Concerto::Graphics
 							*object.material._textureSet);
 				}
 			}
-			glm::mat4 mesh_matrix = object.transformMatrix;
 
 			if (object.mesh.get() != lastMesh)
 			{
