@@ -35,8 +35,9 @@ namespace Concerto::Graphics::Wrapper
 		 * @return
 		 */
 		Device& GetDevice() const;
+
 	private:
-		Device *_device;
+		Device* _device;
 	};
 }
 

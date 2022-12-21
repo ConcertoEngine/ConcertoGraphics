@@ -2,19 +2,21 @@
 // Created by arthur on 25/10/2022.
 //
 
+#define GLFW_INCLUDE_VULKAN
 #include <cassert>
 #include <vector>
 #include <iostream>
-//TODO : move to GLF3W window
-#define GLFW_INCLUDE_VULKAN
-#include "glm/gtx/string_cast.hpp"
+
+#include "imgui.h"
+#include <imgui_impl_vulkan.h>
+#include "imgui_impl_glfw.h"
 #include <GLFW/glfw3.h>
 #include "glm/glm.hpp"
-#include "glm/gtx/transform.hpp"
+
+#include "MeshPushConstants.hpp"
+#include "Utils.hpp"
 #include "VulkanRenderer.hpp"
 #include "window/GlfW3.hpp"
-#include "Utils.hpp"
-#include "MeshPushConstants.hpp"
 #include "wrapper/Sampler.hpp"
 
 namespace Concerto::Graphics
@@ -115,6 +117,8 @@ namespace Concerto::Graphics
 		_texturedPipeline->BuildPipeline(*_renderPass->Get());
 		_graphicsQueue = std::move(Queue(_device, _graphicsQueueFamilyIndex));
 		_uploadContext = std::move(UploadContext(_device, _graphicsQueueFamilyIndex));
+		if (_renderInfo.useImGUI)
+			UseImGUI();
 	}
 
 	VulkanRenderer* VulkanRenderer::Instance()
@@ -125,7 +129,8 @@ namespace Concerto::Graphics
 
 	void VulkanRenderer::Draw(const Camera &camera)
 	{
-		_window.PopEvent();
+		if (_imGUI.has_value())
+			_imGUI.value().Draw();
 		FrameData& frame = _frames[_frameNumber % _frames.size()];
 		frame._renderFence.wait(1000000000);
 		frame._renderFence.reset();
@@ -146,6 +151,8 @@ namespace Concerto::Graphics
 			frame._mainCommandBuffer->BeginRenderPass(rpInfo);
 			{
 				DrawObjects(camera);
+				if(_imGUI.has_value())
+					_imGUI.value().RenderDrawData(*frame._mainCommandBuffer);
 			}
 			frame._mainCommandBuffer->EndRenderPass();
 		}
@@ -264,5 +271,31 @@ namespace Concerto::Graphics
 			}
 			frame._mainCommandBuffer->Draw(object.mesh->_vertices.size(), 1, 0, i);
 		}
+	}
+
+	void VulkanRenderer::UseImGUI()
+	{
+		assert(_imGUI.has_value() == false);
+		RenderingContext context  = {
+			.instance = &_vulkanInstance,
+			.physicalDevice = &_physicalDevice,
+			.device = &_device,
+			.queueFamilyIndex = _graphicsQueueFamilyIndex,
+			.queue = &(_graphicsQueue.value()),
+			.renderPass = &(_renderPass.value()),
+			.minImageCount = 3,
+			.imageCount = 3,
+			.commandBuffer = &_uploadContext->_commandBuffer,
+			.fence = &_uploadContext->_uploadFence,
+			.commandPool = &_uploadContext->_commandPool,
+		};
+		_imGUI.emplace(context, _window);
+	}
+
+	ImGUI* VulkanRenderer::GetImGUIContext()
+	{
+		if (_imGUI.has_value())
+			return &(_imGUI.value());
+		return nullptr;
 	}
 } // Concerto::Graphics

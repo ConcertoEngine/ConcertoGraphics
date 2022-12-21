@@ -30,6 +30,7 @@
 #include "UploadContext.hpp"
 #include "RenderObject.hpp"
 #include "Texture.hpp"
+#include "ImGUI.hpp"
 
 namespace Concerto::Graphics
 {
@@ -37,6 +38,7 @@ namespace Concerto::Graphics
 	{
 		std::string applicationName;
 		Version applicationVersion;
+		bool useImGUI = false;
 	};
 
 	class VulkanRenderer
@@ -59,6 +61,8 @@ namespace Concerto::Graphics
 		void Draw(const Camera &camera);
 		void DrawObject(const std::string& modelPath, const std::string& texturePath, float px, float py, float pz, float rx,
 				float ry, float rz, float sx, float sy, float sz);
+		void UseImGUI();
+		ImGUI* GetImGUIContext();
 	private:
 		RenderObject& LoadModelIfNotExist(const std::string& modelPath, const std::string& texturePath, float px, float py, float pz, float rx,
 				float ry, float rz, float sx, float sy, float sz);
@@ -75,6 +79,7 @@ namespace Concerto::Graphics
 		Wrapper::Device _device;
 		VkPhysicalDeviceProperties _gpuProperties;
 		std::uint32_t _graphicsQueueFamilyIndex;
+		std::optional<Graphics::ImGUI> _imGUI;
 		std::optional<Wrapper::Allocator> _allocator; //TODO : Remove optional
 		std::optional<Wrapper::Swapchain> _swapchain; //TODO : Remove optional
 		std::optional<Wrapper::RenderPass> _renderPass; //TODO : Remove optional
