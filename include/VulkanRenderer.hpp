@@ -39,6 +39,8 @@ namespace Concerto::Graphics
 		std::string applicationName;
 		Version applicationVersion;
 		bool useImGUI = false;
+		std::uint32_t width;
+		std::uint32_t height;
 	};
 
 	class VulkanRenderer
@@ -63,6 +65,8 @@ namespace Concerto::Graphics
 				float ry, float rz, float sx, float sy, float sz);
 		void UseImGUI();
 		ImGUI* GetImGUIContext();
+		void UpdateSceneParameters(const Scene& sceneData);
+		void Resize(std::uint32_t width, std::uint32_t height);
 	private:
 		RenderObject& LoadModelIfNotExist(const std::string& modelPath, const std::string& texturePath, float px, float py, float pz, float rx,
 				float ry, float rz, float sx, float sy, float sz);
@@ -71,35 +75,37 @@ namespace Concerto::Graphics
 		std::vector<const char*> _deviceExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
 		GlfW3& _window;
 		RendererInfo _renderInfo;
+		Scene _sceneParameters;
 		VulkanRenderer* _instance{nullptr};
 		std::uint32_t _frameNumber{0};
 		Wrapper::Instance _vulkanInstance;
 		VkSurfaceKHR _surface {VK_NULL_HANDLE};
 		Wrapper::PhysicalDevice _physicalDevice;
 		Wrapper::Device _device;
+		bool _isResized{false};
 		VkPhysicalDeviceProperties _gpuProperties;
 		std::uint32_t _graphicsQueueFamilyIndex;
-		std::optional<Graphics::ImGUI> _imGUI;
-		std::optional<Wrapper::Allocator> _allocator; //TODO : Remove optional
-		std::optional<Wrapper::Swapchain> _swapchain; //TODO : Remove optional
-		std::optional<Wrapper::RenderPass> _renderPass; //TODO : Remove optional
-		std::vector<Wrapper::FrameBuffer> _frameBuffers; //TODO : Remove optional
-		std::optional<Wrapper::DescriptorSetLayout> _globalSetLayout; //TODO : Remove optional
-		std::optional<Wrapper::DescriptorSetLayout> _objectSetLayout; //TODO : Remove optional
-		std::optional<Wrapper::DescriptorSetLayout> _singleTextureSetLayout; //TODO : Remove optional
-		std::optional<Wrapper::DescriptorPool> _descriptorPool; //TODO : Remove optional
+		std::unique_ptr<Graphics::ImGUI> _imGUI;
+		std::unique_ptr<Wrapper::Allocator> _allocator;
+		std::unique_ptr<Wrapper::Swapchain> _swapchain;
+		std::unique_ptr<Wrapper::RenderPass> _renderPass;
+		std::vector<Wrapper::FrameBuffer> _frameBuffers;
+		std::unique_ptr<Wrapper::DescriptorSetLayout> _globalSetLayout;
+		std::unique_ptr<Wrapper::DescriptorSetLayout> _objectSetLayout;
+		std::unique_ptr<Wrapper::DescriptorSetLayout> _singleTextureSetLayout;
+		std::unique_ptr<Wrapper::DescriptorPool> _descriptorPool;
 		std::vector<FrameData> _frames;
-		std::optional<Wrapper::AllocatedBuffer> _sceneParameterBuffer; //TODO : Remove optional
+		std::unique_ptr<Wrapper::AllocatedBuffer> _sceneParameterBuffer;
 		//TODO : Convert all shaders modules into a unordered_map
-		std::optional<Wrapper::ShaderModule> _colorMeshShader; //TODO : Remove optional
-		std::optional<Wrapper::ShaderModule> _textureMeshShader; //TODO : Remove optional
-		std::optional<Wrapper::ShaderModule> _meshVertShader; //TODO : Remove optional
-		std::optional<Wrapper::PipelineLayout> _meshPipelineLayout; //TODO : Remove optional
-		std::optional<Wrapper::PipelineLayout> _texturedSetLayout; //TODO : Remove optional
-		std::optional<Wrapper::Pipeline> _coloredShaderPipeline; //TODO : Remove optional
-		std::optional<Wrapper::Pipeline> _texturedPipeline; //TODO : Remove optional
-		std::optional<Wrapper::Queue> _graphicsQueue; //TODO : Remove optional
-		std::optional<UploadContext> _uploadContext; //TODO : Remove optional
+		std::unique_ptr<Wrapper::ShaderModule> _colorMeshShader;
+		std::unique_ptr<Wrapper::ShaderModule> _textureMeshShader;
+		std::unique_ptr<Wrapper::ShaderModule> _meshVertShader;
+		std::unique_ptr<Wrapper::PipelineLayout> _meshPipelineLayout;
+		std::unique_ptr<Wrapper::PipelineLayout> _texturedSetLayout;
+		std::unique_ptr<Wrapper::Pipeline> _coloredShaderPipeline;
+		std::unique_ptr<Wrapper::Pipeline> _texturedPipeline;
+		std::unique_ptr<Wrapper::Queue> _graphicsQueue;
+		std::unique_ptr<UploadContext> _uploadContext;
 		std::unordered_map<std::string, std::unique_ptr<RenderObject>> _renderObjects;
 		std::unordered_map<std::string, std::shared_ptr<Texture>> _textures;
 		std::vector<std::reference_wrapper<RenderObject>> _renderObjectsToDraw;

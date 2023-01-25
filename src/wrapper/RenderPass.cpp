@@ -12,8 +12,8 @@
 
 namespace Concerto::Graphics::Wrapper
 {
-	RenderPass::RenderPass(Device& device, Swapchain& swapchain) : Object<VkRenderPass>(device, [this]()
-	{ vkDestroyRenderPass(*_device->Get(), _handle, nullptr); })
+	RenderPass::RenderPass(Device& device, Swapchain& swapchain) : Object<VkRenderPass>(device, [](Device &device, VkRenderPass handle)
+	{ vkDestroyRenderPass(*device.Get(), handle, nullptr); })
 	{
 		VkAttachmentDescription color_attachment = {};
 		color_attachment.format = swapchain.GetImageFormat();

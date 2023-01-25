@@ -101,7 +101,9 @@ namespace Concerto::Graphics::Wrapper
 
 	void Device::WaitIdle() const
 	{
-		vkDeviceWaitIdle(_device);
+		auto res = vkDeviceWaitIdle(_device);
+		if (res != VK_SUCCESS)
+			throw std::runtime_error("Failed to wait for device idle" + std::to_string(res));
 	}
 
 } // Concerto::Graphics::Wrapper

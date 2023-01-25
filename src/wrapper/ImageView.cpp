@@ -10,8 +10,9 @@
 
 namespace Concerto::Graphics::Wrapper
 {
-	ImageView::ImageView(Device& device, Image& image, VkImageAspectFlags aspectFlags) : Object<VkImageView>(device, [this](){
-		vkDestroyImageView(*_device->Get(), _handle, nullptr);
+	ImageView::ImageView(Device& device, Image& image, VkImageAspectFlags aspectFlags) : Object<VkImageView>(device, [this](Device &device, VkImageView handle){
+		device.WaitIdle();
+		vkDestroyImageView(*device.Get(), handle, nullptr);
 	})
 	{
 		auto imageInfo = VulkanInitializer::ImageViewCreateInfo(image.GetFormat(), *image.Get(), aspectFlags);

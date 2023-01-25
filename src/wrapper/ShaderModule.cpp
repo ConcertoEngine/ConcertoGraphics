@@ -11,8 +11,8 @@
 namespace Concerto::Graphics::Wrapper
 {
 
-	ShaderModule::ShaderModule(Device& device, const std::string& shaderPath) : Object<VkShaderModule>(device, [this]()
-	{ vkDestroyShaderModule(*_device->Get(), _handle, nullptr); })
+	ShaderModule::ShaderModule(Device& device, const std::string& shaderPath) : Object<VkShaderModule>(device, [this](Device &device, VkShaderModule handle)
+	{ vkDestroyShaderModule(*device.Get(), handle, nullptr); })
 	{
 		loadShaderModule(shaderPath);
 		createShaderModule();

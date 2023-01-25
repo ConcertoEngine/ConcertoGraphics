@@ -12,12 +12,30 @@ namespace Concerto::Graphics::Wrapper
 {
 	class Device;
 
+
+	/**
+	 * @brief `Object` is a template class that represents a Vulkan object.
+	 * This class is intended to be used as a base class for representing specific types of Vulkan objects.
+	 * @tparam vkType The type of the Vulkan object.
+	 */
 	template<typename vkType>
 	class Object
 	{
 	public:
+		using DestroyHelper = std::function<void(Device&, vkType)>;
+		/**
+		 * @brief Default constructor.
+		 * @attention If you need to clean up the object by calling a Vulkan function, you mustn't use this constructor.
+		 */
 		explicit Object(Device& device);
-		explicit Object(Device& device, std::function<void()>&& destroyHelper);
+
+		/**
+		 * @brief Constructor.
+		 * @param device The device.
+		 * @param destroyHelper The function that will be called to clean up the object.
+		 */
+		explicit Object(Device& device, DestroyHelper&& destroyHelper);
+
 		Object(const Object&) = delete;
 
 		Object(Object&&) noexcept;
@@ -44,7 +62,7 @@ namespace Concerto::Graphics::Wrapper
 		vkType _handle{ VK_NULL_HANDLE };
 		Device* _device{ nullptr };
 	private:
-		std::function<void()> _destroyHelper;
+		DestroyHelper _destroyHelper;
 	};
 }
 

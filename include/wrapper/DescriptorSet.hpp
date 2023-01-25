@@ -26,18 +26,18 @@ namespace Concerto::Graphics::Wrapper
 		DescriptorSet(Device& device, DescriptorPool& pool,
 				DescriptorSetLayout& descriptorSetLayout);
 
-		DescriptorSet(DescriptorSet&&) = default;
+		DescriptorSet(DescriptorSet&&) noexcept;
 
 		DescriptorSet(const DescriptorSet&) = delete;
 
-		DescriptorSet& operator=(DescriptorSet&&) = default;
+		DescriptorSet& operator=(DescriptorSet&&) noexcept = default;
 
 		DescriptorSet& operator=(const DescriptorSet&) = delete;
 
-		~DescriptorSet() = default;
-		
 		void WriteImageSamplerDescriptor(Sampler& sampler, ImageView& imageView,
 				VkImageLayout imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+	private:
+		DescriptorPool* _pool{};
 	};
 }
 

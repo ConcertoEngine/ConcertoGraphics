@@ -13,8 +13,10 @@
 namespace Concerto::Graphics::Wrapper
 {
 	FrameBuffer::FrameBuffer(Device& device, RenderPass& renderPass, ImageView& imageView, ImageView& depthImageView,
-			VkExtent2D extent) : Object<VkFramebuffer>(device, [this]()
-	{ vkDestroyFramebuffer(*_device->Get(), _handle, nullptr); })
+			VkExtent2D extent) : Object<VkFramebuffer>(device, [](Device &device, VkFramebuffer handle)
+	{
+				vkDestroyFramebuffer(*device.Get(), handle, nullptr);
+	})
 	{
 		VkFramebufferCreateInfo fb_info = VulkanInitializer::FramebufferCreateInfo(*renderPass.Get(), extent);
 

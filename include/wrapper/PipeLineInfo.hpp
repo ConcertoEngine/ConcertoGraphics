@@ -22,7 +22,7 @@ namespace Concerto::Graphics::Wrapper
 		PipelineInfo(std::vector<VkPipelineShaderStageCreateInfo> shaderStages, VkExtent2D windowExtent,
 				PipelineLayout& pipelineLayout)
 		{
-			static VertexInputDescription vertexDescription = Vertex::getVertexDescription(); //TODO Remove static
+			static VertexInputDescription vertexDescription = Vertex::GetVertexDescription(); //TODO Remove static
 			_shaderStages = std::move(shaderStages);
 			_vertexInputInfo = VulkanInitializer::VertexInputStateCreateInfo();
 			_vertexInputInfo.pVertexAttributeDescriptions = vertexDescription.attributes.data();
@@ -55,7 +55,6 @@ namespace Concerto::Graphics::Wrapper
 		VkPipelineMultisampleStateCreateInfo _multisampling;
 		VkPipelineLayout _pipelineLayout;
 		VkPipelineDepthStencilStateCreateInfo _depthStencil;
-		Viewport viewport;
 	};
 
 } // Concerto::Graphics::Wrapper

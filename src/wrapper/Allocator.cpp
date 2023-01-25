@@ -12,9 +12,9 @@
 namespace Concerto::Graphics::Wrapper
 {
 	Allocator::Allocator(PhysicalDevice& physicalDevice, Device& device, Instance& instance) : Object<VmaAllocator>(
-			device, [this, &device, &instance]()
+			device, [](Device &device, VmaAllocator handle)
 			{
-				vmaDestroyAllocator(_handle);
+				vmaDestroyAllocator(handle);
 			}), _device(&device)
 	{
 		VmaAllocatorCreateInfo allocatorInfo = {};

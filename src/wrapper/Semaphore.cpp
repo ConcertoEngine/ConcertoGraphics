@@ -11,8 +11,8 @@
 namespace Concerto::Graphics::Wrapper
 {
 
-	Semaphore::Semaphore(Device& device) : Object<VkSemaphore>(device, [this]()
-	{ vkDestroySemaphore(*_device->Get(), _handle, nullptr); })
+	Semaphore::Semaphore(Device& device) : Object<VkSemaphore>(device, [](Device &device, VkSemaphore handle)
+	{ vkDestroySemaphore(*device.Get(), handle, nullptr); })
 	{
 		VkSemaphoreCreateInfo info = {};
 		info.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;

@@ -40,7 +40,7 @@ namespace Concerto::Graphics::Wrapper
 		}
 	}
 
-	void Queue::Present(const FrameData& frame, Swapchain& swapchain, std::uint32_t swapchainImageIndex)
+	bool Queue::Present(const FrameData& frame, Swapchain& swapchain, std::uint32_t swapchainImageIndex)
 	{
 		VkPresentInfoKHR present = {};
 		present.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
@@ -50,11 +50,16 @@ namespace Concerto::Graphics::Wrapper
 		present.pWaitSemaphores = frame._renderSemaphore.Get();
 		present.waitSemaphoreCount = 1;
 		present.pImageIndices = &swapchainImageIndex;
-
-		if (vkQueuePresentKHR(_handle, &present) != VK_SUCCESS)
+		auto vkResult = vkQueuePresentKHR(_handle, &present);
+		if (vkResult == VK_ERROR_OUT_OF_DATE_KHR || vkResult == VK_SUBOPTIMAL_KHR)
+		{
+			return false;
+		}
+		else if (vkResult != VK_SUCCESS)
 		{
 			throw std::runtime_error("vkQueuePresentKHR fail");
 		}
+		return true;
 	}
 }
 

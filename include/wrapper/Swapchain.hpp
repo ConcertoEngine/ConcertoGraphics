@@ -51,6 +51,8 @@ namespace Concerto::Graphics::Wrapper
 
 		std::uint32_t AcquireNextImage(Semaphore& semaphore, Fence& fence, std::uint64_t timeout);
 
+		void Recreate(std::uint32_t width, std::uint32_t height);
+
 	private:
 		mutable std::optional<std::vector<Image>> _swapChainImages;
 		mutable std::optional<std::vector<ImageView>> _swapChainImageViews;
@@ -58,6 +60,7 @@ namespace Concerto::Graphics::Wrapper
 		VkFormat _swapChainImageFormat;
 		Image _depthImage;
 		ImageView _depthImageView;
+		PhysicalDevice* _physicalDevice;
 	};
 
 } // Concerto::Graphics::Wrapper

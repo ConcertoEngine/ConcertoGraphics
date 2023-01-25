@@ -21,17 +21,18 @@ int main()
 	RendererInfo info = {
 			.applicationName = "Concerto Graphics",
 			.applicationVersion = { 1, 0, 0 },
-			.useImGUI = true
+			.useImGUI = true,
+			.width = 1280,
+			.height = 720
 	};
 	GLFW3WindowPtr window = std::make_unique<GlfW3>(info.applicationName, 1280, 720);
 	VulkanRenderer engine(std::move(info), *window.get());
 	Concerto::Graphics::ImGUI* imGui = engine.GetImGUIContext();
 	assert(imGui != nullptr);
 	ImGuiIO& io = ImGui::GetIO();
-	bool uiMode = true;
 
-	float fractionChangeX = 0.0f;
-	float fractionChangeY = 0.0f;
+	float fractionChangeX;
+	float fractionChangeY;
 	float aspect = float(window->GetWidth() / window->GetHeight());
 	double mouseX, mouseY;
 	bool leftMouseButtonPressed = false;
@@ -40,32 +41,24 @@ int main()
 	double cx = 0;
 	double cy = 0;
 	CameraViewer cameraViewer({ 5.f, 5.f, 5.f }, { 0.f, 0.f, 0.f }, { 0.0f, 1.0f, 0.0f }, 45.f, aspect);
-
+	Scene sceneParameters{};
+	sceneParameters.gpuSceneData.ambientColor = { 0.1f, 0.1f, 0.1f, 1.f },
+			sceneParameters.clearColor = { 0.1f, 0.1f, 0.1f, 1.f };
+	engine.UpdateSceneParameters(sceneParameters);
 	window->RegisterCursorPosCallback([&](AWindow<GLFWwindow>& window, double x, double y)
 	{
-//		if (uiMode)
-//		{
 		io.AddMousePosEvent(x, y);
-//		}
-//		else
-//		{
 		cx = x;
 		cy = y;
-//		}
 	});
 	window->RegisterMouseButtonCallback([&](AWindow<GLFWwindow>& window, int button, int action, int mods)
 	{
-//		if (uiMode)
-//		{
 		io.AddMouseButtonEvent(button, action == GLFW_PRESS);
-//		}
-//		else
-//		{
 		leftMouseButtonPressed = action == GLFW_PRESS && button == GLFW_MOUSE_BUTTON_LEFT;
 		rightMouseButtonPressed = action == GLFW_PRESS && button == GLFW_MOUSE_BUTTON_RIGHT;
 		middleMouseButtonPressed = action == GLFW_PRESS && button == GLFW_MOUSE_BUTTON_MIDDLE;
-//		}
 	});
+
 
 	Camera camera
 			{
@@ -74,16 +67,17 @@ int main()
 					.proj = glm::perspective(glm::radians(90.f), aspect, 0.001f, 2000.0f),
 					.viewproj = camera.proj * camera.view * glm::mat4(1.f)
 			};
+	window->RegisterResizeCallback([&](AWindow<GLFWwindow>& window)
+	{
+		aspect = float(window.GetWidth() / window.GetHeight());
+		camera.proj = glm::perspective(glm::radians(90.f), aspect, 0.001f, 2000.0f);
+		camera.viewproj = camera.proj * camera.view * glm::mat4(1.f);
+//		engine.Resize(window.GetWidth(), window.GetHeight());
+	});
 	while (!window->ShouldClose())
 	{
 		window->PopEvent();
-//		if (uiMode)
-//		{
-//
-//		}
-//		else
-//		{
-		if (ImGui::IsWindowFocused() == false)
+		if (!ImGui::IsWindowFocused(ImGuiFocusedFlags_AnyWindow))
 		{
 			if (leftMouseButtonPressed)
 			{
@@ -107,9 +101,16 @@ int main()
 			mouseY = cy;
 		}
 		imGui->NewFrame();
-		ImGui::ShowDemoWindow();
+		if (ImGui::ColorEdit3("Select clear color", &sceneParameters.clearColor[0]))
+		{
+			engine.UpdateSceneParameters(sceneParameters);
+		}
+		if (ImGui::ColorEdit3("Select ambiant color", &sceneParameters.gpuSceneData.ambientColor[0]))
+		{
+			engine.UpdateSceneParameters(sceneParameters);
+		}
 		engine.DrawObject("./assets/monkey_flat.obj", {}, 0, 0, 0, 0, 0, 0, 1, 1, 1);
+		engine.DrawObject("./assets/lost_empire.obj", "./assets/lost_empire-RGBA.png", 10, 0, 0, 0, 0, 0, 1, 1, 1);
 		engine.Draw(camera);
 	}
-
 }

@@ -35,7 +35,7 @@ namespace Concerto::Graphics::Wrapper
 
 		void Submit(const FrameData& frame);
 
-		void Present(const FrameData& frame, Swapchain& swapchain, std::uint32_t swapchainImageIndex);
+		bool Present(const FrameData& frame, Swapchain& swapchain, std::uint32_t swapchainImageIndex);
 
 	private:
 		std::uint32_t _queueFamilyIndex;

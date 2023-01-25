@@ -174,4 +174,14 @@ namespace Concerto::Graphics::Wrapper
 		copyRegion.size = size;
 		vkCmdCopyBuffer(_commandBuffer, src._buffer, dest._buffer, 1, &copyRegion);
 	}
+
+	void CommandBuffer::SetViewport(VkViewport viewport)
+	{
+		vkCmdSetViewport(_commandBuffer, 0, 1, &viewport);
+	}
+
+	void CommandBuffer::SetScissor(VkRect2D scissor)
+	{
+		vkCmdSetScissor(_commandBuffer, 0, 1, &scissor);
+	}
 }

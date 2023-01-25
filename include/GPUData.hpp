@@ -31,5 +31,11 @@ namespace Concerto::Graphics
 		glm::vec4 sunlightDirection; //w for sun power
 		glm::vec4 sunlightColor;
 	};
+
+	struct Scene
+	{
+		GPUSceneData gpuSceneData;
+		glm::vec4 clearColor;
+	};
 }
 #endif //CONCERTOGRAPHICS_GPUDATA_HPP

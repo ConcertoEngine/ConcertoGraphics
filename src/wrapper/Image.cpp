@@ -14,12 +14,11 @@
 namespace Concerto::Graphics::Wrapper
 {
 	Image::Image(Device& device, VkExtent2D extent, VkFormat depthFormat, Allocator& allocator) : Object<VkImage>(
-			device, [this]()
+			device, [this](Device &device, VkImage handle)
 			{
 				if (!_isAllocated)
 					return;
-				if (!IsNull())
-					vmaDestroyImage(_allocator, _handle, _allocation);
+				vmaDestroyImage(_allocator, handle, _allocation);
 			}), _imageFormat(depthFormat), _isAllocated(true), _allocator(*allocator.Get())
 	{
 		VkExtent3D depthImageExtent = {
@@ -41,17 +40,13 @@ namespace Concerto::Graphics::Wrapper
 	}
 
 	Image::Image(Device& device, const std::string& file, Allocator& allocator,
-			CommandBuffer& commandBuffer, UploadContext& uploadContext, Queue& queue) : Object<VkImage>(device, [this]()
+			CommandBuffer& commandBuffer, UploadContext& uploadContext, Queue& queue) : Object<VkImage>(device, [this](Device &device, VkImage handle)
 	{
 		if (!_isAllocated)
 			return;
 		if (!IsNull())
-			vmaDestroyImage(_allocator, _handle, _allocation);
-	}),
-																						_imageFormat(
-																								VK_FORMAT_R8G8B8A8_SRGB),
-																						_isAllocated(true),
-																						_allocator(*allocator.Get())
+			vmaDestroyImage(_allocator, handle, _allocation);
+	}), _imageFormat(VK_FORMAT_R8G8B8A8_SRGB), _isAllocated(true), _allocator(*allocator.Get())
 	{
 		int textureWidth, textureHeight, textureChannels;
 		stbi_uc* pixels = stbi_load(file.c_str(), &textureWidth, &textureHeight, &textureChannels, STBI_rgb_alpha);
@@ -137,15 +132,12 @@ namespace Concerto::Graphics::Wrapper
 				});
 	}
 
-	Image::Image(Device& device, VkImage image, VkFormat imageFormat) : Object<VkImage>(device, [this]()
+	Image::Image(Device& device, VkImage image, VkFormat imageFormat) : Object<VkImage>(device, [this](Device &device, VkImage handle)
 	{
 		if (!_isAllocated)
 			return;
-		if (!IsNull())
-			vmaDestroyImage(_allocator, _handle, _allocation);
-	}), _isAllocated(false),
-																		_allocator(VK_NULL_HANDLE),
-																		_imageFormat(imageFormat)
+		vmaDestroyImage(_allocator, handle, _allocation);
+	}), _isAllocated(false), _allocator(VK_NULL_HANDLE), _imageFormat(imageFormat)
 	{
 		_handle = image;
 	}

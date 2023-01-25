@@ -6,7 +6,7 @@
 
 namespace Concerto::Graphics
 {
-	VertexInputDescription Vertex::getVertexDescription()
+	VertexInputDescription Vertex::GetVertexDescription()
 	{
 		VertexInputDescription description {};
 

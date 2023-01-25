@@ -28,7 +28,7 @@ namespace Concerto::Graphics
 		glm::vec3 color;
 		glm::vec2 uv;
 
-		static VertexInputDescription getVertexDescription();
+		static VertexInputDescription GetVertexDescription();
 	};
 	using Vertices = std::vector<Vertex>;
 

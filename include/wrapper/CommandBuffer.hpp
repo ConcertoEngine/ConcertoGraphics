@@ -70,6 +70,10 @@ namespace Concerto::Graphics::Wrapper
 
 		void CopyBuffer(AllocatedBuffer& src, AllocatedBuffer& dest, std::size_t size);
 
+		void SetViewport(VkViewport viewport);
+
+		void SetScissor(VkRect2D scissor);
+
 	private:
 		Device* _device;
 		VkCommandPool _commandPool;

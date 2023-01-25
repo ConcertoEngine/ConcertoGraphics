@@ -10,8 +10,8 @@
 
 namespace Concerto::Graphics::Wrapper
 {
-	Fence::Fence(Device& device, bool signaled) : Object<VkFence>(device, [this](){
-		vkDestroyFence(*_device->Get(), _handle, nullptr);
+	Fence::Fence(Device& device, bool signaled) : Object<VkFence>(device, [this](Device &device, VkFence handle){
+		vkDestroyFence(*device.Get(), handle, nullptr);
 	})
 	{
 		VkFenceCreateInfo info = {};
@@ -26,9 +26,10 @@ namespace Concerto::Graphics::Wrapper
 
 	void Fence::wait(std::uint64_t timeout)
 	{
-		if (vkWaitForFences(*_device->Get(), 1, &_handle, true, timeout) != VK_SUCCESS)
+		auto result = vkWaitForFences(*_device->Get(), 1, &_handle, true, timeout);
+		if ( result != VK_SUCCESS)
 		{
-			throw std::runtime_error("vkWaitForFences fail");
+			throw std::runtime_error("vkWaitForFences fail error code : " + std::to_string(int(result)));
 		}
 	}
 

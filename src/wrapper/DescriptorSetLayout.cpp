@@ -12,9 +12,9 @@ namespace Concerto::Graphics::Wrapper
 {
 
 	DescriptorSetLayout::DescriptorSetLayout(Device& device, std::vector<VkDescriptorSetLayoutBinding> bindings)
-			: Object<VkDescriptorSetLayout>(device, [this]()
+			: Object<VkDescriptorSetLayout>(device, [](Device &device, VkDescriptorSetLayout handle)
 	{
-		vkDestroyDescriptorSetLayout(*_device->Get(), _handle, nullptr);
+		vkDestroyDescriptorSetLayout(*device.Get(), handle, nullptr);
 	})
 	{
 		VkDescriptorSetLayoutCreateInfo createInfo{};

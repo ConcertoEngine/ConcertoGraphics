@@ -11,9 +11,9 @@
 
 namespace Concerto::Graphics::Wrapper
 {
-	DescriptorPool::DescriptorPool(Device& device) : Object<VkDescriptorPool>(device, [this]()
+	DescriptorPool::DescriptorPool(Device& device) : Object<VkDescriptorPool>(device, [](Device &device, VkDescriptorPool handle)
 	{
-		vkDestroyDescriptorPool(*_device->Get(), _handle, nullptr);
+		vkDestroyDescriptorPool(*device.Get(), handle, nullptr);
 	})
 	{
 		std::vector<VkDescriptorPoolSize> sizes =
@@ -36,9 +36,9 @@ namespace Concerto::Graphics::Wrapper
 	}
 
 	DescriptorPool::DescriptorPool(Device& device, std::vector<VkDescriptorPoolSize> poolSizes)
-			: Object<VkDescriptorPool>(device, [this]()
+			: Object<VkDescriptorPool>(device, [](Device &device, VkDescriptorPool handle)
 	{
-		vkDestroyDescriptorPool(*_device->Get(), _handle, nullptr);
+		vkDestroyDescriptorPool(*device.Get(), handle, nullptr);
 	})
 	{
 		VkDescriptorPoolCreateInfo pool_info = {};

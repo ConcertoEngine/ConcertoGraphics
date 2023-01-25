@@ -4,6 +4,7 @@
 
 #include <cassert>
 #include <stdexcept>
+#include <iostream>
 
 #include "wrapper/DescriptorSet.hpp"
 #include "wrapper/DescriptorSetLayout.hpp"
@@ -15,7 +16,11 @@
 namespace Concerto::Graphics::Wrapper
 {
 	DescriptorSet::DescriptorSet(Device& device, DescriptorPool& pool,
-			DescriptorSetLayout& descriptorSetLayout) :  Object<VkDescriptorSet>(device)
+			DescriptorSetLayout& descriptorSetLayout) : Object<VkDescriptorSet>(device, [this](Device &device, VkDescriptorSet handle)
+	{
+		if (_pool != nullptr)
+			vkFreeDescriptorSets(*device.Get(), *_pool->Get(), 1, &handle);
+	}), _pool(&pool)
 	{
 		VkDescriptorSetAllocateInfo allocInfo = {};
 		allocInfo.pNext = nullptr;
@@ -23,10 +28,10 @@ namespace Concerto::Graphics::Wrapper
 		allocInfo.descriptorPool = *pool.Get();
 		allocInfo.descriptorSetCount = 1;
 		allocInfo.pSetLayouts = descriptorSetLayout.Get();
-
-		if (vkAllocateDescriptorSets(*device.Get(), &allocInfo, &_handle) != VK_SUCCESS)
+		auto result = vkAllocateDescriptorSets(*_device->Get(), &allocInfo, &_handle);
+		if (result != VK_SUCCESS)
 		{
-			throw std::runtime_error("Unable to allocate descriptor sets");
+			throw std::runtime_error("Unable to allocate descriptor sets : " + std::to_string(int(result)));
 		}
 	}
 
@@ -41,5 +46,10 @@ namespace Concerto::Graphics::Wrapper
 				VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, _handle, &imageBufferInfo, 0);
 
 		vkUpdateDescriptorSets(*_device->Get(), 1, &texture1, 0, nullptr);
+	}
+
+	DescriptorSet::DescriptorSet(DescriptorSet&& other) noexcept : Object<VkDescriptorSet>(std::move(other))
+	{
+		_pool = std::exchange(other._pool, nullptr);
 	}
 }

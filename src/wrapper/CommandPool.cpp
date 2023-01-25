@@ -12,9 +12,9 @@
 namespace Concerto::Graphics::Wrapper
 {
 	CommandPool::CommandPool(Device& device, std::uint32_t queueFamily) : Object<VkCommandPool>(device,
-			[this]()
+			[](Device &device, VkCommandPool handle)
 			{
-				vkDestroyCommandPool(*_device->Get(), _handle, nullptr);
+				vkDestroyCommandPool(*device.Get(), handle, nullptr);
 			}), _queueFamily(queueFamily)
 	{
 		VkCommandPoolCreateInfo info{};

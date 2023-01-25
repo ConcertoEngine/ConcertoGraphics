@@ -49,6 +49,7 @@ namespace Concerto::Graphics
 
 		Wrapper::AllocatedBuffer _objectBuffer;
 		Wrapper::DescriptorSet objectDescriptor;
+		bool _isResized = true;
 	};
 }
 #endif //CONCERTOGRAPHICS_FRAME_HPP

@@ -13,8 +13,8 @@ namespace Concerto::Graphics::Wrapper
 
 	PipelineLayout::PipelineLayout(Device& device, std::size_t size,
 			const std::vector<std::reference_wrapper<DescriptorSetLayout>>& descriptorSetLayouts)
-			: Object<VkPipelineLayout>(device, [this]()
-	{ vkDestroyPipelineLayout(*_device->Get(), _handle, nullptr); })
+			: Object<VkPipelineLayout>(device, [](Device &device, VkPipelineLayout handle)
+	{ vkDestroyPipelineLayout(*device.Get(), handle, nullptr); })
 	{
 		VkPipelineLayoutCreateInfo pipelineLayoutCreateInfo;
 		VkPushConstantRange push_constant;

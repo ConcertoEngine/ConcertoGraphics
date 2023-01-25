@@ -16,15 +16,16 @@ namespace Concerto::Graphics::Wrapper
 {
 
 	Swapchain::Swapchain(Device& device, Allocator& allocator, VkExtent2D windowExtent, PhysicalDevice& physicalDevice)
-			: Object<VkSwapchainKHR>(device, [this](){vkDestroySwapchainKHR(*_device->Get(), _handle, nullptr);}),
+			: Object<VkSwapchainKHR>(device, [](Device &device, VkSwapchainKHR handle){vkDestroySwapchainKHR(*device.Get(), handle, nullptr);}),
 			  _windowExtent(windowExtent),
 			  _swapChainImages(),
 			  _depthImage(device, windowExtent, VK_FORMAT_D32_SFLOAT, allocator),
 			  _depthImageView(device, _depthImage, VK_IMAGE_ASPECT_DEPTH_BIT),
 			  _swapChainImageViews(),
-			  _swapChainImageFormat(VK_FORMAT_B8G8R8A8_SRGB)
+			  _swapChainImageFormat(VK_FORMAT_B8G8R8A8_SRGB),
+			  _physicalDevice(&physicalDevice)
 	{
-		PhysicalDevice::SurfaceSupportDetails surfaceSupportDetails = physicalDevice.GetSurfaceSupportDetails();
+		PhysicalDevice::SurfaceSupportDetails surfaceSupportDetails = _physicalDevice->GetSurfaceSupportDetails();
 		VkSwapchainCreateInfoKHR swapChainCreateInfo{};
 		std::uint32_t imageCount = surfaceSupportDetails.capabilities.minImageCount + 1;
 		if (surfaceSupportDetails.capabilities.maxImageCount > 0 &&
@@ -32,7 +33,7 @@ namespace Concerto::Graphics::Wrapper
 			imageCount = surfaceSupportDetails.capabilities.maxImageCount;
 
 		swapChainCreateInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
-		swapChainCreateInfo.surface = physicalDevice.GetSurface();
+		swapChainCreateInfo.surface = _physicalDevice->GetSurface();
 		swapChainCreateInfo.minImageCount = imageCount;
 		swapChainCreateInfo.imageFormat = _swapChainImageFormat;
 		swapChainCreateInfo.imageColorSpace = VK_COLOR_SPACE_SRGB_NONLINEAR_KHR;
@@ -113,5 +114,39 @@ namespace Concerto::Graphics::Wrapper
 			throw std::runtime_error("vkAcquireNextImageKHR fail");
 		}
 		return index;
+	}
+
+	void Swapchain::Recreate(std::uint32_t width, std::uint32_t height)
+	{
+		assert(_physicalDevice != nullptr);
+		if (!IsNull())
+		{
+			vkDestroySwapchainKHR(*_device->Get(), _handle, nullptr);
+		}
+		_windowExtent.width = width;
+		_windowExtent.height = height;
+		PhysicalDevice::SurfaceSupportDetails surfaceSupportDetails = _physicalDevice->GetSurfaceSupportDetails();
+		VkSwapchainCreateInfoKHR swapChainCreateInfo{};
+		std::uint32_t imageCount = surfaceSupportDetails.capabilities.minImageCount + 1;
+		if (surfaceSupportDetails.capabilities.maxImageCount > 0 &&
+			imageCount > surfaceSupportDetails.capabilities.maxImageCount)
+			imageCount = surfaceSupportDetails.capabilities.maxImageCount;
+
+		swapChainCreateInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
+		swapChainCreateInfo.surface = _physicalDevice->GetSurface();
+		swapChainCreateInfo.minImageCount = imageCount;
+		swapChainCreateInfo.imageFormat = _swapChainImageFormat;
+		swapChainCreateInfo.imageColorSpace = VK_COLOR_SPACE_SRGB_NONLINEAR_KHR;
+		swapChainCreateInfo.imageExtent = _windowExtent;
+		swapChainCreateInfo.imageArrayLayers = 1;
+		swapChainCreateInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+		swapChainCreateInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
+		swapChainCreateInfo.preTransform = VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR;
+		swapChainCreateInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
+		swapChainCreateInfo.presentMode = VK_PRESENT_MODE_IMMEDIATE_KHR;
+		swapChainCreateInfo.clipped = VK_TRUE;
+		swapChainCreateInfo.oldSwapchain = VK_NULL_HANDLE;
+		if (vkCreateSwapchainKHR(*_device->Get(), &swapChainCreateInfo, nullptr, &_handle) != VK_SUCCESS)
+			throw std::runtime_error("failed to create swap chain!");
 	}
 }
