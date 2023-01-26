@@ -24,7 +24,7 @@ namespace Concerto::Graphics::Wrapper
 		}
 	}
 
-	void Fence::wait(std::uint64_t timeout)
+	void Fence::Wait(std::uint64_t timeout)
 	{
 		auto result = vkWaitForFences(*_device->Get(), 1, &_handle, true, timeout);
 		if ( result != VK_SUCCESS)
@@ -33,7 +33,7 @@ namespace Concerto::Graphics::Wrapper
 		}
 	}
 
-	void Fence::reset()
+	void Fence::Reset()
 	{
 		if (vkResetFences(*_device->Get(), 1, &_handle) != VK_SUCCESS)
 		{

@@ -15,6 +15,16 @@ namespace Concerto::Graphics::Wrapper
 	class Device;
 
 
+	/**
+	* @class DescriptorPool
+	* @brief Represents a VkDescriptorPool object.
+	*
+	* DescriptorPool class is a wrapper for VkDescriptorPool, it encapsulate the VkDescriptorPool object,
+	* it also provide some utility functions for creating the VkDescriptorPool, allocating descriptor sets
+	* from it.
+	* A VkDescriptorPool is used to allocate descriptor sets from.
+	*/
+
 	class DescriptorPool : public Object<VkDescriptorPool>
 	{
 	public:
@@ -30,6 +40,10 @@ namespace Concerto::Graphics::Wrapper
 
 		DescriptorPool& operator=(const DescriptorPool&) = delete;
 
+		/*
+		 * @brief Allocate a descriptor set from the descriptor pool.
+		 * @param layout The descriptor set layout used to allocate the descriptor set.
+		 */
 		DescriptorSet AllocateDescriptorSet(DescriptorSetLayout& setLayout);
 	};
 }

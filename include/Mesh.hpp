@@ -8,7 +8,7 @@
 #include <vector>
 #include <string>
 #include "Vertex.hpp"
-#include "wrapper/AllocatedBuffer.hpp"
+#include "wrapper/Buffer.hpp"
 #include "wrapper/Allocator.hpp"
 #include "wrapper/CommandPool.hpp"
 #include "wrapper/Fence.hpp"
@@ -32,7 +32,7 @@ namespace Concerto::Graphics
 
 		Vertices _vertices;
 		bool _isLoaded;
-		Wrapper::AllocatedBuffer _vertexBuffer;
+		Wrapper::Buffer _vertexBuffer;
 	};
 } // Concerto::Graphics::Wrapper
 

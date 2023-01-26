@@ -8,8 +8,6 @@
 #include <vector>
 #include <iostream>
 
-#include "imgui.h"
-#include <imgui_impl_vulkan.h>
 #include "imgui_impl_glfw.h"
 #include <GLFW/glfw3.h>
 
@@ -81,7 +79,7 @@ namespace Concerto::Graphics
 		_descriptorPool = std::make_unique<DescriptorPool>(_device);
 		const std::size_t sceneParamBufferSize =
 				2 * PadUniformBuffer(sizeof(GPUSceneData), _gpuProperties.limits.minUniformBufferOffsetAlignment);
-		_sceneParameterBuffer = std::make_unique<AllocatedBuffer>(*_allocator, sceneParamBufferSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+		_sceneParameterBuffer = std::make_unique<Buffer>(*_allocator, sceneParamBufferSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
 						VMA_MEMORY_USAGE_CPU_TO_GPU);
 		_frames.reserve(_swapchain->GetImages().size());
 		for (std::size_t i = 0; i < _swapchain->GetImages().size(); i++)
@@ -130,8 +128,8 @@ namespace Concerto::Graphics
 		if (_imGUI)
 			_imGUI->Draw();
 		FrameData& frame = _frames[_frameNumber % _frames.size()];
-		frame._renderFence.wait(1000000000);
-		frame._renderFence.reset();
+		frame._renderFence.Wait(1000000000);
+		frame._renderFence.Reset();
 		std::uint32_t swapchainImageIndex = _swapchain->AcquireNextImage(frame._presentSemaphore, frame._renderFence,
 				1000000000);
 		frame._mainCommandBuffer->Reset();

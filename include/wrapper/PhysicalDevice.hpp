@@ -14,6 +14,14 @@ namespace Concerto::Graphics::Wrapper
 {
 	class Instance;
 
+	/**
+	* @class PhysicalDevice
+	*
+	* @brief Represents a physical device in a Vulkan instance.
+	*
+	* The PhysicalDevice class represents a physical device, such as a GPU, in a Vulkan instance.
+	* It is responsible for providing information about the device and its capabilities, such as its queue families, properties, features, and memory properties.
+	*/
 	class PhysicalDevice
 	{
 	public:
@@ -32,16 +40,48 @@ namespace Concerto::Graphics::Wrapper
 		PhysicalDevice& operator=(const PhysicalDevice&) = delete;
 		PhysicalDevice& operator=(PhysicalDevice&&) noexcept;
 
+		/**
+		* @brief Get the queue family properties of the physical device.
+		*
+		* This function is used to get the properties of the queue families of the physical device.
+		*
+		* @return The queue family properties of the physical device.
+		*/
 		[[nodiscard]] std::span<VkQueueFamilyProperties> GetQueueFamilyProperties() const;
 
+		/**
+		* @brief Get the properties of the physical device.
+		*
+		* @return The properties of the physical device.
+		*/
 		[[nodiscard]] VkPhysicalDeviceProperties GetProperties() const;
 
+		/**
+		* @brief Get the features of the physical device.
+		*
+		* @return The features of the physical device.
+		*/
 		[[nodiscard]] VkPhysicalDeviceFeatures GetFeatures() const;
 
+		/**
+		* @brief Get the memory properties of the physical device.
+		*
+		* @return The memory properties of the physical device.
+		*/
 		[[nodiscard]] VkPhysicalDeviceMemoryProperties GetMemoryProperties() const;
 
+		/**
+		* @brief Get the extension properties of the physical device.
+		*
+		* @return The extension properties of the physical device.
+		*/
 		[[nodiscard]] std::span<VkExtensionProperties> GetExtensionProperties() const;
 
+		/**
+		 * @brief Get the extension properties names of the physical device.
+		 *
+		 * @return The extension properties names of the physical device.
+		*/
 		[[nodiscard]] std::span<const char*> GetExtensionPropertiesNames() const;
 
 		VkSurfaceCapabilitiesKHR GetCapabilities() const;
@@ -70,7 +110,7 @@ namespace Concerto::Graphics::Wrapper
 		mutable std::optional<std::vector<VkPresentModeKHR>> _presentModes;
 		VkPhysicalDevice _physicalDevice{ VK_NULL_HANDLE };
 		VkSurfaceKHR _surface{ VK_NULL_HANDLE };
-	};
+};
 
 } // Concerto::Graphics::Wrapper
 

@@ -15,9 +15,20 @@ namespace Concerto::Graphics::Wrapper
 
 	class Device;
 
+	/**
+	 * @class RenderPass
+	 * @brief A class representing a render pass.
+	 *
+	 * A render pass defines a set of attachments, subpasses and dependencies that describe the rendering operations that will be performed.
+	 */
 	class RenderPass : public Object<VkRenderPass>
 	{
 	public:
+		/**
+		 * @brief Constructs a RenderPass object.
+		 * @param device The Device object associated with the render pass.
+		 * @param swapchain The Swapchain object associated with the render pass.
+		 */
 		RenderPass(Device& device, Swapchain& swapchain);
 
 		RenderPass(RenderPass&&) = default;

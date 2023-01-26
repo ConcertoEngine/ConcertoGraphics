@@ -21,7 +21,7 @@
 #include "wrapper/FrameBuffer.hpp"
 #include "wrapper/DescriptorSetLayout.hpp"
 #include "wrapper/DescriptorPool.hpp"
-#include "wrapper/AllocatedBuffer.hpp"
+#include "wrapper/Buffer.hpp"
 #include "Frame.hpp"
 #include "wrapper/ShaderModule.hpp"
 #include "wrapper/PipelineLayout.hpp"
@@ -45,7 +45,7 @@ namespace Concerto::Graphics
 
 	class VulkanRenderer
 	{
-	public:
+	 public:
 		explicit VulkanRenderer(RendererInfo info, GlfW3& window);
 
 		~VulkanRenderer() = default;
@@ -60,29 +60,47 @@ namespace Concerto::Graphics
 
 		VulkanRenderer* Instance();
 
-		void Draw(const Camera &camera);
-		void DrawObject(const std::string& modelPath, const std::string& texturePath, float px, float py, float pz, float rx,
-				float ry, float rz, float sx, float sy, float sz);
+		void Draw(const Camera& camera);
+		void DrawObject(const std::string& modelPath,
+			const std::string& texturePath,
+			float px,
+			float py,
+			float pz,
+			float rx,
+			float ry,
+			float rz,
+			float sx,
+			float sy,
+			float sz);
 		void UseImGUI();
 		ImGUI* GetImGUIContext();
 		void UpdateSceneParameters(const Scene& sceneData);
 		void Resize(std::uint32_t width, std::uint32_t height);
-	private:
-		RenderObject& LoadModelIfNotExist(const std::string& modelPath, const std::string& texturePath, float px, float py, float pz, float rx,
-				float ry, float rz, float sx, float sy, float sz);
+	 private:
+		RenderObject& LoadModelIfNotExist(const std::string& modelPath,
+			const std::string& texturePath,
+			float px,
+			float py,
+			float pz,
+			float rx,
+			float ry,
+			float rz,
+			float sx,
+			float sy,
+			float sz);
 		Texture& CreateTextureIfNotExist(const std::string& texturePath);
-		void DrawObjects(const Camera &camera);
+		void DrawObjects(const Camera& camera);
 		std::vector<const char*> _deviceExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
 		GlfW3& _window;
 		RendererInfo _renderInfo;
 		Scene _sceneParameters;
-		VulkanRenderer* _instance{nullptr};
-		std::uint32_t _frameNumber{0};
+		VulkanRenderer* _instance{ nullptr };
+		std::uint32_t _frameNumber{ 0 };
 		Wrapper::Instance _vulkanInstance;
-		VkSurfaceKHR _surface {VK_NULL_HANDLE};
+		VkSurfaceKHR _surface{ VK_NULL_HANDLE };
 		Wrapper::PhysicalDevice _physicalDevice;
 		Wrapper::Device _device;
-		bool _isResized{false};
+		bool _isResized{ false };
 		VkPhysicalDeviceProperties _gpuProperties;
 		std::uint32_t _graphicsQueueFamilyIndex;
 		std::unique_ptr<Graphics::ImGUI> _imGUI;
@@ -95,8 +113,8 @@ namespace Concerto::Graphics
 		std::unique_ptr<Wrapper::DescriptorSetLayout> _singleTextureSetLayout;
 		std::unique_ptr<Wrapper::DescriptorPool> _descriptorPool;
 		std::vector<FrameData> _frames;
-		std::unique_ptr<Wrapper::AllocatedBuffer> _sceneParameterBuffer;
-		//TODO : Convert all shaders modules into a unordered_map
+		std::unique_ptr<Wrapper::Buffer> _sceneParameterBuffer;
+		//TODO : Convert all shaders modules into an unordered_map
 		std::unique_ptr<Wrapper::ShaderModule> _colorMeshShader;
 		std::unique_ptr<Wrapper::ShaderModule> _textureMeshShader;
 		std::unique_ptr<Wrapper::ShaderModule> _meshVertShader;

@@ -13,7 +13,7 @@ namespace Concerto::Graphics
 	using namespace Concerto::Graphics::Wrapper;
 	Graphics::FrameData::FrameData(Device& device, Wrapper::Allocator& allocator, std::uint32_t queueFamily,
 			Wrapper::DescriptorPool& pool, Wrapper::DescriptorSetLayout& globalDescriptorSetLayout,
-			Wrapper::DescriptorSetLayout& objectDescriptorSetLayout, Wrapper::AllocatedBuffer& sceneParameterBuffer,
+			Wrapper::DescriptorSetLayout& objectDescriptorSetLayout, Wrapper::Buffer& sceneParameterBuffer,
 			bool signaled) : _presentSemaphore(device),
 							 _commandPool(std::make_unique<Wrapper::CommandPool>(device, queueFamily)),
 							 _renderSemaphore(device),

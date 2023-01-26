@@ -6,7 +6,7 @@
 #define CONCERTOGRAPHICS_FRAME_HPP
 
 #include <memory>
-#include "wrapper/AllocatedBuffer.hpp"
+#include "wrapper/Buffer.hpp"
 #include "wrapper/Allocator.hpp"
 #include "wrapper/DescriptorSet.hpp"
 #include "wrapper/DescriptorSetLayout.hpp"
@@ -29,7 +29,7 @@ namespace Concerto::Graphics
 	{
 		FrameData(Wrapper::Device& device,Wrapper::Allocator& allocator, std::uint32_t queueFamily, Wrapper::DescriptorPool& pool,
 				Wrapper::DescriptorSetLayout& globalDescriptorSetLayout, Wrapper::DescriptorSetLayout& objectDescriptorSetLayout,
-				Wrapper::AllocatedBuffer& sceneParameterBuffer,
+				Wrapper::Buffer& sceneParameterBuffer,
 				bool signaled = true);
 
 		FrameData(FrameData&&) = default;
@@ -44,10 +44,10 @@ namespace Concerto::Graphics
 		std::unique_ptr<Wrapper::CommandPool> _commandPool;
 		std::unique_ptr<Wrapper::CommandBuffer> _mainCommandBuffer;
 
-		Wrapper::AllocatedBuffer _cameraBuffer;
+		Wrapper::Buffer _cameraBuffer;
 		Wrapper::DescriptorSet globalDescriptor;
 
-		Wrapper::AllocatedBuffer _objectBuffer;
+		Wrapper::Buffer _objectBuffer;
 		Wrapper::DescriptorSet objectDescriptor;
 		bool _isResized = true;
 	};

@@ -12,6 +12,14 @@
 namespace Concerto::Graphics::Wrapper
 {
 	class Device;
+
+	/**
+	* @class DescriptorSetLayout
+	* @brief This class represents a VkDescriptorSetLayout.
+	* A descriptor set layout defines the layout of the descriptors within a descriptor set.
+	*
+	* @note This class is not copyable, but it is movable.
+	*/
 	class DescriptorSetLayout : public Object<VkDescriptorSetLayout>
 	{
 	public:

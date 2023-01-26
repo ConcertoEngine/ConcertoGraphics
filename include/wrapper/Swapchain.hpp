@@ -22,9 +22,21 @@ namespace Concerto::Graphics::Wrapper
 
 	class PhysicalDevice;
 
+	/**
+	 * @class Swapchain
+	 * @brief Represents a swapchain in the vulkan API.
+	 * A swapchain is a collection of images that are used for rendering and displaying.
+	 */
 	class Swapchain : public Object<VkSwapchainKHR>
 	{
 	public:
+		/**
+		 * @brief Construct a new Swapchain object
+		 * @param device A reference to the logical device.
+		 * @param allocator A reference to the allocator.
+		 * @param windowExtent The size of the window.
+		 * @param physicalDevice A reference to the physical device.
+		 */
 		Swapchain(Device& device, Allocator& allocator, VkExtent2D windowExtent, PhysicalDevice& physicalDevice);
 
 		Swapchain(Swapchain&&) noexcept = default;
@@ -35,6 +47,10 @@ namespace Concerto::Graphics::Wrapper
 
 		Swapchain& operator=(const Swapchain&) = delete;
 
+		/**
+		 * @brief Get the images in the swapchain.
+		 * @return A span of Image objects.
+		 */
 		[[nodiscard]] std::span<Image> GetImages();
 
 		[[nodiscard]] std::span<ImageView> GetImageViews();
@@ -49,20 +65,25 @@ namespace Concerto::Graphics::Wrapper
 
 		[[nodiscard]] VkFormat GetDepthFormat() const;
 
+		/**
+		 * @brief Acquire the next image in the swapchain.
+		 * @param semaphore A reference to the semaphore.
+		 * @param fence A reference to the fence.
+		 * @param timeout The timeout.
+		 * @return The index of the acquired image.
+		 */
 		std::uint32_t AcquireNextImage(Semaphore& semaphore, Fence& fence, std::uint64_t timeout);
 
-		void Recreate(std::uint32_t width, std::uint32_t height);
 
-	private:
-		mutable std::optional<std::vector<Image>> _swapChainImages;
-		mutable std::optional<std::vector<ImageView>> _swapChainImageViews;
-		VkExtent2D _windowExtent;
-		VkFormat _swapChainImageFormat;
-		Image _depthImage;
-		ImageView _depthImageView;
-		PhysicalDevice* _physicalDevice;
+		private:
+			mutable std::optional<std::vector<Image>> _swapChainImages;
+			mutable std::optional<std::vector<ImageView>> _swapChainImageViews;
+			VkExtent2D _windowExtent;
+			VkFormat _swapChainImageFormat;
+			Image _depthImage;
+			ImageView _depthImageView;
+			PhysicalDevice* _physicalDevice;
 	};
-
 } // Concerto::Graphics::Wrapper
 
 #endif //CONCERTOGRAPHICS_SWAPCHAIN_HPP

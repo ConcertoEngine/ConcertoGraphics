@@ -14,9 +14,20 @@ namespace Concerto::Graphics::Wrapper
 {
 	class Device;
 
+	/**
+	 * @class ShaderModule
+	 * @brief A class representing a ShaderModule.
+	 *
+	 * A ShaderModule is a class that encapsulate the creation, loading and handling of a VkShaderModule object.
+	 */
 	class ShaderModule : public Object<VkShaderModule>
 	{
 	public:
+		/**
+		 * @brief Constructs a ShaderModule object.
+		 * @param device The Device object associated with the ShaderModule.
+		 * @param shaderPath The path to the shader source file.
+		 */
 		ShaderModule(Device& device, const std::string& shaderPath);
 
 		ShaderModule(ShaderModule&&) = default;

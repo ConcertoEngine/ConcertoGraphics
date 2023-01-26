@@ -4,7 +4,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 
 #include <stb_image.h>
-#include "wrapper/AllocatedBuffer.hpp"
+#include "wrapper/Buffer.hpp"
 #include "wrapper/Image.hpp"
 #include "wrapper/CommandBuffer.hpp"
 #include "UploadContext.hpp"
@@ -57,7 +57,7 @@ namespace Concerto::Graphics::Wrapper
 
 		void* pixelPtr = pixels;
 		VkDeviceSize imageSize = textureWidth * textureHeight * 4;
-		AllocatedBuffer stagingBuffer(allocator, imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+		Buffer stagingBuffer(allocator, imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
 				VMA_MEMORY_USAGE_CPU_ONLY);
 		MapAndCopy(allocator, stagingBuffer, pixelPtr, imageSize);
 		stbi_image_free(pixels);

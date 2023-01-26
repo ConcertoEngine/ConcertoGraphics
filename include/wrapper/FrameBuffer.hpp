@@ -6,7 +6,6 @@
 #define CONCERTOGRAPHICS_FRAMEBUFFER_HPP
 
 #include <vector>
-#include "vulkan/vulkan.hpp"
 #include "wrapper/Object.hpp"
 
 namespace Concerto::Graphics::Wrapper
@@ -17,9 +16,26 @@ namespace Concerto::Graphics::Wrapper
 
 	class ImageView;
 
+	/**
+	* @class FrameBuffer
+	* @brief This class represents a VkFramebuffer.
+	* A frame buffer is a collection of images that are used as the destination for rendering.
+	*
+	* This class is a wrapper around the VkFramebuffer handle and provides
+	* a simpler interface for interacting with frame buffers.
+	*/
 	class FrameBuffer : public Object<VkFramebuffer>
 	{
 	public:
+		/**
+		* @brief Constructs a new frame buffer.
+		*
+		* @param device The device to create the frame buffer on.
+		* @param renderPass The render pass the frame buffer will be used with.
+		* @param imageView The color image view for the frame buffer.
+		* @param depthImageView The depth image view for the frame buffer.
+		* @param extent The dimensions of the frame buffer.
+		*/
 		FrameBuffer(Device& device, RenderPass& renderPass, ImageView& imageView, ImageView& depthImageView,
 				VkExtent2D extent);
 

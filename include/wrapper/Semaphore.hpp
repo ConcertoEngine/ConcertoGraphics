@@ -12,6 +12,12 @@ namespace Concerto::Graphics::Wrapper
 {
 	class Device;
 
+	/**
+	 * @class Semaphore
+	 * @brief A class representing a semaphore.
+	 *
+	 * A semaphore is a synchronization object that can be used to insert a dependency between command buffers submitted to a queue.
+	 */
 	class Semaphore : public Object<VkSemaphore>
 	{
 	public:

@@ -11,9 +11,10 @@ namespace Concerto::Graphics::Wrapper
 {
 	class Device;
 	class Image;
+
 	class ImageView : public Object<VkImageView>
 	{
-	public:
+	 public:
 		ImageView(Device& device, Image& image, VkImageAspectFlags aspectFlags);
 
 		ImageView(const ImageView&) = delete;
@@ -25,6 +26,5 @@ namespace Concerto::Graphics::Wrapper
 		ImageView& operator=(ImageView&&) noexcept = default;
 	};
 }
-
 
 #endif //CONCERTOGRAPHICS_IMAGEVIEW_HPP

@@ -4,13 +4,13 @@
 
 #include <stdexcept>
 #include <utility>
-#include "wrapper/AllocatedBuffer.hpp"
+#include "wrapper/Buffer.hpp"
 #include "wrapper/Device.hpp"
 
 namespace Concerto::Graphics::Wrapper
 {
 
-	AllocatedBuffer::AllocatedBuffer(Allocator& allocator,
+	Buffer::Buffer(Allocator& allocator,
 			std::size_t allocSize, VkBufferUsageFlags usage, VmaMemoryUsage memoryUsage) : _allocator(&allocator)
 	{
 		VkBufferCreateInfo bufferInfo = {};
@@ -30,19 +30,19 @@ namespace Concerto::Graphics::Wrapper
 		}
 	}
 
-	AllocatedBuffer::AllocatedBuffer(AllocatedBuffer&& other) noexcept
+	Buffer::Buffer(Buffer&& other) noexcept
 	{
 		_allocator = std::exchange(other._allocator, nullptr);
 		_buffer = std::exchange(other._buffer, VK_NULL_HANDLE);
 		_allocation = std::exchange(other._allocation, nullptr);
 	}
 
-	AllocatedBuffer& AllocatedBuffer::operator=(AllocatedBuffer&& other) noexcept
+	Buffer& Buffer::operator=(Buffer&& other) noexcept
 	{
 		return *this;
 	}
 
-	AllocatedBuffer::~AllocatedBuffer()
+	Buffer::~Buffer()
 	{
 		if (_buffer == VK_NULL_HANDLE)
 			return;

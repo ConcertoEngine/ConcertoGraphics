@@ -17,9 +17,24 @@ namespace Concerto::Graphics::Wrapper
 
 	class Device;
 
+	/**
+	* @class Allocator
+	* @brief Represents a VmaAllocator object.
+	*
+	*  Allocator class is a wrapper for VmaAllocator, it encapsulate the VmaAllocator object,
+	*  it also provide some utility functions for creating the VmaAllocator.
+	*
+	*/
 	class Allocator : public Object<VmaAllocator>
 	{
 	public:
+		/**
+		* @brief Constructs a new Allocator object.
+		*
+		* @param physicalDevice The PhysicalDevice object used to create the allocator.
+		* @param device The Device object used to create the allocator.
+		* @param instance The Instance object used to create the allocator.
+		*/
 		Allocator(PhysicalDevice& physicalDevice, Device& device, Instance& instance);
 
 		Allocator(const Allocator&) = delete;
@@ -31,10 +46,10 @@ namespace Concerto::Graphics::Wrapper
 		Allocator& operator=(Allocator&&) = default;
 
 		/**
-		 * @brief Returns the device used to create the allocator
-		 * @return
-		 */
-		Device& GetDevice() const;
+		* @brief Returns the device used to create the allocator
+		* @return Reference to the Device object used to create the allocator.
+		*/
+		[[nodiscard]] Device& GetDevice() const;
 
 	private:
 		Device* _device;

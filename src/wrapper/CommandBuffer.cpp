@@ -114,7 +114,7 @@ namespace Concerto::Graphics::Wrapper
 		vkCmdDraw(_commandBuffer, vertexCount, instanceCount, firstVertex, firstInstance);
 	}
 
-	void CommandBuffer::BindVertexBuffers(const AllocatedBuffer& buffer)
+	void CommandBuffer::BindVertexBuffers(const Buffer& buffer)
 	{
 		VkDeviceSize offset = 0;
 		vkCmdBindVertexBuffers(_commandBuffer, 0, 1, &buffer._buffer, &offset);
@@ -161,12 +161,12 @@ namespace Concerto::Graphics::Wrapper
 		{
 			throw std::runtime_error("vkQueueSubmit fail");
 		}
-		fence.wait(9999999999);
-		fence.reset();
-		commandPool.reset();
+		fence.Wait(9999999999);
+		fence.Reset();
+		commandPool.Reset();
 	}
 
-	void CommandBuffer::CopyBuffer(AllocatedBuffer& src, AllocatedBuffer& dest, std::size_t size)
+	void CommandBuffer::CopyBuffer(Buffer& src, Buffer& dest, std::size_t size)
 	{
 		VkBufferCopy copyRegion = {};
 		copyRegion.srcOffset = 0;

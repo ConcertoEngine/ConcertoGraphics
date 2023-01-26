@@ -15,6 +15,13 @@
 namespace Concerto::Graphics::Wrapper
 {
 	class Device;
+
+	/**
+	 * @class Pipeline
+	 *
+	 * @brief A wrapper class for creating and managing VkPipelineLayout.
+	 * The pipeline layout represents a sequence of descriptor sets with each having a specific layout. This sequence of layouts is used to determine the interface between shader stages and shader resources
+	 */
 	class PipelineLayout : public Object<VkPipelineLayout>
 	{
 	public:

@@ -8,12 +8,12 @@
 #include <vector>
 #include <functional>
 #include "wrapper/Allocator.hpp"
-#include "wrapper/AllocatedBuffer.hpp"
+#include "wrapper/Buffer.hpp"
 
 namespace Concerto::Graphics
 {
 	template<typename T>
-	void MapAndCopy(Wrapper::Allocator& allocator, Wrapper::AllocatedBuffer& buffer, T& object)
+	void MapAndCopy(Wrapper::Allocator& allocator, Wrapper::Buffer& buffer, T& object)
 	{
 		void* data;
 		vmaMapMemory(*allocator.Get(), buffer._allocation, &data);
@@ -22,7 +22,7 @@ namespace Concerto::Graphics
 	}
 
 	template<typename T>
-	void MapAndCopy(Wrapper::Allocator& allocator, Wrapper::AllocatedBuffer& buffer, T* object, std::size_t size)
+	void MapAndCopy(Wrapper::Allocator& allocator, Wrapper::Buffer& buffer, T* object, std::size_t size)
 	{
 		void* data;
 		vmaMapMemory(*allocator.Get(), buffer._allocation, &data);
@@ -31,7 +31,7 @@ namespace Concerto::Graphics
 	}
 
 	template<typename DestBuffer, typename SrcObj>
-	void MapAndCopy(Wrapper::Allocator& allocator, Wrapper::AllocatedBuffer& buffer, std::vector<SrcObj>& objects,
+	void MapAndCopy(Wrapper::Allocator& allocator, Wrapper::Buffer& buffer, std::vector<SrcObj>& objects,
 			std::function<void(DestBuffer& destBuffer, SrcObj& srcObj)> && copyFunc)
 	{
 		void* data;
@@ -45,7 +45,7 @@ namespace Concerto::Graphics
 	}
 
 	template<typename T>
-	void MapAndCopy(Wrapper::Allocator& allocator, Wrapper::AllocatedBuffer& buffer, T& object, std::size_t padding)
+	void MapAndCopy(Wrapper::Allocator& allocator, Wrapper::Buffer& buffer, T& object, std::size_t padding)
 	{
 		char* data;
 		vmaMapMemory(*allocator.Get(), buffer._allocation, (void**)&data);

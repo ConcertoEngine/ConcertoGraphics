@@ -21,7 +21,7 @@ namespace Concerto::Graphics::Wrapper
 		info.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
 		info.pNext = nullptr;
 		info.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
-		info.queueFamilyIndex = queueFamily;
+		info.queueFamilyIndex = _queueFamily;
 
 		VkResult result = vkCreateCommandPool(*_device->Get(), &info, nullptr, &_handle);
 		if (result != VK_SUCCESS)
@@ -30,7 +30,7 @@ namespace Concerto::Graphics::Wrapper
 		}
 	}
 
-	void CommandPool::reset()
+	void CommandPool::Reset()
 	{
 		if (vkResetCommandPool(*_device->Get(), _handle, 0) != VK_SUCCESS)
 		{
