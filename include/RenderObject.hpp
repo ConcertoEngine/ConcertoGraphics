@@ -19,9 +19,16 @@ namespace Concerto::Graphics
 
 		}
 
+		explicit RenderObject(std::unique_ptr<Mesh> mesh, VkPipelineLayout pipelineLayout, VkPipeline pipeline) : mesh(
+			std::move(mesh)), material(pipelineLayout, pipeline), transformMatrix()
+		{
+
+		}
+
 		std::unique_ptr<Mesh> mesh;
 		Material material;
 		glm::mat4 transformMatrix;
 	};
+	using RenderObjectPtr = std::shared_ptr<RenderObject>;
 }
 #endif //CONCERTOGRAPHICS_RENDEROBJECT_HPP

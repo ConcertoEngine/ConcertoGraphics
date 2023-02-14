@@ -9,6 +9,7 @@
 #include <optional>
 #include <unordered_map>
 #include <functional>
+#include <utility>
 #include "window/GlfW3.hpp"
 #include "Version.hpp"
 #include "wrapper/Instance.hpp"
@@ -31,7 +32,6 @@
 #include "RenderObject.hpp"
 #include "Texture.hpp"
 #include "ImGUI.hpp"
-
 namespace Concerto::Graphics
 {
 	struct RendererInfo
@@ -77,17 +77,7 @@ namespace Concerto::Graphics
 		void UpdateSceneParameters(const Scene& sceneData);
 		void Resize(std::uint32_t width, std::uint32_t height);
 	 private:
-		RenderObject& LoadModelIfNotExist(const std::string& modelPath,
-			const std::string& texturePath,
-			float px,
-			float py,
-			float pz,
-			float rx,
-			float ry,
-			float rz,
-			float sx,
-			float sy,
-			float sz);
+		RenderObjectPtr LoadModelIfNotExist(const std::string& modelPath, const std::string& texturePath);
 		Texture& CreateTextureIfNotExist(const std::string& texturePath);
 		void DrawObjects(const Camera& camera);
 		std::vector<const char*> _deviceExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
@@ -124,9 +114,9 @@ namespace Concerto::Graphics
 		std::unique_ptr<Wrapper::Pipeline> _texturedPipeline;
 		std::unique_ptr<Wrapper::Queue> _graphicsQueue;
 		std::unique_ptr<UploadContext> _uploadContext;
-		std::unordered_map<std::string, std::unique_ptr<RenderObject>> _renderObjects;
+		std::unordered_map<std::string, RenderObjectPtr> _renderObjects;
 		std::unordered_map<std::string, std::shared_ptr<Texture>> _textures;
-		std::vector<std::reference_wrapper<RenderObject>> _renderObjectsToDraw;
+		std::unordered_map<RenderObjectPtr, std::vector<glm::mat4>> _renderObjectsToDraw;
 	};
 
 } // Concerto::Graphics

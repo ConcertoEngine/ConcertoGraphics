@@ -109,8 +109,9 @@ int main()
 		{
 			engine.UpdateSceneParameters(sceneParameters);
 		}
-		engine.DrawObject("./assets/monkey_flat.obj", {}, 0, 0, 0, 0, 0, 0, 1, 1, 1);
-		engine.DrawObject("./assets/lost_empire.obj", "./assets/lost_empire-RGBA.png", 10, 0, 0, 0, 0, 0, 1, 1, 1);
+		engine.DrawObject("./assets/monkey_flat.obj", {}, 0, 0, 0, 90, 0, 0, 1, 1, 1);
+		engine.DrawObject("./assets/monkey_flat.obj", {}, 10, 0, 0, 0, 0, 0, 1, 1, 1);
+//		engine.DrawObject("./assets/lost_empire.obj", "./assets/lost_empire-RGBA.png", 10, 0, 0, 0, 0, 0, 1, 1, 1);
 		engine.Draw(camera);
 	}
 }
