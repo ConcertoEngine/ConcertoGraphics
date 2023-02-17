@@ -5,10 +5,10 @@
 #ifndef CONCERTOGRAPHICS_UPLOADCONTEXT_HPP
 #define CONCERTOGRAPHICS_UPLOADCONTEXT_HPP
 
-#include "wrapper/CommandPool.hpp"
-#include "wrapper/CommandBuffer.hpp"
-#include "wrapper/Fence.hpp"
-#include "wrapper/Device.hpp"
+#include "Vulkan/Wrapper/CommandPool.hpp"
+#include "Vulkan/Wrapper/CommandBuffer.hpp"
+#include "Vulkan/Wrapper/Fence.hpp"
+#include "Vulkan/Wrapper/Device.hpp"
 
 namespace Concerto::Graphics
 {

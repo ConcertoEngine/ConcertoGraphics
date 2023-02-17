@@ -6,13 +6,13 @@
 #define CONCERTOGRAPHICS_FRAME_HPP
 
 #include <memory>
-#include "wrapper/Buffer.hpp"
-#include "wrapper/Allocator.hpp"
-#include "wrapper/DescriptorSet.hpp"
-#include "wrapper/DescriptorSetLayout.hpp"
-#include "wrapper/DescriptorPool.hpp"
-#include "wrapper/Fence.hpp"
-#include "wrapper/Semaphore.hpp"
+#include "Vulkan/Wrapper/Buffer.hpp"
+#include "Vulkan/Wrapper/Allocator.hpp"
+#include "Vulkan/Wrapper/DescriptorSet.hpp"
+#include "Vulkan/Wrapper/DescriptorSetLayout.hpp"
+#include "Vulkan/Wrapper/DescriptorPool.hpp"
+#include "Vulkan/Wrapper/Fence.hpp"
+#include "Vulkan/Wrapper/Semaphore.hpp"
 #include "GPUData.hpp"
 
 #define MAX_OBJECTS 1000

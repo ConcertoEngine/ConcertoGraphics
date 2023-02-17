@@ -6,8 +6,8 @@
 #define CONCERTOGRAPHICS_IMGUI_HPP
 
 #include "imgui.h"
-#include "RenderingContext.hpp"
-#include "wrapper/DescriptorPool.hpp"
+#include "Vulkan/RenderingContext.hpp"
+#include "Vulkan/Wrapper/DescriptorPool.hpp"
 
 namespace Concerto::Graphics
 {

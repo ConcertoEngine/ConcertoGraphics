@@ -12,11 +12,10 @@
 #include "imgui_impl_glfw.h"
 #include <GLFW/glfw3.h>
 
-#include "MeshPushConstants.hpp"
-#include "Utils.hpp"
+#include "Vulkan/Utils.hpp"
 #include "VulkanRenderer.hpp"
 #include "window/GlfW3.hpp"
-#include "wrapper/Sampler.hpp"
+#include "Vulkan/Wrapper/Sampler.hpp"
 
 namespace Concerto::Graphics
 {
@@ -198,7 +197,7 @@ namespace Concerto::Graphics
 		auto it = _renderObjects.find(modelPath);
 		if (it != _renderObjects.end())
 			return it->second;
-		std::unique_ptr<Mesh> mesh = std::make_unique<Mesh>(modelPath, *_allocator,
+		std::unique_ptr<VkMesh> mesh = std::make_unique<VkMesh>(modelPath, *_allocator,
 			VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
 			VMA_MEMORY_USAGE_GPU_ONLY);
 		mesh->Upload(_uploadContext->_commandBuffer, _uploadContext->_commandPool, _uploadContext->_uploadFence,
@@ -248,7 +247,7 @@ namespace Concerto::Graphics
 		FrameData& frame = _frames[_frameNumber % _frames.size()];
 		auto minimumAlignment = _gpuProperties.limits.minUniformBufferOffsetAlignment;
 
-		Mesh* lastMesh = nullptr;
+		VkMesh* lastMesh = nullptr;
 		Material* lastMaterial = nullptr;
 
 		MapAndCopy(*_allocator, frame._cameraBuffer, camera);

@@ -7,11 +7,11 @@
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_vulkan.h"
 
-#include "wrapper/Instance.hpp"
-#include "wrapper/PhysicalDevice.hpp"
-#include "wrapper/Device.hpp"
-#include "wrapper/RenderPass.hpp"
-#include "wrapper/CommandBuffer.hpp"
+#include "Vulkan/Wrapper/Instance.hpp"
+#include "Vulkan/Wrapper/PhysicalDevice.hpp"
+#include "Vulkan/Wrapper/Device.hpp"
+#include "Vulkan/Wrapper/RenderPass.hpp"
+#include "Vulkan/Wrapper/CommandBuffer.hpp"
 #include "GlfW3.hpp"
 
 namespace Concerto::Graphics
