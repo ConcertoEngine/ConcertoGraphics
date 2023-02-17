@@ -62,7 +62,7 @@ namespace Concerto::Graphics
 		VulkanRenderer* Instance();
 
 		void Draw(const Camera& camera);
-		void DrawObject(const std::string& modelPath,
+		void DrawObject(MeshPtr &mesh,
 			const std::string& texturePath,
 			float px,
 			float py,
@@ -78,7 +78,7 @@ namespace Concerto::Graphics
 		void UpdateSceneParameters(const Scene& sceneData);
 		void Resize(std::uint32_t width, std::uint32_t height);
 	 private:
-		RenderObjectPtr LoadModelIfNotExist(const std::string& modelPath, const std::string& texturePath);
+		RenderObjectPtr LoadModelIfNotExist(MeshPtr &mesh, const std::string& texturePath);
 		Texture& CreateTextureIfNotExist(const std::string& texturePath);
 		void DrawObjects(const Camera& camera);
 		std::vector<const char*> _deviceExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };

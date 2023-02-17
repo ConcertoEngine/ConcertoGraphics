@@ -74,6 +74,7 @@ int main()
 		camera.viewproj = camera.proj * camera.view * glm::mat4(1.f);
 //		engine.Resize(window.GetWidth(), window.GetHeight());
 	});
+	MeshPtr sponzaMesh = std::make_shared<Mesh>("./assets/sponza/sponza.obj");
 	while (!window->ShouldClose())
 	{
 		window->PopEvent();
@@ -109,8 +110,7 @@ int main()
 		{
 			engine.UpdateSceneParameters(sceneParameters);
 		}
-		engine.DrawObject("./assets/sponza/sponza.obj", {}, 0, 0, 0, 0, 0, 0, 0.1f, 0.1f, 0.1f);
-//		engine.DrawObject("./assets/lost_empire.obj", "./assets/lost_empire-RGBA.png", 10, 0, 0, 0, 0, 0, 1, 1, 1);
+		engine.DrawObject(sponzaMesh, {}, 0, 0, 0, 0, 0, 0, 0.1f, 0.1f, 0.1f);
 		engine.Draw(camera);
 	}
 }

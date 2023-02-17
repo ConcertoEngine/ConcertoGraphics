@@ -173,10 +173,10 @@ namespace Concerto::Graphics
 		_renderObjectsToDraw.clear();
 	}
 
-	void VulkanRenderer::DrawObject(const std::string& modelPath, const std::string& texturePath, float px, float py,
+	void VulkanRenderer::DrawObject(MeshPtr &mesh, const std::string& texturePath, float px, float py,
 		float pz, float rx, float ry, float rz, float sx, float sy, float sz)
 	{
-		RenderObjectPtr object = LoadModelIfNotExist(modelPath, texturePath);
+		RenderObjectPtr object = LoadModelIfNotExist(mesh, texturePath);
 		glm::mat4 modelMatrix = glm::mat4(1.0f);
 		modelMatrix = glm::translate(modelMatrix, glm::vec3(px, py, pz));
 		modelMatrix = glm::rotate(modelMatrix, glm::radians(rx), glm::vec3(1.0f, 0.0f, 0.0f));
@@ -192,15 +192,15 @@ namespace Concerto::Graphics
 	}
 
 	RenderObjectPtr
-	VulkanRenderer::LoadModelIfNotExist(const std::string& modelPath, const std::string& texturePath)
+	VulkanRenderer::LoadModelIfNotExist(MeshPtr &mesh, const std::string& texturePath)
 	{
-		auto it = _renderObjects.find(modelPath);
+		auto it = _renderObjects.find(mesh->GetPath());
 		if (it != _renderObjects.end())
 			return it->second;
-		std::unique_ptr<VkMesh> mesh = std::make_unique<VkMesh>(modelPath, *_allocator,
+		std::unique_ptr<VkMesh> vkMesh = std::make_unique<VkMesh>(mesh, *_allocator,
 			VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
 			VMA_MEMORY_USAGE_GPU_ONLY);
-		mesh->Upload(_uploadContext->_commandBuffer, _uploadContext->_commandPool, _uploadContext->_uploadFence,
+		vkMesh->Upload(_uploadContext->_commandBuffer, _uploadContext->_commandPool, _uploadContext->_uploadFence,
 			*_graphicsQueue, *_allocator);
 		VkPipelineLayout pipelineLayout = *_meshPipelineLayout->Get();
 		VkPipeline pipeline = *_coloredShaderPipeline->Get();
@@ -209,8 +209,8 @@ namespace Concerto::Graphics
 			pipelineLayout = *_texturedSetLayout->Get();
 			pipeline = *_texturedPipeline->Get();
 		}
-		auto& renderObject = _renderObjects.emplace(modelPath,
-			std::make_unique<RenderObject>(std::move(mesh), pipelineLayout, pipeline)).first->second;
+		auto& renderObject = _renderObjects.emplace(mesh->GetPath(),
+			std::make_unique<RenderObject>(std::move(vkMesh), pipelineLayout, pipeline)).first->second;
 		if (!texturePath.empty())
 		{
 			Texture& texture = CreateTextureIfNotExist(texturePath);
@@ -248,7 +248,7 @@ namespace Concerto::Graphics
 		auto minimumAlignment = _gpuProperties.limits.minUniformBufferOffsetAlignment;
 
 		VkMesh* lastMesh = nullptr;
-		Material* lastMaterial = nullptr;
+		VkMaterial* lastMaterial = nullptr;
 
 		MapAndCopy(*_allocator, frame._cameraBuffer, camera);
 
@@ -299,7 +299,7 @@ namespace Concerto::Graphics
 					frame._mainCommandBuffer->SetViewport(viewport);
 					frame._mainCommandBuffer->SetScissor(dynamicScissor);
 				}
-				frame._mainCommandBuffer->Draw(object->mesh->_vertices.size(), 1, 0, i);
+				frame._mainCommandBuffer->Draw(object->mesh->GetVertices().size(), 1, 0, i);
 			}
 		}
 	}

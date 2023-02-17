@@ -7,24 +7,24 @@
 
 #include <optional>
 #include "vulkan/vulkan.h"
-#include "Vulkan/wrapper/DescriptorSet.hpp"
+#include "Vulkan/Wrapper/DescriptorSet.hpp"
 
 namespace Concerto::Graphics
 {
-	class Material
+	class VkMaterial
 	{
 	public:
-		Material(VkPipelineLayout pipelineLayout, VkPipeline pipeline) : _pipelineLayout(pipelineLayout),
-																		 _pipeline(pipeline)
+		VkMaterial(VkPipelineLayout pipelineLayout, VkPipeline pipeline) : _pipelineLayout(pipelineLayout),
+																		   _pipeline(pipeline)
 		{
 		}
 
-		bool operator==(const Material& other) const
+		bool operator==(const VkMaterial& other) const
 		{
 			return _pipelineLayout == other._pipelineLayout && _pipeline == other._pipeline;
 		}
 
-		bool operator!=(const Material& other) const
+		bool operator!=(const VkMaterial& other) const
 		{
 			return !(*this == other);
 		}

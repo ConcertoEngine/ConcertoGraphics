@@ -7,7 +7,7 @@
 #include <memory>
 #include "vulkan/vulkan.h"
 #include "Vulkan/VkMesh.hpp"
-#include "Vulkan/Material.hpp"
+#include "Vulkan/VkMaterial.hpp"
 
 namespace Concerto::Graphics
 {
@@ -26,7 +26,7 @@ namespace Concerto::Graphics
 		}
 
 		std::unique_ptr<VkMesh> mesh;
-		Material material;
+		VkMaterial material;
 		glm::mat4 transformMatrix;
 	};
 	using RenderObjectPtr = std::shared_ptr<RenderObject>;
