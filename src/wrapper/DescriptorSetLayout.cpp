@@ -28,4 +28,9 @@ namespace Concerto::Graphics::Wrapper
 			throw std::runtime_error("failed to create descriptor set layout!");
 		}
 	}
+
+	DescriptorSetLayoutPtr MakeDescriptorSetLayout(Device& device, const std::vector<VkDescriptorSetLayoutBinding>& bindings)
+	{
+		return std::make_shared<DescriptorSetLayout>(device, bindings);
+	}
 }

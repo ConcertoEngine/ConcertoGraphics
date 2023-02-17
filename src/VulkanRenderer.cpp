@@ -256,13 +256,7 @@ namespace Concerto::Graphics
 		int frameIndex = _frameNumber % 2;
 		MapAndCopy(*_allocator, *_sceneParameterBuffer, _sceneParameters,
 			PadUniformBuffer(sizeof(GPUSceneData), minimumAlignment) * frameIndex);
-//		auto objectsToDraw = std::ranges::views::keys(_renderObjectsToDraw);
-//		std::vector<RenderObjectPtr> objectsToDrawVec(objectsToDraw.begin(), objectsToDraw.end());
-//		MapAndCopy<GPUObjectData, RenderObjectPtr>(*_allocator, frame._objectBuffer, objectsToDrawVec,
-//			[](GPUObjectData& gpuObjectData, RenderObjectPtr& renderObject)
-//			{
-//			  gpuObjectData.modelMatrix = renderObject->transformMatrix;
-//			});
+
 		for(auto [object, modelMatrices] : _renderObjectsToDraw)
 		{
 			MapAndCopy<GPUObjectData, glm::mat4>(*_allocator, frame._objectBuffer, modelMatrices,

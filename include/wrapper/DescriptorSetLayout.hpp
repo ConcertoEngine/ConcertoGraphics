@@ -6,6 +6,7 @@
 #define CONCERTOGRAPHICS_DESCRIPTORSETLAYOUT_HPP
 
 #include <vector>
+#include <memory>
 #include "vulkan/vulkan.h"
 #include "wrapper/Object.hpp"
 
@@ -31,10 +32,11 @@ namespace Concerto::Graphics::Wrapper
 
 		DescriptorSetLayout& operator=(DescriptorSetLayout&&) = default;
 
-		DescriptorSetLayout& operator=(const DescriptorSetLayout&) = delete;
-
 		~DescriptorSetLayout() = default;
 	};
+	using DescriptorSetLayoutPtr = std::shared_ptr<DescriptorSetLayout>;
+
+	DescriptorSetLayoutPtr MakeDescriptorSetLayout(Device& device, const std::vector<VkDescriptorSetLayoutBinding>& bindings);
 }
 
 #endif //CONCERTOGRAPHICS_DESCRIPTORSETLAYOUT_HPP
