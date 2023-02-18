@@ -8,6 +8,7 @@
 #include <vector>
 #include <iostream>
 #include <ranges>
+#include <filesystem>
 #include "glm/gtc/matrix_transform.hpp"
 #include "imgui_impl_glfw.h"
 #include <GLFW/glfw3.h>
@@ -122,6 +123,12 @@ namespace Concerto::Graphics
 		_uploadContext = std::make_unique<UploadContext>(_device, _graphicsQueueFamilyIndex);
 		if (_renderInfo.useImGUI)
 			UseImGUI();
+		_sampler = std::make_unique<Sampler>(_device, VK_FILTER_NEAREST);
+		_textureBuilder = std::make_unique<TextureBuilder>(_device, *_allocator, _uploadContext->_commandBuffer,
+			*_uploadContext, *_graphicsQueue);
+		_descriptorAllocator = std::make_unique<DescriptorAllocator>(_device);
+		_descriptorLayoutCache = std::make_unique<DescriptorLayoutCache>(_device);
+		_materialBuilder = std::make_unique<MaterialBuilder>(*_descriptorLayoutCache, *_descriptorAllocator, *_sampler);
 	}
 
 	VulkanRenderer* VulkanRenderer::Instance()
@@ -173,10 +180,10 @@ namespace Concerto::Graphics
 		_renderObjectsToDraw.clear();
 	}
 
-	void VulkanRenderer::DrawObject(MeshPtr &mesh, const std::string& texturePath, float px, float py,
+	void VulkanRenderer::DrawObject(MeshPtr& mesh, const std::string& texturePath, float px, float py,
 		float pz, float rx, float ry, float rz, float sx, float sy, float sz)
 	{
-		RenderObjectPtr object = LoadModelIfNotExist(mesh, texturePath);
+		VkMeshPtr object = LoadModelIfNotExist(mesh, texturePath);
 		glm::mat4 modelMatrix = glm::mat4(1.0f);
 		modelMatrix = glm::translate(modelMatrix, glm::vec3(px, py, pz));
 		modelMatrix = glm::rotate(modelMatrix, glm::radians(rx), glm::vec3(1.0f, 0.0f, 0.0f));
@@ -191,44 +198,44 @@ namespace Concerto::Graphics
 		_renderObjectsToDraw[object].push_back(modelMatrix);
 	}
 
-	RenderObjectPtr
-	VulkanRenderer::LoadModelIfNotExist(MeshPtr &mesh, const std::string& texturePath)
+	VkMeshPtr VulkanRenderer::LoadModelIfNotExist(MeshPtr& mesh, const std::string& texturePath)
 	{
-		auto it = _renderObjects.find(mesh->GetPath());
-		if (it != _renderObjects.end())
+		auto it = _meshes.find(mesh->GetPath());
+		if (it != _meshes.end())
 			return it->second;
-		std::unique_ptr<VkMesh> vkMesh = std::make_unique<VkMesh>(mesh, *_allocator,
-			VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
-			VMA_MEMORY_USAGE_GPU_ONLY);
-		vkMesh->Upload(_uploadContext->_commandBuffer, _uploadContext->_commandPool, _uploadContext->_uploadFence,
-			*_graphicsQueue, *_allocator);
-		VkPipelineLayout pipelineLayout = *_meshPipelineLayout->Get();
-		VkPipeline pipeline = *_coloredShaderPipeline->Get();
-		if (!texturePath.empty())
+		VkMeshPtr vkMesh = std::make_shared<VkMesh>();
+		for (SubMeshPtr& subMesh : mesh->GetSubMeshes())
 		{
-			pipelineLayout = *_texturedSetLayout->Get();
-			pipeline = *_texturedPipeline->Get();
+			VkSubMeshPtr vkSubMesh = std::make_shared<VkSubMesh>(subMesh, *_allocator,
+				VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
+				VMA_MEMORY_USAGE_GPU_ONLY);
+			vkSubMesh->Upload(_uploadContext->_commandBuffer,
+				_uploadContext->_commandPool,
+				_uploadContext->_uploadFence,
+				*_graphicsQueue,
+				*_allocator);
+			vkMesh->subMeshes.push_back(vkSubMesh);
+			//TODO: Add support for all material properties
+			VkPipelineLayout pipelineLayout = *_meshPipelineLayout->Get();
+			VkPipeline pipeline = *_coloredShaderPipeline->Get();
+			if (!subMesh->GetMaterial()->diffuseTexturePath.empty())
+			{
+				pipelineLayout = *_texturedSetLayout->Get();
+				pipeline = *_texturedPipeline->Get();
+			}
+			if (!subMesh->GetMaterial()->diffuseTexturePath.empty())
+			{
+				std::filesystem::path path = mesh->GetPath();
+				path = path.parent_path() / subMesh->GetMaterial()->diffuseTexturePath;
+				subMesh->GetMaterial()->diffuseTexture = _textureBuilder->BuildTexture(path.string());
+				_materialBuilder->BuildMaterial(*subMesh->GetMaterial(), pipelineLayout, pipeline);
+			}
+			else
+			{
+				_materialBuilder->BuildMaterial(*subMesh->GetMaterial(), pipelineLayout, pipeline);
+			}
 		}
-		auto& renderObject = _renderObjects.emplace(mesh->GetPath(),
-			std::make_unique<RenderObject>(std::move(vkMesh), pipelineLayout, pipeline)).first->second;
-		if (!texturePath.empty())
-		{
-			Texture& texture = CreateTextureIfNotExist(texturePath);
-			Sampler sampler(_device, VK_FILTER_NEAREST);
-			renderObject->material._textureSet = _descriptorPool->AllocateDescriptorSet(*_singleTextureSetLayout);
-			renderObject->material._textureSet->WriteImageSamplerDescriptor(sampler, texture._imageView);
-		}
-		return renderObject;
-	}
-
-	Texture& VulkanRenderer::CreateTextureIfNotExist(const std::string& texturePath)
-	{
-		auto it = _textures.find(texturePath);
-		if (it != _textures.end())
-			return *it->second;
-		auto texture = std::make_shared<Texture>(_device, texturePath, *_allocator,
-			_uploadContext->_commandBuffer, *_uploadContext, *_graphicsQueue, VK_IMAGE_ASPECT_COLOR_BIT);
-		return *_textures.emplace(texturePath, texture).first->second;
+		return vkMesh;
 	}
 
 	void VulkanRenderer::DrawObjects(const Camera& camera)
@@ -247,59 +254,91 @@ namespace Concerto::Graphics
 		FrameData& frame = _frames[_frameNumber % _frames.size()];
 		auto minimumAlignment = _gpuProperties.limits.minUniformBufferOffsetAlignment;
 
-		VkMesh* lastMesh = nullptr;
-		VkMaterial* lastMaterial = nullptr;
-
 		MapAndCopy(*_allocator, frame._cameraBuffer, camera);
 
 		int frameIndex = _frameNumber % 2;
 		MapAndCopy(*_allocator, *_sceneParameterBuffer, _sceneParameters,
 			PadUniformBuffer(sizeof(GPUSceneData), minimumAlignment) * frameIndex);
 
-		for(auto [object, modelMatrices] : _renderObjectsToDraw)
+		for (auto [object, modelMatrices] : _renderObjectsToDraw)
 		{
 			MapAndCopy<GPUObjectData, glm::mat4>(*_allocator, frame._objectBuffer, modelMatrices,
 				[](GPUObjectData& gpuObjectData, glm::mat4& modelMatrix)
 				{
-					gpuObjectData.modelMatrix = modelMatrix;
+				  gpuObjectData.modelMatrix = modelMatrix;
 				});
 		}
+
+		std::size_t totalObjectCount = 0;
 		for (auto& [object, modelMatrices] : _renderObjectsToDraw)
 		{
-			for(std::size_t i = 0; i < modelMatrices.size(); ++i)
+			std::size_t total = 0;
+			for (auto& subMesh : object->subMeshes)
 			{
-				if (lastMaterial == nullptr || object->material != *lastMaterial)
+				total++;
+			}
+			totalObjectCount += total * modelMatrices.size();
+		}
+
+		auto* drawIndirectCommand = MapBuffer<VkDrawIndirectCommand>(frame._indirectBuffer);
+
+		std::size_t i = 0;
+		for (auto& [object, modelMatrices] : _renderObjectsToDraw)
+		{
+			for (auto& subMesh : object->subMeshes)
+			{
+				for (std::size_t j = 0; j < modelMatrices.size(); ++j)
 				{
+					VkDrawIndirectCommand* drawIndirectCommandPtr = &drawIndirectCommand[i];
+					drawIndirectCommandPtr->vertexCount = subMesh->GetVertices().size();
+					drawIndirectCommandPtr->instanceCount = 1;
+					drawIndirectCommandPtr->firstVertex = 0;
+					drawIndirectCommandPtr->firstInstance = j;
+					i++;
+				}
+			}
+		}
+		UnMapBuffer(frame._indirectBuffer);
+		VkSubMeshPtr lastSubMesh = nullptr;
+		i = 0;
+		for (auto& [object, modelMatrices] : _renderObjectsToDraw)
+		{
+			for (auto& subMesh : object->subMeshes)
+			{
+				for (std::size_t j = 0; j < modelMatrices.size(); ++j)
+				{
+					auto vkMaterial = _materialBuilder->GetMaterial(subMesh->GetMaterial()->name);
 					std::uint32_t
 						uniform_offset = PadUniformBuffer(sizeof(GPUSceneData), minimumAlignment) * frameIndex;
-					frame._mainCommandBuffer->BindPipeline(VK_PIPELINE_BIND_POINT_GRAPHICS, object->material._pipeline);
-					lastMaterial = &object->material;
+					frame._mainCommandBuffer->BindPipeline(VK_PIPELINE_BIND_POINT_GRAPHICS, vkMaterial->_pipeline);
 					frame._mainCommandBuffer->BindDescriptorSets(VK_PIPELINE_BIND_POINT_GRAPHICS,
-						object->material._pipelineLayout, 0, 1,
-						frame.globalDescriptor, uniform_offset);
+						vkMaterial->_pipelineLayout, 0, 1, frame.globalDescriptor, uniform_offset);
 					frame._mainCommandBuffer->BindDescriptorSets(VK_PIPELINE_BIND_POINT_GRAPHICS,
-						object->material._pipelineLayout, 1, 1,
-						frame.objectDescriptor);
-					if (object->material._textureSet.has_value() && !object->material._textureSet->IsNull())
+						vkMaterial->_pipelineLayout, 1, 1, frame.objectDescriptor);
+					if (vkMaterial->_diffuseTextureSet && !vkMaterial->_diffuseTextureSet->IsNull())
 					{
 						frame._mainCommandBuffer->BindDescriptorSets(VK_PIPELINE_BIND_POINT_GRAPHICS,
-							object->material._pipelineLayout,
+							vkMaterial->_pipelineLayout,
 							2, 1,
-							*object->material._textureSet);
+							*vkMaterial->_diffuseTextureSet);
 					}
-				}
 
-				if (object->mesh.get() != lastMesh)
-				{
-					frame._mainCommandBuffer->BindVertexBuffers(object->mesh->_vertexBuffer);
-					lastMesh = object->mesh.get();
+					if (subMesh != lastSubMesh)
+					{
+						frame._mainCommandBuffer->BindVertexBuffers(subMesh->_vertexBuffer);
+						lastSubMesh = subMesh;
+					}
+					if (frame._isResized)
+					{
+						frame._mainCommandBuffer->SetViewport(viewport);
+						frame._mainCommandBuffer->SetScissor(dynamicScissor);
+					}
+					frame._mainCommandBuffer->DrawIndirect(frame._indirectBuffer,
+						sizeof(VkDrawIndirectCommand) * i,
+						drawIndirectCommand[i].instanceCount,
+						sizeof(VkDrawIndirectCommand));
+					++i;
 				}
-				if (frame._isResized)
-				{
-					frame._mainCommandBuffer->SetViewport(viewport);
-					frame._mainCommandBuffer->SetScissor(dynamicScissor);
-				}
-				frame._mainCommandBuffer->Draw(object->mesh->GetVertices().size(), 1, 0, i);
 			}
 		}
 	}

@@ -58,9 +58,16 @@ namespace Concerto::Graphics::Wrapper
 		 */
 		[[nodiscard]] bool IsNull() const;
 
+		/**
+		 * @brief Get the last result of the object
+		 * @return The last result of the object
+		 */
+		[[nodiscard]] VkResult GetLastResult() const;
+
 	protected:
 		vkType _handle{ VK_NULL_HANDLE };
 		Device* _device{ nullptr };
+		VkResult _lastResult{ VK_SUCCESS };
 	private:
 		DestroyHelper _destroyHelper;
 	};

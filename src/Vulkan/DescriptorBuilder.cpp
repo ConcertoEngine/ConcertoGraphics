@@ -14,6 +14,7 @@ namespace Concerto::Graphics
 	{
 
 	}
+
 	DescriptorBuilder& DescriptorBuilder::BindBuffer(std::uint32_t binding,
 		VkDescriptorBufferInfo* bufferInfo,
 		VkDescriptorType type,
@@ -41,6 +42,7 @@ namespace Concerto::Graphics
 		writes.push_back(newWrite);
 		return *this;
 	}
+
 	DescriptorBuilder& DescriptorBuilder::BindImage(std::uint32_t binding,
 		VkDescriptorImageInfo* imageInfo,
 		VkDescriptorType type,
@@ -68,7 +70,8 @@ namespace Concerto::Graphics
 		writes.push_back(newWrite);
 		return *this;
 	}
-	bool DescriptorBuilder::Build(Wrapper::DescriptorSet& set, Wrapper::DescriptorSetLayoutPtr& layout)
+
+	bool DescriptorBuilder::Build(Wrapper::DescriptorSetPtr& set, Wrapper::DescriptorSetLayoutPtr& layout)
 	{
 		VkDescriptorSetLayoutCreateInfo layoutInfo{};
 		layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
@@ -84,13 +87,14 @@ namespace Concerto::Graphics
 			return false;
 
 		for (VkWriteDescriptorSet& w : writes)
-			w.dstSet = *set.Get();
+			w.dstSet = *set->Get();
 
 		vkUpdateDescriptorSets(*alloc.GetDevice().Get(), writes.size(), writes.data(), 0, nullptr);
 
 		return true;
 	}
-	bool DescriptorBuilder::Build(Wrapper::DescriptorSet& set)
+
+	bool DescriptorBuilder::Build(Wrapper::DescriptorSetPtr& set)
 	{
 		Wrapper::DescriptorSetLayoutPtr layout;
 		return Build(set, layout);

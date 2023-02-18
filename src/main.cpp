@@ -8,6 +8,7 @@
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 
 #include <iostream>
+#include <chrono>
 #include "glm/glm.hpp"
 #include "glm/gtc/quaternion.hpp"
 #include "VulkanRenderer.hpp"
@@ -74,7 +75,11 @@ int main()
 		camera.viewproj = camera.proj * camera.view * glm::mat4(1.f);
 //		engine.Resize(window.GetWidth(), window.GetHeight());
 	});
-	MeshPtr sponzaMesh = std::make_shared<Mesh>("./assets/sponza/sponza.obj");
+	MeshPtr sponzaMesh = std::make_shared<Mesh>();
+	sponzaMesh->LoadFromFile("./assets/sponza/sponza.obj");
+	std::chrono::steady_clock::time_point lastFrameTime = std::chrono::steady_clock::now();
+	float deltaTime = 0.f;
+
 	while (!window->ShouldClose())
 	{
 		window->PopEvent();
@@ -101,7 +106,15 @@ int main()
 			mouseX = cx;
 			mouseY = cy;
 		}
+		auto beginTime = std::chrono::high_resolution_clock::now();
+		deltaTime = std::chrono::duration<float>(beginTime - lastFrameTime).count();
+		lastFrameTime = beginTime;
+		int fps = 1.f / deltaTime;
 		imGui->NewFrame();
+		ImGui::Begin("Timing");
+		ImGui::Text("%d fps", fps);
+		ImGui::Text("%f ms", deltaTime * 1000.f);
+		ImGui::End();
 		if (ImGui::ColorEdit3("Select clear color", &sceneParameters.clearColor[0]))
 		{
 			engine.UpdateSceneParameters(sceneParameters);

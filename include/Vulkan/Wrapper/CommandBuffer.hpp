@@ -148,6 +148,15 @@ namespace Concerto::Graphics::Wrapper
 				std::uint32_t firstInstance);
 
 		/**
+		 * @brief Draws indexed vertex data on the command buffer.
+		 * @param buffer The Buffer object containing the index data.
+		 * @param offset The offset into the buffer to start reading index data from.
+		 * @param drawCount The number of draws to perform.
+		 * @param stride The stride between each draw.
+		 */
+		void DrawIndirect(Buffer& buffer, std::uint32_t offset, std::uint32_t drawCount, std::uint32_t stride);
+
+		/**
 		 * @brief Submits the command buffer to the queue, and waits for the fence to signal.
 		 * @param fence The Fence object to wait on.
 		 * @param commandPool The CommandPool object associated with the command buffer.

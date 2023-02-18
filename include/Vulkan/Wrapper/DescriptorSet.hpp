@@ -5,6 +5,7 @@
 #ifndef CONCERTOGRAPHICS_DESCRIPTORSET_HPP
 #define CONCERTOGRAPHICS_DESCRIPTORSET_HPP
 
+#include <memory>
 #include "vulkan/vulkan.h"
 #include "Object.hpp"
 
@@ -62,6 +63,7 @@ namespace Concerto::Graphics::Wrapper
 	private:
 		DescriptorPool* _pool{};
 	};
+	using DescriptorSetPtr = std::shared_ptr<DescriptorSet>;
 }
 
 #endif //CONCERTOGRAPHICS_DESCRIPTORSET_HPP

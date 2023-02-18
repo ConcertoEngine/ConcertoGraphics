@@ -6,6 +6,7 @@
 #define CONCERTOGRAPHICS_DESCRIPTORPOOL_HPP
 
 #include <vector>
+#include <memory>
 #include "vulkan/vulkan.h"
 #include "Object.hpp"
 #include "DescriptorSet.hpp"
@@ -13,7 +14,6 @@
 namespace Concerto::Graphics::Wrapper
 {
 	class Device;
-
 
 	/**
 	* @class DescriptorPool
@@ -27,7 +27,7 @@ namespace Concerto::Graphics::Wrapper
 
 	class DescriptorPool : public Object<VkDescriptorPool>
 	{
-	public:
+	 public:
 		explicit DescriptorPool(Device& device);
 
 		DescriptorPool(Device& device, std::vector<VkDescriptorPoolSize> poolSizes);
@@ -45,7 +45,14 @@ namespace Concerto::Graphics::Wrapper
 		 * @param layout The descriptor set layout used to allocate the descriptor set.
 		 */
 		DescriptorSet AllocateDescriptorSet(DescriptorSetLayout& setLayout);
+
+		/*
+		 * @brief Resetting a descriptor pool recycles all of the resources from all of the descriptor sets allocated
+		 * from the descriptor pool back to the descriptor pool, and the descriptor sets are implicitly freed.
+		 */
+		void Reset();
 	};
+	using DescriptorPoolPtr = std::shared_ptr<DescriptorPool>;
 }
 
 #endif //CONCERTOGRAPHICS_DESCRIPTORPOOL_HPP

@@ -5,8 +5,9 @@
 #ifndef CONCERTOGRAPHICS_INCLUDE_DESCRIPTORALLOCATOR_HPP_
 #define CONCERTOGRAPHICS_INCLUDE_DESCRIPTORALLOCATOR_HPP_
 
-#include <vulkan/vulkan.h>
 #include <vector>
+#include <vulkan/vulkan.h>
+#include "Vulkan/Wrapper/DescriptorPool.hpp"
 
 namespace Concerto::Graphics
 {
@@ -36,20 +37,20 @@ namespace Concerto::Graphics
 				};
 		};
 		explicit DescriptorAllocator(Wrapper::Device &device);
-		bool Allocate(Wrapper::DescriptorSet &descriptorSet, Wrapper::DescriptorSetLayout &layout);
+		bool Allocate(Wrapper::DescriptorSetPtr &descriptorSet, Wrapper::DescriptorSetLayout &layout);
 	 	/**
 	 	 * @brief Reset the allocator, resetting all the descriptors in the pool.
 	 	 */
 		void Reset();
 		Wrapper::Device &GetDevice();
 	 private:
-		VkDescriptorPool CreatePool(VkDescriptorPoolCreateFlags flags);
-		VkDescriptorPool GetPool();
+		Wrapper::DescriptorPoolPtr CreatePool(VkDescriptorPoolCreateFlags flags);
+		Wrapper::DescriptorPoolPtr GetPool();
 		Wrapper::Device *_device;
 		PoolSizes _poolSizes;
-		VkDescriptorPool _currentPool;
-		std::vector<VkDescriptorPool> usedPools;
-		std::vector<VkDescriptorPool> freePools;
+		Wrapper::DescriptorPoolPtr _currentPool;
+		std::vector<Wrapper::DescriptorPoolPtr> _usedPools;
+		std::vector<Wrapper::DescriptorPoolPtr> _freePools;
 	};
 }
 

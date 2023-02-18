@@ -5,26 +5,27 @@
 #ifndef CONCERTOGRAPHICS_INCLUDE_DESCRIPTORBUILDER_HPP_
 #define CONCERTOGRAPHICS_INCLUDE_DESCRIPTORBUILDER_HPP_
 
+#include <memory>
 #include "DescriptorLayoutCache.hpp"
 #include "DescriptorAllocator.hpp"
+#include "Vulkan/Wrapper/DescriptorSet.hpp"
 
 namespace Concerto::Graphics
 {
 	namespace Wrapper
 	{
-		class DescriptorSet;
 		class DescriptorSetLayout;
 	}
 	class DescriptorBuilder
 	{
 	 public:
-		DescriptorBuilder(DescriptorLayoutCache& layoutCache, DescriptorAllocator& allocator );
+		DescriptorBuilder(DescriptorLayoutCache& layoutCache, DescriptorAllocator& allocator);
 
 		DescriptorBuilder& BindBuffer(std::uint32_t binding, VkDescriptorBufferInfo* bufferInfo, VkDescriptorType type, VkShaderStageFlags stageFlags);
 		DescriptorBuilder& BindImage(std::uint32_t binding, VkDescriptorImageInfo* imageInfo, VkDescriptorType type, VkShaderStageFlags stageFlags);
 
-		bool Build(Wrapper::DescriptorSet& set, Wrapper::DescriptorSetLayoutPtr& layout);
-		bool Build(Wrapper::DescriptorSet& set);
+		bool Build(Wrapper::DescriptorSetPtr& set, Wrapper::DescriptorSetLayoutPtr& layout);
+		bool Build(Wrapper::DescriptorSetPtr& set);
 	 private:
 
 		std::vector<VkWriteDescriptorSet> writes;

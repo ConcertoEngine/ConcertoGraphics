@@ -1,34 +1,22 @@
 //
-// Created by arthur on 09/06/22.
+// Created by arthur on 18/02/2023.
 //
 
-#ifndef CONCERTOGRAPHICS_MESH_HPP
-#define CONCERTOGRAPHICS_MESH_HPP
+#ifndef CONCERTOGRAPHICS_INCLUDE_VULKAN_VKMESH_HPP_
+#define CONCERTOGRAPHICS_INCLUDE_VULKAN_VKMESH_HPP_
 
+#include <memory>
 #include <vector>
-#include <string>
-
-#include "Vulkan/Wrapper/Buffer.hpp"
-#include "Vulkan/Wrapper/Allocator.hpp"
-#include "Vulkan/Wrapper/CommandPool.hpp"
-#include "Vulkan/Wrapper/Fence.hpp"
-#include "Vulkan/Wrapper/Queue.hpp"
-#include "Mesh.hpp"
+#include <glm/mat4x4.hpp>
+#include "VkSubMesh.hpp"
 
 namespace Concerto::Graphics
 {
 	struct VkMesh
 	{
-		VkMesh(MeshPtr& meshPtr, Wrapper::Allocator& allocator, VkBufferUsageFlags usage,
-				VmaMemoryUsage memoryUsage);
-
-		void Upload(Wrapper::CommandBuffer& commandBuffer, Wrapper::CommandPool &commandPool, Wrapper::Fence& fence, Wrapper::Queue& queue,
-				Wrapper::Allocator& allocator);
-
-		const Vertices& GetVertices() const;
-		MeshPtr _mesh;
-		Wrapper::Buffer _vertexBuffer;
+		std::vector<VkSubMeshPtr> subMeshes;
+		glm::mat4 transformMatrix;
 	};
-} // Concerto::Graphics::Wrapper
-
-#endif //CONCERTOGRAPHICS_MESH_HPP
+	using VkMeshPtr = std::shared_ptr<VkMesh>;
+}
+#endif //CONCERTOGRAPHICS_INCLUDE_VULKAN_VKMESH_HPP_

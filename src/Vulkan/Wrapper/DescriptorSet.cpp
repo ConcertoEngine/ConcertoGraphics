@@ -28,11 +28,7 @@ namespace Concerto::Graphics::Wrapper
 		allocInfo.descriptorPool = *pool.Get();
 		allocInfo.descriptorSetCount = 1;
 		allocInfo.pSetLayouts = descriptorSetLayout.Get();
-		auto result = vkAllocateDescriptorSets(*_device->Get(), &allocInfo, &_handle);
-		if (result != VK_SUCCESS)
-		{
-			throw std::runtime_error("Unable to allocate descriptor sets : " + std::to_string(int(result)));
-		}
+		_lastResult = vkAllocateDescriptorSets(*_device->Get(), &allocInfo, &_handle);
 	}
 
 	void DescriptorSet::WriteImageSamplerDescriptor(Sampler& sampler, ImageView& imageView, VkImageLayout imageLayout)

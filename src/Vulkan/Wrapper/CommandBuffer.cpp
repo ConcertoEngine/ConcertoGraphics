@@ -114,6 +114,11 @@ namespace Concerto::Graphics::Wrapper
 		vkCmdDraw(_commandBuffer, vertexCount, instanceCount, firstVertex, firstInstance);
 	}
 
+	void CommandBuffer::DrawIndirect(Buffer& buffer, std::uint32_t offset, std::uint32_t drawCount, std::uint32_t stride)
+	{
+		vkCmdDrawIndirect(_commandBuffer, buffer._buffer, offset, drawCount, stride);
+	}
+
 	void CommandBuffer::BindVertexBuffers(const Buffer& buffer)
 	{
 		VkDeviceSize offset = 0;

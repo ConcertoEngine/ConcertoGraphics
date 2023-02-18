@@ -61,6 +61,12 @@ namespace Concerto::Graphics::Wrapper
 	{
 		return _handle == VK_NULL_HANDLE;
 	}
+
+	template<typename vkType>
+	VkResult Object<vkType>::GetLastResult() const
+	{
+		return _lastResult;
+	}
 }
 
 #endif //CONCERTOGRAPHICS_OBJECT_INL

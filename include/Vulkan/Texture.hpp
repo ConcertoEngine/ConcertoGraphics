@@ -7,10 +7,10 @@
 
 #include <memory>
 #include "vulkan/vulkan.h"
-#include "Vulkan/wrapper/Image.hpp"
-#include "Vulkan/wrapper/ImageView.hpp"
-#include "Vulkan/wrapper/CommandBuffer.hpp"
-#include "Vulkan/wrapper/Device.hpp"
+#include "Vulkan/Wrapper/Image.hpp"
+#include "Vulkan/Wrapper/ImageView.hpp"
+#include "Vulkan/Wrapper/CommandBuffer.hpp"
+#include "Vulkan/Wrapper/Device.hpp"
 
 namespace Concerto::Graphics
 {
@@ -28,5 +28,6 @@ namespace Concerto::Graphics
 		Wrapper::Image _image;
 		Wrapper::ImageView _imageView;
 	};
+	using TexturePtr = std::shared_ptr<Texture>;
 }
 #endif //CONCERTOGRAPHICS_TEXTURE_HPP

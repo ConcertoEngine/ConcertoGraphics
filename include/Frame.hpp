@@ -49,6 +49,8 @@ namespace Concerto::Graphics
 
 		Wrapper::Buffer _objectBuffer;
 		Wrapper::DescriptorSet objectDescriptor;
+
+		Wrapper::Buffer _indirectBuffer;
 		bool _isResized = true;
 	};
 }

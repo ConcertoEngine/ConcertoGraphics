@@ -10,46 +10,30 @@
 namespace Concerto::Graphics
 {
 
-	DescriptorAllocator::DescriptorAllocator(Wrapper::Device& device) : _device(&device)
+	DescriptorAllocator::DescriptorAllocator(Wrapper::Device& device) : _device(&device), _currentPool(VK_NULL_HANDLE)
 	{
 
 	}
 
-	bool DescriptorAllocator::Allocate(Wrapper::DescriptorSet& descriptorSet, Wrapper::DescriptorSetLayout& layout)
+	bool DescriptorAllocator::Allocate(Wrapper::DescriptorSetPtr& descriptorSet, Wrapper::DescriptorSetLayout& layout)
 	{
-		//initialize the currentPool handle if it's null
 		if (_currentPool == VK_NULL_HANDLE)
 		{
-
 			_currentPool = GetPool();
-			usedPools.push_back(_currentPool);
+			_usedPools.push_back(_currentPool);
 		}
-
-		VkDescriptorSetAllocateInfo allocInfo = {};
-		allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-		allocInfo.pNext = nullptr;
-
-		allocInfo.pSetLayouts = layout.Get();
-		allocInfo.descriptorPool = _currentPool;
-		allocInfo.descriptorSetCount = 1;
-
-		VkResult allocResult = vkAllocateDescriptorSets(*_device->Get(), &allocInfo, descriptorSet.Get());
-
-		switch (allocResult)
+		descriptorSet = std::make_shared<Wrapper::DescriptorSet>(*_device, *_currentPool, layout);
+		switch (descriptorSet->GetLastResult())
 		{
 		case VK_SUCCESS:
 			return true;
 		case VK_ERROR_FRAGMENTED_POOL:
 		case VK_ERROR_OUT_OF_POOL_MEMORY:
 			_currentPool = GetPool();
-			usedPools.push_back(_currentPool);
-			allocInfo.descriptorPool = _currentPool;
-
-			allocResult = vkAllocateDescriptorSets(*_device->Get(), &allocInfo, descriptorSet.Get());
-			if (allocResult == VK_SUCCESS)
-			{
+			_usedPools.push_back(_currentPool);
+			descriptorSet = std::make_shared<Wrapper::DescriptorSet>(*_device, *_currentPool, layout);
+			if (descriptorSet->GetLastResult() == VK_SUCCESS)
 				return true;
-			}
 			break;
 		default:
 			return false;
@@ -58,42 +42,34 @@ namespace Concerto::Graphics
 		return false;
 	}
 
-	VkDescriptorPool DescriptorAllocator::CreatePool(VkDescriptorPoolCreateFlags flags)
+	Wrapper::DescriptorPoolPtr DescriptorAllocator::CreatePool(VkDescriptorPoolCreateFlags flags)
 	{
-		std::vector<VkDescriptorPoolSize> sizes(_poolSizes.sizes.size());
+		std::vector<VkDescriptorPoolSize> sizes;
+		sizes.reserve(_poolSizes.sizes.size());
 		for (auto sz : _poolSizes.sizes)
 		{
 			sizes.push_back({ sz.first, uint32_t(sz.second * DESCRIPTOR_POOL_SIZE) });
 		}
-		VkDescriptorPoolCreateInfo pool_info = {};
-		pool_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-		pool_info.flags = flags;
-		pool_info.maxSets = DESCRIPTOR_POOL_SIZE;
-		pool_info.poolSizeCount = (uint32_t)sizes.size();
-		pool_info.pPoolSizes = sizes.data();
-
-		VkDescriptorPool descriptorPool;
-		vkCreateDescriptorPool(*_device->Get(), &pool_info, nullptr, &descriptorPool);
-
-		return descriptorPool;
+		return std::make_shared<Wrapper::DescriptorPool>(*_device, sizes);
 	}
 
-	VkDescriptorPool DescriptorAllocator::GetPool()
+	Wrapper::DescriptorPoolPtr DescriptorAllocator::GetPool()
 	{
-		if (freePools.empty())
+		if (_freePools.empty())
 			return CreatePool(0);
-		VkDescriptorPool pool = freePools.back();
-		freePools.pop_back();
+		Wrapper::DescriptorPoolPtr pool = _freePools.back();
+		_freePools.pop_back();
 		return pool;
 	}
 
 	void DescriptorAllocator::Reset()
 	{
-		for (auto pool : usedPools){
-			vkResetDescriptorPool(*_device->Get(), pool, 0);
-			freePools.push_back(pool);
+		for (auto& pool : _usedPools)
+		{
+			pool->Reset();
+			_freePools.push_back(pool);
 		}
-		usedPools.clear();
+		_usedPools.clear();
 		_currentPool = VK_NULL_HANDLE;
 	}
 

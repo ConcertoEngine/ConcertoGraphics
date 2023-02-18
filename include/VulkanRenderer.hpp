@@ -32,6 +32,13 @@
 #include "Vulkan/RenderObject.hpp"
 #include "Vulkan/Texture.hpp"
 #include "ImGUI.hpp"
+#include "TextureBuilder.hpp"
+#include "MaterialBuilder.hpp"
+#include "Vulkan/Wrapper/Sampler.hpp"
+#include "Vulkan/DescriptorLayoutCache.hpp"
+#include "Vulkan/DescriptorAllocator.hpp"
+#include "Mesh.hpp"
+#include "Vulkan/VkMesh.hpp"
 
 namespace Concerto::Graphics
 {
@@ -78,8 +85,7 @@ namespace Concerto::Graphics
 		void UpdateSceneParameters(const Scene& sceneData);
 		void Resize(std::uint32_t width, std::uint32_t height);
 	 private:
-		RenderObjectPtr LoadModelIfNotExist(MeshPtr &mesh, const std::string& texturePath);
-		Texture& CreateTextureIfNotExist(const std::string& texturePath);
+		VkMeshPtr LoadModelIfNotExist(MeshPtr &mesh, const std::string& texturePath);
 		void DrawObjects(const Camera& camera);
 		std::vector<const char*> _deviceExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
 		GlfW3& _window;
@@ -116,8 +122,14 @@ namespace Concerto::Graphics
 		std::unique_ptr<Wrapper::Queue> _graphicsQueue;
 		std::unique_ptr<UploadContext> _uploadContext;
 		std::unordered_map<std::string, RenderObjectPtr> _renderObjects;
+		std::unordered_map<std::string, VkMeshPtr> _meshes;
 		std::unordered_map<std::string, std::shared_ptr<Texture>> _textures;
-		std::unordered_map<RenderObjectPtr, std::vector<glm::mat4>> _renderObjectsToDraw;
+		std::unordered_map<VkMeshPtr, std::vector<glm::mat4>> _renderObjectsToDraw;
+		std::unique_ptr<TextureBuilder> _textureBuilder;
+		std::unique_ptr<DescriptorLayoutCache> _descriptorLayoutCache;
+		std::unique_ptr<DescriptorAllocator> _descriptorAllocator;
+		std::unique_ptr<MaterialBuilder> _materialBuilder;
+		std::unique_ptr<Wrapper::Sampler> _sampler;
 	};
 
 } // Concerto::Graphics

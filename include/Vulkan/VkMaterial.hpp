@@ -6,6 +6,7 @@
 #define CONCERTOGRAPHICS_MATERIAL_HPP
 
 #include <optional>
+#include <memory>
 #include "vulkan/vulkan.h"
 #include "Vulkan/Wrapper/DescriptorSet.hpp"
 
@@ -13,7 +14,13 @@ namespace Concerto::Graphics
 {
 	class VkMaterial
 	{
-	public:
+	 public:
+		VkMaterial() : _pipelineLayout(VK_NULL_HANDLE),
+					   _pipeline(VK_NULL_HANDLE)
+		{
+
+		}
+
 		VkMaterial(VkPipelineLayout pipelineLayout, VkPipeline pipeline) : _pipelineLayout(pipelineLayout),
 																		   _pipeline(pipeline)
 		{
@@ -31,7 +38,9 @@ namespace Concerto::Graphics
 
 		VkPipeline _pipeline;
 		VkPipelineLayout _pipelineLayout;
-		std::optional<Wrapper::DescriptorSet> _textureSet;
+		Wrapper::DescriptorSetPtr _diffuseTextureSet;
+		Wrapper::DescriptorSetPtr _normalTextureSet;
 	};
+	using VkMaterialPtr = std::shared_ptr<VkMaterial>;
 }
 #endif //CONCERTOGRAPHICS_MATERIAL_HPP

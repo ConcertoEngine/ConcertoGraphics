@@ -9,8 +9,9 @@
 #include <functional>
 #include <glm/vec4.hpp>
 #include <glm/mat4x4.hpp>
-#include "Vulkan/wrapper/Allocator.hpp"
-#include "Vulkan/wrapper/Buffer.hpp"
+#include "Vulkan/Wrapper/Allocator.hpp"
+#include "Vulkan/Wrapper/Buffer.hpp"
+#include "Vulkan/Wrapper/Device.hpp"
 
 namespace Concerto::Graphics
 {
@@ -40,12 +41,12 @@ namespace Concerto::Graphics
 
 	template<typename DestBuffer, typename SrcObj>
 	void MapAndCopy(Wrapper::Allocator& allocator, Wrapper::Buffer& buffer, std::vector<SrcObj>& objects,
-			std::function<void(DestBuffer& destBuffer, SrcObj& srcObj)> && copyFunc)
+		std::function<void(DestBuffer& destBuffer, SrcObj& srcObj)>&& copyFunc)
 	{
 		void* data;
 		vmaMapMemory(*allocator.Get(), buffer._allocation, &data);
 		auto* destBuffer = reinterpret_cast<DestBuffer*>(data);
-		for(std::size_t i = 0; i < objects.size(); i++)
+		for (std::size_t i = 0; i < objects.size(); i++)
 		{
 			copyFunc(destBuffer[i], objects[i]);
 		}
@@ -67,6 +68,19 @@ namespace Concerto::Graphics
 		if (size > 0)
 			return (size + minUniformBufferOffsetAlignment - 1) & ~(minUniformBufferOffsetAlignment - 1);
 		return size;
+	}
+
+	template<typename T>
+	inline T* MapBuffer(Wrapper::Buffer& buffer)
+	{
+		void* data;
+		vmaMapMemory(*buffer._allocator->Get(), buffer._allocation, &data);
+		return reinterpret_cast<T*>(data);
+	}
+
+	inline void UnMapBuffer(Wrapper::Buffer& buffer)
+	{
+		vmaUnmapMemory(*buffer._allocator->Get(), buffer._allocation);
 	}
 }
 

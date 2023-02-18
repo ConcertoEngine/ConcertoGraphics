@@ -55,7 +55,7 @@ namespace Concerto::Graphics::Wrapper
 	* @return A new AllocatedBuffer object with the size of T.
 	*/
 	template<typename T>
-	Buffer MakeAllocatedBuffer(Allocator& allocator, VkBufferUsageFlags usage, VmaMemoryUsage memoryUsage)
+	Buffer MakeBuffer(Allocator& allocator, VkBufferUsageFlags usage, VmaMemoryUsage memoryUsage)
 	{
 		return { allocator, sizeof(T), usage, memoryUsage };
 	}
@@ -70,7 +70,7 @@ namespace Concerto::Graphics::Wrapper
 	* @return A new AllocatedBuffer object with the size of T*objNumber.
 	*/
 	template<typename T>
-	Buffer MakeAllocatedBuffer(Allocator& allocator,
+	Buffer MakeBuffer(Allocator& allocator,
 		std::size_t objNumber,
 		VkBufferUsageFlags usage,
 		VmaMemoryUsage memoryUsage)

@@ -4,29 +4,18 @@
 
 #ifndef CONCERTOGRAPHICS_RENDEROBJECT_HPP
 #define CONCERTOGRAPHICS_RENDEROBJECT_HPP
+
 #include <memory>
+#include <vector>
 #include "vulkan/vulkan.h"
-#include "Vulkan/VkMesh.hpp"
+#include "Vulkan/VkSubMesh.hpp"
 #include "Vulkan/VkMaterial.hpp"
 
 namespace Concerto::Graphics
 {
 	struct RenderObject
 	{
-		explicit RenderObject(std::unique_ptr<VkMesh> mesh, VkPipelineLayout pipelineLayout, VkPipeline pipeline, const glm::mat4& transformMatrix) : mesh(
-				std::move(mesh)), material(pipelineLayout, pipeline), transformMatrix(transformMatrix)
-		{
-
-		}
-
-		explicit RenderObject(std::unique_ptr<VkMesh> mesh, VkPipelineLayout pipelineLayout, VkPipeline pipeline) : mesh(
-			std::move(mesh)), material(pipelineLayout, pipeline), transformMatrix()
-		{
-
-		}
-
-		std::unique_ptr<VkMesh> mesh;
-		VkMaterial material;
+		std::unique_ptr<VkSubMesh> mesh;
 		glm::mat4 transformMatrix;
 	};
 	using RenderObjectPtr = std::shared_ptr<RenderObject>;
