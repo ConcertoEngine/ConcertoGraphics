@@ -10,6 +10,7 @@
 #include <unordered_map>
 #include <functional>
 #include <utility>
+#include <chrono>
 #include "window/GlfW3.hpp"
 #include "Version.hpp"
 #include "Vulkan/Wrapper/Instance.hpp"
@@ -130,6 +131,12 @@ namespace Concerto::Graphics
 		std::unique_ptr<DescriptorAllocator> _descriptorAllocator;
 		std::unique_ptr<MaterialBuilder> _materialBuilder;
 		std::unique_ptr<Wrapper::Sampler> _sampler;
+
+	 public:
+		//timings
+		float _transfersTime{ 0 };
+		float _drawTime{ 0 };
+		float _drawObjectsTime{ 0 };
 	};
 
 } // Concerto::Graphics

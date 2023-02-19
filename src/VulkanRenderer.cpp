@@ -183,6 +183,7 @@ namespace Concerto::Graphics
 	void VulkanRenderer::DrawObject(MeshPtr& mesh, const std::string& texturePath, float px, float py,
 		float pz, float rx, float ry, float rz, float sx, float sy, float sz)
 	{
+		auto begin = std::chrono::high_resolution_clock::now();
 		VkMeshPtr object = LoadModelIfNotExist(mesh, texturePath);
 		glm::mat4 modelMatrix = glm::mat4(1.0f);
 		modelMatrix = glm::translate(modelMatrix, glm::vec3(px, py, pz));
@@ -192,10 +193,16 @@ namespace Concerto::Graphics
 		modelMatrix = glm::scale(modelMatrix, glm::vec3(sx, sy, sz));
 		if (_renderObjectsToDraw.find(object) == _renderObjectsToDraw.end())
 		{
+			auto end = std::chrono::high_resolution_clock::now();
+			auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - begin);
+			_drawObjectsTime = std::chrono::duration<float>(end - begin).count();
 			_renderObjectsToDraw.emplace(object, std::vector<glm::mat4>{ modelMatrix });
 			return;
 		}
 		_renderObjectsToDraw[object].push_back(modelMatrix);
+		auto end = std::chrono::high_resolution_clock::now();
+		auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - begin);
+		_drawObjectsTime = std::chrono::duration<float>(end - begin).count();
 	}
 
 	VkMeshPtr VulkanRenderer::LoadModelIfNotExist(MeshPtr& mesh, const std::string& texturePath)
@@ -234,6 +241,7 @@ namespace Concerto::Graphics
 			{
 				_materialBuilder->BuildMaterial(*subMesh->GetMaterial(), pipelineLayout, pipeline);
 			}
+			_meshes.emplace(mesh->GetPath(), vkMesh);
 		}
 		return vkMesh;
 	}
@@ -254,6 +262,7 @@ namespace Concerto::Graphics
 		FrameData& frame = _frames[_frameNumber % _frames.size()];
 		auto minimumAlignment = _gpuProperties.limits.minUniformBufferOffsetAlignment;
 
+		auto beginTime = std::chrono::high_resolution_clock::now();
 		MapAndCopy(*_allocator, frame._cameraBuffer, camera);
 
 		int frameIndex = _frameNumber % 2;
@@ -299,7 +308,12 @@ namespace Concerto::Graphics
 			}
 		}
 		UnMapBuffer(frame._indirectBuffer);
+		auto endTime = std::chrono::high_resolution_clock::now();
+		auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - beginTime);
+		_transfersTime = std::chrono::duration<float>(endTime - beginTime).count();
+		beginTime = std::chrono::high_resolution_clock::now();
 		VkSubMeshPtr lastSubMesh = nullptr;
+		beginTime = std::chrono::high_resolution_clock::now();
 		i = 0;
 		for (auto& [object, modelMatrices] : _renderObjectsToDraw)
 		{
@@ -341,6 +355,9 @@ namespace Concerto::Graphics
 				}
 			}
 		}
+		endTime = std::chrono::high_resolution_clock::now();
+		duration = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - beginTime);
+		_drawTime = std::chrono::duration<float>(endTime - beginTime).count();
 	}
 
 	void VulkanRenderer::UseImGUI()

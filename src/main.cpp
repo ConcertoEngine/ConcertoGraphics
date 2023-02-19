@@ -34,7 +34,7 @@ int main()
 
 	float fractionChangeX;
 	float fractionChangeY;
-	float aspect = float(window->GetWidth() / window->GetHeight());
+	float aspect = float(window->GetWidth()) / float(window->GetHeight());
 	double mouseX, mouseY;
 	bool leftMouseButtonPressed = false;
 	bool rightMouseButtonPressed = false;
@@ -65,13 +65,13 @@ int main()
 			{
 					.view = glm::lookAt(glm::vec3(5.f, 5.f, 5.f), glm::vec3(0.0f, 0.0f, 0.0f),
 							glm::normalize(glm::vec3(0.0f, 1.0f, 0.0f))),
-					.proj = glm::perspective(glm::radians(90.f), aspect, 0.001f, 2000.0f),
+					.proj = glm::perspective(glm::radians(90.f), aspect, 0.00001f, 10000.0f),
 					.viewproj = camera.proj * camera.view * glm::mat4(1.f)
 			};
 	window->RegisterResizeCallback([&](AWindow<GLFWwindow>& window)
 	{
-		aspect = float(window.GetWidth() / window.GetHeight());
-		camera.proj = glm::perspective(glm::radians(90.f), aspect, 0.001f, 2000.0f);
+		aspect = float(window.GetWidth()) / float(window.GetHeight());
+		camera.proj = glm::perspective(glm::radians(90.f), aspect, 0.00001f, 10000.0f);
 		camera.viewproj = camera.proj * camera.view * glm::mat4(1.f);
 //		engine.Resize(window.GetWidth(), window.GetHeight());
 	});
@@ -111,9 +111,12 @@ int main()
 		lastFrameTime = beginTime;
 		int fps = 1.f / deltaTime;
 		imGui->NewFrame();
-		ImGui::Begin("Timing");
+		ImGui::Begin("Timings");
 		ImGui::Text("%d fps", fps);
 		ImGui::Text("%f ms", deltaTime * 1000.f);
+		ImGui::Text("Transfers %f ms", engine._transfersTime * 1000.f);
+		ImGui::Text("Draw %f ms", engine._drawTime * 1000.f);
+		ImGui::Text("Load meshes %f ms", engine._drawObjectsTime * 1000.f);
 		ImGui::End();
 		if (ImGui::ColorEdit3("Select clear color", &sceneParameters.clearColor[0]))
 		{
