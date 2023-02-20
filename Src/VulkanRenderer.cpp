@@ -97,9 +97,9 @@ namespace Concerto::Graphics
 					*_globalSetLayout, *_objectSetLayout, *_sceneParameterBuffer, true)));
 		}
 		// Commands
-		_colorMeshShader = std::make_unique<ShaderModule>(_device, R"(shaders/default_lit.frag.spv)");
-		_textureMeshShader = std::make_unique<ShaderModule>(_device, R"(shaders/textured_lit.frag.spv)");
-		_meshVertShader = std::make_unique<ShaderModule>(_device, R"(shaders/tri_mesh_ssbo.vert.spv)");
+		_colorMeshShader = std::make_unique<ShaderModule>(_device, R"(Shaders/default_lit.frag.spv)");
+		_textureMeshShader = std::make_unique<ShaderModule>(_device, R"(Shaders/textured_lit.frag.spv)");
+		_meshVertShader = std::make_unique<ShaderModule>(_device, R"(Shaders/tri_mesh_ssbo.vert.spv)");
 		_meshPipelineLayout = std::make_unique<PipelineLayout>(makePipelineLayout<MeshPushConstants>(_device,
 			{ *_globalSetLayout, *_objectSetLayout }));
 		_texturedSetLayout = std::make_unique<PipelineLayout>(makePipelineLayout<MeshPushConstants>(_device,
@@ -180,17 +180,19 @@ namespace Concerto::Graphics
 		_renderObjectsToDraw.clear();
 	}
 
-	void VulkanRenderer::DrawObject(MeshPtr& mesh, const std::string& texturePath, float px, float py,
-		float pz, float rx, float ry, float rz, float sx, float sy, float sz)
+	void VulkanRenderer::DrawObject(MeshPtr& mesh,
+		Math::Vector3f& position,
+		Math::Vector3f& rotation,
+		Math::Vector3f& scale)
 	{
 		auto begin = std::chrono::high_resolution_clock::now();
-		VkMeshPtr object = LoadModelIfNotExist(mesh, texturePath);
+		VkMeshPtr object = LoadModelIfNotExist(mesh);
 		glm::mat4 modelMatrix = glm::mat4(1.0f);
-		modelMatrix = glm::translate(modelMatrix, glm::vec3(px, py, pz));
-		modelMatrix = glm::rotate(modelMatrix, glm::radians(rx), glm::vec3(1.0f, 0.0f, 0.0f));
-		modelMatrix = glm::rotate(modelMatrix, glm::radians(ry), glm::vec3(0.0f, 1.0f, 0.0f));
-		modelMatrix = glm::rotate(modelMatrix, glm::radians(rz), glm::vec3(0.0f, 0.0f, 1.0f));
-		modelMatrix = glm::scale(modelMatrix, glm::vec3(sx, sy, sz));
+		modelMatrix = glm::translate(modelMatrix, glm::vec3(position.X(), position.Y(), position.Z()));
+		modelMatrix = glm::rotate(modelMatrix, glm::radians(rotation.X()), glm::vec3(1.0f, 0.0f, 0.0f));
+		modelMatrix = glm::rotate(modelMatrix, glm::radians(rotation.Y()), glm::vec3(0.0f, 1.0f, 0.0f));
+		modelMatrix = glm::rotate(modelMatrix, glm::radians(rotation.Z()), glm::vec3(0.0f, 0.0f, 1.0f));
+		modelMatrix = glm::scale(modelMatrix, glm::vec3(scale.X(), scale.Y(), scale.Z()));
 		if (_renderObjectsToDraw.find(object) == _renderObjectsToDraw.end())
 		{
 			auto end = std::chrono::high_resolution_clock::now();
@@ -205,7 +207,7 @@ namespace Concerto::Graphics
 		_drawObjectsTime = std::chrono::duration<float>(end - begin).count();
 	}
 
-	VkMeshPtr VulkanRenderer::LoadModelIfNotExist(MeshPtr& mesh, const std::string& texturePath)
+	VkMeshPtr VulkanRenderer::LoadModelIfNotExist(MeshPtr& mesh)
 	{
 		auto it = _meshes.find(mesh->GetPath());
 		if (it != _meshes.end())

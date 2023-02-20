@@ -9,11 +9,13 @@
 
 #include <iostream>
 #include <chrono>
+#include "Concerto/Core/Vector.hpp"
 #include "glm/glm.hpp"
 #include "glm/gtc/quaternion.hpp"
 #include "VulkanRenderer.hpp"
 #include "CameraViewer.hpp"
 
+using namespace Concerto;
 using namespace Concerto::Graphics;
 
 
@@ -79,7 +81,9 @@ int main()
 	sponzaMesh->LoadFromFile("./assets/sponza/sponza.obj");
 	std::chrono::steady_clock::time_point lastFrameTime = std::chrono::steady_clock::now();
 	float deltaTime = 0.f;
-
+	Math::Vector3f position(0.f, 0.f, 0.f );
+	Math::Vector3f rotation(0.f, 0.f, 0.f);
+	Math::Vector3f scale(0.1f, 0.1f, 0.1f);
 	while (!window->ShouldClose())
 	{
 		window->PopEvent();
@@ -126,7 +130,7 @@ int main()
 		{
 			engine.UpdateSceneParameters(sceneParameters);
 		}
-		engine.DrawObject(sponzaMesh, {}, 0, 0, 0, 0, 0, 0, 0.1f, 0.1f, 0.1f);
+		engine.DrawObject(sponzaMesh, position, rotation, scale);
 		engine.Draw(camera);
 	}
 }

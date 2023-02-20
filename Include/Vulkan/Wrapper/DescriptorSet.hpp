@@ -26,7 +26,7 @@ namespace Concerto::Graphics::Wrapper
 	* @class DescriptorSet
 	* @brief This class represents a VkDescriptorSet.
 	*  A descriptor set is a collection of descriptors that are used to
-	*  describe resources to the shaders in a pipeline.
+	*  describe resources to the Shaders in a pipeline.
 	*
 	* This class is a Wrapper around the VkDescriptorSet handle and provides
 	* a simpler interface for interacting with descriptor sets.

@@ -11,6 +11,7 @@
 #include <functional>
 #include <utility>
 #include <chrono>
+#include "Concerto/Core/Math/Vector.hpp"
 #include "window/GlfW3.hpp"
 #include "Version.hpp"
 #include "Vulkan/Wrapper/Instance.hpp"
@@ -71,22 +72,15 @@ namespace Concerto::Graphics
 
 		void Draw(const Camera& camera);
 		void DrawObject(MeshPtr &mesh,
-			const std::string& texturePath,
-			float px,
-			float py,
-			float pz,
-			float rx,
-			float ry,
-			float rz,
-			float sx,
-			float sy,
-			float sz);
+			Math::Vector3f& position,
+			Math::Vector3f& rotation,
+			Math::Vector3f& scale);
 		void UseImGUI();
 		ImGUI* GetImGUIContext();
 		void UpdateSceneParameters(const Scene& sceneData);
 		void Resize(std::uint32_t width, std::uint32_t height);
 	 private:
-		VkMeshPtr LoadModelIfNotExist(MeshPtr &mesh, const std::string& texturePath);
+		VkMeshPtr LoadModelIfNotExist(MeshPtr &mesh);
 		void DrawObjects(const Camera& camera);
 		std::vector<const char*> _deviceExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
 		GlfW3& _window;
@@ -112,7 +106,7 @@ namespace Concerto::Graphics
 		std::unique_ptr<Wrapper::DescriptorPool> _descriptorPool;
 		std::vector<FrameData> _frames;
 		std::unique_ptr<Wrapper::Buffer> _sceneParameterBuffer;
-		//TODO : Convert all shaders modules into an unordered_map
+		//TODO : Convert all Shaders modules into an unordered_map
 		std::unique_ptr<Wrapper::ShaderModule> _colorMeshShader;
 		std::unique_ptr<Wrapper::ShaderModule> _textureMeshShader;
 		std::unique_ptr<Wrapper::ShaderModule> _meshVertShader;
