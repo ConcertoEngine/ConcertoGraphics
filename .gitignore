@@ -2,6 +2,7 @@
 build
 CMakeLists.txt
 .idea
+assets
 # Prerequisites
 *.d
 
