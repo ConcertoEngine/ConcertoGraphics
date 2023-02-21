@@ -98,7 +98,7 @@ namespace Concerto::Graphics
 		}
 		// Commands
 		_colorMeshShader = std::make_unique<ShaderModule>(_device, R"(Shaders/default_lit.frag.spv)");
-		_textureMeshShader = std::make_unique<ShaderModule>(_device, R"(Shaders/textured_lit.frag.spv)");
+		_textureMeshShader = std::make_unique<ShaderModule>(_device, R"(Shaders/textured_phong.frag.spv)");
 		_meshVertShader = std::make_unique<ShaderModule>(_device, R"(Shaders/tri_mesh_ssbo.vert.spv)");
 		_meshPipelineLayout = std::make_unique<PipelineLayout>(makePipelineLayout<MeshPushConstants>(_device,
 			{ *_globalSetLayout, *_objectSetLayout }));

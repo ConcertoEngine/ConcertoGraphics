@@ -16,7 +16,7 @@ target('ConcertoGraphics')
     add_includedirs('include', 'include/thirdParty', 'include/window', 'include/Vulkan/Wrapper', 'include/Vulkan')
     add_packages('ConcertoCore','vulkan-headers', 'vulkan-loader', 'vulkan-memory-allocator', 'vk-bootstrap', 'glm', 'stb', 'glfw', 'vulkan-validationlayers', 'imgui')
     add_rules('utils.glsl2spv', {outputdir = '$(buildir)/$(plat)/$(arch)/$(mode)/shaders'})
-    add_files('shaders/*.vert', 'shaders/*.frag')
+    add_files('Shaders/*.vert', 'Shaders/*.frag')
     add_packages('glslang')
     after_build(function (target)
         import('net.http')
@@ -26,7 +26,7 @@ target('ConcertoGraphics')
         os.mkdir(binaryPath .. '/assets')
 
         print('Copying shaders to build directory...')
-        os.cp('shaders/**',  binaryPath .. '/shaders')
+        os.cp('Shaders/**',  binaryPath .. '/Shaders')
         print('Copying shaders to build directory... Done !')
 
         if (not os.exists('assets/sponza')) then
