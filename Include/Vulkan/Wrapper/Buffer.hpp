@@ -5,9 +5,10 @@
 #ifndef CONCERTOGRAPHICS_BUFFER_HPP
 #define CONCERTOGRAPHICS_BUFFER_HPP
 
-#include <vulkan/vulkan.h>
 #include <cstddef>
-#include "vk_mem_alloc.h"
+#include <vulkan/vulkan.h>
+#include <vk_mem_alloc.h>
+#include <Concerto/Core/Types.hpp>
 #include "Allocator.hpp"
 
 namespace Concerto::Graphics::Wrapper
@@ -18,7 +19,7 @@ namespace Concerto::Graphics::Wrapper
 	 *
 	 * Buffer class is a Wrapper for VkBuffer, it encapsulate the VkBuffer object and its corresponding allocation
 	 */
-	class Buffer
+	class CONCERTO_PUBLIC_API Buffer
 	{
 	 public:
 		/**

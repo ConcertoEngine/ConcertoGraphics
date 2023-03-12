@@ -6,7 +6,8 @@
 #define CONCERTOGRAPHICS_COMMANDPOOL_HPP
 
 #include <cstdint>
-#include "vulkan/vulkan.h"
+#include <vulkan/vulkan.h>
+#include <Concerto/Core/Types.hpp>
 #include "Object.hpp"
 
 namespace Concerto::Graphics::Wrapper
@@ -25,7 +26,7 @@ namespace Concerto::Graphics::Wrapper
 	 *
 	 * @author [Your name]
 	 */
-	class CommandPool : public Object<VkCommandPool>
+	class CONCERTO_PUBLIC_API CommandPool : public Object<VkCommandPool>
 	{
 	public:
 		/**

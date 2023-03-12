@@ -5,7 +5,8 @@
 #ifndef CONCERTOGRAPHICS_IMGUI_HPP
 #define CONCERTOGRAPHICS_IMGUI_HPP
 
-#include "imgui.h"
+#include <imgui.h>
+#include <Concerto/Core/Types.hpp>
 #include "Vulkan/RenderingContext.hpp"
 #include "Vulkan/Wrapper/DescriptorPool.hpp"
 
@@ -16,7 +17,7 @@ namespace Concerto::Graphics
 	{
 		class CommandBuffer;
 	}
-	class ImGUI
+	class CONCERTO_PUBLIC_API ImGUI
 	{
 	public:
 		explicit ImGUI(RenderingContext &context, GlfW3 &window);

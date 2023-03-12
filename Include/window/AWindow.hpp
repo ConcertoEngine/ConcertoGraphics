@@ -8,6 +8,7 @@
 #include <string>
 #include <functional>
 #include <optional>
+#include <Concerto/Core/Types.hpp>
 
 namespace Concerto::Graphics
 {
@@ -18,7 +19,7 @@ namespace Concerto::Graphics
 	};
 	//TODO : Remove template because it's breaking the abstraction
 	template<typename T>
-	class AWindow
+	class CONCERTO_PUBLIC_API AWindow
 	{
 	public:
 		AWindow(const std::string& title, int width, int height) : _title(title), _width(width), _height(height)

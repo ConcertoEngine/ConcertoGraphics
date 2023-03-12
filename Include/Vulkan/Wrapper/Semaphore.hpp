@@ -5,7 +5,8 @@
 #ifndef CONCERTOGRAPHICS_SEMAPHORE_HPP
 #define CONCERTOGRAPHICS_SEMAPHORE_HPP
 
-#include "vulkan/vulkan.hpp"
+#include <vulkan/vulkan.hpp>
+#include <Concerto/Core/Types.hpp>
 #include "Object.hpp"
 
 namespace Concerto::Graphics::Wrapper
@@ -18,7 +19,7 @@ namespace Concerto::Graphics::Wrapper
 	 *
 	 * A semaphore is a synchronization object that can be used to insert a dependency between command buffers submitted to a queue.
 	 */
-	class Semaphore : public Object<VkSemaphore>
+	class CONCERTO_PUBLIC_API Semaphore : public Object<VkSemaphore>
 	{
 	public:
 		explicit Semaphore(Device& device);

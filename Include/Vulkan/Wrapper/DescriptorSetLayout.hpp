@@ -7,7 +7,8 @@
 
 #include <vector>
 #include <memory>
-#include "vulkan/vulkan.h"
+#include <vulkan/vulkan.h>
+#include <Concerto/Core/Types.hpp>
 #include "Object.hpp"
 
 namespace Concerto::Graphics::Wrapper
@@ -21,7 +22,7 @@ namespace Concerto::Graphics::Wrapper
 	*
 	* @note This class is not copyable, but it is movable.
 	*/
-	class DescriptorSetLayout : public Object<VkDescriptorSetLayout>
+	class CONCERTO_PUBLIC_API DescriptorSetLayout : public Object<VkDescriptorSetLayout>
 	{
 	public:
 		DescriptorSetLayout(Device& device, std::vector<VkDescriptorSetLayoutBinding> bindings);

@@ -7,6 +7,7 @@
 
 #include <vector>
 #include <vulkan/vulkan.h>
+#include <Concerto/Core/Types.hpp>
 #include "Vulkan/Wrapper/DescriptorPool.hpp"
 
 namespace Concerto::Graphics
@@ -17,7 +18,7 @@ namespace Concerto::Graphics
 		class DescriptorSetLayout;
 		class Device;
 	}
-	class DescriptorAllocator
+	class CONCERTO_PUBLIC_API DescriptorAllocator
 	{
 	 public:
 		struct PoolSizes {

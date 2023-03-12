@@ -6,13 +6,15 @@
 #define CONCERTOGRAPHICS_INCLUDE_SUBMESH_HPP_
 
 #include <memory>
+
+#include <Concerto/Core/Types.hpp>
 #include "Vertex.hpp"
 #include "Material.hpp"
 
 namespace Concerto::Graphics
 {
 	class Mesh;
-	class SubMesh
+	class CONCERTO_PUBLIC_API SubMesh
 	{
 	 public:
 		explicit SubMesh(std::shared_ptr<Mesh>& parent);

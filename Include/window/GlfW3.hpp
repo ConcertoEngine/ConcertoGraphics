@@ -18,10 +18,11 @@
 #include <functional>
 #include <GLFW/glfw3.h>
 #include <GLFW/glfw3native.h>
+#include <Concerto/Core/Types.hpp>
 
 namespace Concerto::Graphics
 {
-	class GlfW3 : public AWindow<GLFWwindow>
+	class CONCERTO_PUBLIC_API GlfW3 : public AWindow<GLFWwindow>
 	{
 	public:
 		GlfW3(const std::string& title, int width, int height);

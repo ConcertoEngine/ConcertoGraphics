@@ -9,6 +9,7 @@
 #include <string>
 #include <memory>
 
+#include <Concerto/Core/Types.hpp>
 #include "Vulkan/Wrapper/Buffer.hpp"
 #include "Vulkan/Wrapper/Allocator.hpp"
 #include "Vulkan/Wrapper/CommandPool.hpp"
@@ -18,7 +19,7 @@
 
 namespace Concerto::Graphics
 {
-	struct VkSubMesh
+	struct CONCERTO_PUBLIC_API VkSubMesh
 	{
 		VkSubMesh(SubMeshPtr& meshPtr, Wrapper::Allocator& allocator, VkBufferUsageFlags usage,
 				VmaMemoryUsage memoryUsage);

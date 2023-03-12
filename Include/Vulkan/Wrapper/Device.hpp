@@ -7,7 +7,8 @@
 
 #include <cstdint>
 #include <span>
-#include "vulkan/vulkan.h"
+#include <vulkan/vulkan.h>
+#include <Concerto/Core/Types.hpp>
 #include "Queue.hpp"
 
 namespace Concerto::Graphics::Wrapper
@@ -20,7 +21,7 @@ namespace Concerto::Graphics::Wrapper
 	* A device is a virtual representation of a physical device,
 	* such as a GPU, and provides access to the resources of that physical device.
 	*/
-	class Device
+	class CONCERTO_PUBLIC_API Device
 	{
 	public:
 		Device() = default;

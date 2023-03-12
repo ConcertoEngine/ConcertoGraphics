@@ -6,7 +6,8 @@
 #define CONCERTOGRAPHICS_OBJECT_HPP
 
 #include <functional>
-#include "vulkan/vulkan.h"
+#include <vulkan/vulkan.h>
+#include <Concerto/Core/Types.hpp>
 
 namespace Concerto::Graphics::Wrapper
 {
@@ -19,7 +20,7 @@ namespace Concerto::Graphics::Wrapper
 	 * @tparam vkType The type of the Vulkan object.
 	 */
 	template<typename vkType>
-	class Object
+	class CONCERTO_PUBLIC_API Object
 	{
 	public:
 		using DestroyHelper = std::function<void(Device&, vkType)>;

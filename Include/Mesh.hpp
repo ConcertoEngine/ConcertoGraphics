@@ -7,13 +7,15 @@
 
 #include <memory>
 #include <unordered_map>
+
+#include <Concerto/Core/Types.hpp>
 #include "Vulkan/Vertex.hpp"
 #include "Material.hpp"
 #include "SubMesh.hpp"
 
 namespace Concerto::Graphics
 {
-	class Mesh : public std::enable_shared_from_this<Mesh>
+	class CONCERTO_PUBLIC_API Mesh : public std::enable_shared_from_this<Mesh>
 	{
 	 public:
 		Mesh() = default;

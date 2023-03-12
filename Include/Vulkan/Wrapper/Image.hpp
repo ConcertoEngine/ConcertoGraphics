@@ -8,6 +8,7 @@
 #include <string>
 #include <vulkan/vulkan.h>
 #include <vk_mem_alloc.h>
+#include <Concerto/Core/Types.hpp>
 #include "Object.hpp"
 #include "Allocator.hpp"
 #include "VulkanInitializer.hpp"
@@ -30,7 +31,7 @@ namespace Concerto::Graphics::Wrapper
 	* An image is a two-dimensional array of pixels that can be used as a source or destination for rendering.
 	*
 	*/
-	class Image : public Object<VkImage>
+	class CONCERTO_PUBLIC_API Image : public Object<VkImage>
 	{
 	public:
 		/**

@@ -5,7 +5,8 @@
 #ifndef CONCERTOGRAPHICS_FENCE_HPP
 #define CONCERTOGRAPHICS_FENCE_HPP
 
-#include "vulkan/vulkan.hpp"
+#include <vulkan/vulkan.hpp>
+#include <Concerto/Core/Types.hpp>
 #include "Object.hpp"
 
 namespace Concerto::Graphics::Wrapper
@@ -20,7 +21,7 @@ namespace Concerto::Graphics::Wrapper
 	*
 	* @note This class is not copyable, but it is movable.
 	*/
-	class Fence : public Object<VkFence>
+	class CONCERTO_PUBLIC_API Fence : public Object<VkFence>
 	{
 	public:
 		/**

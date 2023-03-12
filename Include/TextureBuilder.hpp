@@ -6,6 +6,7 @@
 #define CONCERTOGRAPHICS_INCLUDE_TEXTUREBUILDER_HPP_
 
 #include <unordered_map>
+#include <Concerto/Core/Types.hpp>
 #include "Vulkan/Texture.hpp"
 
 namespace Concerto::Graphics
@@ -17,7 +18,7 @@ namespace Concerto::Graphics
 		class CommandBuffer;
 		class Queue;
 	}
-	class TextureBuilder
+	class CONCERTO_PUBLIC_API TextureBuilder
 	{
 	 public:
 		TextureBuilder(Wrapper::Device& device, Wrapper::Allocator& allocator, Wrapper::CommandBuffer& commandBuffer,

@@ -9,7 +9,8 @@
 #include <span>
 #include <string>
 #include <vector>
-#include "vulkan/vulkan.h"
+#include <vulkan/vulkan.h>
+#include <Concerto/Core/Types.hpp>
 #include "Version.hpp"
 
 namespace Concerto::Graphics::Wrapper
@@ -24,7 +25,7 @@ namespace Concerto::Graphics::Wrapper
 	* The Instance class represents a Vulkan instance, which is the root object of the Vulkan API.
 	* It is responsible for creating and managing other objects in the Vulkan API, such as physical devices and logical devices.
 	*/
-	class Instance
+	class CONCERTO_PUBLIC_API Instance
 	{
 	public:
 		/**

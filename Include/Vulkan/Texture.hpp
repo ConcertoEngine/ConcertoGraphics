@@ -6,7 +6,7 @@
 #define CONCERTOGRAPHICS_TEXTURE_HPP
 
 #include <memory>
-#include "vulkan/vulkan.h"
+#include <vulkan/vulkan.h>
 #include "Vulkan/Wrapper/Image.hpp"
 #include "Vulkan/Wrapper/ImageView.hpp"
 #include "Vulkan/Wrapper/CommandBuffer.hpp"

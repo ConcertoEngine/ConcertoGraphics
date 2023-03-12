@@ -5,8 +5,9 @@
 #ifndef CONCERTOGRAPHICS_CAMERAVIEWER_HPP
 #define CONCERTOGRAPHICS_CAMERAVIEWER_HPP
 
-#include "glm/vec3.hpp"
+#include <glm/vec3.hpp>
 #include <glm/ext/quaternion_float.hpp>
+#include <Concerto/Core/Types.hpp>
 
 namespace Concerto::Graphics
 {
@@ -16,7 +17,7 @@ namespace Concerto::Graphics
 	 * @brief Controls the viewing parameters of the camera.
 	 * @details Support basic viewing operation like translation, rotation, zoom.
 	 */
-	class CameraViewer
+	class CONCERTO_PUBLIC_API CameraViewer
 	{
 	public:
 		CameraViewer(const glm::vec3& viewPos, const glm::vec3& pivot, const glm::vec3& upVector, float fov,

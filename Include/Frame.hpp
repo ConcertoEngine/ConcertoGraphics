@@ -6,6 +6,8 @@
 #define CONCERTOGRAPHICS_FRAME_HPP
 
 #include <memory>
+
+#include <Concerto/Core/Types.hpp>
 #include "Vulkan/Wrapper/Buffer.hpp"
 #include "Vulkan/Wrapper/Allocator.hpp"
 #include "Vulkan/Wrapper/DescriptorSet.hpp"

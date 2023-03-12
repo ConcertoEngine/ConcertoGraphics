@@ -7,7 +7,8 @@
 
 #include <functional>
 
-#include "vulkan/vulkan.h"
+#include <vulkan/vulkan.h>
+#include <Concerto/Core/Types.hpp>
 #include "Pipeline.hpp"
 #include "Buffer.hpp"
 #include "PipelineLayout.hpp"
@@ -26,7 +27,7 @@ namespace Concerto::Graphics::Wrapper
 	 * This class is used to record and submit commands to the GPU for execution, such as rendering commands,
 	 * memory management commands, and compute commands.
 	 */
-	class CommandBuffer
+	class CONCERTO_PUBLIC_API CommandBuffer
 	{
 	public:
 		/**

@@ -11,9 +11,9 @@
 #include <functional>
 #include <utility>
 #include <chrono>
-#include "Concerto/Core/Math/Vector.hpp"
-#include "window/GlfW3.hpp"
-#include "Version.hpp"
+
+#include <Concerto/Core/Math/Vector.hpp>
+#include <Concerto/Core/Types.hpp>
 #include "Vulkan/Wrapper/Instance.hpp"
 #include "Vulkan/Wrapper/Device.hpp"
 #include "Vulkan/Wrapper/PhysicalDevice.hpp"
@@ -25,20 +25,22 @@
 #include "Vulkan/Wrapper/DescriptorSetLayout.hpp"
 #include "Vulkan/Wrapper/DescriptorPool.hpp"
 #include "Vulkan/Wrapper/Buffer.hpp"
-#include "Frame.hpp"
 #include "Vulkan/Wrapper/ShaderModule.hpp"
 #include "Vulkan/Wrapper/PipelineLayout.hpp"
 #include "Vulkan/Wrapper/Pipeline.hpp"
 #include "Vulkan/Wrapper/Queue.hpp"
+#include "Vulkan/Wrapper/Sampler.hpp"
+#include "Vulkan/DescriptorLayoutCache.hpp"
+#include "Vulkan/DescriptorAllocator.hpp"
+#include "window/GlfW3.hpp"
+#include "Version.hpp"
+#include "Frame.hpp"
 #include "UploadContext.hpp"
 #include "Vulkan/RenderObject.hpp"
 #include "Vulkan/Texture.hpp"
 #include "ImGUI.hpp"
 #include "TextureBuilder.hpp"
 #include "MaterialBuilder.hpp"
-#include "Vulkan/Wrapper/Sampler.hpp"
-#include "Vulkan/DescriptorLayoutCache.hpp"
-#include "Vulkan/DescriptorAllocator.hpp"
 #include "Mesh.hpp"
 #include "Vulkan/VkMesh.hpp"
 
@@ -53,7 +55,7 @@ namespace Concerto::Graphics
 		std::uint32_t height;
 	};
 
-	class VulkanRenderer
+	class CONCERTO_PUBLIC_API VulkanRenderer
 	{
 	 public:
 		explicit VulkanRenderer(RendererInfo info, GlfW3& window);

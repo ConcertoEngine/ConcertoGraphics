@@ -7,7 +7,8 @@
 
 #include <unordered_map>
 #include <string>
-#include "vulkan/vulkan.h"
+#include <vulkan/vulkan.h>
+#include <Concerto/Core/Types.hpp>
 #include "Object.hpp"
 #include "Viewport.hpp"
 #include "PipelineInfo.hpp"
@@ -23,7 +24,7 @@ namespace Concerto::Graphics::Wrapper
 	 * @class Pipeline
 	 * @brief Class representing a pipeline in the Vulkan API
 	 */
-	class Pipeline : public Object<VkPipeline>
+	class CONCERTO_PUBLIC_API Pipeline : public Object<VkPipeline>
 	{
 	public:
 		/**

@@ -5,7 +5,8 @@
 #ifndef CONCERTOGRAPHICS_SAMPLER_HPP
 #define CONCERTOGRAPHICS_SAMPLER_HPP
 
-#include "vulkan/vulkan.h"
+#include <vulkan/vulkan.h>
+#include <Concerto/Core/Types.hpp>
 #include "Object.hpp"
 
 namespace Concerto::Graphics::Wrapper
@@ -18,7 +19,7 @@ namespace Concerto::Graphics::Wrapper
 	 *
 	 * A sampler is an object that describes how sampled images should be read in a shader. This class will create the VkSampler object, and it's default move and copy constructors and assignment operators are provided.
 	 */
-	class Sampler : public Object<VkSampler>
+	class CONCERTO_PUBLIC_API Sampler : public Object<VkSampler>
 	{
 	public:
 		/**

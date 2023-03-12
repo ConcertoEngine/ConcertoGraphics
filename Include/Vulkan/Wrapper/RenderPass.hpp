@@ -6,7 +6,8 @@
 #define CONCERTOGRAPHICS_RENDERPASS_HPP
 
 #include <vector>
-#include "vulkan/vulkan.h"
+#include <vulkan/vulkan.h>
+#include <Concerto/Core/Types.hpp>
 #include "Object.hpp"
 
 namespace Concerto::Graphics::Wrapper
@@ -21,7 +22,7 @@ namespace Concerto::Graphics::Wrapper
 	 *
 	 * A render pass defines a set of attachments, subpasses and dependencies that describe the rendering operations that will be performed.
 	 */
-	class RenderPass : public Object<VkRenderPass>
+	class CONCERTO_PUBLIC_API RenderPass : public Object<VkRenderPass>
 	{
 	public:
 		/**

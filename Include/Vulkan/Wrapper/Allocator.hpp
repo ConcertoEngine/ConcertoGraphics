@@ -5,8 +5,9 @@
 #ifndef CONCERTOGRAPHICS_ALLOCATOR_HPP
 #define CONCERTOGRAPHICS_ALLOCATOR_HPP
 
-#include "vulkan/vulkan.h"
+#include <vulkan/vulkan.h>
 #include "vk_mem_alloc.h"
+#include <Concerto/Core/Types.hpp>
 #include "Object.hpp"
 
 namespace Concerto::Graphics::Wrapper
@@ -25,7 +26,7 @@ namespace Concerto::Graphics::Wrapper
 	*  it also provide some utility functions for creating the VmaAllocator.
 	*
 	*/
-	class Allocator : public Object<VmaAllocator>
+	class CONCERTO_PUBLIC_API Allocator : public Object<VmaAllocator>
 	{
 	public:
 		/**

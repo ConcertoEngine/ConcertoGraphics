@@ -7,7 +7,7 @@
 
 #include <optional>
 #include <memory>
-#include "vulkan/vulkan.h"
+#include <vulkan/vulkan.h>
 #include "Vulkan/Wrapper/DescriptorSet.hpp"
 
 namespace Concerto::Graphics

@@ -5,7 +5,7 @@
 #include <cassert>
 
 #include "Vulkan/wrapper/Swapchain.hpp"
-#include "vulkan/vulkan.h"
+#include <vulkan/vulkan.h>
 #include "vk_mem_alloc.h"
 #include "Vulkan/wrapper/VulkanInitializer.hpp"
 #include "Vulkan/wrapper/PhysicalDevice.hpp"

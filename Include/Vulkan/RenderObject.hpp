@@ -7,7 +7,7 @@
 
 #include <memory>
 #include <vector>
-#include "vulkan/vulkan.h"
+#include <vulkan/vulkan.h>
 #include "Vulkan/VkSubMesh.hpp"
 #include "Vulkan/VkMaterial.hpp"
 

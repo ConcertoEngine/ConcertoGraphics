@@ -3,7 +3,11 @@
 //
 
 #define GLFW_INCLUDE_VULKAN
-
+#define VMA_IMPLEMENTATION
+#define VMA_VULKAN_VERSION 1000000
+#define VKB_DEBUG
+#define GLM_FORCE_LEFT_HANDED
+#define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include <cassert>
 #include <vector>
 #include <iostream>
@@ -97,9 +101,11 @@ namespace Concerto::Graphics
 					*_globalSetLayout, *_objectSetLayout, *_sceneParameterBuffer, true)));
 		}
 		// Commands
-		_colorMeshShader = std::make_unique<ShaderModule>(_device, R"(Shaders/default_lit.frag.spv)");
-		_textureMeshShader = std::make_unique<ShaderModule>(_device, R"(Shaders/textured_phong.frag.spv)");
-		_meshVertShader = std::make_unique<ShaderModule>(_device, R"(Shaders/tri_mesh_ssbo.vert.spv)");
+		std::filesystem::path shaderPath = std::filesystem::current_path() / "Shaders";
+		std::cout << "Shader path : " << shaderPath << std::endl;
+		_colorMeshShader = std::make_unique<ShaderModule>(_device, (shaderPath / "default_lit.frag.spv)").string());
+		_textureMeshShader = std::make_unique<ShaderModule>(_device, (shaderPath / "textured_phong.frag.spv)").string());
+		_meshVertShader = std::make_unique<ShaderModule>(_device, (shaderPath / "tri_mesh_ssbo.vert.spv)").string());
 		_meshPipelineLayout = std::make_unique<PipelineLayout>(makePipelineLayout<MeshPushConstants>(_device,
 			{ *_globalSetLayout, *_objectSetLayout }));
 		_texturedSetLayout = std::make_unique<PipelineLayout>(makePipelineLayout<MeshPushConstants>(_device,

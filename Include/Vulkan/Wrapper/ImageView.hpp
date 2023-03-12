@@ -5,14 +5,16 @@
 #ifndef CONCERTOGRAPHICS_IMAGEVIEW_HPP
 #define CONCERTOGRAPHICS_IMAGEVIEW_HPP
 
-#include "vulkan/vulkan.h"
+#include <vulkan/vulkan.h>
+#include <Concerto/Core/Types.hpp>
 #include "Object.hpp"
+
 namespace Concerto::Graphics::Wrapper
 {
 	class Device;
 	class Image;
 
-	class ImageView : public Object<VkImageView>
+	class CONCERTO_PUBLIC_API ImageView : public Object<VkImageView>
 	{
 	 public:
 		ImageView(Device& device, Image& image, VkImageAspectFlags aspectFlags);
