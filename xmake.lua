@@ -16,7 +16,7 @@ local packagesList = {
     'glm',
     'stb',
     'glfw',
-    'vulkan-validationlayers'
+--     'vulkan-validationlayers'
 }
 
 local function AddPackagesToTarget(packages)
