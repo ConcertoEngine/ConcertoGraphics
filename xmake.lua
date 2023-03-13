@@ -2,6 +2,7 @@ add_rules('mode.debug')
 add_repositories('Concerto-xrepo https://github.com/ConcertoEngine/xmake-repo.git main')
 add_requires('ConcertoCore', 'vulkan-loader','vulkan-memory-allocator', 'glm','stb','glfw', 'vulkan-validationlayers')
 add_requires('imgui', {configs = {glfw_vulkan = true}})
+add_requireconfs("vulkan-memory-allocator.vulkan-headers", {override = true, version = "1.2.189+1"})
 
 if (has_config('examples')) then
     add_requires("glslang", {configs = {binaryonly = true}})
