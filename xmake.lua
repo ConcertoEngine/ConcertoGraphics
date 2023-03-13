@@ -1,8 +1,6 @@
 add_rules('mode.debug')
 add_repositories('Concerto-xrepo https://github.com/ConcertoEngine/xmake-repo.git main')
-add_requires('ConcertoCore', 'vulkan-loader','vulkan-memory-allocator', 'glm','stb','glfw', 'vulkan-validationlayers')
 add_requires('imgui', {configs = {glfw_vulkan = true}})
-add_requireconfs("vulkan-memory-allocator.vulkan-headers", {override = true, version = "1.2.189+1"})
 
 if (has_config('examples')) then
     add_requires("glslang", {configs = {binaryonly = true}})
@@ -18,12 +16,12 @@ local packagesList = {
     'glm',
     'stb',
     'glfw',
-    'vulkan-validationlayers',
-    'imgui'
+    'vulkan-validationlayers'
 }
 
 local function AddPackagesToTarget(packages)
     for _, package in ipairs(packages) do
+        add_requires(package)
         add_packages(package, { public = true })
     end
 end
@@ -33,6 +31,9 @@ local function AddIncludesToTarget(includes)
         add_includedirs(include, { public = true })
     end
 end
+
+AddPackagesToTarget(packagesList)
+add_requireconfs("vulkan-memory-allocator.vulkan-headers", {override = true, version = "1.2.189+1"})
 
 target('ConcertoGraphics')
     set_kind('shared')
@@ -44,7 +45,7 @@ target('ConcertoGraphics')
     set_languages('cxx20')
     add_files('Src/*.cpp', 'Src/Vulkan/Wrapper/*.cpp', 'Src/window/*.cpp', 'Src/Vulkan/*.cpp')
     AddIncludesToTarget({'Include', 'Include/thirdParty', 'Include/window', 'Include/Vulkan/Wrapper', 'Include/Vulkan'})
-    AddPackagesToTarget(packagesList)
+    add_packages('imgui', { public = true })
 
 includes('xmake/rules/*.lua')
 includes('Examples/xmake.lua')
