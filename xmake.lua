@@ -12,7 +12,7 @@ end
 
 local packagesList = {
     'ConcertoCore',
-    'vulkan-loader 1.2.198',
+    'vulkan-loader',
     'vulkan-memory-allocator',
     'glm',
     'stb',
