@@ -40,34 +40,34 @@ namespace Concerto::Graphics
 		virtual ~AWindow() = default;
 
 		/**
-		* @brief Get the raw window
-		* @return The raw window as a void pointer
+		* @brief Get the raw Window
+		* @return The raw Window as a void pointer
 		*/
 		virtual void* GetRawWindow() = 0;
 		/**
-		 * @return The cursor position in the window
+		 * @return The cursor position in the Window
 		 */
 		//virtual Math::Vector2d getCursorPosition() = 0;
 		/**
-		 * @return The width of the window
+		 * @return The width of the Window
 		 */
 		virtual std::uint32_t GetWidth() = 0;
 
 		/**
-		 * @return The height of the window
+		 * @return The height of the Window
 		 */
 		virtual std::uint32_t GetHeight() = 0;
 		/**
-		 * @return The window clear color
+		 * @return The Window clear color
 		 */
 		//		[[nodiscard]] virtual const Math::Vector4f& getClearColor() const = 0;
 		/**
-		 * @brief Set the window clear color
+		 * @brief Set the Window clear color
 		 * @param color The new clear color
 		 */
 		//		virtual void setClearColor(const Math::Vector4f& color) = 0;
 		/**
-		 * @brief Set the window clear color
+		 * @brief Set the Window clear color
 		 * @param r The red component of the new clear color
 		 * @param g The green component of the new clear color
 		 * @param b The blue component of the new clear color
@@ -75,13 +75,13 @@ namespace Concerto::Graphics
 		 */
 		//		virtual void setClearColor(float r, float g, float b, float a) = 0;
 		/**
-		 * @bried Set the window title
+		 * @bried Set the Window title
 		 * @param title The new title
 		 */
 		virtual void SetTitle(const std::string& title) = 0;
 
 		/**
-		 * @brief Set the window icon
+		 * @brief Set the Window icon
 		 * @param path The path to the icon
 		 */
 		virtual void SetIcon(const std::string& path) = 0;
@@ -106,7 +106,7 @@ namespace Concerto::Graphics
 		virtual void SetCursorIcon(const std::string& path) = 0;
 
 		/**
-		 * @brief The cursor always go back to the center of the window, and becomes invisible
+		 * @brief The cursor always go back to the center of the Window, and becomes invisible
 		 * @param disabled True if the cursor should be disabled, false otherwise
 		 */
 		virtual void SetCursorDisabled(bool disabled) = 0;
@@ -118,13 +118,13 @@ namespace Concerto::Graphics
 		virtual std::optional<Key> PopEvent() = 0;
 
 		/**
-		 * @brief Check if the window should close
-		 * @return True if the window should close, false otherwise
+		 * @brief Check if the Window should close
+		 * @return True if the Window should close, false otherwise
 		 */
 		virtual bool ShouldClose() = 0;
 
 		/**
-		 * @brief Register a callback function that will be called when the window is resized
+		 * @brief Register a callback function that will be called when the Window is resized
 		 * @param callback The callback function
 		 */
 		virtual void RegisterResizeCallback(std::function<void(AWindow& window)> callback) = 0;

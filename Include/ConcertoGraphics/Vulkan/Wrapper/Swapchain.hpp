@@ -35,7 +35,7 @@ namespace Concerto::Graphics::Wrapper
 		 * @brief Construct a new Swapchain object
 		 * @param device A reference to the logical device.
 		 * @param allocator A reference to the allocator.
-		 * @param windowExtent The size of the window.
+		 * @param windowExtent The size of the Window.
 		 * @param physicalDevice A reference to the physical device.
 		 */
 		Swapchain(Device& device, Allocator& allocator, VkExtent2D windowExtent, PhysicalDevice& physicalDevice);
