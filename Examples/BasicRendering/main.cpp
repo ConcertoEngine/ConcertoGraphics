@@ -26,7 +26,7 @@ int main()
 	Concerto::Graphics::ImGUI* imGui = engine.GetImGUIContext();
 	assert(imGui != nullptr);
 	ImGuiIO& io = ImGui::GetIO();
-
+	ImGui::SetCurrentContext(imGui->GetContext());
 	float fractionChangeX;
 	float fractionChangeY;
 	float aspect = float(window->GetWidth()) / float(window->GetHeight());
@@ -45,13 +45,13 @@ int main()
 	engine.UpdateSceneParameters(sceneParameters);
 	window->RegisterCursorPosCallback([&](AWindow<GLFWwindow>& window, double x, double y)
 	{
-	  io.AddMousePosEvent(x, y);
+	  imGui->UpdateMousePosition(x, y);
 	  cx = x;
 	  cy = y;
 	});
 	window->RegisterMouseButtonCallback([&](AWindow<GLFWwindow>& window, int button, int action, int mods)
 	{
-	  io.AddMouseButtonEvent(button, action == GLFW_PRESS);
+	  imGui->UpdateMouseButton(button, action == GLFW_PRESS);
 	  leftMouseButtonPressed = action == GLFW_PRESS && button == GLFW_MOUSE_BUTTON_LEFT;
 	  rightMouseButtonPressed = action == GLFW_PRESS && button == GLFW_MOUSE_BUTTON_RIGHT;
 	  middleMouseButtonPressed = action == GLFW_PRESS && button == GLFW_MOUSE_BUTTON_MIDDLE;
@@ -69,14 +69,13 @@ int main()
 	  aspect = float(window.GetWidth()) / float(window.GetHeight());
 	  camera.proj = glm::perspective(glm::radians(90.f), aspect, 0.00001f, 10000.0f);
 	  camera.viewproj = camera.proj * camera.view * glm::mat4(1.f);
-//		engine.Resize(window.GetWidth(), window.GetHeight());
 	});
 	MeshPtr sponzaMesh = std::make_shared<Mesh>();
 	sponzaMesh->LoadFromFile("./assets/sponza/sponza.obj");
 	std::chrono::steady_clock::time_point lastFrameTime = std::chrono::steady_clock::now();
 	float deltaTime = 0.f;
 	Math::Vector3f position(0.f, 0.f, 0.f);
-	Math::Vector3f rotation(0.f, 0.f, 0.f);
+	Math::Quaternionf rotation(Math::EulerAnglesf(0.f, 0.f, 0.f));
 	Math::Vector3f scale(0.1f, 0.1f, 0.1f);
 	while (!window->ShouldClose())
 	{

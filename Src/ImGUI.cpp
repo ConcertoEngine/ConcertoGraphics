@@ -33,8 +33,7 @@ namespace Concerto::Graphics
 	{
 
 		IMGUI_CHECKVERSION();
-		ImGui::CreateContext();
-		ImGuiIO& io = ImGui::GetIO();
+		_imGuiContext = ImGui::CreateContext();
 		ImGui::StyleColorsDark();
 		ImGui_ImplVulkan_InitInfo init_info = {};
 		init_info.Instance = *_context.instance->Get();
@@ -78,5 +77,22 @@ namespace Concerto::Graphics
 	void ImGUI::RenderDrawData(Wrapper::CommandBuffer& commandBuffer)
 	{
 		ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), commandBuffer.Get());
+	}
+
+	ImGuiContext* ImGUI::GetContext() const
+	{
+		return _imGuiContext;
+	}
+
+	void ImGUI::UpdateMousePosition(float x, float y)
+	{
+		ImGuiIO& io = ImGui::GetIO();
+		io.AddMousePosEvent(x, y);
+	}
+
+	void ImGUI::UpdateMouseButton(int button, bool pressed)
+	{
+		ImGuiIO& io = ImGui::GetIO();
+		io.AddMouseButtonEvent(button, pressed);
 	}
 } // Concerto::Graphics
