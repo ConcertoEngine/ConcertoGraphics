@@ -43,7 +43,7 @@ target('ConcertoGraphics')
     set_languages('cxx20')
     add_files('Src/*.cpp', 'Src/Vulkan/Wrapper/*.cpp', 'Src/window/*.cpp', 'Src/Vulkan/*.cpp')
     AddIncludesToTarget({'Include/Concerto/Graphics', 'Include/Concerto/Graphics/thirdParty', 'Include/Concerto/Graphics/window', 'Include/Concerto/Graphics/Vulkan/Wrapper', 'Include/Concerto/Graphics/Vulkan'})
-    add_headerfiles('Include/(Concerto/Graphics/*.hpp)', 'Include/(ConcertoGraphics/thirdParty/**.h)', 'Include/(Concerto/Graphics/Window/**.hpp)', 'Include/(Concerto/Graphics/Vulkan/Wrapper/*.hpp)', 'Include/(Concerto/Graphics/Vulkan/*.hpp)', 'Include/(Concerto/Graphics/Vulkan/*.inl)')
+    add_headerfiles('Include/(Concerto/Graphics/*.hpp)', 'Include/(ConcertoGraphics/thirdParty/**.h)', 'Include/(Concerto/Graphics/Window/**.hpp)', 'Include/(Concerto/Graphics/Vulkan/Wrapper/*.hpp)', 'Include/(Concerto/Graphics/Vulkan/*.hpp)', 'Include/(Concerto/Graphics/Vulkan/Wrapper/*.inl)')
     add_packages('imgui', { public = true })
 
 includes('Xmake/Rules/*.lua')
