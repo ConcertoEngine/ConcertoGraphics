@@ -17,7 +17,7 @@ Install [xmake](https://xmake.io/#/)
 Clone this repo 
 
 ```bash
-git clone git@github.com:ArthurVasseur/ConcertoGraphics.git
+git clone git@github.com:ArthurVasseur/Concerto.git
 ```
 
 ## Build
@@ -25,25 +25,25 @@ git clone git@github.com:ArthurVasseur/ConcertoGraphics.git
 If you want to build a debug version of the project : 
 
 ```bash
-xmake config -m debug
+Xmake config -m debug
 ```
 
 or
 
 ```bash
-xmake config -m release
+Xmake config -m release
 ```
 
 Build the project with `xmake`.
 
 ```bash
-xmake
+Xmake
 ```
 
 Creating cmake project files.
 
 ```bash
-xmake project -k cmakelists
+Xmake project -k cmakelists
 ```
 
 Creating Visual Studio project files.
