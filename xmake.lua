@@ -15,8 +15,7 @@ local packagesList = {
     'vulkan-memory-allocator',
     'glm',
     'stb',
-    'glfw',
---     'vulkan-validationlayers'
+    'glfw'
 }
 
 local function AddPackagesToTarget(packages)
@@ -33,7 +32,6 @@ local function AddIncludesToTarget(includes)
 end
 
 AddPackagesToTarget(packagesList)
-add_requireconfs("vulkan-memory-allocator.vulkan-headers", {override = true, version = "1.2.189+1"})
 
 target('ConcertoGraphics')
     set_kind('shared')
@@ -44,9 +42,9 @@ target('ConcertoGraphics')
     add_defines('CONCERTO_BUILD')
     set_languages('cxx20')
     add_files('Src/*.cpp', 'Src/Vulkan/Wrapper/*.cpp', 'Src/window/*.cpp', 'Src/Vulkan/*.cpp')
-    AddIncludesToTarget({'Include/ConcertoGraphics', 'Include/ConcertoGraphics/thirdParty', 'Include/ConcertoGraphics/window', 'Include/ConcertoGraphics/Vulkan/Wrapper', 'Include/ConcertoGraphics/Vulkan'})
-    add_headerfiles('Include/(ConcertoGraphics/*.hpp)', 'Include/(ConcertoGraphics/thirdParty/**.h)', 'Include/(ConcertoGraphics/Window/**.hpp)', 'Include/(ConcertoGraphics/Vulkan/Wrapper/*.hpp)', 'Include/(ConcertoGraphics/Vulkan/*.hpp)')
+    AddIncludesToTarget({'Include/Concerto/Graphics', 'Include/Concerto/Graphics/thirdParty', 'Include/Concerto/Graphics/window', 'Include/Concerto/Graphics/Vulkan/Wrapper', 'Include/Concerto/Graphics/Vulkan'})
+    add_headerfiles('Include/(Concerto/Graphics/*.hpp)', 'Include/(ConcertoGraphics/thirdParty/**.h)', 'Include/(Concerto/Graphics/Window/**.hpp)', 'Include/(Concerto/Graphics/Vulkan/Wrapper/*.hpp)', 'Include/(Concerto/Graphics/Vulkan/*.hpp)')
     add_packages('imgui', { public = true })
 
-includes('xmake/rules/*.lua')
+includes('Xmake/Rules/*.lua')
 includes('Examples/xmake.lua')
