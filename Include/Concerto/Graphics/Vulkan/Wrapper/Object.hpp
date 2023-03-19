@@ -20,7 +20,7 @@ namespace Concerto::Graphics::Wrapper
 	 * @tparam vkType The type of the Vulkan object.
 	 */
 	template<typename vkType>
-	class CONCERTO_PUBLIC_API Object
+	class Object
 	{
 	public:
 		using DestroyHelper = std::function<void(Device&, vkType)>;
