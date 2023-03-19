@@ -14,7 +14,7 @@ namespace Concerto::Graphics
 		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 		auto* window = glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);;
 		if (!window)
-			throw std::runtime_error("GLFW3 window creation failed");
+			throw std::runtime_error("GLFW3 Window creation failed");
 		_window = std::unique_ptr<GLFWwindow, std::function<void(GLFWwindow*)>>(window, [](GLFWwindow* window)
 		{
 			glfwDestroyWindow(window);

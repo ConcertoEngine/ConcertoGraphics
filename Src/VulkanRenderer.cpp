@@ -45,7 +45,7 @@ namespace Concerto::Graphics
 		auto res = glfwCreateWindowSurface(*_vulkanInstance.Get(), (GLFWwindow*)_window.GetRawWindow(), nullptr,
 			&_surface); //TODO : Move this to Window
 		if (res != VK_SUCCESS)
-			throw std::runtime_error("Failed to create window surface");
+			throw std::runtime_error("Failed to create Window surface");
 		std::span<PhysicalDevice> devices = _vulkanInstance.EnumeratePhysicalDevices();
 		if (devices.empty())
 		{
@@ -101,11 +101,9 @@ namespace Concerto::Graphics
 					*_globalSetLayout, *_objectSetLayout, *_sceneParameterBuffer, true)));
 		}
 		// Commands
-		std::filesystem::path shaderPath = std::filesystem::current_path() / "Shaders";
-		std::cout << "Shader path : " << shaderPath << std::endl;
-		_colorMeshShader = std::make_unique<ShaderModule>(_device, (shaderPath / "default_lit.frag.spv)").string());
-		_textureMeshShader = std::make_unique<ShaderModule>(_device, (shaderPath / "textured_phong.frag.spv)").string());
-		_meshVertShader = std::make_unique<ShaderModule>(_device, (shaderPath / "tri_mesh_ssbo.vert.spv)").string());
+		_colorMeshShader = std::make_unique<ShaderModule>(_device, ".\\Shaders\\default_lit.frag.spv");
+		_textureMeshShader = std::make_unique<ShaderModule>(_device, ".\\Shaders\\textured_phong.frag.spv");
+		_meshVertShader = std::make_unique<ShaderModule>(_device, ".\\Shaders\\tri_mesh_ssbo.vert.spv");
 		_meshPipelineLayout = std::make_unique<PipelineLayout>(makePipelineLayout<MeshPushConstants>(_device,
 			{ *_globalSetLayout, *_objectSetLayout }));
 		_texturedSetLayout = std::make_unique<PipelineLayout>(makePipelineLayout<MeshPushConstants>(_device,
@@ -186,18 +184,25 @@ namespace Concerto::Graphics
 		_renderObjectsToDraw.clear();
 	}
 
+
+	void VulkanRenderer::DrawObject(MeshPtr& mesh, const Math::Transform transform)
+	{
+		DrawObject(mesh, transform.GetLocation(), transform.GetRotation(), transform.GetScale());
+	}
+
 	void VulkanRenderer::DrawObject(MeshPtr& mesh,
-		Math::Vector3f& position,
-		Math::Vector3f& rotation,
-		Math::Vector3f& scale)
+		const Math::Vector3f& position,
+		const Math::Quaternionf& rotation,
+		const Math::Vector3f& scale)
 	{
 		auto begin = std::chrono::high_resolution_clock::now();
 		VkMeshPtr object = LoadModelIfNotExist(mesh);
 		glm::mat4 modelMatrix = glm::mat4(1.0f);
+		Math::EulerAnglesf angles = rotation.ToEulerAngles();
 		modelMatrix = glm::translate(modelMatrix, glm::vec3(position.X(), position.Y(), position.Z()));
-		modelMatrix = glm::rotate(modelMatrix, glm::radians(rotation.X()), glm::vec3(1.0f, 0.0f, 0.0f));
-		modelMatrix = glm::rotate(modelMatrix, glm::radians(rotation.Y()), glm::vec3(0.0f, 1.0f, 0.0f));
-		modelMatrix = glm::rotate(modelMatrix, glm::radians(rotation.Z()), glm::vec3(0.0f, 0.0f, 1.0f));
+		modelMatrix = glm::rotate(modelMatrix, glm::radians(angles.Yaw()), glm::vec3(1.0f, 0.0f, 0.0f));
+		modelMatrix = glm::rotate(modelMatrix, glm::radians(angles.Pitch()), glm::vec3(0.0f, 1.0f, 0.0f));
+		modelMatrix = glm::rotate(modelMatrix, glm::radians(angles.Roll()), glm::vec3(0.0f, 0.0f, 1.0f));
 		modelMatrix = glm::scale(modelMatrix, glm::vec3(scale.X(), scale.Y(), scale.Z()));
 		if (_renderObjectsToDraw.find(object) == _renderObjectsToDraw.end())
 		{

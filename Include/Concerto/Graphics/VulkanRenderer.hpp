@@ -13,6 +13,7 @@
 #include <chrono>
 
 #include <Concerto/Core/Math/Vector.hpp>
+#include <Concerto/Core/Math/Transform.hpp>
 #include <Concerto/Core/Types.hpp>
 #include "Vulkan/Wrapper/Instance.hpp"
 #include "Vulkan/Wrapper/Device.hpp"
@@ -73,10 +74,11 @@ namespace Concerto::Graphics
 		VulkanRenderer* Instance();
 
 		void Draw(const Camera& camera);
+		void DrawObject(MeshPtr &mesh, const Math::Transform transform);
 		void DrawObject(MeshPtr &mesh,
-			Math::Vector3f& position,
-			Math::Vector3f& rotation,
-			Math::Vector3f& scale);
+			const Math::Vector3f& position,
+			const Math::Quaternionf& rotation,
+			const Math::Vector3f& scale);
 		void UseImGUI();
 		ImGUI* GetImGUIContext();
 		void UpdateSceneParameters(const Scene& sceneData);

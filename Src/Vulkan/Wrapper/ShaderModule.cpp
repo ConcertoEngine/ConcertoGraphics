@@ -4,6 +4,7 @@
 
 #include <cassert>
 #include <fstream>
+#include <iostream>
 
 #include "Vulkan/wrapper/ShaderModule.hpp"
 #include "Vulkan/wrapper/Device.hpp"
