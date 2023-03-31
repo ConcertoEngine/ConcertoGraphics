@@ -8,7 +8,7 @@
 #include <memory>
 
 #include <Concerto/Core/Types.hpp>
-#include "Vertex.hpp"
+#include "Vulkan/Vertex.hpp"
 #include "Material.hpp"
 
 namespace Concerto::Graphics
