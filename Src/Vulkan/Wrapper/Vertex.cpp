@@ -18,7 +18,7 @@ namespace Concerto::Graphics
 
 		description.bindings.push_back(mainBinding);
 
-		//Position will be stored at Location 0
+		//_position will be stored at Location 0
 		VkVertexInputAttributeDescription positionAttribute = {};
 		positionAttribute.binding = 0;
 		positionAttribute.location = 0;

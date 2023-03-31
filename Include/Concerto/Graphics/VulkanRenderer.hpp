@@ -44,6 +44,7 @@
 #include "MaterialBuilder.hpp"
 #include "Mesh.hpp"
 #include "Vulkan/VkMesh.hpp"
+#include "Camera.hpp"
 
 namespace Concerto::Graphics
 {
@@ -73,7 +74,7 @@ namespace Concerto::Graphics
 
 		VulkanRenderer* Instance();
 
-		void Draw(const Camera& camera);
+		void Draw(const GPUCamera& camera);
 		void DrawObject(MeshPtr &mesh, const Math::Transform transform);
 		void DrawObject(MeshPtr &mesh,
 			const Math::Vector3f& position,
@@ -85,7 +86,7 @@ namespace Concerto::Graphics
 		void Resize(std::uint32_t width, std::uint32_t height);
 	 private:
 		VkMeshPtr LoadModelIfNotExist(MeshPtr &mesh);
-		void DrawObjects(const Camera& camera);
+		void DrawObjects(const GPUCamera& camera);
 		std::vector<const char*> _deviceExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
 		GlfW3& _window;
 		RendererInfo _renderInfo;

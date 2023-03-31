@@ -9,14 +9,10 @@
 #include <functional>
 #include <optional>
 #include <Concerto/Core/Types.hpp>
+#include "Key.hpp"
 
 namespace Concerto::Graphics
 {
-	//TODO : custom enum for keys
-	enum class Key
-	{
-
-	};
 	//TODO : Remove template because it's breaking the abstraction
 	template<typename T>
 	class CONCERTO_PUBLIC_API AWindow

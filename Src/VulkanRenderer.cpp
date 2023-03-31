@@ -102,7 +102,7 @@ namespace Concerto::Graphics
 		}
 		// Commands
 		_colorMeshShader = std::make_unique<ShaderModule>(_device, ".\\Shaders\\default_lit.frag.spv");
-		_textureMeshShader = std::make_unique<ShaderModule>(_device, ".\\Shaders\\textured_phong.frag.spv");
+		_textureMeshShader = std::make_unique<ShaderModule>(_device, ".\\Shaders\\textured_lit.frag.spv");
 		_meshVertShader = std::make_unique<ShaderModule>(_device, ".\\Shaders\\tri_mesh_ssbo.vert.spv");
 		_meshPipelineLayout = std::make_unique<PipelineLayout>(makePipelineLayout<MeshPushConstants>(_device,
 			{ *_globalSetLayout, *_objectSetLayout }));
@@ -141,7 +141,7 @@ namespace Concerto::Graphics
 		return _instance;
 	}
 
-	void VulkanRenderer::Draw(const Camera& camera)
+	void VulkanRenderer::Draw(const GPUCamera& camera)
 	{
 		if (_imGUI)
 			_imGUI->Draw();
@@ -259,7 +259,7 @@ namespace Concerto::Graphics
 		return vkMesh;
 	}
 
-	void VulkanRenderer::DrawObjects(const Camera& camera)
+	void VulkanRenderer::DrawObjects(const GPUCamera& camera)
 	{
 		std::uint32_t windowWidth = _window.GetWidth();
 		std::uint32_t windowHeight = _window.GetHeight();
@@ -276,6 +276,7 @@ namespace Concerto::Graphics
 		auto minimumAlignment = _gpuProperties.limits.minUniformBufferOffsetAlignment;
 
 		auto beginTime = std::chrono::high_resolution_clock::now();
+
 		MapAndCopy(*_allocator, frame._cameraBuffer, camera);
 
 		int frameIndex = _frameNumber % 2;
