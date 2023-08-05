@@ -8,6 +8,7 @@
 #include <string>
 #include <functional>
 #include <optional>
+#include <memory>
 #include <Concerto/Core/Types.hpp>
 #include "Key.hpp"
 
