@@ -33,7 +33,7 @@ namespace Concerto
 		auto it = _keyCallbacks.find(name);
 		if (it == _keyCallbacks.end())
 		{
-			auto pair = std::make_pair(SparseArray<bool>(), TriggerTypeCallbacks());
+			auto pair = std::make_pair(SparseVector<bool>(), TriggerTypeCallbacks());
 			pair.first.Emplace((std::size_t)key, true);
 			pair.second[triggerType].push_back(std::move(callback));
 			_keyCallbacks.emplace(name, std::move(pair));

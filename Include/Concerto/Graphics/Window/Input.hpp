@@ -9,7 +9,7 @@
 #include <unordered_map>
 #include <string>
 #include <vector>
-#include <Concerto/Core/SparseArray.hpp>
+#include <Concerto/Core/SparseVector.hpp>
 #include <Concerto/Core/Types.hpp>
 #include "Event.hpp"
 #include "Key.hpp"
@@ -47,7 +47,7 @@ namespace Concerto
 		static Input* _instance;
 		using KeyCallbacks = std::vector<std::function<void(float deltaTime)>>;
 		using TriggerTypeCallbacks = std::unordered_map<TriggerType, KeyCallbacks>;
-		using BindingCallback = std::pair<SparseArray<bool>, TriggerTypeCallbacks>;
+		using BindingCallback = std::pair<SparseVector<bool>, TriggerTypeCallbacks>;
 		std::unordered_map<std::string, BindingCallback> _keyCallbacks;
 
 		using MouseEventCallbacks = std::function<void(const MouseEvent&, float)>;
