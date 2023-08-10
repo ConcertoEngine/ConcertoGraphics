@@ -1,6 +1,7 @@
 add_rules('mode.debug')
 add_repositories('Concerto-xrepo https://github.com/ConcertoEngine/xmake-repo.git main')
 add_requires('imgui', {configs = {glfw_vulkan = true}})
+add_requireconfs("vulkan-headers", {override = true, version = "1.3.246"})
 
 if (has_config('examples')) then
     add_requires("glslang", {configs = {binaryonly = true}})
