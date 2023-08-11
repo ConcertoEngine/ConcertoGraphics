@@ -2,12 +2,13 @@
 // Created by arthur on 12/07/2022.
 //
 #include <chrono>
-#include "Concerto/Core/Math/Vector.hpp"
-#include "glm/gtc/quaternion.hpp"
+#include <Concerto/Core/Math/Vector.hpp>
+#include <Concerto/Core/Math/Algorithm.hpp>
+#include <glm/gtc/quaternion.hpp>
 #include "VulkanRenderer.hpp"
 #include "Camera.hpp"
-#include <Concerto/Core/Math/Algorithm.hpp>
 #include "Input.hpp"
+#include <Primitives.hpp>
 
 using namespace Concerto;
 using namespace Concerto::Graphics;
@@ -117,11 +118,13 @@ int main()
 	  window->SetCursorDisabled(cursorDisabled);
 	});
 
-	MeshPtr sponzaMesh = std::make_shared<Mesh>();
-	sponzaMesh->LoadFromFile("./assets/sponza/sponza.obj");
+	/*MeshPtr sponzaMesh = std::make_shared<Mesh>();
+	sponzaMesh->LoadFromFile("./assets/sponza/sponza.obj");*/
 	Math::Vector3f position(0.f, 0.f, 0.f);
 	Math::Quaternionf rotation(Math::EulerAnglesf(0.f, 0.f, 0.f));
 	Math::Vector3f scale(1.f, 1.f, 1.f);
+
+	MeshPtr cube = std::make_shared<Mesh>(Primitive::MakeCube(50.f));
 
 	std::chrono::steady_clock::time_point lastFrameTime = std::chrono::steady_clock::now();
 	while (!window->ShouldClose())
@@ -160,7 +163,7 @@ int main()
 		if (ImGui::ColorEdit3("Select sun color", &sceneParameters.gpuSceneData.sunlightColor[0]))
 			engine.UpdateSceneParameters(sceneParameters);
 
-		engine.DrawObject(sponzaMesh, position, rotation, scale);
+		engine.DrawObject(cube, position, rotation, scale);
 		engine.Draw(camera);
 	}
 }
