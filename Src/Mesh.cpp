@@ -5,11 +5,24 @@
 #include <iostream>
 #include <stdexcept>
 
+#include <Concerto/Core/Logger.hpp>
 #include "Mesh.hpp"
 #include "tiny_obj_loader.h"
 
 namespace Concerto::Graphics
 {
+	Mesh::Mesh(std::string filePath) : _path(std::move(filePath))
+	{
+		LoadFromFile(_path);
+	}
+
+	Mesh::Mesh(Vertices vertices)
+	{
+		SubMeshPtr subMesh = std::make_shared<SubMesh>(this);
+		subMesh->GetVertices() = std::move(vertices);
+		_subMeshes.push_back(subMesh);
+	}
+
 	std::vector<SubMeshPtr>& Mesh::GetSubMeshes()
 	{
 		return _subMeshes;
@@ -17,7 +30,6 @@ namespace Concerto::Graphics
 
 	bool Mesh::LoadFromFile(const std::string& fileName)
 	{
-		_path = fileName;
 		std::string err;
 		tinyobj::ObjReaderConfig readerConfig;
 		tinyobj::ObjReader reader;
@@ -27,13 +39,13 @@ namespace Concerto::Graphics
 		{
 			if (!reader.Error().empty())
 			{
-				std::cerr << "TinyObjReader error: " << reader.Error() << std::endl;
+				Logger::Error("TinyObjReader: " + reader.Error());
 				return false;
 			}
 		}
 		if (!reader.Warning().empty())
 		{
-			std::cout << "TinyObjReader: " << reader.Warning();
+			Logger::Error("TinyObjReader: " + reader.Warning());
 		}
 
 		if (!err.empty())
@@ -80,8 +92,7 @@ namespace Concerto::Graphics
 				if (currentSubMeshIndex == -1
 					|| _subMeshes[currentSubMeshIndex]->GetMaterial()->name != materials[matId].name)
 				{
-					MeshPtr self = shared_from_this();
-					SubMeshPtr subMesh = std::make_shared<SubMesh>(self);
+					SubMeshPtr subMesh = std::make_shared<SubMesh>(this);
 					subMesh->GetMaterial() = _materials[materials[matId].name];
 					_subMeshes.push_back(subMesh);
 					currentSubMeshIndex++;

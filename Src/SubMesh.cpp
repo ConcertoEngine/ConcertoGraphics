@@ -7,14 +7,18 @@
 
 namespace Concerto::Graphics
 {
-	SubMesh::SubMesh(std::shared_ptr<Mesh>& parent):
-		_vertices(), _material(std::make_shared<Material>()), _parent(parent)
+	SubMesh::SubMesh(Mesh* parent) :
+		_vertices(),
+		_material(std::make_shared<Material>()),
+		_parent(parent)
 	{
 
 	}
 
-	SubMesh::SubMesh(const Vertices& vertices, MaterialPtr& material, std::shared_ptr<Mesh>& parent) :
-		_vertices(vertices), _material(material), _parent(parent)
+	SubMesh::SubMesh(const Vertices& vertices, MaterialPtr& material, Mesh* parent) :
+		_vertices(vertices),
+		_material(material),
+		_parent(parent)
 	{
 
 	}
@@ -29,7 +33,7 @@ namespace Concerto::Graphics
 		return _material;
 	}
 	
-	std::shared_ptr<Mesh>& SubMesh::GetParent()
+	Mesh* SubMesh::GetParent()
 	{
 		return _parent;
 	}
