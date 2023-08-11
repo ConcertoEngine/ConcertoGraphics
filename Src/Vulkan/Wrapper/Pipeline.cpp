@@ -10,7 +10,7 @@
 #include "Vulkan/wrapper/Device.hpp"
 #include "Vulkan/wrapper/VulkanInitializer.hpp"
 
-namespace Concerto::Graphics::Wrapper
+namespace Concerto::Graphics
 {
 
 	Pipeline::Pipeline(Device& device, PipelineInfo pipeLineInfo) : Object<VkPipeline>(device, [](Device &device, VkPipeline handle)

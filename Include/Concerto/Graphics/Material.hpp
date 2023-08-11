@@ -7,9 +7,11 @@
 
 #include <string>
 #include <memory>
+
 #include <glm/vec3.hpp>
 #include <glm/gtx/hash.hpp>
-#include "Vulkan/Texture.hpp"
+
+#include "Concerto/Graphics/Vulkan/Texture.hpp"
 
 namespace Concerto::Graphics
 {

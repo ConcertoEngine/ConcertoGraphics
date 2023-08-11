@@ -9,9 +9,9 @@
 #include <vulkan/vulkan.h>
 #include <vk_mem_alloc.h>
 #include <Concerto/Core/Types.hpp>
-#include "Allocator.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Allocator.hpp"
 
-namespace Concerto::Graphics::Wrapper
+namespace Concerto::Graphics
 {
 	/**
 	 * @class Buffer

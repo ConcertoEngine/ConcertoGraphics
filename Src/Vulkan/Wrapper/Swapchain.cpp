@@ -12,7 +12,7 @@
 #include "Vulkan/wrapper/Device.hpp"
 #include "Vulkan/wrapper/ImageView.hpp"
 
-namespace Concerto::Graphics::Wrapper
+namespace Concerto::Graphics
 {
 
 	Swapchain::Swapchain(Device& device, Allocator& allocator, VkExtent2D windowExtent, PhysicalDevice& physicalDevice)

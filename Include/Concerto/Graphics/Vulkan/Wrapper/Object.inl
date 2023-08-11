@@ -7,9 +7,9 @@
 
 #include <utility>
 #include <cassert>
-#include "Object.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Object.hpp"
 
-namespace Concerto::Graphics::Wrapper
+namespace Concerto::Graphics
 {
 	template<typename vkType>
 	Object<vkType>::Object(Device& device) : _device(&device)

@@ -10,7 +10,7 @@
 #include "Vulkan/wrapper/Instance.hpp"
 #include "Vulkan/wrapper/PhysicalDevice.hpp"
 
-namespace Concerto::Graphics::Wrapper
+namespace Concerto::Graphics
 {
 	VKAPI_ATTR VkBool32 VKAPI_CALL DebugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
 			VkDebugUtilsMessageTypeFlagsEXT messageType, const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
@@ -110,4 +110,4 @@ namespace Concerto::Graphics::Wrapper
 		_physicalDevices = std::move(physicalDevices);
 		return _physicalDevices.value();
 	}
-} // namespace Concerto::Graphics::Wrapper
+} // namespace Concerto::Graphics

@@ -9,7 +9,7 @@
 #include "Vulkan/wrapper/ShaderModule.hpp"
 #include "Vulkan/wrapper/Device.hpp"
 
-namespace Concerto::Graphics::Wrapper
+namespace Concerto::Graphics
 {
 
 	ShaderModule::ShaderModule(Device& device, const std::string& shaderPath) : Object<VkShaderModule>(device, [this](Device &device, VkShaderModule handle)

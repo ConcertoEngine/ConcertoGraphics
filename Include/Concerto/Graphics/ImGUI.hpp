@@ -7,16 +7,14 @@
 
 #include <imgui.h>
 #include <Concerto/Core/Types.hpp>
-#include "Vulkan/RenderingContext.hpp"
-#include "Vulkan/Wrapper/DescriptorPool.hpp"
+#include "Concerto/Graphics/Vulkan/RenderingContext.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/DescriptorPool.hpp"
 
 namespace Concerto::Graphics
 {
 	class GlfW3;
-	namespace Wrapper
-	{
-		class CommandBuffer;
-	}
+	class CommandBuffer;
+
 	class CONCERTO_PUBLIC_API ImGUI
 	{
 	public:
@@ -33,7 +31,7 @@ namespace Concerto::Graphics
 		 * @info This function must be called after the rendering pass
 		 * @param commandBuffer The command buffer to record the rendering commands
 		 */
-		void RenderDrawData(Wrapper::CommandBuffer &commandBuffer);
+		void RenderDrawData(CommandBuffer &commandBuffer);
 
 		/**
 		 * @brief End the Dear ImGui frame, finalize the draw data
@@ -62,7 +60,7 @@ namespace Concerto::Graphics
 
 	private:
 		RenderingContext& _context;
-		Wrapper::DescriptorPool _descriptorPool;
+		DescriptorPool _descriptorPool;
 		GlfW3 &_window;
 		ImGuiContext* _imGuiContext;
 	};

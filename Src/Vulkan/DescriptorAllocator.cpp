@@ -10,19 +10,19 @@
 namespace Concerto::Graphics
 {
 
-	DescriptorAllocator::DescriptorAllocator(Wrapper::Device& device) : _device(&device), _currentPool(VK_NULL_HANDLE)
+	DescriptorAllocator::DescriptorAllocator(Device& device) : _device(&device), _currentPool(VK_NULL_HANDLE)
 	{
 
 	}
 
-	bool DescriptorAllocator::Allocate(Wrapper::DescriptorSetPtr& descriptorSet, Wrapper::DescriptorSetLayout& layout)
+	bool DescriptorAllocator::Allocate(DescriptorSetPtr& descriptorSet, DescriptorSetLayout& layout)
 	{
 		if (_currentPool == VK_NULL_HANDLE)
 		{
 			_currentPool = GetPool();
 			_usedPools.push_back(_currentPool);
 		}
-		descriptorSet = std::make_shared<Wrapper::DescriptorSet>(*_device, *_currentPool, layout);
+		descriptorSet = std::make_shared<DescriptorSet>(*_device, *_currentPool, layout);
 		switch (descriptorSet->GetLastResult())
 		{
 		case VK_SUCCESS:
@@ -31,7 +31,7 @@ namespace Concerto::Graphics
 		case VK_ERROR_OUT_OF_POOL_MEMORY:
 			_currentPool = GetPool();
 			_usedPools.push_back(_currentPool);
-			descriptorSet = std::make_shared<Wrapper::DescriptorSet>(*_device, *_currentPool, layout);
+			descriptorSet = std::make_shared<DescriptorSet>(*_device, *_currentPool, layout);
 			if (descriptorSet->GetLastResult() == VK_SUCCESS)
 				return true;
 			break;
@@ -42,7 +42,7 @@ namespace Concerto::Graphics
 		return false;
 	}
 
-	Wrapper::DescriptorPoolPtr DescriptorAllocator::CreatePool(VkDescriptorPoolCreateFlags flags)
+	DescriptorPoolPtr DescriptorAllocator::CreatePool(VkDescriptorPoolCreateFlags flags)
 	{
 		std::vector<VkDescriptorPoolSize> sizes;
 		sizes.reserve(_poolSizes.sizes.size());
@@ -50,14 +50,14 @@ namespace Concerto::Graphics
 		{
 			sizes.push_back({ sz.first, uint32_t(sz.second * DESCRIPTOR_POOL_SIZE) });
 		}
-		return std::make_shared<Wrapper::DescriptorPool>(*_device, sizes);
+		return std::make_shared<DescriptorPool>(*_device, sizes);
 	}
 
-	Wrapper::DescriptorPoolPtr DescriptorAllocator::GetPool()
+	DescriptorPoolPtr DescriptorAllocator::GetPool()
 	{
 		if (_freePools.empty())
 			return CreatePool(0);
-		Wrapper::DescriptorPoolPtr pool = _freePools.back();
+		DescriptorPoolPtr pool = _freePools.back();
 		_freePools.pop_back();
 		return pool;
 	}
@@ -73,7 +73,7 @@ namespace Concerto::Graphics
 		_currentPool = VK_NULL_HANDLE;
 	}
 
-	Wrapper::Device& DescriptorAllocator::GetDevice()
+	Device& DescriptorAllocator::GetDevice()
 	{
 		assert(_device != nullptr);
 		return *_device;

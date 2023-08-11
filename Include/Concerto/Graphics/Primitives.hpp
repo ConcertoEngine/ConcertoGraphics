@@ -6,7 +6,8 @@
 #define BASICRENDERING_INCLUDE_CONCERTO_GRAPHICS_PRIMITIVES_PRIMITIVES_HPP_
 #include <Concerto/Core/Types.hpp>
 #include <Concerto/Core/Math/Vector.hpp>
-#include "Vertex.hpp"
+
+#include "Concerto/Graphics/Vulkan/Vertex.hpp"
 
 namespace Concerto::Graphics
 {

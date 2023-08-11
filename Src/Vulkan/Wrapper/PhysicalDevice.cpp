@@ -8,7 +8,7 @@
 #include <utility>
 #include "Vulkan/wrapper/PhysicalDevice.hpp"
 
-namespace Concerto::Graphics::Wrapper
+namespace Concerto::Graphics
 {
 	PhysicalDevice::PhysicalDevice(VkPhysicalDevice physicalDevice) : _physicalDevice(physicalDevice)
 	{

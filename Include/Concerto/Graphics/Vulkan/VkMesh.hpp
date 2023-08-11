@@ -8,7 +8,8 @@
 #include <memory>
 #include <vector>
 #include <glm/mat4x4.hpp>
-#include "VkSubMesh.hpp"
+
+#include "Concerto/Graphics/Vulkan/VkSubMesh.hpp"
 
 namespace Concerto::Graphics
 {

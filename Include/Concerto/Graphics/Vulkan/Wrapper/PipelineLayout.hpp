@@ -8,12 +8,14 @@
 #include <cstddef>
 #include <vector>
 #include <functional>
+
 #include <vulkan/vulkan.h>
 #include <Concerto/Core/Types.hpp>
-#include "Object.hpp"
-#include "DescriptorSetLayout.hpp"
 
-namespace Concerto::Graphics::Wrapper
+#include "Concerto/Graphics/Vulkan/Wrapper/Object.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/DescriptorSetLayout.hpp"
+
+namespace Concerto::Graphics
 {
 	class Device;
 

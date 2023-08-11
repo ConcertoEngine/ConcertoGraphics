@@ -11,7 +11,7 @@ namespace Concerto::Graphics
 {
 	MaterialBuilder::MaterialBuilder(DescriptorLayoutCache& layoutCache,
 		DescriptorAllocator& allocator,
-		Wrapper::Sampler& sampler) :
+		Sampler& sampler) :
 		_layoutCache(layoutCache), _allocator(allocator), _sampler(sampler)
 	{
 

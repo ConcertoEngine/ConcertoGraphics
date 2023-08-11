@@ -5,7 +5,7 @@
 #ifndef CONCERTO_GLFW3_HPP
 #define CONCERTO_GLFW3_HPP
 
-#include "AWindow.hpp"
+#include "Concerto/Graphics/Window/AWindow.hpp"
 #if __linux__
 #define GLFW_EXPOSE_NATIVE_X11
 #elif _WIN32

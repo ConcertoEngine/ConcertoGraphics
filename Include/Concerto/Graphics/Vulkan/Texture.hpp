@@ -6,18 +6,20 @@
 #define CONCERTOGRAPHICS_TEXTURE_HPP
 
 #include <memory>
+
 #include <vulkan/vulkan.h>
-#include "Vulkan/Wrapper/Image.hpp"
-#include "Vulkan/Wrapper/ImageView.hpp"
-#include "Vulkan/Wrapper/CommandBuffer.hpp"
-#include "Vulkan/Wrapper/Device.hpp"
+
+#include "Concerto/Graphics/Vulkan/Wrapper/Image.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/ImageView.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/CommandBuffer.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Device.hpp"
 
 namespace Concerto::Graphics
 {
 	struct Texture
 	{
-		Texture(Wrapper::Device& device, const std::string& file, Wrapper::Allocator& allocator,
-				Wrapper::CommandBuffer& commandBuffer, UploadContext& uploadContext, Wrapper::Queue& queue,
+		Texture(Device& device, const std::string& file, Allocator& allocator,
+				CommandBuffer& commandBuffer, UploadContext& uploadContext, Queue& queue,
 				VkImageAspectFlags aspectFlags) :
 				_image(device, file, allocator, commandBuffer, uploadContext, queue),
 				_imageView(device, _image, aspectFlags)
@@ -25,8 +27,8 @@ namespace Concerto::Graphics
 
 		}
 
-		Wrapper::Image _image;
-		Wrapper::ImageView _imageView;
+		Image _image;
+		ImageView _imageView;
 	};
 	using TexturePtr = std::shared_ptr<Texture>;
 }

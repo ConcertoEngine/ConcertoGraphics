@@ -6,8 +6,10 @@
 #define CONCERTOGRAPHICS_INCLUDE_TEXTUREBUILDER_HPP_
 
 #include <unordered_map>
+
 #include <Concerto/Core/Types.hpp>
-#include "Vulkan/Texture.hpp"
+
+#include "Concerto/Graphics/Vulkan/Texture.hpp"
 
 namespace Concerto::Graphics
 {
@@ -21,17 +23,17 @@ namespace Concerto::Graphics
 	class CONCERTO_PUBLIC_API TextureBuilder
 	{
 	 public:
-		TextureBuilder(Wrapper::Device& device, Wrapper::Allocator& allocator, Wrapper::CommandBuffer& commandBuffer,
-					   UploadContext& uploadContext, Wrapper::Queue& queue);
+		TextureBuilder(Device& device, Allocator& allocator, CommandBuffer& commandBuffer,
+					   UploadContext& uploadContext, Queue& queue);
 
 		TexturePtr BuildTexture(const std::string& path);
 	 private:
 		std::unordered_map<std::string, TexturePtr> _texturesCache;
-		Wrapper::Device& _device;
-		Wrapper::Allocator& _allocator;
-		Wrapper::CommandBuffer& _commandBuffer;
+		Device& _device;
+		Allocator& _allocator;
+		CommandBuffer& _commandBuffer;
 		UploadContext& _uploadContext;
-		Wrapper::Queue& _queue;
+		Queue& _queue;
 	};
 }
 

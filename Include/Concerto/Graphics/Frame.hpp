@@ -8,30 +8,29 @@
 #include <memory>
 
 #include <Concerto/Core/Types.hpp>
-#include "Vulkan/Wrapper/Buffer.hpp"
-#include "Vulkan/Wrapper/Allocator.hpp"
-#include "Vulkan/Wrapper/DescriptorSet.hpp"
-#include "Vulkan/Wrapper/DescriptorSetLayout.hpp"
-#include "Vulkan/Wrapper/DescriptorPool.hpp"
-#include "Vulkan/Wrapper/Fence.hpp"
-#include "Vulkan/Wrapper/Semaphore.hpp"
-#include "GPUData.hpp"
+
+#include "Concerto/Graphics/Vulkan/Wrapper/Buffer.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Allocator.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/DescriptorSet.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/DescriptorSetLayout.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/DescriptorPool.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Fence.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Semaphore.hpp"
+#include "Concerto/Graphics/GPUData.hpp"
 
 #define MAX_OBJECTS 1000
 
 namespace Concerto::Graphics
 {
-	namespace Wrapper
-	{
-		class CommandBuffer;
-		class CommandPool;
-		class Device;
-	}
+	class CommandBuffer;
+	class CommandPool;
+	class Device;
+
 	struct FrameData
 	{
-		FrameData(Wrapper::Device& device,Wrapper::Allocator& allocator, std::uint32_t queueFamily, Wrapper::DescriptorPool& pool,
-				Wrapper::DescriptorSetLayout& globalDescriptorSetLayout, Wrapper::DescriptorSetLayout& objectDescriptorSetLayout,
-				Wrapper::Buffer& sceneParameterBuffer,
+		FrameData(Device& device,Allocator& allocator, std::uint32_t queueFamily, DescriptorPool& pool,
+				DescriptorSetLayout& globalDescriptorSetLayout, DescriptorSetLayout& objectDescriptorSetLayout,
+				Buffer& sceneParameterBuffer,
 				bool signaled = true);
 
 		FrameData(FrameData&&) = default;
@@ -40,19 +39,19 @@ namespace Concerto::Graphics
 
 		~FrameData() = default;
 
-		Wrapper::Semaphore _presentSemaphore, _renderSemaphore;
-		Wrapper::Fence _renderFence;
+		Semaphore _presentSemaphore, _renderSemaphore;
+		Fence _renderFence;
 
-		std::unique_ptr<Wrapper::CommandPool> _commandPool;
-		std::unique_ptr<Wrapper::CommandBuffer> _mainCommandBuffer;
+		std::unique_ptr<CommandPool> _commandPool;
+		std::unique_ptr<CommandBuffer> _mainCommandBuffer;
 
-		Wrapper::Buffer _cameraBuffer;
-		Wrapper::DescriptorSet globalDescriptor;
+		Buffer _cameraBuffer;
+		DescriptorSet globalDescriptor;
 
-		Wrapper::Buffer _objectBuffer;
-		Wrapper::DescriptorSet objectDescriptor;
+		Buffer _objectBuffer;
+		DescriptorSet objectDescriptor;
 
-		Wrapper::Buffer _indirectBuffer;
+		Buffer _indirectBuffer;
 		bool _isResized = true;
 	};
 }

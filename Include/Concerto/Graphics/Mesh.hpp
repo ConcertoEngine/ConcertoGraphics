@@ -8,9 +8,10 @@
 #include <unordered_map>
 
 #include <Concerto/Core/Types.hpp>
-#include "Vulkan/Vertex.hpp"
-#include "Material.hpp"
-#include "SubMesh.hpp"
+
+#include "Concerto/Graphics/Vulkan/Vertex.hpp"
+#include "Concerto/Graphics/Material.hpp"
+#include "Concerto/Graphics/SubMesh.hpp"
 
 namespace Concerto::Graphics
 {

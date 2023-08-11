@@ -5,10 +5,12 @@
 #ifndef CONCERTOGRAPHICS_INCLUDE_DESCRIPTORLAYOUTCACHE_HPP_
 #define CONCERTOGRAPHICS_INCLUDE_DESCRIPTORLAYOUTCACHE_HPP_
 
-#include <vulkan/vulkan.h>
 #include <unordered_map>
-#include "Vulkan/wrapper/DescriptorSetLayout.hpp"
-#include "Vulkan/wrapper/Device.hpp"
+
+#include <vulkan/vulkan.h>
+
+#include "Concerto/Graphics/Vulkan/wrapper/DescriptorSetLayout.hpp"
+#include "Concerto/Graphics/Vulkan/wrapper/Device.hpp"
 
 namespace Concerto::Graphics
 {
@@ -72,11 +74,11 @@ namespace Concerto::Graphics
 			}
 		};
 	 public:
-		explicit DescriptorLayoutCache(Wrapper::Device& device) : _device(&device)
+		explicit DescriptorLayoutCache(Device& device) : _device(&device)
 		{
 		}
 
-		Wrapper::DescriptorSetLayoutPtr GetLayout(const VkDescriptorSetLayoutCreateInfo& createInfo)
+		DescriptorSetLayoutPtr GetLayout(const VkDescriptorSetLayoutCreateInfo& createInfo)
 		{
 			DescriptorLayoutInfo layoutInfo;
 			layoutInfo.bindings.reserve(createInfo.bindingCount);
@@ -112,13 +114,13 @@ namespace Concerto::Graphics
 				return (*it).second;
 			}
 			auto [elementIt, _] =
-				_layoutsCache.emplace(layoutInfo, Wrapper::MakeDescriptorSetLayout(*_device, layoutInfo.bindings));
+				_layoutsCache.emplace(layoutInfo, MakeDescriptorSetLayout(*_device, layoutInfo.bindings));
 			return elementIt->second;
 		}
 
 	 private:
-		Wrapper::Device* _device;
-		std::unordered_map<DescriptorLayoutInfo, Wrapper::DescriptorSetLayoutPtr, DescriptorLayoutHash> _layoutsCache;
+		Device* _device;
+		std::unordered_map<DescriptorLayoutInfo, DescriptorSetLayoutPtr, DescriptorLayoutHash> _layoutsCache;
 	};
 }
 #endif //CONCERTOGRAPHICS_INCLUDE_DESCRIPTORLAYOUTCACHE_HPP_

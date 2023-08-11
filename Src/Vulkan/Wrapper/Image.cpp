@@ -11,7 +11,7 @@
 #include "Vulkan/wrapper/Queue.hpp"
 #include "Vulkan/Utils.hpp"
 
-namespace Concerto::Graphics::Wrapper
+namespace Concerto::Graphics
 {
 	Image::Image(Device& device, VkExtent2D extent, VkFormat depthFormat, Allocator& allocator) : Object<VkImage>(
 			device, [this](Device &device, VkImage handle)

@@ -7,28 +7,27 @@
 
 #include <string>
 #include <unordered_map>
-#include "Material.hpp"
-#include "Vulkan/VkMaterial.hpp"
+
+#include "Concerto/Graphics/Material.hpp"
+#include "Concerto/Graphics/Vulkan/VkMaterial.hpp"
 
 namespace Concerto::Graphics
 {
 	class DescriptorLayoutCache;
 	class DescriptorAllocator;
-	namespace Wrapper
-	{
-		class Sampler;
-	}
+	class Sampler;
+
 	class MaterialBuilder
 	{
 	 public:
-		MaterialBuilder(DescriptorLayoutCache& layoutCache, DescriptorAllocator& allocator, Wrapper::Sampler &sampler);
+		MaterialBuilder(DescriptorLayoutCache& layoutCache, DescriptorAllocator& allocator, Sampler &sampler);
 		VkMaterialPtr BuildMaterial(const Material& material, VkPipelineLayout pipelineLayout, VkPipeline pipeline);
 		VkMaterialPtr GetMaterial(const std::string& materialName);
 	 private:
 		std::unordered_map<Material, VkMaterialPtr, Material::Hash> _materialsCache;
 		DescriptorLayoutCache& _layoutCache;
 		DescriptorAllocator& _allocator;
-		Wrapper::Sampler& _sampler;
+		Sampler& _sampler;
 	};
 }
 #endif //CONCERTOGRAPHICS_INCLUDE_MATERIALBUILDER_HPP_

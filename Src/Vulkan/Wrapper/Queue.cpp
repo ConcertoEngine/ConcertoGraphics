@@ -8,7 +8,7 @@
 #include "Vulkan/wrapper/CommandBuffer.hpp"
 #include "Vulkan/wrapper/Device.hpp"
 
-namespace Concerto::Graphics::Wrapper
+namespace Concerto::Graphics
 {
 	Queue::Queue(Device& device, std::uint32_t queueFamilyIndex) : Object<VkQueue>(device), _queueFamilyIndex(queueFamilyIndex)
 	{

@@ -9,11 +9,13 @@
 #include <span>
 #include <string>
 #include <vector>
+
 #include <vulkan/vulkan.h>
 #include <Concerto/Core/Types.hpp>
-#include "Version.hpp"
 
-namespace Concerto::Graphics::Wrapper
+#include "Concerto/Graphics/Version.hpp"
+
+namespace Concerto::Graphics
 {
 	class PhysicalDevice;
 

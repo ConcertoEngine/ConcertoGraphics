@@ -6,18 +6,20 @@
 #define CONCERTOGRAPHICS_IMAGE_HPP
 
 #include <string>
+
 #include <vulkan/vulkan.h>
 #include <vk_mem_alloc.h>
 #include <Concerto/Core/Types.hpp>
-#include "Object.hpp"
-#include "Allocator.hpp"
-#include "VulkanInitializer.hpp"
+
+#include "Concerto/Graphics/Vulkan/Wrapper/Object.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Allocator.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/VulkanInitializer.hpp"
 
 namespace Concerto::Graphics
 {
 	class UploadContext;
 }
-namespace Concerto::Graphics::Wrapper
+namespace Concerto::Graphics
 {
 	class CommandBuffer;
 

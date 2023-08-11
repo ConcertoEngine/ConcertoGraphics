@@ -9,7 +9,7 @@
 #include "Vulkan/wrapper/PhysicalDevice.hpp"
 #include "Vulkan/wrapper/Device.hpp"
 
-namespace Concerto::Graphics::Wrapper
+namespace Concerto::Graphics
 {
 	Allocator::Allocator(PhysicalDevice& physicalDevice, Device& device, Instance& instance) : Object<VmaAllocator>(
 			device, [](Device &device, VmaAllocator handle)

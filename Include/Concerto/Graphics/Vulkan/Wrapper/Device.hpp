@@ -7,11 +7,13 @@
 
 #include <cstdint>
 #include <span>
+
 #include <vulkan/vulkan.h>
 #include <Concerto/Core/Types.hpp>
-#include "Queue.hpp"
 
-namespace Concerto::Graphics::Wrapper
+#include "Concerto/Graphics/Vulkan/Wrapper/Queue.hpp"
+
+namespace Concerto::Graphics
 {
 	class PhysicalDevice;
 

@@ -13,7 +13,7 @@
 #include "tiny_obj_loader.h"
 #include "Vulkan/Utils.hpp"
 
-using namespace Concerto::Graphics::Wrapper;
+using namespace Concerto::Graphics;
 
 namespace Concerto::Graphics
 {

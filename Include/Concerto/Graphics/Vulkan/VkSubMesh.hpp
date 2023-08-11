@@ -10,27 +10,28 @@
 #include <memory>
 
 #include <Concerto/Core/Types.hpp>
-#include "Vulkan/Wrapper/Buffer.hpp"
-#include "Vulkan/Wrapper/Allocator.hpp"
-#include "Vulkan/Wrapper/CommandPool.hpp"
-#include "Vulkan/Wrapper/Fence.hpp"
-#include "Vulkan/Wrapper/Queue.hpp"
-#include "SubMesh.hpp"
+
+#include "Concerto/Graphics/Vulkan/Wrapper/Buffer.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Allocator.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/CommandPool.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Fence.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Queue.hpp"
+#include "Concerto/Graphics/SubMesh.hpp"
 
 namespace Concerto::Graphics
 {
 	struct CONCERTO_PUBLIC_API VkSubMesh
 	{
-		VkSubMesh(SubMeshPtr& meshPtr, Wrapper::Allocator& allocator, VkBufferUsageFlags usage,
+		VkSubMesh(SubMeshPtr& meshPtr, Allocator& allocator, VkBufferUsageFlags usage,
 				VmaMemoryUsage memoryUsage);
 
-		void Upload(Wrapper::CommandBuffer& commandBuffer, Wrapper::CommandPool &commandPool, Wrapper::Fence& fence, Wrapper::Queue& queue,
-				Wrapper::Allocator& allocator);
+		void Upload(CommandBuffer& commandBuffer, CommandPool &commandPool, Fence& fence, Queue& queue,
+				Allocator& allocator);
 
 		[[nodiscard]] const Vertices& GetVertices() const;
 		[[nodiscard]] const MaterialPtr& GetMaterial() const;
 		SubMeshPtr _subMesh;
-		Wrapper::Buffer _vertexBuffer;
+		Buffer _vertexBuffer;
 	};
 	using VkSubMeshPtr = std::shared_ptr<VkSubMesh>;
 } // Concerto::Graphics::Wrapper

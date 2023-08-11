@@ -53,15 +53,15 @@ namespace Concerto::Graphics
 		}
 		_physicalDevice = std::move(devices[0]);
 		_physicalDevice.SetSurface(_surface);
-		_device = Device(_physicalDevice, _deviceExtensions);
+		_device = Graphics::Device(_physicalDevice, _deviceExtensions);
 		_gpuProperties = _physicalDevice.GetProperties();
-		_graphicsQueueFamilyIndex = _device.GetQueue(Queue::Type::Graphics).GetFamilyIndex();
-		_allocator = std::make_unique<Allocator>(_physicalDevice, _device, _vulkanInstance);
-		_swapchain = std::make_unique<Swapchain>(_device,
+		_graphicsQueueFamilyIndex = _device.GetQueue(Graphics::Queue::Type::Graphics).GetFamilyIndex();
+		_allocator = std::make_unique<Graphics::Allocator>(_physicalDevice, _device, _vulkanInstance);
+		_swapchain = std::make_unique<Graphics::Swapchain>(_device,
 			*_allocator,
 			VkExtent2D{ _renderInfo.width, _renderInfo.height },
 			_physicalDevice);
-		_renderPass = std::make_unique<RenderPass>(_device, *_swapchain);
+		_renderPass = std::make_unique<Graphics::RenderPass>(_device, *_swapchain);
 		auto swapchainImagesViews = _swapchain->GetImageViews();
 		auto& swapchainDepthImageView = _swapchain->GetDepthImageView();
 		for (auto& swapchainImagesView : swapchainImagesViews)
@@ -123,7 +123,7 @@ namespace Concerto::Graphics
 		meshPipelineInfo._pipelineLayout = *_texturedSetLayout->Get();
 		_texturedPipeline = std::make_unique<Pipeline>(_device, meshPipelineInfo);
 		_texturedPipeline->BuildPipeline(*_renderPass->Get());
-		_graphicsQueue = std::make_unique<Queue>(_device, _graphicsQueueFamilyIndex);
+		_graphicsQueue = std::make_unique<Graphics::Queue>(_device, _graphicsQueueFamilyIndex);
 		_uploadContext = std::make_unique<UploadContext>(_device, _graphicsQueueFamilyIndex);
 		if (_renderInfo.useImGUI)
 			UseImGUI();

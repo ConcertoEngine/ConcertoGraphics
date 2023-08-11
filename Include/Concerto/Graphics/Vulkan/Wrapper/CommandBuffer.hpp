@@ -9,14 +9,15 @@
 
 #include <vulkan/vulkan.h>
 #include <Concerto/Core/Types.hpp>
-#include "Pipeline.hpp"
-#include "Buffer.hpp"
-#include "PipelineLayout.hpp"
-#include "CommandPool.hpp"
-#include "Queue.hpp"
-#include "Vulkan/Utils.hpp"
 
-namespace Concerto::Graphics::Wrapper
+#include "Concerto/Graphics/Vulkan/Wrapper/Pipeline.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Buffer.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/PipelineLayout.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/CommandPool.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Queue.hpp"
+#include "Concerto/Graphics/Vulkan/Utils.hpp"
+
+namespace Concerto::Graphics
 {
 	class Device;
 
@@ -192,6 +193,6 @@ namespace Concerto::Graphics::Wrapper
 		VkCommandPool _commandPool;
 		VkCommandBuffer _commandBuffer;
 	};
-} // namespace Concerto::Graphics::Wrapper
+} // namespace Concerto::Graphics
 
 #endif //CONCERTOGRAPHICS_COMMANDBUFFER_HPP

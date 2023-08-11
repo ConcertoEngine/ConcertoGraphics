@@ -9,7 +9,7 @@
 #include "Vulkan/wrapper/DescriptorPool.hpp"
 #include "Vulkan/wrapper/Device.hpp"
 
-namespace Concerto::Graphics::Wrapper
+namespace Concerto::Graphics
 {
 	DescriptorPool::DescriptorPool(Device& device) : Object<VkDescriptorPool>(device, [](Device &device, VkDescriptorPool handle)
 	{

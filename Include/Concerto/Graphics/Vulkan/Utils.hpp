@@ -7,11 +7,13 @@
 
 #include <vector>
 #include <functional>
+
 #include <glm/vec4.hpp>
 #include <glm/mat4x4.hpp>
-#include "Vulkan/Wrapper/Allocator.hpp"
-#include "Vulkan/Wrapper/Buffer.hpp"
-#include "Vulkan/Wrapper/Device.hpp"
+
+#include "Concerto/Graphics/Vulkan/Wrapper/Allocator.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Buffer.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Device.hpp"
 
 namespace Concerto::Graphics
 {
@@ -22,7 +24,7 @@ namespace Concerto::Graphics
 	};
 
 	template<typename T>
-	void MapAndCopy(Wrapper::Allocator& allocator, Wrapper::Buffer& buffer, T& object)
+	void MapAndCopy(Allocator& allocator, Buffer& buffer, T& object)
 	{
 		void* data;
 		vmaMapMemory(*allocator.Get(), buffer._allocation, &data);
@@ -31,7 +33,7 @@ namespace Concerto::Graphics
 	}
 
 	template<typename T>
-	void MapAndCopy(Wrapper::Allocator& allocator, Wrapper::Buffer& buffer, T* object, std::size_t size)
+	void MapAndCopy(Allocator& allocator, Buffer& buffer, T* object, std::size_t size)
 	{
 		void* data;
 		vmaMapMemory(*allocator.Get(), buffer._allocation, &data);
@@ -40,7 +42,7 @@ namespace Concerto::Graphics
 	}
 
 	template<typename DestBuffer, typename SrcObj>
-	void MapAndCopy(Wrapper::Allocator& allocator, Wrapper::Buffer& buffer, std::vector<SrcObj>& objects,
+	void MapAndCopy(Allocator& allocator, Buffer& buffer, std::vector<SrcObj>& objects,
 		std::function<void(DestBuffer& destBuffer, SrcObj& srcObj)>&& copyFunc)
 	{
 		void* data;
@@ -54,7 +56,7 @@ namespace Concerto::Graphics
 	}
 
 	template<typename T>
-	void MapAndCopy(Wrapper::Allocator& allocator, Wrapper::Buffer& buffer, T& object, std::size_t padding)
+	void MapAndCopy(Allocator& allocator, Buffer& buffer, T& object, std::size_t padding)
 	{
 		char* data;
 		vmaMapMemory(*allocator.Get(), buffer._allocation, (void**)&data);
@@ -71,14 +73,14 @@ namespace Concerto::Graphics
 	}
 
 	template<typename T>
-	inline T* MapBuffer(Wrapper::Buffer& buffer)
+	inline T* MapBuffer(Buffer& buffer)
 	{
 		void* data;
 		vmaMapMemory(*buffer._allocator->Get(), buffer._allocation, &data);
 		return reinterpret_cast<T*>(data);
 	}
 
-	inline void UnMapBuffer(Wrapper::Buffer& buffer)
+	inline void UnMapBuffer(Buffer& buffer)
 	{
 		vmaUnmapMemory(*buffer._allocator->Get(), buffer._allocation);
 	}

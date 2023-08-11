@@ -7,7 +7,9 @@
 
 #include <variant>
 #include <string>
-#include "Key.hpp"
+
+#include "Concerto/Graphics/Window/Key.hpp"
+
 namespace Concerto
 {
 	enum TriggerType

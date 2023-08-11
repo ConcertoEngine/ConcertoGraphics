@@ -6,8 +6,10 @@
 #define CONCERTOGRAPHICS_INCLUDE_SHADEREFFECT_HPP_
 
 #include <array>
+
 #include <vulkan/vulkan.h>
-#include "Vulkan/wrapper/ShaderModule.hpp"
+
+#include "Concerto/Graphics/Vulkan/wrapper/ShaderModule.hpp"
 
 namespace Concerto::Graphics
 {
@@ -21,7 +23,7 @@ namespace Concerto::Graphics
 	 private:
 		struct ShaderStage
 		{
-			Wrapper::ShaderModule* shaderModule;
+			ShaderModule* shaderModule;
 			VkShaderStageFlagBits stage;
 		};
 

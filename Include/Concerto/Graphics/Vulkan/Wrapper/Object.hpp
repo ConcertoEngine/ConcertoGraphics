@@ -9,7 +9,7 @@
 #include <vulkan/vulkan.h>
 #include <Concerto/Core/Types.hpp>
 
-namespace Concerto::Graphics::Wrapper
+namespace Concerto::Graphics
 {
 	class Device;
 

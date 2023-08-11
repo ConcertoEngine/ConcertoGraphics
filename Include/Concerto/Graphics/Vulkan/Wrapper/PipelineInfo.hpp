@@ -7,12 +7,14 @@
 
 #include <utility>
 #include <vector>
-#include <vulkan/vulkan.h>
-#include "PipelineLayout.hpp"
-#include "Vulkan/Vertex.hpp"
-#include "VulkanInitializer.hpp"
 
-namespace Concerto::Graphics::Wrapper
+#include <vulkan/vulkan.h>
+
+#include "Concerto/Graphics/Vulkan/Wrapper/PipelineLayout.hpp"
+#include "Concerto/Graphics/Vulkan//Vertex.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/VulkanInitializer.hpp"
+
+namespace Concerto::Graphics
 {
 
 	struct PipelineInfo

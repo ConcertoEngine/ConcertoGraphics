@@ -10,7 +10,7 @@
 #include "Vulkan/wrapper/Swapchain.hpp"
 #include "Vulkan/wrapper/Device.hpp"
 
-namespace Concerto::Graphics::Wrapper
+namespace Concerto::Graphics
 {
 	RenderPass::RenderPass(Device& device, Swapchain& swapchain) : Object<VkRenderPass>(device, [](Device &device, VkRenderPass handle)
 	{ vkDestroyRenderPass(*device.Get(), handle, nullptr); })

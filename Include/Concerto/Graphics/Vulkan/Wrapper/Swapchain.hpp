@@ -8,16 +8,18 @@
 #include <vector>
 #include <optional>
 #include <span>
+
 #include <vulkan/vulkan.h>
 #include <Concerto/Core/Types.hpp>
-#include "Object.hpp"
-#include "Image.hpp"
-#include "Allocator.hpp"
-#include "Semaphore.hpp"
-#include "Fence.hpp"
-#include "ImageView.hpp"
 
-namespace Concerto::Graphics::Wrapper
+#include "Concerto/Graphics/Vulkan/Wrapper/Object.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Image.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Allocator.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Semaphore.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Fence.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/ImageView.hpp"
+
+namespace Concerto::Graphics
 {
 	class Device;
 

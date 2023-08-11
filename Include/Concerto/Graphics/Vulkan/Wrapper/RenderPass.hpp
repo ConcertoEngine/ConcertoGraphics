@@ -6,11 +6,13 @@
 #define CONCERTOGRAPHICS_RENDERPASS_HPP
 
 #include <vector>
+
 #include <vulkan/vulkan.h>
 #include <Concerto/Core/Types.hpp>
-#include "Object.hpp"
 
-namespace Concerto::Graphics::Wrapper
+#include "Concerto/Graphics/Vulkan/Wrapper/Object.hpp"
+
+namespace Concerto::Graphics
 {
 	class Swapchain;
 

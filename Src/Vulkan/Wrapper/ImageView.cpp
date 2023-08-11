@@ -8,7 +8,7 @@
 #include "Vulkan/wrapper/ImageView.hpp"
 #include "Vulkan/wrapper/VulkanInitializer.hpp"
 
-namespace Concerto::Graphics::Wrapper
+namespace Concerto::Graphics
 {
 	ImageView::ImageView(Device& device, Image& image, VkImageAspectFlags aspectFlags) : Object<VkImageView>(device, [this](Device &device, VkImageView handle){
 		device.WaitIdle();

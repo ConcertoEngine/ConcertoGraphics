@@ -5,7 +5,7 @@
 #ifndef CONCERTOGRAPHICS_VIEWPORT_HPP
 #define CONCERTOGRAPHICS_VIEWPORT_HPP
 
-namespace Concerto::Graphics::Wrapper
+namespace Concerto::Graphics
 {
 	struct Viewport
 	{

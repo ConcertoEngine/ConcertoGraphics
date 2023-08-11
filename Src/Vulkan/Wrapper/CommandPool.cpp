@@ -9,7 +9,7 @@
 #include "Vulkan/wrapper/CommandPool.hpp"
 #include "Vulkan/wrapper/Device.hpp"
 
-namespace Concerto::Graphics::Wrapper
+namespace Concerto::Graphics
 {
 	CommandPool::CommandPool(Device& device, std::uint32_t queueFamily) : Object<VkCommandPool>(device,
 			[](Device &device, VkCommandPool handle)

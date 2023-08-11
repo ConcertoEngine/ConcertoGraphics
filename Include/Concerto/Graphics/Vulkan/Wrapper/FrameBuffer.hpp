@@ -6,10 +6,12 @@
 #define CONCERTOGRAPHICS_FRAMEBUFFER_HPP
 
 #include <vector>
-#include <Concerto/Core/Types.hpp>
-#include "Object.hpp"
 
-namespace Concerto::Graphics::Wrapper
+#include <Concerto/Core/Types.hpp>
+
+#include "Concerto/Graphics/Vulkan/Wrapper/Object.hpp"
+
+namespace Concerto::Graphics
 {
 	class Device;
 

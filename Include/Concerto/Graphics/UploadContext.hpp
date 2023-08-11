@@ -5,10 +5,10 @@
 #ifndef CONCERTOGRAPHICS_UPLOADCONTEXT_HPP
 #define CONCERTOGRAPHICS_UPLOADCONTEXT_HPP
 
-#include "Vulkan/Wrapper/CommandPool.hpp"
-#include "Vulkan/Wrapper/CommandBuffer.hpp"
-#include "Vulkan/Wrapper/Fence.hpp"
-#include "Vulkan/Wrapper/Device.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/CommandPool.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/CommandBuffer.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Fence.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Device.hpp"
 
 namespace Concerto::Graphics
 {
@@ -16,7 +16,7 @@ namespace Concerto::Graphics
 	{
 		UploadContext() = delete;
 
-		UploadContext(Wrapper::Device& device, std::uint32_t queueFamily) : _uploadFence(device, false),
+		UploadContext(Device& device, std::uint32_t queueFamily) : _uploadFence(device, false),
 																			_commandPool(
 																					device,
 																					queueFamily),
@@ -36,9 +36,9 @@ namespace Concerto::Graphics
 
 		UploadContext& operator=(const UploadContext&) = delete;
 
-		Wrapper::Fence _uploadFence;
-		Wrapper::CommandPool _commandPool;
-		Wrapper::CommandBuffer _commandBuffer;
+		Fence _uploadFence;
+		CommandPool _commandPool;
+		CommandBuffer _commandBuffer;
 	};
 }
 

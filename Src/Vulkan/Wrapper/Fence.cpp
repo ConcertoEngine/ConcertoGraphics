@@ -8,7 +8,7 @@
 #include "Vulkan/wrapper/Fence.hpp"
 #include "Vulkan/wrapper/Device.hpp"
 
-namespace Concerto::Graphics::Wrapper
+namespace Concerto::Graphics
 {
 	Fence::Fence(Device& device, bool signaled) : Object<VkFence>(device, [this](Device &device, VkFence handle){
 		vkDestroyFence(*device.Get(), handle, nullptr);
@@ -40,4 +40,4 @@ namespace Concerto::Graphics::Wrapper
 			throw std::runtime_error("vkResetFences fail");
 		}
 	}
-} // namespace Concerto::Graphics::Wrapper
+} // namespace Concerto::Graphics

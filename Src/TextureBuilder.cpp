@@ -7,8 +7,8 @@
 
 namespace Concerto::Graphics
 {
-	TextureBuilder::TextureBuilder(Wrapper::Device& device, Wrapper::Allocator& allocator,
-		Wrapper::CommandBuffer& commandBuffer, UploadContext& uploadContext, Wrapper::Queue& queue) :
+	TextureBuilder::TextureBuilder(Device& device, Allocator& allocator,
+		CommandBuffer& commandBuffer, UploadContext& uploadContext, Queue& queue) :
 		_device(device),
 		_allocator(allocator),
 		_commandBuffer(commandBuffer),

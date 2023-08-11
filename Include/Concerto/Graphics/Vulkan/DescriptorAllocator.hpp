@@ -6,18 +6,18 @@
 #define CONCERTOGRAPHICS_INCLUDE_DESCRIPTORALLOCATOR_HPP_
 
 #include <vector>
+
 #include <vulkan/vulkan.h>
 #include <Concerto/Core/Types.hpp>
-#include "Vulkan/Wrapper/DescriptorPool.hpp"
+
+#include "Concerto/Graphics/Vulkan/Wrapper/DescriptorPool.hpp"
 
 namespace Concerto::Graphics
 {
-	namespace Wrapper
-	{
-		class DescriptorSet;
-		class DescriptorSetLayout;
-		class Device;
-	}
+	class DescriptorSet;
+	class DescriptorSetLayout;
+	class Device;
+
 	class CONCERTO_PUBLIC_API DescriptorAllocator
 	{
 	 public:
@@ -37,21 +37,21 @@ namespace Concerto::Graphics
 					{ VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, 0.5f }
 				};
 		};
-		explicit DescriptorAllocator(Wrapper::Device &device);
-		bool Allocate(Wrapper::DescriptorSetPtr &descriptorSet, Wrapper::DescriptorSetLayout &layout);
+		explicit DescriptorAllocator(Device &device);
+		bool Allocate(DescriptorSetPtr &descriptorSet, DescriptorSetLayout &layout);
 	 	/**
 	 	 * @brief Reset the allocator, resetting all the descriptors in the pool.
 	 	 */
 		void Reset();
-		Wrapper::Device &GetDevice();
+		Device &GetDevice();
 	 private:
-		Wrapper::DescriptorPoolPtr CreatePool(VkDescriptorPoolCreateFlags flags);
-		Wrapper::DescriptorPoolPtr GetPool();
-		Wrapper::Device *_device;
+		DescriptorPoolPtr CreatePool(VkDescriptorPoolCreateFlags flags);
+		DescriptorPoolPtr GetPool();
+		Device *_device;
 		PoolSizes _poolSizes;
-		Wrapper::DescriptorPoolPtr _currentPool;
-		std::vector<Wrapper::DescriptorPoolPtr> _usedPools;
-		std::vector<Wrapper::DescriptorPoolPtr> _freePools;
+		DescriptorPoolPtr _currentPool;
+		std::vector<DescriptorPoolPtr> _usedPools;
+		std::vector<DescriptorPoolPtr> _freePools;
 	};
 }
 

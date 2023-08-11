@@ -7,9 +7,10 @@
 
 #include <vulkan/vulkan.hpp>
 #include <Concerto/Core/Types.hpp>
-#include "Object.hpp"
 
-namespace Concerto::Graphics::Wrapper
+#include "Concerto/Graphics/Vulkan/Wrapper/Object.hpp"
+
+namespace Concerto::Graphics
 {
 	class Device;
 
@@ -52,6 +53,6 @@ namespace Concerto::Graphics::Wrapper
 		*/
 		void Reset();
 	};
-} // namespace Concerto::Graphics::Wrapper
+} // namespace Concerto::Graphics
 
 #endif //CONCERTOGRAPHICS_FENCE_HPP

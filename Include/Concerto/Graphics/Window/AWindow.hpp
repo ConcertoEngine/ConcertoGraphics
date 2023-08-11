@@ -9,8 +9,10 @@
 #include <functional>
 #include <optional>
 #include <memory>
+
 #include <Concerto/Core/Types.hpp>
-#include "Key.hpp"
+
+#include "Concerto/Graphics/Window/Key.hpp"
 
 namespace Concerto::Graphics
 {

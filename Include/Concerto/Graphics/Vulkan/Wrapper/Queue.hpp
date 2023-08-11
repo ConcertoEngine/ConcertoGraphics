@@ -6,11 +6,12 @@
 #define CONCERTOGRAPHICS_QUEUE_HPP
 
 #include <Concerto/Core/Types.hpp>
-#include "Frame.hpp"
-#include "Swapchain.hpp"
-#include "Object.hpp"
 
-namespace Concerto::Graphics::Wrapper
+#include "Concerto/Graphics/Frame.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Swapchain.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Object.hpp"
+
+namespace Concerto::Graphics
 {
 	class Device;
 
@@ -78,6 +79,6 @@ namespace Concerto::Graphics::Wrapper
 	 private:
 		std::uint32_t _queueFamilyIndex;
 	};
-} // namespace Concerto::Graphics::Wrapper
+} // namespace Concerto::Graphics
 
 #endif //CONCERTOGRAPHICS_QUEUE_HPP

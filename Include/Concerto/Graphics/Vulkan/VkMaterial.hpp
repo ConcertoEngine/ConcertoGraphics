@@ -8,7 +8,8 @@
 #include <optional>
 #include <memory>
 #include <vulkan/vulkan.h>
-#include "Vulkan/Wrapper/DescriptorSet.hpp"
+
+#include "Concerto/Graphics/Vulkan/Wrapper/DescriptorSet.hpp"
 
 namespace Concerto::Graphics
 {
@@ -38,8 +39,8 @@ namespace Concerto::Graphics
 
 		VkPipeline _pipeline;
 		VkPipelineLayout _pipelineLayout;
-		Wrapper::DescriptorSetPtr _diffuseTextureSet;
-		Wrapper::DescriptorSetPtr _normalTextureSet;
+		DescriptorSetPtr _diffuseTextureSet;
+		DescriptorSetPtr _normalTextureSet;
 	};
 	using VkMaterialPtr = std::shared_ptr<VkMaterial>;
 }

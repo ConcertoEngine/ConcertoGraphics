@@ -8,7 +8,7 @@
 #include "Vulkan/wrapper/PipelineLayout.hpp"
 #include "Vulkan/wrapper/Device.hpp"
 
-namespace Concerto::Graphics::Wrapper
+namespace Concerto::Graphics
 {
 
 	PipelineLayout::PipelineLayout(Device& device, std::size_t size,

@@ -8,7 +8,7 @@
 #include "Vulkan/wrapper/Semaphore.hpp"
 #include "Vulkan/wrapper/Device.hpp"
 
-namespace Concerto::Graphics::Wrapper
+namespace Concerto::Graphics
 {
 
 	Semaphore::Semaphore(Device& device) : Object<VkSemaphore>(device, [](Device &device, VkSemaphore handle)
@@ -23,4 +23,4 @@ namespace Concerto::Graphics::Wrapper
 			throw std::runtime_error("Failed to create semaphore");
 		}
 	}
-} // namespace Concerto::Graphics::Wrapper
+} // namespace Concerto::Graphics

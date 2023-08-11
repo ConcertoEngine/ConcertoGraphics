@@ -8,7 +8,7 @@
 #include "Vulkan/wrapper/DescriptorSetLayout.hpp"
 #include "Vulkan/wrapper/Device.hpp"
 
-namespace Concerto::Graphics::Wrapper
+namespace Concerto::Graphics
 {
 
 	DescriptorSetLayout::DescriptorSetLayout(Device& device, std::vector<VkDescriptorSetLayoutBinding> bindings)

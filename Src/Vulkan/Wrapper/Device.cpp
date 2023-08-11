@@ -8,7 +8,7 @@
 #include "Vulkan/wrapper/Device.hpp"
 #include "Vulkan/wrapper/PhysicalDevice.hpp"
 
-namespace Concerto::Graphics::Wrapper
+namespace Concerto::Graphics
 {
 	Device::Device(PhysicalDevice& physicalDevice, std::span<const char*> extentions) : _physicalDevice(&physicalDevice), _device(VK_NULL_HANDLE)
 	{

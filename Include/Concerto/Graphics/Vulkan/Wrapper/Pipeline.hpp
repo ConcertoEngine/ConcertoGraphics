@@ -7,15 +7,17 @@
 
 #include <unordered_map>
 #include <string>
+
 #include <vulkan/vulkan.h>
 #include <Concerto/Core/Types.hpp>
-#include "Object.hpp"
-#include "Viewport.hpp"
-#include "PipelineInfo.hpp"
-#include "PipelineLayout.hpp"
-#include "DescriptorSet.hpp"
 
-namespace Concerto::Graphics::Wrapper
+#include "Concerto/Graphics/Vulkan/Wrapper/Object.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Viewport.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/PipelineInfo.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/PipelineLayout.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/DescriptorSet.hpp"
+
+namespace Concerto::Graphics
 {
 
 	class Device;

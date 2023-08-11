@@ -7,7 +7,7 @@
 #include "Vulkan/wrapper/Buffer.hpp"
 #include "Vulkan/wrapper/Device.hpp"
 
-namespace Concerto::Graphics::Wrapper
+namespace Concerto::Graphics
 {
 
 	Buffer::Buffer(Allocator& allocator,

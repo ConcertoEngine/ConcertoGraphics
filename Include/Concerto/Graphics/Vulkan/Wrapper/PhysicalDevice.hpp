@@ -8,10 +8,11 @@
 #include <span>
 #include <optional>
 #include <vector>
+
 #include <vulkan/vulkan.h>
 #include <Concerto/Core/Types.hpp>
 
-namespace Concerto::Graphics::Wrapper
+namespace Concerto::Graphics
 {
 	class Instance;
 

@@ -10,46 +10,34 @@
 
 namespace Concerto::Graphics
 {
-	namespace Wrapper
-	{
-		class Instance;
+	class Instance;
+	class PhysicalDevice;
+	class Device;
+	class Queue;
+	class Pipeline;
+	class DescriptorPool;
+	class RenderPass;
+	class Allocator;
+	class CommandBuffer;
+	class Fence;
+	class CommandPool;
 
-		class PhysicalDevice;
-
-		class Device;
-
-		class Queue;
-
-		class Pipeline;
-
-		class DescriptorPool;
-
-		class RenderPass;
-
-		class Allocator;
-
-		class CommandBuffer;
-
-		class Fence;
-
-		class CommandPool;
-	}
 	struct RenderingContext
 	{
-		Wrapper::Instance* instance;
-		Wrapper::PhysicalDevice* physicalDevice;
-		Wrapper::Device* device;
+		Instance* instance;
+		PhysicalDevice* physicalDevice;
+		Device* device;
 		std::uint32_t queueFamilyIndex;
-		Wrapper::Queue* queue;
-		Wrapper::Pipeline* pipeline;
-		Wrapper::RenderPass* renderPass;
+		Queue* queue;
+		Pipeline* pipeline;
+		RenderPass* renderPass;
 		std::uint32_t subPass;
 		std::uint32_t minImageCount;
 		std::uint32_t imageCount;
 		VkSampleCountFlagBits MSAASamples;
-		Wrapper::CommandBuffer* commandBuffer;
-		Wrapper::Fence* fence;
-		Wrapper::CommandPool* commandPool;
+		CommandBuffer* commandBuffer;
+		Fence* fence;
+		CommandPool* commandPool;
 	};
 } // Concerto::Graphics
 #endif //CONCERTOGRAPHICS_RENDERINGCONTEXT_HPP

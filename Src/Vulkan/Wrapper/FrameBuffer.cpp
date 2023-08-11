@@ -10,7 +10,7 @@
 #include "Vulkan/wrapper/RenderPass.hpp"
 #include "Vulkan/wrapper/ImageView.hpp"
 
-namespace Concerto::Graphics::Wrapper
+namespace Concerto::Graphics
 {
 	FrameBuffer::FrameBuffer(Device& device, RenderPass& renderPass, ImageView& imageView, ImageView& depthImageView,
 			VkExtent2D extent) : Object<VkFramebuffer>(device, [](Device &device, VkFramebuffer handle)

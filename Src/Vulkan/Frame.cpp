@@ -10,15 +10,15 @@
 
 namespace Concerto::Graphics
 {
-	using namespace Concerto::Graphics::Wrapper;
-	Graphics::FrameData::FrameData(Device& device, Wrapper::Allocator& allocator, std::uint32_t queueFamily,
-			Wrapper::DescriptorPool& pool, Wrapper::DescriptorSetLayout& globalDescriptorSetLayout,
-			Wrapper::DescriptorSetLayout& objectDescriptorSetLayout, Wrapper::Buffer& sceneParameterBuffer,
+	using namespace Concerto::Graphics;
+	Graphics::FrameData::FrameData(Device& device, Allocator& allocator, std::uint32_t queueFamily,
+			DescriptorPool& pool, DescriptorSetLayout& globalDescriptorSetLayout,
+			DescriptorSetLayout& objectDescriptorSetLayout, Buffer& sceneParameterBuffer,
 			bool signaled) : _presentSemaphore(device),
-							 _commandPool(std::make_unique<Wrapper::CommandPool>(device, queueFamily)),
+							 _commandPool(std::make_unique<CommandPool>(device, queueFamily)),
 							 _renderSemaphore(device),
 							 _renderFence(device, signaled),
-							 _mainCommandBuffer(std::make_unique<Wrapper::CommandBuffer>(device, *_commandPool->Get())),
+							 _mainCommandBuffer(std::make_unique<CommandBuffer>(device, *_commandPool->Get())),
 							 _cameraBuffer(MakeBuffer<GPUCamera>(allocator,
 								 VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
 								 VMA_MEMORY_USAGE_CPU_TO_GPU)),
@@ -27,7 +27,7 @@ namespace Concerto::Graphics
 								 VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
 								 VMA_MEMORY_USAGE_CPU_TO_GPU)),
 							 objectDescriptor(device, pool, objectDescriptorSetLayout),
-							 _indirectBuffer(Wrapper::MakeBuffer<VkDrawIndirectCommand>(allocator,
+							 _indirectBuffer(MakeBuffer<VkDrawIndirectCommand>(allocator,
 								 MAX_OBJECTS,
 								 VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT |  VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT,
 								 VMA_MEMORY_USAGE_CPU_TO_GPU))

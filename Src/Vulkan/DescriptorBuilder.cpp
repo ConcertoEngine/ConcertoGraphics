@@ -71,7 +71,7 @@ namespace Concerto::Graphics
 		return *this;
 	}
 
-	bool DescriptorBuilder::Build(Wrapper::DescriptorSetPtr& set, Wrapper::DescriptorSetLayoutPtr& layout)
+	bool DescriptorBuilder::Build(DescriptorSetPtr& set, DescriptorSetLayoutPtr& layout)
 	{
 		VkDescriptorSetLayoutCreateInfo layoutInfo{};
 		layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
@@ -94,9 +94,9 @@ namespace Concerto::Graphics
 		return true;
 	}
 
-	bool DescriptorBuilder::Build(Wrapper::DescriptorSetPtr& set)
+	bool DescriptorBuilder::Build(DescriptorSetPtr& set)
 	{
-		Wrapper::DescriptorSetLayoutPtr layout;
+		DescriptorSetLayoutPtr layout;
 		return Build(set, layout);
 	}
 }

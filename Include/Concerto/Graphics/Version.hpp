@@ -5,15 +5,15 @@
 #ifndef CONCERTOGRAPHICS_VERSION_HPP
 #define CONCERTOGRAPHICS_VERSION_HPP
 
-#include <cstdint>
+#include <Concerto/Core/Types.hpp>
 
 namespace Concerto::Graphics
 {
 	struct Version
 	{
-		std::uint32_t major;
-		std::uint32_t minor;
-		std::uint32_t patch;
+		UInt32 major;
+		UInt32 minor;
+		UInt32 patch;
 	};
 }
 #endif //CONCERTOGRAPHICS_VERSION_HPP

@@ -6,11 +6,11 @@
 #define CONCERTOGRAPHICS_ALLOCATOR_HPP
 
 #include <vulkan/vulkan.h>
-#include "vk_mem_alloc.h"
+#include <vk_mem_alloc.h>
 #include <Concerto/Core/Types.hpp>
-#include "Object.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Object.hpp"
 
-namespace Concerto::Graphics::Wrapper
+namespace Concerto::Graphics
 {
 	class Instance;
 

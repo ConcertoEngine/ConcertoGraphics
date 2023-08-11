@@ -15,36 +15,37 @@
 #include <Concerto/Core/Math/Vector.hpp>
 #include <Concerto/Core/Math/Transform.hpp>
 #include <Concerto/Core/Types.hpp>
-#include "Vulkan/Wrapper/Instance.hpp"
-#include "Vulkan/Wrapper/Device.hpp"
-#include "Vulkan/Wrapper/PhysicalDevice.hpp"
-#include "Vulkan/Wrapper/Allocator.hpp"
-#include "Vulkan/Wrapper/Allocator.hpp"
-#include "Vulkan/Wrapper/Swapchain.hpp"
-#include "Vulkan/Wrapper/RenderPass.hpp"
-#include "Vulkan/Wrapper/FrameBuffer.hpp"
-#include "Vulkan/Wrapper/DescriptorSetLayout.hpp"
-#include "Vulkan/Wrapper/DescriptorPool.hpp"
-#include "Vulkan/Wrapper/Buffer.hpp"
-#include "Vulkan/Wrapper/ShaderModule.hpp"
-#include "Vulkan/Wrapper/PipelineLayout.hpp"
-#include "Vulkan/Wrapper/Pipeline.hpp"
-#include "Vulkan/Wrapper/Queue.hpp"
-#include "Vulkan/Wrapper/Sampler.hpp"
-#include "Vulkan/DescriptorLayoutCache.hpp"
-#include "Vulkan/DescriptorAllocator.hpp"
-#include "window/GlfW3.hpp"
-#include "Version.hpp"
-#include "Frame.hpp"
-#include "UploadContext.hpp"
-#include "Vulkan/RenderObject.hpp"
-#include "Vulkan/Texture.hpp"
-#include "ImGUI.hpp"
-#include "TextureBuilder.hpp"
-#include "MaterialBuilder.hpp"
-#include "Mesh.hpp"
-#include "Vulkan/VkMesh.hpp"
-#include "Camera.hpp"
+
+#include "Concerto/Graphics/Vulkan/Wrapper/Instance.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Device.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/PhysicalDevice.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Allocator.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Allocator.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Swapchain.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/RenderPass.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/FrameBuffer.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/DescriptorSetLayout.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/DescriptorPool.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Buffer.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/ShaderModule.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/PipelineLayout.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Pipeline.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Queue.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Sampler.hpp"
+#include "Concerto/Graphics/Vulkan/DescriptorLayoutCache.hpp"
+#include "Concerto/Graphics/Vulkan/DescriptorAllocator.hpp"
+#include "Concerto/Graphics/Window/GlfW3.hpp"
+#include "Concerto/Graphics/Version.hpp"
+#include "Concerto/Graphics/Frame.hpp"
+#include "Concerto/Graphics/UploadContext.hpp"
+#include "Concerto/Graphics/Vulkan/RenderObject.hpp"
+#include "Concerto/Graphics/Vulkan/Texture.hpp"
+#include "Concerto/Graphics/ImGUI.hpp"
+#include "Concerto/Graphics/TextureBuilder.hpp"
+#include "Concerto/Graphics/MaterialBuilder.hpp"
+#include "Concerto/Graphics/Mesh.hpp"
+#include "Concerto/Graphics/Vulkan/VkMesh.hpp"
+#include "Concerto/Graphics/Camera.hpp"
 
 namespace Concerto::Graphics
 {
@@ -93,33 +94,33 @@ namespace Concerto::Graphics
 		Scene _sceneParameters;
 		VulkanRenderer* _instance{ nullptr };
 		std::uint32_t _frameNumber{ 0 };
-		Wrapper::Instance _vulkanInstance;
+		Graphics::Instance _vulkanInstance;
 		VkSurfaceKHR _surface{ VK_NULL_HANDLE };
-		Wrapper::PhysicalDevice _physicalDevice;
-		Wrapper::Device _device;
+		PhysicalDevice _physicalDevice;
+		Device _device;
 		bool _isResized{ false };
 		VkPhysicalDeviceProperties _gpuProperties;
 		std::uint32_t _graphicsQueueFamilyIndex;
 		std::unique_ptr<Graphics::ImGUI> _imGUI;
-		std::unique_ptr<Wrapper::Allocator> _allocator;
-		std::unique_ptr<Wrapper::Swapchain> _swapchain;
-		std::unique_ptr<Wrapper::RenderPass> _renderPass;
-		std::vector<Wrapper::FrameBuffer> _frameBuffers;
-		std::unique_ptr<Wrapper::DescriptorSetLayout> _globalSetLayout;
-		std::unique_ptr<Wrapper::DescriptorSetLayout> _objectSetLayout;
-		std::unique_ptr<Wrapper::DescriptorSetLayout> _singleTextureSetLayout;
-		std::unique_ptr<Wrapper::DescriptorPool> _descriptorPool;
+		std::unique_ptr<Allocator> _allocator;
+		std::unique_ptr<Swapchain> _swapchain;
+		std::unique_ptr<RenderPass> _renderPass;
+		std::vector<FrameBuffer> _frameBuffers;
+		std::unique_ptr<DescriptorSetLayout> _globalSetLayout;
+		std::unique_ptr<DescriptorSetLayout> _objectSetLayout;
+		std::unique_ptr<DescriptorSetLayout> _singleTextureSetLayout;
+		std::unique_ptr<DescriptorPool> _descriptorPool;
 		std::vector<FrameData> _frames;
-		std::unique_ptr<Wrapper::Buffer> _sceneParameterBuffer;
+		std::unique_ptr<Buffer> _sceneParameterBuffer;
 		//TODO : Convert all Shaders modules into an unordered_map
-		std::unique_ptr<Wrapper::ShaderModule> _colorMeshShader;
-		std::unique_ptr<Wrapper::ShaderModule> _textureMeshShader;
-		std::unique_ptr<Wrapper::ShaderModule> _meshVertShader;
-		std::unique_ptr<Wrapper::PipelineLayout> _meshPipelineLayout;
-		std::unique_ptr<Wrapper::PipelineLayout> _texturedSetLayout;
-		std::unique_ptr<Wrapper::Pipeline> _coloredShaderPipeline;
-		std::unique_ptr<Wrapper::Pipeline> _texturedPipeline;
-		std::unique_ptr<Wrapper::Queue> _graphicsQueue;
+		std::unique_ptr<ShaderModule> _colorMeshShader;
+		std::unique_ptr<ShaderModule> _textureMeshShader;
+		std::unique_ptr<ShaderModule> _meshVertShader;
+		std::unique_ptr<PipelineLayout> _meshPipelineLayout;
+		std::unique_ptr<PipelineLayout> _texturedSetLayout;
+		std::unique_ptr<Pipeline> _coloredShaderPipeline;
+		std::unique_ptr<Pipeline> _texturedPipeline;
+		std::unique_ptr<Queue> _graphicsQueue;
 		std::unique_ptr<UploadContext> _uploadContext;
 		std::unordered_map<std::string, RenderObjectPtr> _renderObjects;
 		std::unordered_map<std::string, VkMeshPtr> _meshes;
@@ -129,7 +130,7 @@ namespace Concerto::Graphics
 		std::unique_ptr<DescriptorLayoutCache> _descriptorLayoutCache;
 		std::unique_ptr<DescriptorAllocator> _descriptorAllocator;
 		std::unique_ptr<MaterialBuilder> _materialBuilder;
-		std::unique_ptr<Wrapper::Sampler> _sampler;
+		std::unique_ptr<Sampler> _sampler;
 
 	 public:
 		//timings

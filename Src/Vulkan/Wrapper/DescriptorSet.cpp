@@ -13,7 +13,7 @@
 #include "Vulkan/wrapper/Sampler.hpp"
 #include "Vulkan/wrapper/ImageView.hpp"
 
-namespace Concerto::Graphics::Wrapper
+namespace Concerto::Graphics
 {
 	DescriptorSet::DescriptorSet(Device& device, DescriptorPool& pool,
 			DescriptorSetLayout& descriptorSetLayout) : Object<VkDescriptorSet>(device, [this](Device &device, VkDescriptorSet handle)

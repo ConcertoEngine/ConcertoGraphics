@@ -9,7 +9,8 @@
 #include <Concerto/Core/Math/Vector.hpp>
 #include <Concerto/Core/Types.hpp>
 #include <glm/mat4x4.hpp>
-#include "GPUData.hpp"
+
+#include "Concerto/Graphics/GPUData.hpp"
 
 namespace Concerto::Graphics
 {

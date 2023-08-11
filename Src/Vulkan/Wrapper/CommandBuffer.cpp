@@ -9,7 +9,7 @@
 #include "Vulkan/wrapper/Device.hpp"
 #include "Vulkan/wrapper/VulkanInitializer.hpp"
 
-namespace Concerto::Graphics::Wrapper
+namespace Concerto::Graphics
 {
 	CommandBuffer::CommandBuffer(Device& device, VkCommandPool commandPool) : _device(&device),
 																			  _commandPool(commandPool)

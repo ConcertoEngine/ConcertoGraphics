@@ -9,10 +9,12 @@
 #include <unordered_map>
 #include <string>
 #include <vector>
+
 #include <Concerto/Core/SparseVector.hpp>
 #include <Concerto/Core/Types.hpp>
-#include "Event.hpp"
-#include "Key.hpp"
+
+#include "Concerto/Graphics/Window/Event.hpp"
+#include "Concerto/Graphics/Window/Key.hpp"
 
 namespace Concerto
 {
