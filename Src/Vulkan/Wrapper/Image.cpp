@@ -4,12 +4,13 @@
 #define STB_IMAGE_IMPLEMENTATION
 
 #include <stb_image.h>
-#include "Vulkan/wrapper/Buffer.hpp"
-#include "Vulkan/wrapper/Image.hpp"
-#include "Vulkan/wrapper/CommandBuffer.hpp"
-#include "UploadContext.hpp"
-#include "Vulkan/wrapper/Queue.hpp"
-#include "Vulkan/Utils.hpp"
+
+#include "Concerto/Graphics/Vulkan/Wrapper/Buffer.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Image.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/CommandBuffer.hpp"
+#include "Concerto/Graphics/UploadContext.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Queue.hpp"
+#include "Concerto/Graphics/Vulkan/Utils.hpp"
 
 namespace Concerto::Graphics
 {

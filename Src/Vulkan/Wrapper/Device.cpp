@@ -5,8 +5,8 @@
 #include <cassert>
 #include <stdexcept>
 
-#include "Vulkan/wrapper/Device.hpp"
-#include "Vulkan/wrapper/PhysicalDevice.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Device.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/PhysicalDevice.hpp"
 
 namespace Concerto::Graphics
 {

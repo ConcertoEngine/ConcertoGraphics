@@ -5,8 +5,8 @@
 #include <cassert>
 #include <stdexcept>
 
-#include "Vulkan/wrapper/Fence.hpp"
-#include "Vulkan/wrapper/Device.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Fence.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Device.hpp"
 
 namespace Concerto::Graphics
 {

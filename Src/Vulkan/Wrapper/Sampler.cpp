@@ -4,9 +4,9 @@
 
 #include <cassert>
 
-#include "Vulkan/wrapper/Sampler.hpp"
-#include "Vulkan/wrapper/Device.hpp"
-#include "Vulkan/wrapper/VulkanInitializer.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Sampler.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Device.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/VulkanInitializer.hpp"
 
 namespace Concerto::Graphics
 {

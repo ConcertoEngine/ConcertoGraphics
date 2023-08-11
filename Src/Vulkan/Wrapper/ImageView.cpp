@@ -4,9 +4,9 @@
 
 #include <utility>
 
-#include "Vulkan/wrapper/Device.hpp"
-#include "Vulkan/wrapper/ImageView.hpp"
-#include "Vulkan/wrapper/VulkanInitializer.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Device.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/ImageView.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/VulkanInitializer.hpp"
 
 namespace Concerto::Graphics
 {

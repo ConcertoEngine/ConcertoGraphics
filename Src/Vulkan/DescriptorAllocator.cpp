@@ -2,11 +2,13 @@
 // Created by arthur on 16/02/2023.
 //
 
-#include "Vulkan/DescriptorAllocator.hpp"
-#include "Vulkan/Wrapper/DescriptorSet.hpp"
-#include "Vulkan/Wrapper/DescriptorSetLayout.hpp"
-#include "Vulkan/Wrapper/Device.hpp"
 #define DESCRIPTOR_POOL_SIZE 1000
+
+#include "Concerto/Graphics/Vulkan/DescriptorAllocator.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/DescriptorSet.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/DescriptorSetLayout.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Device.hpp"
+
 namespace Concerto::Graphics
 {
 

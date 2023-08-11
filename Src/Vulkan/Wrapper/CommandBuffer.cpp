@@ -5,9 +5,10 @@
 
 #include <stdexcept>
 #include <utility>
-#include "Vulkan/wrapper/CommandBuffer.hpp"
-#include "Vulkan/wrapper/Device.hpp"
-#include "Vulkan/wrapper/VulkanInitializer.hpp"
+
+#include "Concerto/Graphics/Vulkan/wrapper/CommandBuffer.hpp"
+#include "Concerto/Graphics/Vulkan/wrapper/Device.hpp"
+#include "Concerto/Graphics/Vulkan/wrapper/VulkanInitializer.hpp"
 
 namespace Concerto::Graphics
 {

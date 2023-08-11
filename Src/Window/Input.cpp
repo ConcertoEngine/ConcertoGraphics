@@ -4,7 +4,8 @@
 
 #include <cassert>
 #include <iostream>
-#include "Input.hpp"
+
+#include "Concerto/Graphics/Window/Input.hpp"
 
 namespace Concerto
 {

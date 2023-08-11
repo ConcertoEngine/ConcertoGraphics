@@ -3,27 +3,24 @@
 //
 
 #include <glm/gtc/quaternion.hpp>
-#include "Camera.hpp"
+
+#include "Concerto/Graphics/Camera.hpp"
 
 namespace Concerto::Graphics
 {
-	Camera::Camera(float fov, float near, float far, float aspectRatio) : _fov(fov),
-																		  _near(near),
-																		  _far(far),
-																		  _aspectRatio(aspectRatio),
-																		  _clearColor(Math::Vector4f(0.0f,
-																			  0.0f,
-																			  0.0f,
-																			  1.0f)),
-																		  _position(glm::vec3(0.0f, 0.0f, 0.0f)),
-																		  _zoom(ZOOM),
-																		  _up(0.0f, 1.0f, 0.0f),
-																		  _worldUp(_up),
-																		  _movementSpeed(SPEED),
-																		  _mouseSensitivity(SENSITIVITY),
-																		  _eulerAngles(Math::EulerAnglesf(PITCH,
-																			  YAW,
-																			  0.0f))
+	Camera::Camera(float fov, float near, float far, float aspectRatio) :
+		_fov(fov),
+		_near(near),
+		_far(far),
+		_aspectRatio(aspectRatio),
+		_clearColor(Math::Vector4f(0.0f, 0.0f, 0.0f, 1.0f)),
+		_position(glm::vec3(0.0f, 0.0f, 0.0f)),
+		_zoom(ZOOM),
+		_up(0.0f, 1.0f, 0.0f),
+		_worldUp(_up),
+		_movementSpeed(SPEED),
+		_mouseSensitivity(SENSITIVITY),
+		_eulerAngles(Math::EulerAnglesf(PITCH, YAW, 0.0f))
 	{
 		UpdateProjectionMatrix();
 		UpdateViewMatrix();

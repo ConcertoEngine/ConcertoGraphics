@@ -6,9 +6,9 @@
 #include <stdexcept>
 #include <cassert>
 
-#include "Vulkan/wrapper/RenderPass.hpp"
-#include "Vulkan/wrapper/Swapchain.hpp"
-#include "Vulkan/wrapper/Device.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/RenderPass.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Swapchain.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Device.hpp"
 
 namespace Concerto::Graphics
 {

@@ -6,7 +6,7 @@
 #include <glm/geometric.hpp>
 #include <glm/gtc/constants.hpp>
 
-#include "Primitives.hpp"
+#include "Concerto/Graphics/Primitives.hpp"
 
 namespace Concerto::Graphics
 {

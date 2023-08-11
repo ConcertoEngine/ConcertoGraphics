@@ -1,7 +1,7 @@
 //
 // Created by arthur on 23/05/22.
 //
-#include "AWindow.hpp"
+#include "Concerto/Graphics/Window/AWindow.hpp"
 
 //Concerto::AWindow::AWindow(const std::string& title, unsigned int width, unsigned int height) : _title(title), _width(width), _height(height)
 //{

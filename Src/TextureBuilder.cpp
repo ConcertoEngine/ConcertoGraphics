@@ -2,8 +2,8 @@
 // Created by arthur on 17/02/2023.
 //
 
-#include "TextureBuilder.hpp"
-#include "VulkanRenderer.hpp"
+#include "Concerto/Graphics/TextureBuilder.hpp"
+#include "Concerto/Graphics/VulkanRenderer.hpp"
 
 namespace Concerto::Graphics
 {

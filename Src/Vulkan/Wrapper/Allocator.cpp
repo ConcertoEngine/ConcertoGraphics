@@ -4,10 +4,11 @@
 
 #include <cassert>
 #include <stdexcept>
-#include "Vulkan/wrapper/Allocator.hpp"
-#include "Vulkan/wrapper/Instance.hpp"
-#include "Vulkan/wrapper/PhysicalDevice.hpp"
-#include "Vulkan/wrapper/Device.hpp"
+
+#include "Concerto/Graphics/Vulkan/wrapper/Allocator.hpp"
+#include "Concerto/Graphics/Vulkan/wrapper/Instance.hpp"
+#include "Concerto/Graphics/Vulkan/wrapper/PhysicalDevice.hpp"
+#include "Concerto/Graphics/Vulkan/wrapper/Device.hpp"
 
 namespace Concerto::Graphics
 {

@@ -5,8 +5,8 @@
 #include <cassert>
 #include <stdexcept>
 
-#include "Vulkan/wrapper/Semaphore.hpp"
-#include "Vulkan/wrapper/Device.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Semaphore.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Device.hpp"
 
 namespace Concerto::Graphics
 {

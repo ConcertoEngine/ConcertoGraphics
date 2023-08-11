@@ -2,7 +2,7 @@
 // Created by arthur on 09/06/22.
 //
 
-#include "Vulkan/Vertex.hpp"
+#include "Concerto/Graphics/Vulkan/Vertex.hpp"
 
 namespace Concerto::Graphics
 {

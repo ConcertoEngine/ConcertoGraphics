@@ -8,10 +8,11 @@
 #include <filesystem>
 #include <stdexcept>
 
-#include "Vulkan/Wrapper/CommandBuffer.hpp"
-#include "Vulkan/VkSubMesh.hpp"
-#include "tiny_obj_loader.h"
-#include "Vulkan/Utils.hpp"
+#include <Concerto/Graphics/thirdParty/tiny_obj_loader.h>
+
+#include "Concerto/Graphics/Vulkan/Wrapper/CommandBuffer.hpp"
+#include "Concerto/Graphics/Vulkan/VkSubMesh.hpp"
+#include "Concerto/Graphics/Vulkan/Utils.hpp"
 
 using namespace Concerto::Graphics;
 

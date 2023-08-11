@@ -3,9 +3,10 @@
 //
 
 #include <iostream>
-#include "MaterialBuilder.hpp"
-#include "Vulkan/DescriptorBuilder.hpp"
-#include "Vulkan/Wrapper/Sampler.hpp"
+
+#include "Concerto/Graphics/MaterialBuilder.hpp"
+#include "Concerto/Graphics/Vulkan/DescriptorBuilder.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Sampler.hpp"
 
 namespace Concerto::Graphics
 {

@@ -13,14 +13,15 @@
 #include <iostream>
 #include <ranges>
 #include <filesystem>
-#include "glm/gtc/matrix_transform.hpp"
-#include "imgui_impl_glfw.h"
+
+#include <glm/gtc/matrix_transform.hpp>
+#include <imgui_impl_glfw.h>
 #include <GLFW/glfw3.h>
 
-#include "Vulkan/Utils.hpp"
-#include "VulkanRenderer.hpp"
-#include "window/GlfW3.hpp"
-#include "Vulkan/Wrapper/Sampler.hpp"
+#include "Concerto/Graphics/Vulkan/Utils.hpp"
+#include "Concerto/Graphics/VulkanRenderer.hpp"
+#include "Concerto/Graphics/Window/GlfW3.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Sampler.hpp"
 
 namespace Concerto::Graphics
 {

@@ -2,9 +2,9 @@
 // Created by arthur on 16/02/2023.
 //
 
-#include "Vulkan/DescriptorBuilder.hpp"
-#include "Vulkan/Wrapper/DescriptorSet.hpp"
-#include "Vulkan/Wrapper/DescriptorSetLayout.hpp"
+#include "Concerto/Graphics/Vulkan/DescriptorBuilder.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/DescriptorSet.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/DescriptorSetLayout.hpp"
 
 namespace Concerto::Graphics
 {

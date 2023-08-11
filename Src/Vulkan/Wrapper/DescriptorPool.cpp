@@ -6,8 +6,8 @@
 #include <stdexcept>
 #include <cassert>
 
-#include "Vulkan/wrapper/DescriptorPool.hpp"
-#include "Vulkan/wrapper/Device.hpp"
+#include "Concerto/Graphics/Vulkan/wrapper/DescriptorPool.hpp"
+#include "Concerto/Graphics/Vulkan/wrapper/Device.hpp"
 
 namespace Concerto::Graphics
 {

@@ -6,12 +6,12 @@
 #include <stdexcept>
 #include <iostream>
 
-#include "Vulkan/wrapper/DescriptorSet.hpp"
-#include "Vulkan/wrapper/DescriptorSetLayout.hpp"
-#include "Vulkan/wrapper/DescriptorPool.hpp"
-#include "Vulkan/wrapper/Device.hpp"
-#include "Vulkan/wrapper/Sampler.hpp"
-#include "Vulkan/wrapper/ImageView.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/DescriptorSet.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/DescriptorSetLayout.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/DescriptorPool.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Device.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Sampler.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/ImageView.hpp"
 
 namespace Concerto::Graphics
 {

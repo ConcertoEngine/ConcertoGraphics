@@ -6,8 +6,9 @@
 #include <stdexcept>
 
 #include <Concerto/Core/Logger.hpp>
-#include "Mesh.hpp"
-#include "tiny_obj_loader.h"
+#include <Concerto/Graphics/thirdParty/tiny_obj_loader.h>
+
+#include "Concerto/Graphics/Mesh.hpp"
 
 namespace Concerto::Graphics
 {

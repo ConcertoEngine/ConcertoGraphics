@@ -4,11 +4,11 @@
 
 #include <cassert>
 
-#include "Vulkan/wrapper/Device.hpp"
-#include "Vulkan/wrapper/FrameBuffer.hpp"
-#include "Vulkan/wrapper/VulkanInitializer.hpp"
-#include "Vulkan/wrapper/RenderPass.hpp"
-#include "Vulkan/wrapper/ImageView.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Device.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/FrameBuffer.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/VulkanInitializer.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/RenderPass.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/ImageView.hpp"
 
 namespace Concerto::Graphics
 {

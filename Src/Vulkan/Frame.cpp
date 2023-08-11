@@ -2,11 +2,11 @@
 // Created by arthur on 13/09/2022.
 //
 
-#include "Frame.hpp"
-#include "Vulkan/Wrapper/VulkanInitializer.hpp"
-#include "Vulkan/Wrapper/CommandBuffer.hpp"
-#include "Vulkan/Wrapper/CommandPool.hpp"
-#include "Vulkan/Wrapper/Device.hpp"
+#include "Concerto/Graphics/Frame.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/VulkanInitializer.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/CommandBuffer.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/CommandPool.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Device.hpp"
 
 namespace Concerto::Graphics
 {

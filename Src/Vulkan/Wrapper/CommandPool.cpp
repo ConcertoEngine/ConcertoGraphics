@@ -6,8 +6,8 @@
 #include <stdexcept>
 #include <iostream>
 
-#include "Vulkan/wrapper/CommandPool.hpp"
-#include "Vulkan/wrapper/Device.hpp"
+#include "Concerto/Graphics/Vulkan/wrapper/CommandPool.hpp"
+#include "Concerto/Graphics/Vulkan/wrapper/Device.hpp"
 
 namespace Concerto::Graphics
 {

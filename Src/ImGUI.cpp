@@ -2,17 +2,17 @@
 // Created by arthu on 21/12/2022.
 //
 
-#include "ImGUI.hpp"
+#include "Concerto/Graphics/ImGUI.hpp"
 
-#include "imgui_impl_glfw.h"
-#include "imgui_impl_vulkan.h"
+#include <imgui_impl_glfw.h>
+#include <imgui_impl_vulkan.h>
 
-#include "Vulkan/Wrapper/Instance.hpp"
-#include "Vulkan/Wrapper/PhysicalDevice.hpp"
-#include "Vulkan/Wrapper/Device.hpp"
-#include "Vulkan/Wrapper/RenderPass.hpp"
-#include "Vulkan/Wrapper/CommandBuffer.hpp"
-#include "GlfW3.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Instance.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/PhysicalDevice.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Device.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/RenderPass.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/CommandBuffer.hpp"
+#include "Concerto/Graphics/Window/GlfW3.hpp"
 
 namespace Concerto::Graphics
 {

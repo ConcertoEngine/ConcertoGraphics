@@ -6,7 +6,8 @@
 #include <stdexcept>
 #include <vector>
 #include <utility>
-#include "Vulkan/wrapper/PhysicalDevice.hpp"
+
+#include "Concerto/Graphics/Vulkan/Wrapper/PhysicalDevice.hpp"
 
 namespace Concerto::Graphics
 {

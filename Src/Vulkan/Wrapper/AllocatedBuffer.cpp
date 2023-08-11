@@ -4,8 +4,9 @@
 
 #include <stdexcept>
 #include <utility>
-#include "Vulkan/wrapper/Buffer.hpp"
-#include "Vulkan/wrapper/Device.hpp"
+
+#include "Concerto/Graphics/Vulkan/wrapper/Buffer.hpp"
+#include "Concerto/Graphics/Vulkan/wrapper/Device.hpp"
 
 namespace Concerto::Graphics
 {

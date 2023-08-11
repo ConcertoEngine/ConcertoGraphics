@@ -2,8 +2,8 @@
 // Created by arthur on 18/02/2023.
 //
 
-#include "SubMesh.hpp"
-#include "Mesh.hpp"
+#include "Concerto/Graphics/SubMesh.hpp"
+#include "Concerto/Graphics/Mesh.hpp"
 
 namespace Concerto::Graphics
 {

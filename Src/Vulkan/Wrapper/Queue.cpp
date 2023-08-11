@@ -4,9 +4,9 @@
 
 #include <cassert>
 
-#include "Vulkan/wrapper/Queue.hpp"
-#include "Vulkan/wrapper/CommandBuffer.hpp"
-#include "Vulkan/wrapper/Device.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Queue.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/CommandBuffer.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Device.hpp"
 
 namespace Concerto::Graphics
 {

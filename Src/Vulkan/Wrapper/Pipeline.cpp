@@ -6,9 +6,9 @@
 #include <iostream>
 #include <utility>
 
-#include "Vulkan/wrapper/Pipeline.hpp"
-#include "Vulkan/wrapper/Device.hpp"
-#include "Vulkan/wrapper/VulkanInitializer.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Pipeline.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Device.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/VulkanInitializer.hpp"
 
 namespace Concerto::Graphics
 {

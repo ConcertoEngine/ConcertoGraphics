@@ -4,13 +4,14 @@
 
 #include <cassert>
 
-#include "Vulkan/wrapper/Swapchain.hpp"
 #include <vulkan/vulkan.h>
-#include "vk_mem_alloc.h"
-#include "Vulkan/wrapper/VulkanInitializer.hpp"
-#include "Vulkan/wrapper/PhysicalDevice.hpp"
-#include "Vulkan/wrapper/Device.hpp"
-#include "Vulkan/wrapper/ImageView.hpp"
+#include <vk_mem_alloc.h>
+
+#include "Concerto/Graphics/Vulkan/Wrapper/Swapchain.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/VulkanInitializer.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/PhysicalDevice.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Device.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/ImageView.hpp"
 
 namespace Concerto::Graphics
 {

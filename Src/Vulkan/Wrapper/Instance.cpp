@@ -7,8 +7,8 @@
 #include <iostream>
 #include <vector>
 
-#include "Vulkan/wrapper/Instance.hpp"
-#include "Vulkan/wrapper/PhysicalDevice.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Instance.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/PhysicalDevice.hpp"
 
 namespace Concerto::Graphics
 {

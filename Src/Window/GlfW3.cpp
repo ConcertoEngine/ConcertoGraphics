@@ -2,9 +2,10 @@
 // Created by arthur on 23/05/22.
 //
 
-
-#include "window/GlfW3.hpp"
 #include <stdexcept>
+
+#include "Concerto/Graphics/Window/GlfW3.hpp"
+
 namespace Concerto::Graphics
 {
 	GlfW3::GlfW3(const std::string& title, int width, int height) : AWindow(title, width, height)

@@ -6,8 +6,8 @@
 #include <fstream>
 #include <iostream>
 
-#include "Vulkan/wrapper/ShaderModule.hpp"
-#include "Vulkan/wrapper/Device.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/ShaderModule.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Device.hpp"
 
 namespace Concerto::Graphics
 {
