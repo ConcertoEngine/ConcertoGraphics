@@ -37,7 +37,7 @@ namespace Concerto::Graphics
 		* @param device The Device object used to create the command pool.
 		* @param queueFamily The queue family index used to create the command pool.
 		*/
-		CommandPool(Device& device, std::uint32_t queueFamily);
+		CommandPool(Device& device, UInt32 queueFamily);
 
 		CommandPool(CommandPool&&) = default;
 
@@ -54,7 +54,7 @@ namespace Concerto::Graphics
 		void Reset();
 
 	private:
-		std::uint32_t _queueFamily;
+		UInt32 _queueFamily;
 	};
 }
 

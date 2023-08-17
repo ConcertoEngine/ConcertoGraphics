@@ -10,12 +10,12 @@
 
 namespace Concerto::Graphics
 {
-	Queue::Queue(Device& device, std::uint32_t queueFamilyIndex) : Object<VkQueue>(device), _queueFamilyIndex(queueFamilyIndex)
+	Queue::Queue(Device& device, UInt32 queueFamilyIndex) : Object<VkQueue>(device), _queueFamilyIndex(queueFamilyIndex)
 	{
 		vkGetDeviceQueue(*_device->Get(), _queueFamilyIndex, 0, &_handle);
 	}
 
-	std::uint32_t Queue::GetFamilyIndex() const
+	UInt32 Queue::GetFamilyIndex() const
 	{
 		return _queueFamilyIndex;
 	}
@@ -40,7 +40,7 @@ namespace Concerto::Graphics
 		}
 	}
 
-	bool Queue::Present(const FrameData& frame, Swapchain& swapchain, std::uint32_t swapchainImageIndex)
+	bool Queue::Present(const FrameData& frame, Swapchain& swapchain, UInt32 swapchainImageIndex)
 	{
 		VkPresentInfoKHR present = {};
 		present.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;

@@ -109,13 +109,13 @@ namespace Concerto::Graphics
 		vkCmdBindPipeline(_commandBuffer, pipelineBindPoint, pipeline);
 	}
 
-	void CommandBuffer::Draw(std::uint32_t vertexCount, std::uint32_t instanceCount, std::uint32_t firstVertex,
-			std::uint32_t firstInstance)
+	void CommandBuffer::Draw(UInt32 vertexCount, UInt32 instanceCount, UInt32 firstVertex,
+			UInt32 firstInstance)
 	{
 		vkCmdDraw(_commandBuffer, vertexCount, instanceCount, firstVertex, firstInstance);
 	}
 
-	void CommandBuffer::DrawIndirect(Buffer& buffer, std::uint32_t offset, std::uint32_t drawCount, std::uint32_t stride)
+	void CommandBuffer::DrawIndirect(Buffer& buffer, UInt32 offset, UInt32 drawCount, UInt32 stride)
 	{
 		vkCmdDrawIndirect(_commandBuffer, buffer._buffer, offset, drawCount, stride);
 	}
@@ -139,15 +139,15 @@ namespace Concerto::Graphics
 	}
 
 	void CommandBuffer::BindDescriptorSets(VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout pipelineLayout,
-			std::uint32_t firstSet, std::uint32_t descriptorSetCount, DescriptorSet& descriptorSet,
-			std::uint32_t dynamicOffsets)
+			UInt32 firstSet, UInt32 descriptorSetCount, DescriptorSet& descriptorSet,
+			UInt32 dynamicOffsets)
 	{
 		vkCmdBindDescriptorSets(_commandBuffer, pipelineBindPoint, pipelineLayout, firstSet, descriptorSetCount,
 				descriptorSet.Get(), 1, &dynamicOffsets);
 	}
 
 	void CommandBuffer::BindDescriptorSets(VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout pipelineLayout,
-			std::uint32_t firstSet, std::uint32_t descriptorSetCount, DescriptorSet& descriptorSet)
+			UInt32 firstSet, UInt32 descriptorSetCount, DescriptorSet& descriptorSet)
 	{
 		vkCmdBindDescriptorSets(_commandBuffer, pipelineBindPoint, pipelineLayout, firstSet, descriptorSetCount,
 				descriptorSet.Get(), 0, nullptr);

@@ -342,7 +342,7 @@ namespace VulkanInitializer
 	}
 
 	VkWriteDescriptorSet
-	WriteDescriptorImage(VkDescriptorType type, VkDescriptorSet dstSet, VkDescriptorImageInfo* imageInfo, std::uint32_t binding)
+	WriteDescriptorImage(VkDescriptorType type, VkDescriptorSet dstSet, VkDescriptorImageInfo* imageInfo, Concerto::UInt32 binding)
 	{
 		{
 			VkWriteDescriptorSet write = {};

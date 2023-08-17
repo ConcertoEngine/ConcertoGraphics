@@ -25,13 +25,13 @@ namespace Concerto::Graphics
 		if (!file.is_open())
 			throw std::runtime_error("Failed to open the file " + shaderPath);
 		std::streamsize fileSize = file.tellg();
-		_buffer.resize(fileSize / sizeof(std::uint32_t));
+		_buffer.resize(fileSize / sizeof(UInt32));
 		file.seekg(0);
 		file.read(reinterpret_cast<char*>(_buffer.data()), fileSize);
 		file.close();
 		_shaderModuleCreateInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
 		_shaderModuleCreateInfo.pNext = nullptr;
-		_shaderModuleCreateInfo.codeSize = _buffer.size() * sizeof(std::uint32_t);
+		_shaderModuleCreateInfo.codeSize = _buffer.size() * sizeof(UInt32);
 		_shaderModuleCreateInfo.pCode = _buffer.data();
 	}
 

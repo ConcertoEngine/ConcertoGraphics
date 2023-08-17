@@ -41,9 +41,9 @@ namespace Concerto::Graphics
 
 		~GlfW3() override;
 
-		std::uint32_t GetWidth() final;
+		UInt32 GetWidth() final;
 
-		std::uint32_t GetHeight() final;
+		UInt32 GetHeight() final;
 
 		void SetTitle(const std::string& title) override;
 

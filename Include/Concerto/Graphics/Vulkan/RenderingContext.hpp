@@ -27,13 +27,13 @@ namespace Concerto::Graphics
 		Instance* instance;
 		PhysicalDevice* physicalDevice;
 		Device* device;
-		std::uint32_t queueFamilyIndex;
+		UInt32 queueFamilyIndex;
 		Queue* queue;
 		Pipeline* pipeline;
 		RenderPass* renderPass;
-		std::uint32_t subPass;
-		std::uint32_t minImageCount;
-		std::uint32_t imageCount;
+		UInt32 subPass;
+		UInt32 minImageCount;
+		UInt32 imageCount;
 		VkSampleCountFlagBits MSAASamples;
 		CommandBuffer* commandBuffer;
 		Fence* fence;

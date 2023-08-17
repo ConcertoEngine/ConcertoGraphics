@@ -1,6 +1,7 @@
 //
 // Created by arthur on 17/09/2022.
 //
+
 #define STB_IMAGE_IMPLEMENTATION
 
 #include <stb_image.h>
@@ -8,19 +9,21 @@
 #include "Concerto/Graphics/Vulkan/Wrapper/Buffer.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/Image.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/CommandBuffer.hpp"
-#include "Concerto/Graphics/UploadContext.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/Queue.hpp"
 #include "Concerto/Graphics/Vulkan/Utils.hpp"
+#include "Concerto/Graphics/UploadContext.hpp"
 
 namespace Concerto::Graphics
 {
-	Image::Image(Device& device, VkExtent2D extent, VkFormat depthFormat, Allocator& allocator) : Object<VkImage>(
-			device, [this](Device &device, VkImage handle)
+	Image::Image(Device& device, VkExtent2D extent, VkFormat depthFormat) :
+		Object<VkImage>(device, [this](Device &device, VkImage handle)
 			{
 				if (!_isAllocated)
 					return;
-				vmaDestroyImage(_allocator, handle, _allocation);
-			}), _imageFormat(depthFormat), _isAllocated(true), _allocator(*allocator.Get())
+				vmaDestroyImage(*device.GetAllocator().Get(), handle, _allocation);
+			}),
+		_imageFormat(depthFormat),
+		_isAllocated(true)
 	{
 		VkExtent3D depthImageExtent = {
 				extent.width,
@@ -33,21 +36,23 @@ namespace Concerto::Graphics
 		dimg_allocinfo.usage = VMA_MEMORY_USAGE_GPU_ONLY;
 		dimg_allocinfo.requiredFlags = VkMemoryPropertyFlags(VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
 
-		if (vmaCreateImage(*allocator.Get(), &dimg_info, &dimg_allocinfo, &_handle, &_allocation, nullptr) !=
+		if (vmaCreateImage(*device.GetAllocator().Get(), &dimg_info, &dimg_allocinfo, &_handle, &_allocation, nullptr) !=
 			VK_SUCCESS)
 		{
 			throw std::runtime_error("Failed to create image");
 		}
 	}
 
-	Image::Image(Device& device, const std::string& file, Allocator& allocator,
-			CommandBuffer& commandBuffer, UploadContext& uploadContext, Queue& queue) : Object<VkImage>(device, [this](Device &device, VkImage handle)
-	{
-		if (!_isAllocated)
-			return;
-		if (!IsNull())
-			vmaDestroyImage(_allocator, handle, _allocation);
-	}), _imageFormat(VK_FORMAT_R8G8B8A8_SRGB), _isAllocated(true), _allocator(*allocator.Get())
+	Image::Image(Device& device, const std::string& file, CommandBuffer& commandBuffer, UploadContext& uploadContext, Queue& queue) :
+		Object<VkImage>(device, [this](Device& device, VkImage handle)
+			{
+				if (!_isAllocated)
+					return;
+				if (!IsNull())
+					vmaDestroyImage(*device.GetAllocator().Get(), handle, _allocation);
+			}),
+		_imageFormat(VK_FORMAT_R8G8B8A8_SRGB),
+		_isAllocated(true)
 	{
 		int textureWidth, textureHeight, textureChannels;
 		stbi_uc* pixels = stbi_load(file.c_str(), &textureWidth, &textureHeight, &textureChannels, STBI_rgb_alpha);
@@ -58,10 +63,8 @@ namespace Concerto::Graphics
 
 		void* pixelPtr = pixels;
 		VkDeviceSize imageSize = textureWidth * textureHeight * 4;
-		Buffer stagingBuffer(allocator, imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-				VMA_MEMORY_USAGE_CPU_ONLY);
-		MapAndCopy(allocator, stagingBuffer, pixelPtr, imageSize);
-		stbi_image_free(pixels);
+		Buffer stagingBuffer(device.GetAllocator(), imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VMA_MEMORY_USAGE_CPU_ONLY);
+		MapAndCopy(device.GetAllocator(), stagingBuffer, pixelPtr, imageSize);
 
 		VkExtent3D imageExtent = {
 				static_cast<uint32_t>(textureWidth),
@@ -69,11 +72,11 @@ namespace Concerto::Graphics
 				1
 		};
 		VkImageCreateInfo dimg_info = VulkanInitializer::ImageCreateInfo(VK_FORMAT_R8G8B8A8_SRGB,
-				VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT, imageExtent);
+			VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT, imageExtent);
 		VmaAllocationCreateInfo dimg_allocinfo = {};
 		dimg_allocinfo.usage = VMA_MEMORY_USAGE_GPU_ONLY;
 
-		if (vmaCreateImage(*allocator.Get(), &dimg_info, &dimg_allocinfo, &_handle, &_allocation, nullptr) !=
+		if (vmaCreateImage(*device.GetAllocator().Get(), &dimg_info, &dimg_allocinfo, &_handle, &_allocation, nullptr) !=
 			VK_SUCCESS)
 		{
 			throw std::runtime_error("Failed to create image");
@@ -133,12 +136,15 @@ namespace Concerto::Graphics
 				});
 	}
 
-	Image::Image(Device& device, VkImage image, VkFormat imageFormat) : Object<VkImage>(device, [this](Device &device, VkImage handle)
-	{
-		if (!_isAllocated)
-			return;
-		vmaDestroyImage(_allocator, handle, _allocation);
-	}), _isAllocated(false), _allocator(VK_NULL_HANDLE), _imageFormat(imageFormat)
+	Image::Image(Device& device, VkImage image, VkFormat imageFormat) :
+		Object<VkImage>(device, [this](Device &device, VkImage handle)
+			{
+				if (!_isAllocated)
+					return;
+				vmaDestroyImage(*_device->GetAllocator().Get(), handle, _allocation);
+			}),
+		_isAllocated(false),
+		_imageFormat(imageFormat)
 	{
 		_handle = image;
 	}

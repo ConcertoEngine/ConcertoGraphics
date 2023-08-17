@@ -7,6 +7,7 @@
 
 #include <imgui.h>
 #include <Concerto/Core/Types.hpp>
+
 #include "Concerto/Graphics/Vulkan/RenderingContext.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/DescriptorPool.hpp"
 

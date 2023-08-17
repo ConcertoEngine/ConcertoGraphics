@@ -20,7 +20,7 @@ namespace Concerto::Graphics
 	{
 		if (_queueFamilyProperties)
 			return _queueFamilyProperties.value();
-		std::uint32_t queueFamilyCount = 0;
+		UInt32 queueFamilyCount = 0;
 		vkGetPhysicalDeviceQueueFamilyProperties(_physicalDevice, &queueFamilyCount, nullptr);
 		std::vector<VkQueueFamilyProperties> queueFamilyProperties(queueFamilyCount);
 		vkGetPhysicalDeviceQueueFamilyProperties(_physicalDevice, &queueFamilyCount, queueFamilyProperties.data());
@@ -93,7 +93,7 @@ namespace Concerto::Graphics
 	{
 		if (_extensionProperties)
 			return _extensionProperties.value();
-		std::uint32_t extensionCount = 0;
+		UInt32 extensionCount = 0;
 		vkEnumerateDeviceExtensionProperties(_physicalDevice, nullptr, &extensionCount, nullptr);
 		std::vector<VkExtensionProperties> extensions(extensionCount);
 		vkEnumerateDeviceExtensionProperties(_physicalDevice, nullptr, &extensionCount, extensions.data());
@@ -138,7 +138,7 @@ namespace Concerto::Graphics
 		if (_formats)
 			return _formats.value();
 		assert(_surface != VK_NULL_HANDLE);
-		std::uint32_t formatCount = 0;
+		UInt32 formatCount = 0;
 		vkGetPhysicalDeviceSurfaceFormatsKHR(_physicalDevice, _surface, &formatCount, nullptr);
 		std::vector<VkSurfaceFormatKHR> formats(formatCount);
 		vkGetPhysicalDeviceSurfaceFormatsKHR(_physicalDevice, _surface, &formatCount, formats.data());
@@ -150,7 +150,7 @@ namespace Concerto::Graphics
 	{
 		if (_presentModes)
 			return _presentModes.value();
-		std::uint32_t count = 0;
+		UInt32 count = 0;
 		vkGetPhysicalDeviceSurfacePresentModesKHR(_physicalDevice, _surface, &count, nullptr);
 		std::vector<VkPresentModeKHR> modes(count);
 		vkGetPhysicalDeviceSurfacePresentModesKHR(_physicalDevice, _surface, &count, modes.data());

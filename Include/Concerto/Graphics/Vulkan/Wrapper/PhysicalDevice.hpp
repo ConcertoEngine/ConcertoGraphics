@@ -37,9 +37,13 @@ namespace Concerto::Graphics
 		PhysicalDevice() = default;
 
 		explicit PhysicalDevice(VkPhysicalDevice physicalDevice);
+
 		PhysicalDevice(const PhysicalDevice&) = delete;
+		
 		PhysicalDevice(PhysicalDevice&&) noexcept;
+		
 		PhysicalDevice& operator=(const PhysicalDevice&) = delete;
+		
 		PhysicalDevice& operator=(PhysicalDevice&&) noexcept;
 
 		/**

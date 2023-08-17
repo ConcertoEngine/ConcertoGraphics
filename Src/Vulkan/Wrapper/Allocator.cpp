@@ -1,10 +1,10 @@
 //
 // Created by arthur on 21/06/2022.
 //
-
 #include <cassert>
 #include <stdexcept>
-
+#define VMA_IMPLEMENTATION
+#define VMA_STATIC_VULKAN_FUNCTIONS 0
 #include "Concerto/Graphics/Vulkan/wrapper/Allocator.hpp"
 #include "Concerto/Graphics/Vulkan/wrapper/Instance.hpp"
 #include "Concerto/Graphics/Vulkan/wrapper/PhysicalDevice.hpp"
@@ -12,11 +12,12 @@
 
 namespace Concerto::Graphics
 {
-	Allocator::Allocator(PhysicalDevice& physicalDevice, Device& device, Instance& instance) : Object<VmaAllocator>(
-			device, [](Device &device, VmaAllocator handle)
+	Allocator::Allocator(PhysicalDevice& physicalDevice, Device& device, Instance& instance) :
+		Object<VmaAllocator>(device, [](Device &device, VmaAllocator handle)
 			{
 				vmaDestroyAllocator(handle);
-			}), _device(&device)
+			}),
+		_device(&device)
 	{
 		VmaAllocatorCreateInfo allocatorInfo = {};
 		allocatorInfo.physicalDevice = *physicalDevice.Get();

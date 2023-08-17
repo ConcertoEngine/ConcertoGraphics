@@ -6,6 +6,7 @@
 #define ENGINE_VULKANINITIALIZER_HPP
 
 #include <vulkan/vulkan.hpp>
+#include <Concerto/Core/Types.hpp>
 
 namespace VulkanInitializer
 {
@@ -33,7 +34,7 @@ namespace VulkanInitializer
 	VkCommandBufferBeginInfo CommandBufferBeginInfo(VkCommandBufferUsageFlags flags = 0);
 	VkSamplerCreateInfo SamplerCreateInfo(VkFilter filter, VkSamplerAddressMode samplerAddressMode = VK_SAMPLER_ADDRESS_MODE_REPEAT);
 
-	VkWriteDescriptorSet WriteDescriptorImage(VkDescriptorType type, VkDescriptorSet pT, VkDescriptorImageInfo* pInfo, std::uint32_t i);
+	VkWriteDescriptorSet WriteDescriptorImage(VkDescriptorType type, VkDescriptorSet pT, VkDescriptorImageInfo* pInfo, Concerto::UInt32 i);
 };
 
 

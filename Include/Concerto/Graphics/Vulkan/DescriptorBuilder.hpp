@@ -22,8 +22,8 @@ namespace Concerto::Graphics
 	 public:
 		DescriptorBuilder(DescriptorLayoutCache& layoutCache, DescriptorAllocator& allocator);
 
-		DescriptorBuilder& BindBuffer(std::uint32_t binding, VkDescriptorBufferInfo* bufferInfo, VkDescriptorType type, VkShaderStageFlags stageFlags);
-		DescriptorBuilder& BindImage(std::uint32_t binding, VkDescriptorImageInfo* imageInfo, VkDescriptorType type, VkShaderStageFlags stageFlags);
+		DescriptorBuilder& BindBuffer(UInt32 binding, VkDescriptorBufferInfo* bufferInfo, VkDescriptorType type, VkShaderStageFlags stageFlags);
+		DescriptorBuilder& BindImage(UInt32 binding, VkDescriptorImageInfo* imageInfo, VkDescriptorType type, VkShaderStageFlags stageFlags);
 
 		bool Build(DescriptorSetPtr& set, DescriptorSetLayoutPtr& layout);
 		bool Build(DescriptorSetPtr& set);

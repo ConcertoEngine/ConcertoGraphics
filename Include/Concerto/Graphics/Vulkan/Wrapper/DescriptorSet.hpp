@@ -15,15 +15,10 @@
 namespace Concerto::Graphics
 {
 	class DescriptorPool;
-
 	class DescriptorSetLayout;
-
 	class Sampler;
-
 	class ImageView;
-
 	class Device;
-
 
 	/**
 	* @class DescriptorSet

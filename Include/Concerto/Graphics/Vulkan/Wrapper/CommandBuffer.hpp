@@ -105,8 +105,8 @@ namespace Concerto::Graphics
 		 * @param dynamicOffsets The dynamic offset value for each descriptor set.
 		 */
 		void BindDescriptorSets(VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout pipelineLayout,
-				std::uint32_t firstSet, std::uint32_t descriptorSetCount, DescriptorSet& descriptorSet,
-				std::uint32_t dynamicOffsets);
+				UInt32 firstSet, UInt32 descriptorSetCount, DescriptorSet& descriptorSet,
+				UInt32 dynamicOffsets);
 
 		/**
 		 * @brief Binds descriptor sets to the command buffer.
@@ -117,7 +117,7 @@ namespace Concerto::Graphics
 		 * @param descriptorSet The DescriptorSet object to bind.
 		 */
 		void BindDescriptorSets(VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout pipelineLayout,
-				std::uint32_t firstSet, std::uint32_t descriptorSetCount, DescriptorSet& descriptorSet);
+				UInt32 firstSet, UInt32 descriptorSetCount, DescriptorSet& descriptorSet);
 
 		/**
 		 * @brief Binds vertex buffers to the command buffer.
@@ -146,8 +146,8 @@ namespace Concerto::Graphics
 		 * @param firstVertex The index of the first vertex to draw.
 		 * @param firstInstance The instance ID of the first instance to draw.
 		 */
-		void Draw(std::uint32_t vertexCount, std::uint32_t instanceCount, std::uint32_t firstVertex,
-				std::uint32_t firstInstance);
+		void Draw(UInt32 vertexCount, UInt32 instanceCount, UInt32 firstVertex,
+				UInt32 firstInstance);
 
 		/**
 		 * @brief Draws indexed vertex data on the command buffer.
@@ -156,7 +156,7 @@ namespace Concerto::Graphics
 		 * @param drawCount The number of draws to perform.
 		 * @param stride The stride between each draw.
 		 */
-		void DrawIndirect(Buffer& buffer, std::uint32_t offset, std::uint32_t drawCount, std::uint32_t stride);
+		void DrawIndirect(Buffer& buffer, UInt32 offset, UInt32 drawCount, UInt32 stride);
 
 		/**
 		 * @brief Submits the command buffer to the queue, and waits for the fence to signal.

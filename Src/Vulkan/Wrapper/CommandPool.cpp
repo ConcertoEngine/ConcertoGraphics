@@ -11,7 +11,7 @@
 
 namespace Concerto::Graphics
 {
-	CommandPool::CommandPool(Device& device, std::uint32_t queueFamily) : Object<VkCommandPool>(device,
+	CommandPool::CommandPool(Device& device, UInt32 queueFamily) : Object<VkCommandPool>(device,
 			[](Device &device, VkCommandPool handle)
 			{
 				vkDestroyCommandPool(*device.Get(), handle, nullptr);

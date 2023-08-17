@@ -60,14 +60,14 @@ namespace Concerto::Graphics
 		else glfwSetInputMode(_window.get(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 	}
 
-	std::uint32_t GlfW3::GetHeight()
+	UInt32 GlfW3::GetHeight()
 	{
 		int w, h;
 		glfwGetWindowSize(_window.get(), &w, &h);
 		return h;
 	}
 
-	std::uint32_t GlfW3::GetWidth()
+	UInt32 GlfW3::GetWidth()
 	{
 		int w, h;
 		glfwGetWindowSize(_window.get(), &w, &h);

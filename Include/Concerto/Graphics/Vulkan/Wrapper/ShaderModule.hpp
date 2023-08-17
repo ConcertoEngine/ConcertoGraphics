@@ -45,7 +45,7 @@ namespace Concerto::Graphics
 		void createShaderModule();
 
 		VkShaderModuleCreateInfo _shaderModuleCreateInfo{};
-		std::vector<std::uint32_t> _buffer;
+		std::vector<UInt32> _buffer;
 	};
 }
 

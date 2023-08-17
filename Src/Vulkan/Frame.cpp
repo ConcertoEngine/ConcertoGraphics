@@ -11,7 +11,7 @@
 namespace Concerto::Graphics
 {
 	using namespace Concerto::Graphics;
-	Graphics::FrameData::FrameData(Device& device, Allocator& allocator, std::uint32_t queueFamily,
+	Graphics::FrameData::FrameData(Device& device, Allocator& allocator, UInt32 queueFamily,
 			DescriptorPool& pool, DescriptorSetLayout& globalDescriptorSetLayout,
 			DescriptorSetLayout& objectDescriptorSetLayout, Buffer& sceneParameterBuffer,
 			bool signaled) : _presentSemaphore(device),

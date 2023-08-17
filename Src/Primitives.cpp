@@ -11,12 +11,12 @@
 namespace Concerto::Graphics
 {
 
-	Vertices Primitive::MakeCone(float radius, float height, std::uint32_t slices)
+	Vertices Primitive::MakeCone(float radius, float height, UInt32 slices)
 	{
 		Vertices vertices;
 		const float angleStep = 2.0f * Math::Pi<float> / static_cast<float>(slices);
 		const glm::vec3 baseCenter(0.0f, -0.5f * height, 0.0f);
-		for (std::uint32_t i = 0; i < slices; ++i)
+		for (UInt32 i = 0; i < slices; ++i)
 		{
 			const float angle = static_cast<float>(i) * angleStep;
 			const glm::vec3 baseVertex(radius * std::cos(angle), -0.5f * height, radius * std::sin(angle));
@@ -31,7 +31,7 @@ namespace Concerto::Graphics
 
 		const std::size_t baseIndexOffset = 0;
 		const std::size_t tipIndex = vertices.size() - 1;
-		for (std::uint32_t i = 0; i < slices; ++i)
+		for (UInt32 i = 0; i < slices; ++i)
 		{
 			const std::size_t j = (i + 1) % slices;
 			const std::size_t baseIndex1 = baseIndexOffset + i;
@@ -86,7 +86,7 @@ namespace Concerto::Graphics
 				{ 1.0f, 1.0f },
 				{ 0.0f, 1.0f }
 			};
-		const std::uint32_t indices[36] =
+		const UInt32 indices[36] =
 			{
 				0, 1, 2, 2, 1, 3,
 				4, 6, 5, 5, 6, 7,
@@ -105,7 +105,7 @@ namespace Concerto::Graphics
 		return vertices;
 	}
 
-	Vertices Primitive::MakeSphere(float radius, std::uint32_t slices, std::uint32_t stacks)
+	Vertices Primitive::MakeSphere(float radius, UInt32 slices, UInt32 stacks)
 	{
 		Vertices vertices;
 
@@ -117,12 +117,12 @@ namespace Concerto::Graphics
 
 		const float phiStep = Math::Pi<float> / static_cast<float>(stacks + 1);
 		const float thetaStep = 2.0f * Math::Pi<float> / static_cast<float>(slices);
-		for (std::uint32_t i = 1; i <= stacks; ++i)
+		for (UInt32 i = 1; i <= stacks; ++i)
 		{
 			const float phi = static_cast<float>(i) * phiStep;
 			const float cosPhi = std::cos(phi);
 			const float sinPhi = std::sin(phi);
-			for (std::uint32_t j = 0; j < slices; ++j)
+			for (UInt32 j = 0; j < slices; ++j)
 			{
 				const float theta = static_cast<float>(j) * thetaStep;
 				const float cosTheta = std::cos(theta);
@@ -135,7 +135,7 @@ namespace Concerto::Graphics
 			}
 		}
 
-		for (std::uint32_t i = 0; i < slices; ++i)
+		for (UInt32 i = 0; i < slices; ++i)
 		{
 			const std::size_t j = (i + 1) % slices;
 			const std::size_t index1 = 0;
@@ -148,9 +148,9 @@ namespace Concerto::Graphics
 			vertices.push_back({ vertices[index3].position, vertices[index3].normal, glm::vec3(1.0f, 1.0f, 1.0f),
 								 glm::vec2(0.0f, 0.0f) });
 		}
-		for (std::uint32_t i = 0; i < stacks - 1; ++i)
+		for (UInt32 i = 0; i < stacks - 1; ++i)
 		{
-			for (std::uint32_t j = 0; j < slices; ++j)
+			for (UInt32 j = 0; j < slices; ++j)
 			{
 				const std::size_t index1 = 2 + i * slices + j;
 				const std::size_t index2 = index1 + slices;
@@ -171,7 +171,7 @@ namespace Concerto::Graphics
 			}
 		}
 
-		for (std::uint32_t i = 0; i < slices; ++i)
+		for (UInt32 i = 0; i < slices; ++i)
 		{
 			const std::size_t j = (i + 1) % slices;
 			const std::size_t index1 = 1;
@@ -188,7 +188,7 @@ namespace Concerto::Graphics
 		return vertices;
 	}
 
-	Vertices Primitive::MakeCylinder(float radius, float height, std::uint32_t slices)
+	Vertices Primitive::MakeCylinder(float radius, float height, UInt32 slices)
 	{
 		const float step = glm::two_pi<float>() / slices;
 
@@ -201,7 +201,7 @@ namespace Concerto::Graphics
 		vertices.push_back({ bottom_center, glm::normalize(glm::vec3(0.0f, -1.0f, 0.0f)), glm::vec3(1.0f, 1.0f, 1.0f),
 							 glm::vec2(0.5f, 0.5f) });
 
-		for (std::uint32_t i = 0; i < slices; ++i)
+		for (UInt32 i = 0; i < slices; ++i)
 		{
 			const float x = radius * std::cos(i * step);
 			const float z = radius * std::sin(i * step);
@@ -215,7 +215,7 @@ namespace Concerto::Graphics
 								 glm::vec2(static_cast<float>(i) / slices, 0.0f) });
 		}
 
-		for (std::uint32_t i = 0; i < slices; ++i)
+		for (UInt32 i = 0; i < slices; ++i)
 		{
 			const std::size_t j = (i + 1) % slices;
 			const std::size_t index1 = 0;
@@ -229,7 +229,7 @@ namespace Concerto::Graphics
 								 glm::vec2(0.5f + 0.5f * std::cos(i * step), 0.5f + 0.5f * std::sin(i * step)) });
 		}
 
-		for (std::uint32_t i = 0; i < slices; ++i)
+		for (UInt32 i = 0; i < slices; ++i)
 		{
 			const std::size_t j = (i + 1) % slices;
 			const std::size_t top_index1 = 1;

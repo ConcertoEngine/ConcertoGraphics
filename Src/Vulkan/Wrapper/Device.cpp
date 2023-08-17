@@ -1,16 +1,20 @@
 //
 // Created by arthur on 25/10/2022.
 //
-
 #include <cassert>
 #include <stdexcept>
 
 #include "Concerto/Graphics/Vulkan/Wrapper/Device.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/PhysicalDevice.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Instance.hpp"
 
 namespace Concerto::Graphics
 {
-	Device::Device(PhysicalDevice& physicalDevice, std::span<const char*> extentions) : _physicalDevice(&physicalDevice), _device(VK_NULL_HANDLE)
+	std::vector<const char*> deviceExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
+	Device::Device(PhysicalDevice& physicalDevice, Instance& instance) :
+		_physicalDevice(&physicalDevice),
+		_device(VK_NULL_HANDLE),
+		_allocator(physicalDevice, *this, instance)
 	{
 		std::span<VkQueueFamilyProperties> queueFamilyProperties = _physicalDevice->GetQueueFamilyProperties();
 		std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
@@ -48,16 +52,16 @@ namespace Concerto::Graphics
 		createInfo.queueCreateInfoCount = queueCreateInfos.size();
 		createInfo.pEnabledFeatures = &deviceFeatures;
 		createInfo.pNext = &shader_draw_parameters_features;
-		createInfo.enabledExtensionCount = extentions.size();
-		createInfo.ppEnabledExtensionNames = extentions.data();
+		createInfo.enabledExtensionCount = deviceExtensions.size();
+		createInfo.ppEnabledExtensionNames = deviceExtensions.data();
 		if (vkCreateDevice(*_physicalDevice->Get(), &createInfo, nullptr, &_device) != VK_SUCCESS)
 			throw std::runtime_error("failed to create logical device!");
 	}
 
-	std::uint32_t Device::GetQueueFamilyIndex(Queue::Type queueType)
+	UInt32 Device::GetQueueFamilyIndex(Queue::Type queueType)
 	{
 		std::span<VkQueueFamilyProperties> queueFamilyProperties = _physicalDevice->GetQueueFamilyProperties();
-		std::uint32_t i = 0;
+		UInt32 i = 0;
 		for (VkQueueFamilyProperties properties: queueFamilyProperties)
 		{
 			if (properties.queueFlags & VK_QUEUE_GRAPHICS_BIT && queueType == Queue::Type::Graphics)
@@ -71,10 +75,10 @@ namespace Concerto::Graphics
 		throw std::runtime_error("No queue family found");
 	}
 
-	std::uint32_t Device::GetQueueFamilyIndex(std::uint32_t flag)
+	UInt32 Device::GetQueueFamilyIndex(UInt32 flag)
 	{
 		std::span<VkQueueFamilyProperties> queueFamilyProperties = _physicalDevice->GetQueueFamilyProperties();
-		std::uint32_t i = 0;
+		UInt32 i = 0;
 		for (VkQueueFamilyProperties properties: queueFamilyProperties)
 		{
 			if (properties.queueFlags == flag && flag & VK_QUEUE_GRAPHICS_BIT)
@@ -104,6 +108,16 @@ namespace Concerto::Graphics
 		auto res = vkDeviceWaitIdle(_device);
 		if (res != VK_SUCCESS)
 			throw std::runtime_error("Failed to Wait for device idle" + std::to_string(res));
+	}
+
+	PhysicalDevice& Device::GetPhysicalDevice()
+	{
+		return *_physicalDevice;
+	}
+
+	Allocator& Device::GetAllocator()
+	{
+		return _allocator;
 	}
 
 } // Concerto::Graphics::Wrapper

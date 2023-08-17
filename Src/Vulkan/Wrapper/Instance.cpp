@@ -89,7 +89,7 @@ namespace Concerto::Graphics
 	{
 		if (_physicalDevices)
 			return _physicalDevices.value();
-		std::uint32_t deviceCount = 0;
+		UInt32 deviceCount = 0;
 		_lastResult = vkEnumeratePhysicalDevices(_instance, &deviceCount, nullptr);
 		if (_lastResult != VK_SUCCESS)
 		{

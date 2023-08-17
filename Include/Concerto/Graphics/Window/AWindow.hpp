@@ -50,12 +50,12 @@ namespace Concerto::Graphics
 		/**
 		 * @return The width of the Window
 		 */
-		virtual std::uint32_t GetWidth() = 0;
+		virtual UInt32 GetWidth() = 0;
 
 		/**
 		 * @return The height of the Window
 		 */
-		virtual std::uint32_t GetHeight() = 0;
+		virtual UInt32 GetHeight() = 0;
 		/**
 		 * @return The Window clear color
 		 */

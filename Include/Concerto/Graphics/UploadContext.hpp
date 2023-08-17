@@ -16,7 +16,7 @@ namespace Concerto::Graphics
 	{
 		UploadContext() = delete;
 
-		UploadContext(Device& device, std::uint32_t queueFamily) : _uploadFence(device, false),
+		UploadContext(Device& device, UInt32 queueFamily) : _uploadFence(device, false),
 																			_commandPool(
 																					device,
 																					queueFamily),

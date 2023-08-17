@@ -41,7 +41,7 @@ namespace Concerto::Graphics
 		* @param device The device that the queue will be associated with.
 		* @param queueFamilyIndex The index of the queue family that the queue will be associated with.
 		*/
-		explicit Queue(Device& device, std::uint32_t queueFamilyIndex);
+		explicit Queue(Device& device, UInt32 queueFamilyIndex);
 
 		Queue(Queue&&) = default;
 
@@ -56,7 +56,7 @@ namespace Concerto::Graphics
 		*
 		* @return The index of the queue family.
 		*/
-		[[nodiscard]] std::uint32_t GetFamilyIndex() const;
+		[[nodiscard]] UInt32 GetFamilyIndex() const;
 
 		/**
 		* @brief Submits a set of commands to the queue for execution.
@@ -74,10 +74,10 @@ namespace Concerto::Graphics
 		*
 		* @return true if the presentation was successful, false otherwise.
 		*/
-		bool Present(const FrameData& frame, Swapchain& swapchain, std::uint32_t swapchainImageIndex);
+		bool Present(const FrameData& frame, Swapchain& swapchain, UInt32 swapchainImageIndex);
 
 	 private:
-		std::uint32_t _queueFamilyIndex;
+		UInt32 _queueFamilyIndex;
 	};
 } // namespace Concerto::Graphics
 

@@ -14,11 +14,10 @@
 #include <Concerto/Core/Types.hpp>
 
 #include "Concerto/Graphics/Version.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/PhysicalDevice.hpp"
 
 namespace Concerto::Graphics
 {
-	class PhysicalDevice;
-
 	/**
 	* @class Instance
 	*

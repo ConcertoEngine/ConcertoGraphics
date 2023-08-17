@@ -15,7 +15,7 @@ namespace Concerto::Graphics
 
 	}
 
-	DescriptorBuilder& DescriptorBuilder::BindBuffer(std::uint32_t binding,
+	DescriptorBuilder& DescriptorBuilder::BindBuffer(UInt32 binding,
 		VkDescriptorBufferInfo* bufferInfo,
 		VkDescriptorType type,
 		VkShaderStageFlags stageFlags)
@@ -43,7 +43,7 @@ namespace Concerto::Graphics
 		return *this;
 	}
 
-	DescriptorBuilder& DescriptorBuilder::BindImage(std::uint32_t binding,
+	DescriptorBuilder& DescriptorBuilder::BindImage(UInt32 binding,
 		VkDescriptorImageInfo* imageInfo,
 		VkDescriptorType type,
 		VkShaderStageFlags stageFlags)

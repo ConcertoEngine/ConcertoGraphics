@@ -12,10 +12,12 @@
 #include <Concerto/Core/Types.hpp>
 
 #include "Concerto/Graphics/Vulkan/Wrapper/Queue.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Allocator.hpp"
 
 namespace Concerto::Graphics
 {
 	class PhysicalDevice;
+	class Instance;
 
 	/**
 	* @class Device
@@ -26,7 +28,7 @@ namespace Concerto::Graphics
 	class CONCERTO_PUBLIC_API Device
 	{
 	public:
-		Device() = default;
+		Device() = delete;
 
 		/**
 		* @brief Constructs a new device from a physical device and a list of extensions.
@@ -34,7 +36,7 @@ namespace Concerto::Graphics
 		* @param physicalDevice The physical device to create the device on.
 		* @param extensions The list of extensions to enable for the device.
 		*/
-		explicit Device(PhysicalDevice& physicalDevice, std::span<const char*> extensions);
+		Device(PhysicalDevice& physicalDevice, Instance& instance);
 
 		/**
 		* @brief Retrieves the queue family index for a given queue type.
@@ -43,7 +45,7 @@ namespace Concerto::Graphics
 		*
 		* @return The index of the queue family for the given queue type.
 		*/
-		std::uint32_t GetQueueFamilyIndex(Queue::Type queueType);
+		UInt32 GetQueueFamilyIndex(Queue::Type queueType);
 
 		/**
 		* @brief Retrieves the queue family index for a given queue flag.
@@ -52,7 +54,7 @@ namespace Concerto::Graphics
 		*
 		* @return The index of the queue family for the given queue flag.
 		*/
-		std::uint32_t GetQueueFamilyIndex(std::uint32_t queueFlag);
+		UInt32 GetQueueFamilyIndex(UInt32 queueFlag);
 
 		/**
 		* @brief Retrieves a queue of a given type.
@@ -75,9 +77,15 @@ namespace Concerto::Graphics
 		*/
 		void WaitIdle() const;
 
+
+		PhysicalDevice& GetPhysicalDevice();
+
+		Allocator& GetAllocator();
+
 	private:
 		PhysicalDevice* _physicalDevice;
 		VkDevice _device;
+		Allocator _allocator;
 	};
 
 } // Concerto::Graphics::Wrapper
