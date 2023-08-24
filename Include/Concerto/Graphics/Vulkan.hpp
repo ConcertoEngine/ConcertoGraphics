@@ -46,6 +46,8 @@ namespace Concerto::Graphics
 		static Vulkan* GetInstance();
 		
 		Device* CreateDevice(DeviceType type = DeviceType::Dedicated);
+		
+		Instance& GetVkInstance();
 
 	private:
 		static Vulkan* _instance;

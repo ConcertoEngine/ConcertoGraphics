@@ -28,8 +28,7 @@ namespace Concerto::Graphics
 	class CONCERTO_PUBLIC_API PipelineLayout : public Object<VkPipelineLayout>
 	{
 	public:
-		PipelineLayout(Device& device, std::size_t size,
-				const std::vector<std::reference_wrapper<DescriptorSetLayout>>& descriptorSetLayouts);
+		PipelineLayout(Device& device, const std::vector<VkDescriptorSetLayout>& descriptorSetLayouts);
 
 		PipelineLayout(PipelineLayout&&) = default;
 
@@ -39,13 +38,6 @@ namespace Concerto::Graphics
 
 		PipelineLayout& operator=(const PipelineLayout&) = delete;
 	};
-
-	template<typename T>
-	PipelineLayout makePipelineLayout(Device& device,
-			const std::vector<std::reference_wrapper<DescriptorSetLayout>>& descriptorSetLayouts)
-	{
-		return { device, sizeof(T), descriptorSetLayouts };
-	}
 } // Concerto::Graphics::Wrapper
 
 #endif //CONCERTOGRAPHICS_PIPELINELAYOUT_HPP

@@ -12,6 +12,7 @@
 #include "Concerto/Graphics/Vulkan/Wrapper/Device.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/Sampler.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/ImageView.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/VulkanInitializer.hpp"
 
 namespace Concerto::Graphics
 {

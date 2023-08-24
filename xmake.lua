@@ -1,7 +1,8 @@
 add_rules('mode.debug')
 add_repositories('Concerto-xrepo https://github.com/ConcertoEngine/xmake-repo.git main')
+add_repositories("nazara-repo https://github.com/NazaraEngine/xmake-repo")
 add_requires('imgui', {configs = {glfw_vulkan = true}})
-add_requireconfs("**.vulkan-headers", {override = true, version = "1.3.246"})
+add_requires("nzsl")
 
 if (has_config('examples')) then
     add_requires("glslang", {configs = {binaryonly = true}})
@@ -36,9 +37,10 @@ target('ConcertoGraphics')
     set_languages('cxx20')
     add_files('Src/**.cpp')
     AddIncludesToTarget({'Include/', 'Include/Concerto/', 'Include/Concerto/Graphics', 'Include/Concerto/Graphics/thirdParty', 'Include/Concerto/Graphics/window', 'Include/Concerto/Graphics/Vulkan/Wrapper', 'Include/Concerto/Graphics/Vulkan'})
-    add_headerfiles('Include/(Concerto/Graphics/*.hpp)', 'Include/(ConcertoGraphics/thirdParty/**.h)', 'Include/(Concerto/Graphics/Window/**.hpp)', 'Include/(Concerto/Graphics/Vulkan/Wrapper/*.hpp)', 'Include/(Concerto/Graphics/Vulkan/*.hpp)', 'Include/(Concerto/Graphics/Vulkan/Wrapper/*.inl)')
+    add_headerfiles('Include/(Concerto/Graphics/*.hpp)', 'Include/(Concerto/Graphics/thirdParty/*.h)', 'Include/(Concerto/Graphics/Window/*.hpp)', 'Include/(Concerto/Graphics/Vulkan/Wrapper/*.hpp)', 'Include/(Concerto/Graphics/Vulkan/*.hpp)', 'Include/(Concerto/Graphics/Vulkan/Wrapper/*.inl)')
     add_packages('imgui', { public = true })
     add_packages('ConcertoCore', 'vulkan-loader', 'vulkan-memory-allocator', 'glm', 'stb', 'glfw', { public = true })
+    add_packages('nzsl', { public = true })
 
 includes('Xmake/Rules/*.lua')
 includes('Examples/xmake.lua')

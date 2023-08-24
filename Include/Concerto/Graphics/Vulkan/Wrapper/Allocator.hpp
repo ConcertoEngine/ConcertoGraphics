@@ -13,9 +13,7 @@
 namespace Concerto::Graphics
 {
 	class Instance;
-
 	class PhysicalDevice;
-
 	class Device;
 
 	/**

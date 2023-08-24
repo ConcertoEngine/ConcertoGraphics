@@ -5,8 +5,10 @@
 #include <cassert>
 
 #include "Concerto/Graphics/Vulkan/Wrapper/Queue.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Swapchain.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/CommandBuffer.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/Device.hpp"
+#include "Concerto/Graphics/Frame.hpp"
 
 namespace Concerto::Graphics
 {

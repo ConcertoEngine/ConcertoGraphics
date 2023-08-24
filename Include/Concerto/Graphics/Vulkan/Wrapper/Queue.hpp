@@ -7,13 +7,13 @@
 
 #include <Concerto/Core/Types.hpp>
 
-#include "Concerto/Graphics/Frame.hpp"
-#include "Concerto/Graphics/Vulkan/Wrapper/Swapchain.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/Object.hpp"
 
 namespace Concerto::Graphics
 {
 	class Device;
+	class Swapchain;
+	class FrameData;
 
 	/**
 	* @class Queue

@@ -13,7 +13,6 @@ namespace Concerto::Graphics
 {
 	class Device;
 
-
 	/**
 	 * @brief `Object` is a template class that represents a Vulkan object.
 	 * This class is intended to be used as a base class for representing specific types of Vulkan objects.
@@ -27,7 +26,7 @@ namespace Concerto::Graphics
 		/**
 		 * @brief Default constructor.
 		 * @attention If you need to clean up the object by calling a Vulkan function, you mustn't use this constructor.
-		 */
+		*/
 		explicit Object(Device& device);
 
 		/**

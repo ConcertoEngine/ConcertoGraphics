@@ -10,16 +10,17 @@
 #include <vulkan/vulkan.h>
 #include <Concerto/Core/Types.hpp>
 
-#include "Concerto/Graphics/Vulkan/Wrapper/Pipeline.hpp"
-#include "Concerto/Graphics/Vulkan/Wrapper/Buffer.hpp"
-#include "Concerto/Graphics/Vulkan/Wrapper/PipelineLayout.hpp"
-#include "Concerto/Graphics/Vulkan/Wrapper/CommandPool.hpp"
-#include "Concerto/Graphics/Vulkan/Wrapper/Queue.hpp"
-#include "Concerto/Graphics/Vulkan/Utils.hpp"
-
 namespace Concerto::Graphics
 {
 	class Device;
+	class Fence;
+	class Pipeline;
+	class PipelineLayout;
+	class CommandPool;
+	class Queue;
+	class Buffer;
+	class MeshPushConstants;
+	class DescriptorSet;
 
 	/**
 	 * @class CommandBuffer

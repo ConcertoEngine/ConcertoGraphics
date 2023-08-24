@@ -10,7 +10,7 @@ namespace VulkanInitializer
 	VkPipelineShaderStageCreateInfo
 	PipelineShaderStageCreateInfo(VkShaderStageFlagBits stage, VkShaderModule shaderModule)
 	{
-		VkPipelineShaderStageCreateInfo info{};
+		VkPipelineShaderStageCreateInfo info = {};
 		info.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
 		info.pNext = nullptr;
 		info.stage = stage;
@@ -21,7 +21,7 @@ namespace VulkanInitializer
 
 	VkPipelineVertexInputStateCreateInfo VertexInputStateCreateInfo()
 	{
-		VkPipelineVertexInputStateCreateInfo info{};
+		VkPipelineVertexInputStateCreateInfo info = {};
 		info.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
 		info.pNext = nullptr;
 		info.vertexBindingDescriptionCount = 0;
@@ -62,7 +62,7 @@ namespace VulkanInitializer
 
 	VkPipelineMultisampleStateCreateInfo MultisamplingStateCreateInfo()
 	{
-		VkPipelineMultisampleStateCreateInfo info{};
+		VkPipelineMultisampleStateCreateInfo info = {};
 
 		info.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
 		info.pNext = nullptr;
@@ -79,7 +79,7 @@ namespace VulkanInitializer
 
 	VkPipelineColorBlendAttachmentState ColorBlendAttachmentState()
 	{
-		VkPipelineColorBlendAttachmentState colorBlendAttachment{};
+		VkPipelineColorBlendAttachmentState colorBlendAttachment = {};
 		colorBlendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT |
 											  VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
 		colorBlendAttachment.blendEnable = VK_FALSE;
@@ -88,7 +88,7 @@ namespace VulkanInitializer
 
 	VkPipelineLayoutCreateInfo PipelineLayoutCreateInfo()
 	{
-		VkPipelineLayoutCreateInfo info{};
+		VkPipelineLayoutCreateInfo info = {};
 
 		info.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
 		info.pNext = nullptr;

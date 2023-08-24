@@ -11,7 +11,7 @@
 namespace Concerto::Graphics
 {
 	using namespace Concerto::Graphics;
-	Graphics::FrameData::FrameData(Device& device, Allocator& allocator, UInt32 queueFamily,
+	Graphics::FrameData::FrameData(Device& device, UInt32 queueFamily,
 			DescriptorPool& pool, DescriptorSetLayout& globalDescriptorSetLayout,
 			DescriptorSetLayout& objectDescriptorSetLayout, Buffer& sceneParameterBuffer,
 			bool signaled) : _presentSemaphore(device),
@@ -19,15 +19,15 @@ namespace Concerto::Graphics
 							 _renderSemaphore(device),
 							 _renderFence(device, signaled),
 							 _mainCommandBuffer(std::make_unique<CommandBuffer>(device, *_commandPool->Get())),
-							 _cameraBuffer(MakeBuffer<GPUCamera>(allocator,
+							 _cameraBuffer(MakeBuffer<GPUCamera>(device.GetAllocator(),
 								 VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
 								 VMA_MEMORY_USAGE_CPU_TO_GPU)),
 							 globalDescriptor(device, pool, globalDescriptorSetLayout),
-							 _objectBuffer(MakeBuffer<GPUObjectData>(allocator, MAX_OBJECTS,
+							 _objectBuffer(MakeBuffer<GPUObjectData>(device.GetAllocator(), MAX_OBJECTS,
 								 VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
 								 VMA_MEMORY_USAGE_CPU_TO_GPU)),
 							 objectDescriptor(device, pool, objectDescriptorSetLayout),
-							 _indirectBuffer(MakeBuffer<VkDrawIndirectCommand>(allocator,
+							 _indirectBuffer(MakeBuffer<VkDrawIndirectCommand>(device.GetAllocator(),
 								 MAX_OBJECTS,
 								 VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT |  VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT,
 								 VMA_MEMORY_USAGE_CPU_TO_GPU))

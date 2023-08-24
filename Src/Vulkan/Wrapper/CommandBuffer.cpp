@@ -6,9 +6,16 @@
 #include <stdexcept>
 #include <utility>
 
-#include "Concerto/Graphics/Vulkan/wrapper/CommandBuffer.hpp"
-#include "Concerto/Graphics/Vulkan/wrapper/Device.hpp"
-#include "Concerto/Graphics/Vulkan/wrapper/VulkanInitializer.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/CommandBuffer.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Fence.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Device.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/VulkanInitializer.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Buffer.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Pipeline.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/PipelineLayout.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/CommandPool.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Queue.hpp"
+#include "Concerto/Graphics/Vulkan/Utils.hpp"
 
 namespace Concerto::Graphics
 {

@@ -6,6 +6,7 @@
 #define CONCERTOGRAPHICS_INCLUDE_MESH_HPP_
 
 #include <unordered_map>
+#include <memory>
 
 #include <Concerto/Core/Types.hpp>
 
@@ -15,19 +16,28 @@
 
 namespace Concerto::Graphics
 {
+	class Device;
+	class VkMesh;
+
 	class CONCERTO_PUBLIC_API Mesh
 	{
 	 public:
 		Mesh(std::string filePath);
+		
 		Mesh(Vertices vertices);
-		std::vector<SubMeshPtr>& GetSubMeshes();
+		
 		const std::string& GetPath() const;
-		bool LoadFromFile(const std::string& fileName);
+		std::vector<SubMeshPtr>& GetSubMeshes();
 		std::unordered_map<std::string, MaterialPtr>& GetMaterials();
+
+		bool LoadFromFile(const std::string& fileName);
+
+		//VkMesh& CreateGPUMesh(Device& device);
 	 private:
 		std::string _path;
 		std::vector<SubMeshPtr> _subMeshes;
 		std::unordered_map<std::string, MaterialPtr> _materials;
+		//std::unique_ptr<VkMesh> _gpuMesh;
 	};
 	using MeshPtr = std::shared_ptr<Mesh>;
 }

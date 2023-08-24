@@ -8,6 +8,7 @@
 #include "Concerto/Graphics/Vulkan/Wrapper/CommandBuffer.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/Queue.hpp"
 #include "Concerto/Graphics/UploadContext.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Allocator.hpp"
 
 namespace Concerto::Graphics
 {

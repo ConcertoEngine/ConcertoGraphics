@@ -9,6 +9,9 @@
 #include <Concerto/Graphics/thirdParty/tiny_obj_loader.h>
 
 #include "Concerto/Graphics/Mesh.hpp"
+#include "Concerto/Graphics/Vulkan/VkMesh.hpp"
+#include "Concerto/Graphics/UploadContext.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Device.hpp"
 
 namespace Concerto::Graphics
 {
@@ -137,4 +140,41 @@ namespace Concerto::Graphics
 	{
 		return _materials;
 	}
+
+
+
+	//VkMesh& Mesh::CreateGPUMesh(Device& device)
+	//{
+	//	//_gpuMesh = std::make_unique<VkMesh>();
+	//	//Allocator& allocator = device.GetAllocator();
+	//	//UploadContext& uploadContext = device.GetUploadContext();
+
+	//	//for (SubMeshPtr& subMesh : _subMeshes)
+	//	//{
+	//	//	VkSubMeshPtr vkSubMesh = std::make_shared<VkSubMesh>(subMesh, allocator,
+	//	//		VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
+	//	//		VMA_MEMORY_USAGE_GPU_ONLY);
+	//	//	vkSubMesh->Upload(uploadContext._commandBuffer, uploadContext._commandPool,uploadContext._uploadFence, device.GetQueue(Queue::Type::Graphics), allocator);
+	//	//	_gpuMesh->subMeshes.push_back(vkSubMesh);
+	//	//	//TODO: Add support for all material properties
+	//	//	VkPipelineLayout pipelineLayout = *_meshPipelineLayout->Get();
+	//	//	VkPipeline pipeline = *_coloredShaderPipeline->Get();
+	//	//	if (!subMesh->GetMaterial()->diffuseTexturePath.empty())
+	//	//	{
+	//	//		pipelineLayout = *_texturedSetLayout->Get();
+	//	//		pipeline = *_texturedPipeline->Get();
+	//	//	}
+	//	//	if (!subMesh->GetMaterial()->diffuseTexturePath.empty())
+	//	//	{
+	//	//		std::filesystem::path path = _path;
+	//	//		path = path.parent_path() / subMesh->GetMaterial()->diffuseTexturePath;
+	//	//		subMesh->GetMaterial()->diffuseTexture = _textureBuilder->BuildTexture(path.string());
+	//	//		_materialBuilder->BuildMaterial(*subMesh->GetMaterial(), pipelineLayout, pipeline);
+	//	//	}
+	//	//	else
+	//	//	{
+	//	//		_materialBuilder->BuildMaterial(*subMesh->GetMaterial(), pipelineLayout, pipeline);
+	//	//	}
+	//	}
+	//}
 }

@@ -12,7 +12,9 @@
 namespace Concerto::Graphics
 {
 
-	DescriptorAllocator::DescriptorAllocator(Device& device) : _device(&device), _currentPool(VK_NULL_HANDLE)
+	DescriptorAllocator::DescriptorAllocator(Device& device) :
+		_device(&device),
+		_currentPool(VK_NULL_HANDLE)
 	{
 
 	}

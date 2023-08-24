@@ -57,4 +57,9 @@ namespace Concerto::Graphics
         }
 		return nullptr;
     }
+
+    Instance& Vulkan::GetVkInstance()
+    {
+        return _vkInstance;
+    }
 }

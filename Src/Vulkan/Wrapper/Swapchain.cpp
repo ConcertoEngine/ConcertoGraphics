@@ -25,7 +25,9 @@ namespace Concerto::Graphics
 			  _swapChainImageViews(),
 			  _swapChainImageFormat(VK_FORMAT_B8G8R8A8_SRGB),
 			  _physicalDevice(device.GetPhysicalDevice()),
-			  _window(window)
+			  _window(window),
+			  _renderpass(),
+			  _frameBuffers()
 	{
 		PhysicalDevice::SurfaceSupportDetails surfaceSupportDetails = _physicalDevice.GetSurfaceSupportDetails();
 		VkSwapchainCreateInfoKHR swapChainCreateInfo{};
@@ -50,6 +52,8 @@ namespace Concerto::Graphics
 		swapChainCreateInfo.oldSwapchain = VK_NULL_HANDLE;
 		if (vkCreateSwapchainKHR(*_device->Get(), &swapChainCreateInfo, nullptr, &_handle) != VK_SUCCESS)
 			throw std::runtime_error("failed to create swap chain!");
+		CreateRenderPass();
+		CreateFrameBuffers();
 	}
 
 	std::span<Image> Swapchain::GetImages()
@@ -107,6 +111,19 @@ namespace Concerto::Graphics
 		return _depthImage.GetFormat();
 	}
 
+	RenderPass* Swapchain::GetRenderPass()
+	{
+		if (_renderpass.has_value())
+			return &_renderpass.value();
+		return nullptr;
+	}
+
+	FrameBuffer& Swapchain::GetFrameBuffer(std::size_t index)
+	{
+		CONCERTO_ASSERT(index < _frameBuffers.size(), "index out of range");
+		return _frameBuffers[index];
+	}
+
 	UInt32 Swapchain::AcquireNextImage(Semaphore& semaphore, Fence& fence, std::uint64_t timeout)
 	{
 		UInt32 index = 0;
@@ -116,5 +133,18 @@ namespace Concerto::Graphics
 			throw std::runtime_error("vkAcquireNextImageKHR fail");
 		}
 		return index;
+	}
+
+	void Swapchain::CreateRenderPass()
+	{
+		_renderpass = RenderPass(*_device, *this);
+	}
+
+	void Swapchain::CreateFrameBuffers()
+	{
+		auto imagesViews = GetImageViews();
+		_frameBuffers.reserve(imagesViews.size());
+		for (auto& imageView : imagesViews)
+			_frameBuffers.emplace_back(*_device, _renderpass.value(), imageView, _depthImageView, _windowExtent);
 	}
 }

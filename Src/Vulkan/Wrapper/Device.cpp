@@ -14,7 +14,7 @@ namespace Concerto::Graphics
 	Device::Device(PhysicalDevice& physicalDevice, Instance& instance) :
 		_physicalDevice(&physicalDevice),
 		_device(VK_NULL_HANDLE),
-		_allocator(physicalDevice, *this, instance)
+		_allocator(nullptr)
 	{
 		std::span<VkQueueFamilyProperties> queueFamilyProperties = _physicalDevice->GetQueueFamilyProperties();
 		std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
@@ -56,6 +56,8 @@ namespace Concerto::Graphics
 		createInfo.ppEnabledExtensionNames = deviceExtensions.data();
 		if (vkCreateDevice(*_physicalDevice->Get(), &createInfo, nullptr, &_device) != VK_SUCCESS)
 			throw std::runtime_error("failed to create logical device!");
+		CreateAllocator(instance);
+		_uploadContext = std::make_unique<UploadContext>(*this, GetQueueFamilyIndex(Queue::Type::Graphics));
 	}
 
 	UInt32 Device::GetQueueFamilyIndex(Queue::Type queueType)
@@ -92,9 +94,13 @@ namespace Concerto::Graphics
 		throw std::runtime_error("No queue family found");
 	}
 
-	Queue Device::GetQueue(Queue::Type queueType)
+	Queue& Device::GetQueue(Queue::Type queueType)
 	{
-		return Queue(*this, GetQueueFamilyIndex(queueType));
+		auto it = _queues.find(queueType);
+		if (it != _queues.end())
+			return it->second;
+		auto emplace = _queues.emplace(queueType, Queue(*this, GetQueueFamilyIndex(queueType)));
+		return emplace.first->second;
 	}
 
 	VkDevice* Device::Get()
@@ -117,7 +123,19 @@ namespace Concerto::Graphics
 
 	Allocator& Device::GetAllocator()
 	{
-		return _allocator;
+		CONCERTO_ASSERT(_allocator != nullptr)
+		return *_allocator;
+	}
+
+	UploadContext& Device::GetUploadContext()
+	{
+		return *_uploadContext;
+	}
+
+	void Device::CreateAllocator(Instance& instance)
+	{
+		_allocator = std::make_unique<Allocator>(*_physicalDevice, *this, instance);
+		CONCERTO_ASSERT(_allocator != nullptr)
 	}
 
 } // Concerto::Graphics::Wrapper

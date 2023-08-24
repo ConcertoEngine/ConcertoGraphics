@@ -7,17 +7,21 @@
 
 #include <cstdint>
 #include <span>
+#include <unordered_map>
+#include <memory>
 
 #include <vulkan/vulkan.h>
 #include <Concerto/Core/Types.hpp>
 
 #include "Concerto/Graphics/Vulkan/Wrapper/Queue.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/Allocator.hpp"
+#include "Concerto/Graphics/UploadContext.hpp"
 
 namespace Concerto::Graphics
 {
 	class PhysicalDevice;
 	class Instance;
+	class UploadContext;
 
 	/**
 	* @class Device
@@ -63,7 +67,7 @@ namespace Concerto::Graphics
 		*
 		* @return The queue of the given type.
 		*/
-		Queue GetQueue(Queue::Type queueType);
+		Queue& GetQueue(Queue::Type queueType);
 
 		/**
 		* @brief Retrieves a pointer to the underlying VkDevice handle.
@@ -81,11 +85,17 @@ namespace Concerto::Graphics
 		PhysicalDevice& GetPhysicalDevice();
 
 		Allocator& GetAllocator();
+		
+		UploadContext& GetUploadContext();
 
 	private:
+		void CreateAllocator(Instance& instance);
+	
 		PhysicalDevice* _physicalDevice;
 		VkDevice _device;
-		Allocator _allocator;
+		std::unique_ptr<Allocator> _allocator;
+		std::unordered_map<Queue::Type, Queue> _queues;
+		std::unique_ptr<UploadContext> _uploadContext;
 	};
 
 } // Concerto::Graphics::Wrapper

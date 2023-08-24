@@ -19,10 +19,33 @@ namespace Concerto::Graphics
 			}),
 		_device(&device)
 	{
+		VmaVulkanFunctions vulkanFunctions {
+			.vkGetInstanceProcAddr = vkGetInstanceProcAddr,
+			.vkGetDeviceProcAddr = vkGetDeviceProcAddr,
+			.vkGetPhysicalDeviceProperties = vkGetPhysicalDeviceProperties,
+			.vkGetPhysicalDeviceMemoryProperties = vkGetPhysicalDeviceMemoryProperties,
+			.vkAllocateMemory = vkAllocateMemory,
+			.vkFreeMemory = vkFreeMemory,
+			.vkMapMemory = vkMapMemory,
+			.vkUnmapMemory = vkUnmapMemory,
+			.vkFlushMappedMemoryRanges = vkFlushMappedMemoryRanges,
+			.vkInvalidateMappedMemoryRanges = vkInvalidateMappedMemoryRanges,
+			.vkBindBufferMemory = vkBindBufferMemory,
+			.vkBindImageMemory = vkBindImageMemory,
+			.vkGetBufferMemoryRequirements = vkGetBufferMemoryRequirements,
+			.vkGetImageMemoryRequirements = vkGetImageMemoryRequirements,
+			.vkCreateBuffer = vkCreateBuffer,
+			.vkDestroyBuffer = vkDestroyBuffer,
+			.vkCreateImage = vkCreateImage,
+			.vkDestroyImage = vkDestroyImage,
+			.vkCmdCopyBuffer = vkCmdCopyBuffer
+		};
 		VmaAllocatorCreateInfo allocatorInfo = {};
 		allocatorInfo.physicalDevice = *physicalDevice.Get();
 		allocatorInfo.device = *device.Get();
 		allocatorInfo.instance = *instance.Get();
+		allocatorInfo.pVulkanFunctions = &vulkanFunctions;
+		
 		if (vmaCreateAllocator(&allocatorInfo, &_handle) != VK_SUCCESS)
 		{
 			throw std::runtime_error("VMA : Unable to create allocator");

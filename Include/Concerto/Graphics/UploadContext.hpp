@@ -8,7 +8,6 @@
 #include "Concerto/Graphics/Vulkan/Wrapper/CommandPool.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/CommandBuffer.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/Fence.hpp"
-#include "Concerto/Graphics/Vulkan/Wrapper/Device.hpp"
 
 namespace Concerto::Graphics
 {
@@ -16,15 +15,7 @@ namespace Concerto::Graphics
 	{
 		UploadContext() = delete;
 
-		UploadContext(Device& device, UInt32 queueFamily) : _uploadFence(device, false),
-																			_commandPool(
-																					device,
-																					queueFamily),
-																			_commandBuffer(
-																					device,
-																					*_commandPool.Get())
-		{
-		}
+		UploadContext(Device& device, UInt32 queueFamily);
 
 		~UploadContext() = default;
 

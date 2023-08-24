@@ -18,6 +18,8 @@
 #include "Concerto/Graphics/Vulkan/Wrapper/Semaphore.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/Fence.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/ImageView.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/RenderPass.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/FrameBuffer.hpp"
 #include "Concerto/Graphics/Window/GlfW3.hpp"
 
 namespace Concerto::Graphics
@@ -69,6 +71,9 @@ namespace Concerto::Graphics
 
 		[[nodiscard]] VkFormat GetDepthFormat() const;
 
+		[[nodiscard]] RenderPass* GetRenderPass();
+		
+		[[nodiscard]] FrameBuffer& GetFrameBuffer(std::size_t index);
 		/**
 		 * @brief Acquire the next image in the swapchain.
 		 * @param semaphore A reference to the semaphore.
@@ -77,9 +82,11 @@ namespace Concerto::Graphics
 		 * @return The index of the acquired image.
 		 */
 		UInt32 AcquireNextImage(Semaphore& semaphore, Fence& fence, std::uint64_t timeout);
-
-
+		
 		private:
+			void CreateRenderPass();
+			void CreateFrameBuffers();
+
 			mutable std::optional<std::vector<Image>> _swapChainImages;
 			mutable std::optional<std::vector<ImageView>> _swapChainImageViews;
 			VkExtent2D _windowExtent;
@@ -88,6 +95,8 @@ namespace Concerto::Graphics
 			ImageView _depthImageView;
 			PhysicalDevice& _physicalDevice;
 			GlfW3& _window;
+			std::optional<RenderPass> _renderpass;
+			std::vector<FrameBuffer> _frameBuffers;
 	};
 } // Concerto::Graphics::Wrapper
 

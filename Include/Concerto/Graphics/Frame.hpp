@@ -28,7 +28,7 @@ namespace Concerto::Graphics
 
 	struct FrameData
 	{
-		FrameData(Device& device,Allocator& allocator, UInt32 queueFamily, DescriptorPool& pool,
+		FrameData(Device& device, UInt32 queueFamily, DescriptorPool& pool,
 				DescriptorSetLayout& globalDescriptorSetLayout, DescriptorSetLayout& objectDescriptorSetLayout,
 				Buffer& sceneParameterBuffer,
 				bool signaled = true);

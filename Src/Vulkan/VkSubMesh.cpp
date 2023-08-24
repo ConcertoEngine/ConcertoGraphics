@@ -47,6 +47,7 @@ namespace Concerto::Graphics
 	{
 		return _subMesh->GetVertices();
 	}
+
 	const MaterialPtr& VkSubMesh::GetMaterial() const
 	{
 		return _subMesh->GetMaterial();
