@@ -7,7 +7,7 @@
 
 #include <Concerto/Core/Math/Quaternion.hpp>
 #include <Concerto/Core/Math/Vector.hpp>
-#include <Concerto/Core/Types.hpp>
+#include "Concerto/Graphics/Defines.hpp"
 #include <glm/mat4x4.hpp>
 
 #include "Concerto/Graphics/GPUData.hpp"
@@ -30,7 +30,7 @@ namespace Concerto::Graphics
 	inline constexpr float ZOOM = 45.0f;
 
 
-	class CONCERTO_PUBLIC_API Camera : public GPUCamera
+	class CONCERTO_GRAPHICS_API Camera : public GPUCamera
 	{
 	 public:
 

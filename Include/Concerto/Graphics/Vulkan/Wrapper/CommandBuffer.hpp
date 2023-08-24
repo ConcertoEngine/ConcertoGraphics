@@ -8,7 +8,7 @@
 #include <functional>
 
 #include <vulkan/vulkan.h>
-#include <Concerto/Core/Types.hpp>
+#include "Concerto/Graphics/Defines.hpp"
 
 namespace Concerto::Graphics
 {
@@ -29,7 +29,7 @@ namespace Concerto::Graphics
 	 * This class is used to record and submit commands to the GPU for execution, such as rendering commands,
 	 * memory management commands, and compute commands.
 	 */
-	class CONCERTO_PUBLIC_API CommandBuffer
+	class CONCERTO_GRAPHICS_API CommandBuffer
 	{
 	public:
 		/**

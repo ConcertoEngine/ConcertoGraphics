@@ -5,7 +5,7 @@
 #ifndef CONCERTOGRAPHICS_VERSION_HPP
 #define CONCERTOGRAPHICS_VERSION_HPP
 
-#include <Concerto/Core/Types.hpp>
+#include "Concerto/Graphics/Defines.hpp"
 
 namespace Concerto::Graphics
 {

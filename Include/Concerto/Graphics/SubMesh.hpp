@@ -7,14 +7,14 @@
 
 #include <memory>
 
-#include <Concerto/Core/Types.hpp>
+#include "Concerto/Graphics/Defines.hpp"
 #include "Concerto/Graphics/Vulkan/Vertex.hpp"
 #include "Concerto/Graphics/Material.hpp"
 
 namespace Concerto::Graphics
 {
 	class Mesh;
-	class CONCERTO_PUBLIC_API SubMesh
+	class CONCERTO_GRAPHICS_API SubMesh
 	{
 	 public:
 		explicit SubMesh(Mesh* parent);

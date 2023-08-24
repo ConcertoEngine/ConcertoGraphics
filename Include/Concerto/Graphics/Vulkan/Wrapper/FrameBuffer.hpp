@@ -7,7 +7,7 @@
 
 #include <vector>
 
-#include <Concerto/Core/Types.hpp>
+#include "Concerto/Graphics/Defines.hpp"
 
 #include "Concerto/Graphics/Vulkan/Wrapper/Object.hpp"
 
@@ -27,7 +27,7 @@ namespace Concerto::Graphics
 	* This class is a Wrapper around the VkFramebuffer handle and provides
 	* a simpler interface for interacting with frame buffers.
 	*/
-	class CONCERTO_PUBLIC_API FrameBuffer : public Object<VkFramebuffer>
+	class CONCERTO_GRAPHICS_API FrameBuffer : public Object<VkFramebuffer>
 	{
 	public:
 		/**

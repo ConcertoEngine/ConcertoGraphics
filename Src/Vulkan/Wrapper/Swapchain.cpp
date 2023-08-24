@@ -120,7 +120,7 @@ namespace Concerto::Graphics
 
 	FrameBuffer& Swapchain::GetFrameBuffer(std::size_t index)
 	{
-		CONCERTO_ASSERT(index < _frameBuffers.size(), "index out of range");
+		CONCERTO_ASSERT(index < _frameBuffers.size());
 		return _frameBuffers[index];
 	}
 

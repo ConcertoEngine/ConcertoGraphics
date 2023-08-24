@@ -5,7 +5,7 @@
 #ifndef CONCERTOGRAPHICS_QUEUE_HPP
 #define CONCERTOGRAPHICS_QUEUE_HPP
 
-#include <Concerto/Core/Types.hpp>
+#include "Concerto/Graphics/Defines.hpp"
 
 #include "Concerto/Graphics/Vulkan/Wrapper/Object.hpp"
 
@@ -25,7 +25,7 @@ namespace Concerto::Graphics
 	*  The Queue class provides an interface to submit commands to the device and present images to the swapchain.
 	*
 	*/
-	class CONCERTO_PUBLIC_API Queue : public Object<VkQueue>
+	class CONCERTO_GRAPHICS_API Queue : public Object<VkQueue>
 	{
 	 public:
 		enum class Type

@@ -14,7 +14,7 @@
 //
 //#include <Concerto/Core/Math/Vector.hpp>
 //#include <Concerto/Core/Math/Transform.hpp>
-//#include <Concerto/Core/Types.hpp>
+//#include "Concerto/Graphics/Defines.hpp"
 //
 //#include "Concerto/Graphics/Vulkan/Wrapper/Instance.hpp"
 //#include "Concerto/Graphics/Vulkan/Wrapper/Device.hpp"
@@ -58,7 +58,7 @@
 //		UInt32 height;
 //	};
 //
-//	class CONCERTO_PUBLIC_API VulkanRenderer
+//	class CONCERTO_GRAPHICS_API VulkanRenderer
 //	{
 //	 public:
 //		explicit VulkanRenderer(RendererInfo info, GlfW3& window);

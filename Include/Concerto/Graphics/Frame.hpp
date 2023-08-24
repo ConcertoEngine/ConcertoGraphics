@@ -7,7 +7,7 @@
 
 #include <memory>
 
-#include <Concerto/Core/Types.hpp>
+#include "Concerto/Graphics/Defines.hpp"
 
 #include "Concerto/Graphics/Vulkan/Wrapper/Buffer.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/Allocator.hpp"

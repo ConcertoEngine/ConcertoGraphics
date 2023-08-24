@@ -18,7 +18,7 @@ target('ConcertoGraphics')
         add_defines('DEBUG')
         set_symbols('debug')
     end
-    add_defines('CONCERTO_BUILD')
+    add_defines('CONCERTO_GRAPHICS_BUILD')
     add_files('Src/**.cpp')
     add_includedirs('Include/',
                     'Include/Concerto/',

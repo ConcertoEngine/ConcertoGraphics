@@ -10,7 +10,7 @@
 #include <span>
 
 #include <vulkan/vulkan.h>
-#include <Concerto/Core/Types.hpp>
+#include "Concerto/Graphics/Defines.hpp"
 
 #include "Concerto/Graphics/Vulkan/Wrapper/Object.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/Image.hpp"
@@ -33,7 +33,7 @@ namespace Concerto::Graphics
 	 * @brief Represents a swapchain in the vulkan API.
 	 * A swapchain is a collection of images that are used for rendering and displaying.
 	 */
-	class CONCERTO_PUBLIC_API Swapchain : public Object<VkSwapchainKHR>
+	class CONCERTO_GRAPHICS_API Swapchain : public Object<VkSwapchainKHR>
 	{
 	public:
 		/**

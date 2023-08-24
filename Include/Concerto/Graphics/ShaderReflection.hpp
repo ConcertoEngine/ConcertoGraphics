@@ -8,7 +8,7 @@
 #include <unordered_map>
 #include <vector>
 
-#include <Concerto/Core/Types.hpp>
+#include "Concerto/Graphics/Defines.hpp"
 #include <vulkan/vulkan.h>
 #include <NZSL/Ast/RecursiveVisitor.hpp>
 #include <NZSL/Math/FieldOffsets.hpp>
@@ -68,7 +68,7 @@ namespace Concerto::Graphics
 		return shaderStageBits;
 	}
 	
-	class CONCERTO_PUBLIC_API ShaderReflection : public nzsl::Ast::RecursiveVisitor
+	class CONCERTO_GRAPHICS_API ShaderReflection : public nzsl::Ast::RecursiveVisitor
 	{
 	public:
 		ShaderReflection() = default;

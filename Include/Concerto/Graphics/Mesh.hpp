@@ -8,7 +8,7 @@
 #include <unordered_map>
 #include <memory>
 
-#include <Concerto/Core/Types.hpp>
+#include "Concerto/Graphics/Defines.hpp"
 
 #include "Concerto/Graphics/Vulkan/Vertex.hpp"
 #include "Concerto/Graphics/Material.hpp"
@@ -19,7 +19,7 @@ namespace Concerto::Graphics
 	class Device;
 	class VkMesh;
 
-	class CONCERTO_PUBLIC_API Mesh
+	class CONCERTO_GRAPHICS_API Mesh
 	{
 	 public:
 		Mesh(std::string filePath);

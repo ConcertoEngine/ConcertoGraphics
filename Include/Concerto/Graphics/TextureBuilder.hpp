@@ -9,7 +9,7 @@
 #include <memory>
 #include <string>
 
-#include <Concerto/Core/Types.hpp>
+#include "Concerto/Graphics/Defines.hpp"
 
 
 namespace Concerto::Graphics
@@ -21,7 +21,7 @@ namespace Concerto::Graphics
 	class Queue;
 	class Texture;
 
-	class CONCERTO_PUBLIC_API TextureBuilder
+	class CONCERTO_GRAPHICS_API TextureBuilder
 	{
 	 public:
 		TextureBuilder(Device& device, Allocator& allocator, CommandBuffer& commandBuffer, UploadContext& uploadContext, Queue& queue);

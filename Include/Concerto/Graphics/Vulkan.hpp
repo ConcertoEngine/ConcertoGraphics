@@ -9,7 +9,7 @@
 #include <string>
 #include <map>
 
-#include <Concerto/Core/Types.hpp>
+#include "Concerto/Graphics/Defines.hpp"
 
 #include "Concerto/Graphics/Version.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/Instance.hpp"
@@ -37,7 +37,7 @@ namespace Concerto::Graphics
 		Software //CPU software renderer
 	};
 	
-	class CONCERTO_PUBLIC_API Vulkan
+	class CONCERTO_GRAPHICS_API Vulkan
 	{
 	public:
 		Vulkan(RendererInfo info);

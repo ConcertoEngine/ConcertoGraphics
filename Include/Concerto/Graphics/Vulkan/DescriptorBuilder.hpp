@@ -7,7 +7,7 @@
 
 #include <memory>
 
-#include <Concerto/Core/Types.hpp>
+#include "Concerto/Graphics/Defines.hpp"
 
 #include "Concerto/Graphics/Vulkan/DescriptorLayoutCache.hpp"
 #include "Concerto/Graphics/Vulkan/DescriptorAllocator.hpp"
@@ -17,7 +17,7 @@ namespace Concerto::Graphics
 {
 	class DescriptorSetLayout;
 
-	class CONCERTO_PUBLIC_API DescriptorBuilder
+	class CONCERTO_GRAPHICS_API DescriptorBuilder
 	{
 	 public:
 		DescriptorBuilder(DescriptorLayoutCache& layoutCache, DescriptorAllocator& allocator);

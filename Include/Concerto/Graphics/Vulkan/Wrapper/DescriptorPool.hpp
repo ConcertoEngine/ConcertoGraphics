@@ -9,7 +9,7 @@
 #include <memory>
 
 #include <vulkan/vulkan.h>
-#include <Concerto/Core/Types.hpp>
+#include "Concerto/Graphics/Defines.hpp"
 
 #include "Concerto/Graphics/Vulkan/Wrapper/Object.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/DescriptorSet.hpp"
@@ -28,7 +28,7 @@ namespace Concerto::Graphics
 	* A VkDescriptorPool is used to allocate descriptor sets from.
 	*/
 
-	class CONCERTO_PUBLIC_API DescriptorPool : public Object<VkDescriptorPool>
+	class CONCERTO_GRAPHICS_API DescriptorPool : public Object<VkDescriptorPool>
 	{
 	 public:
 		explicit DescriptorPool(Device& device);

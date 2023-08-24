@@ -8,7 +8,7 @@
 #include <cstdint>
 
 #include <vulkan/vulkan.h>
-#include <Concerto/Core/Types.hpp>
+#include "Concerto/Graphics/Defines.hpp"
 
 #include "Concerto/Graphics/Vulkan/Wrapper/Object.hpp"
 
@@ -28,7 +28,7 @@ namespace Concerto::Graphics
 	 *
 	 * @author [Your name]
 	 */
-	class CONCERTO_PUBLIC_API CommandPool : public Object<VkCommandPool>
+	class CONCERTO_GRAPHICS_API CommandPool : public Object<VkCommandPool>
 	{
 	public:
 		/**

@@ -7,9 +7,10 @@
 
 #include <string>
 #include <vector>
-#include <vulkan/vulkan.h>
-#include <Concerto/Core/Types.hpp>
 
+#include <vulkan/vulkan.h>
+
+#include "Concerto/Graphics/Defines.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/Object.hpp"
 
 namespace Concerto::Graphics
@@ -22,7 +23,7 @@ namespace Concerto::Graphics
 	 *
 	 * A ShaderModule is a class that encapsulate the creation, loading and handling of a VkShaderModule object.
 	 */
-	class CONCERTO_PUBLIC_API ShaderModule : public Object<VkShaderModule>
+	class CONCERTO_GRAPHICS_API ShaderModule : public Object<VkShaderModule>
 	{
 	public:
 		/**

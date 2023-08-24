@@ -8,7 +8,7 @@
 #include <memory>
 
 #include <vulkan/vulkan.h>
-#include <Concerto/Core/Types.hpp>
+#include "Concerto/Graphics/Defines.hpp"
 
 #include "Concerto/Graphics/Vulkan/Wrapper/Object.hpp"
 
@@ -29,7 +29,7 @@ namespace Concerto::Graphics
 	* This class is a Wrapper around the VkDescriptorSet handle and provides
 	* a simpler interface for interacting with descriptor sets.
 	*/
-	class CONCERTO_PUBLIC_API DescriptorSet : public Object<VkDescriptorSet>
+	class CONCERTO_GRAPHICS_API DescriptorSet : public Object<VkDescriptorSet>
 	{
 	public:
 		/**
