@@ -38,7 +38,7 @@ namespace Concerto::Graphics
 		* @brief Constructs a new device from a physical device and a list of extensions.
 		*
 		* @param physicalDevice The physical device to create the device on.
-		* @param extensions The list of extensions to enable for the device.
+		* @param instance The instance to create the device on.
 		*/
 		Device(PhysicalDevice& physicalDevice, Instance& instance);
 

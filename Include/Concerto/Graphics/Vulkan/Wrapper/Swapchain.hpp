@@ -20,7 +20,7 @@
 #include "Concerto/Graphics/Vulkan/Wrapper/ImageView.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/RenderPass.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/FrameBuffer.hpp"
-#include "Concerto/Graphics/Window/GlfW3.hpp"
+#include "Concerto/Graphics/Window/Window.hpp"
 
 namespace Concerto::Graphics
 {
@@ -43,7 +43,7 @@ namespace Concerto::Graphics
 		 * @param windowExtent The size of the Window.
 		 * @param physicalDevice A reference to the physical device.
 		 */
-		Swapchain(Device& device, GlfW3& window);
+		Swapchain(Device& device, Window& window);
 
 		Swapchain(Swapchain&&) noexcept = default;
 
@@ -94,7 +94,7 @@ namespace Concerto::Graphics
 			Image _depthImage;
 			ImageView _depthImageView;
 			PhysicalDevice& _physicalDevice;
-			GlfW3& _window;
+			Window& _window;
 			std::optional<RenderPass> _renderpass;
 			std::vector<FrameBuffer> _frameBuffers;
 	};

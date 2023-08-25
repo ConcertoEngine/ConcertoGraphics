@@ -16,7 +16,7 @@
 namespace Concerto::Graphics
 {
 
-	Swapchain::Swapchain(Device& device, GlfW3& window)
+	Swapchain::Swapchain(Device& device, Window& window)
 			: Object<VkSwapchainKHR>(device, [](Device &device, VkSwapchainKHR handle){vkDestroySwapchainKHR(*device.Get(), handle, nullptr);}),
 			  _windowExtent({window.GetHeight(), window.GetWidth()}),
 			  _swapChainImages(),

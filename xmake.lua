@@ -15,7 +15,6 @@ target('ConcertoGraphics')
     set_kind('shared')
     set_languages('cxx20')
     if is_mode('debug') then
-        add_defines('DEBUG')
         set_symbols('debug')
     end
     add_defines('CONCERTO_GRAPHICS_BUILD')

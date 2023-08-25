@@ -3,7 +3,7 @@
 //
 #include <vulkan/vulkan.h>
 #define GLFW_INCLUDE_VULKAN
-#include <Concerto/Graphics/Window/GlfW3.hpp>
+#include <Concerto/Graphics/Window/Window.hpp>
 #include <Concerto/Graphics/Vulkan/Wrapper/Device.hpp>
 #include <Concerto/Graphics/Vulkan/Wrapper/RenderPass.hpp>
 #include <Concerto/Graphics/Vulkan/Wrapper/ShaderModule.hpp>
@@ -40,23 +40,29 @@ int main()
 			.width = 800,
 			.height = 600,
 		};
-		GlfW3 window("Concerto Graphics", 1280, 720);
+		Window window("Concerto Graphics", 1280, 720);
 		Vulkan vulkan(info);
 		auto& vkInstance = vulkan.GetVkInstance();
 		Device* device = vulkan.CreateDevice(DeviceType::Dedicated);
 		auto gpuMinimumAlignment = device->GetPhysicalDevice().GetProperties().limits.minUniformBufferOffsetAlignment;
 		VkSurfaceKHR surface = {};
-		if (glfwVulkanSupported() == 0)
-			Logger::Error("Vulkan not supported");
-		auto res = glfwCreateWindowSurface(*vkInstance.Get(), (GLFWwindow*)window.GetRawWindow(), nullptr,&surface);
-
+		if (!window.IsVulkanSupported())
+		{
+			Logger::Error("Vulkan is not supported");
+			return 1;
+		}
+		if (!window.CreateVulkanSurface(vkInstance, &surface))
+		{
+			Logger::Error("Cannot create vulkan surface");
+			return 1;
+		}
+		
 		device->GetPhysicalDevice().SetSurface(surface);
 		Swapchain swapchain(*device, window);
 		nzsl::Ast::ModulePtr shaderAst = nzsl::ParseFromFile(".\\Shaders\\tri_mesh_ssbo.nzsl");
 		ShaderReflection reflection;
 		reflection.Reflect(*shaderAst);
 		PipelineLayout meshPipelineLayout = reflection.BuildPipelineLayout(*device);
-
 	
 	/*
 		const std::size_t sceneParamBufferSize = 2 * PadUniformBuffer(sizeof(GPUSceneData), gpuMinimumAlignment);

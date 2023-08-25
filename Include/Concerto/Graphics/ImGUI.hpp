@@ -13,13 +13,13 @@
 
 namespace Concerto::Graphics
 {
-	class GlfW3;
+	class Window;
 	class CommandBuffer;
 
 	class CONCERTO_GRAPHICS_API ImGUI
 	{
 	public:
-		explicit ImGUI(RenderingContext &context, GlfW3 &window);
+		explicit ImGUI(RenderingContext &context, Window &window);
 		~ImGUI();
 
 		/**
@@ -62,7 +62,7 @@ namespace Concerto::Graphics
 	private:
 		RenderingContext& _context;
 		DescriptorPool _descriptorPool;
-		GlfW3 &_window;
+		Window &_window;
 		ImGuiContext* _imGuiContext;
 	};
 
