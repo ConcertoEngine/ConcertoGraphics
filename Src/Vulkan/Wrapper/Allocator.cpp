@@ -5,10 +5,10 @@
 #include <stdexcept>
 #define VMA_IMPLEMENTATION
 #define VMA_STATIC_VULKAN_FUNCTIONS 0
-#include "Concerto/Graphics/Vulkan/wrapper/Allocator.hpp"
-#include "Concerto/Graphics/Vulkan/wrapper/Instance.hpp"
-#include "Concerto/Graphics/Vulkan/wrapper/PhysicalDevice.hpp"
-#include "Concerto/Graphics/Vulkan/wrapper/Device.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Allocator.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Instance.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/PhysicalDevice.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Device.hpp"
 
 namespace Concerto::Graphics
 {
@@ -16,8 +16,7 @@ namespace Concerto::Graphics
 		Object<VmaAllocator>(device, [](Device &device, VmaAllocator handle)
 			{
 				vmaDestroyAllocator(handle);
-			}),
-		_device(&device)
+			})
 	{
 		VmaVulkanFunctions vulkanFunctions {
 			.vkGetInstanceProcAddr = vkGetInstanceProcAddr,
@@ -56,5 +55,10 @@ namespace Concerto::Graphics
 	{
 		assert(_device != nullptr);
 		return *_device;
+	}
+
+	void Allocator::SetDevice(Device* device)
+	{
+		_device = device;
 	}
 }

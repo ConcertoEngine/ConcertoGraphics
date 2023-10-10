@@ -9,6 +9,7 @@ struct  CameraBuffer
     viewproj: mat4[f32]
 }
 
+[layout(std140)]
 struct ObjectData
 {
     model: mat4[f32]
@@ -45,15 +46,15 @@ struct VertOut
 }
 
 [entry(vert)]
-fn main(input: VertInt) -> VertOut
+fn main(input: VertIn) -> VertOut
 {
     let output: VertOut;
     let modelMatrix: mat4[f32] = objectBuffer.objects[input.base_instance].model;
-    let transformMatrix: mat4[f32] = (cameraData.viewproj * modelMatrix);
-    output.position = transformMatrix * vec4(input.vPosition, 1.0);
+    let transformMatrix: mat4[f32] = (cameraBuffer.viewproj * modelMatrix);
+    output.position = transformMatrix * vec4[f32](input.vPosition, 1.0);
     output.gl_Position = output.position;
     output.color = input.vColor;
     output.texCoord = input.vTexCoord;
-    output.normal = vNormal;
+    output.normal = input.vNormal;
     return output;
 }

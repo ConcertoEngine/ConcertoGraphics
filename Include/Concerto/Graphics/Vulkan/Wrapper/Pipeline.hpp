@@ -34,7 +34,7 @@ namespace Concerto::Graphics
 		 * @param device The device that the pipeline will be associated with
 		 * @param pipeLineInfo The pipeline information required to build the pipeline
 		 */
-		explicit Pipeline(Device& device, PipelineInfo pipeLineInfo);
+		Pipeline(Device& device, PipelineInfo pipeLineInfo);
 
 		Pipeline(Pipeline&&) = default;
 

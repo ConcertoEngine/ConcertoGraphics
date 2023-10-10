@@ -17,7 +17,7 @@ namespace Concerto::Graphics
 		vkDestroyDescriptorSetLayout(*device.Get(), handle, nullptr);
 	})
 	{
-		VkDescriptorSetLayoutCreateInfo createInfo{};
+		VkDescriptorSetLayoutCreateInfo createInfo = {};
 		createInfo.flags = 0;
 		createInfo.pNext = nullptr;
 		createInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
@@ -27,6 +27,7 @@ namespace Concerto::Graphics
 		{
 			throw std::runtime_error("failed to create descriptor set layout!");
 		}
+		_device->SetObjectName(UInt64(_handle), "DescriptorSetLayout " + std::to_string(UInt64(bindings.size())));
 	}
 
 	DescriptorSetLayoutPtr MakeDescriptorSetLayout(Device& device, const std::vector<VkDescriptorSetLayoutBinding>& bindings)

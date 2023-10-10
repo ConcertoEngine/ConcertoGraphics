@@ -11,22 +11,33 @@
 namespace Concerto::Graphics
 {
 
-	PipelineLayout::PipelineLayout(Device& device, //std::size_t size,
-			const std::vector<VkDescriptorSetLayout>& descriptorSetLayouts)
-			: Object<VkPipelineLayout>(device, [](Device &device, VkPipelineLayout handle)
-	{ vkDestroyPipelineLayout(*device.Get(), handle, nullptr); })
+	PipelineLayout::PipelineLayout(Device& device, std::vector<DescriptorSetLayoutPtr> descriptorSetLayouts) :
+		Object<VkPipelineLayout>(device, [](Device &device, VkPipelineLayout handle)
+			{ vkDestroyPipelineLayout(*device.Get(), handle, nullptr); }),
+		_descriptorSetLayouts(std::move(descriptorSetLayouts))
 	{
+		std::vector<VkDescriptorSetLayout> vkDescriptorSetLayouts;
+		vkDescriptorSetLayouts.reserve(_descriptorSetLayouts.size());
+		for (const auto& descriptorSetLayout : _descriptorSetLayouts)
+		{
+			vkDescriptorSetLayouts.push_back(*descriptorSetLayout->Get());
+		}
 		VkPipelineLayoutCreateInfo pipelineLayoutCreateInfo;
 		pipelineLayoutCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
 		pipelineLayoutCreateInfo.pNext = nullptr;
 		pipelineLayoutCreateInfo.flags = 0;
-		pipelineLayoutCreateInfo.setLayoutCount = descriptorSetLayouts.size();
-		pipelineLayoutCreateInfo.pSetLayouts = descriptorSetLayouts.data();
+		pipelineLayoutCreateInfo.setLayoutCount = vkDescriptorSetLayouts.size();
+		pipelineLayoutCreateInfo.pSetLayouts = vkDescriptorSetLayouts.data();
 		pipelineLayoutCreateInfo.pushConstantRangeCount = 0;
 		pipelineLayoutCreateInfo.pPushConstantRanges = nullptr;
 		if (vkCreatePipelineLayout(*_device->Get(), &pipelineLayoutCreateInfo, nullptr, &_handle) != VK_SUCCESS)
 		{
 			throw std::runtime_error("failed to create pipeline layout!");
 		}
+	}
+
+	const std::vector<DescriptorSetLayoutPtr>& PipelineLayout::GetDescriptorSetLayouts() const
+	{
+		return _descriptorSetLayouts;
 	}
 }

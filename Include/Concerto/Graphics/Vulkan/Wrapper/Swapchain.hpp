@@ -83,20 +83,20 @@ namespace Concerto::Graphics
 		 */
 		UInt32 AcquireNextImage(Semaphore& semaphore, Fence& fence, std::uint64_t timeout);
 		
-		private:
-			void CreateRenderPass();
-			void CreateFrameBuffers();
+	private:
+		void CreateRenderPass();
+		void CreateFrameBuffers();
 
-			mutable std::optional<std::vector<Image>> _swapChainImages;
-			mutable std::optional<std::vector<ImageView>> _swapChainImageViews;
-			VkExtent2D _windowExtent;
-			VkFormat _swapChainImageFormat;
-			Image _depthImage;
-			ImageView _depthImageView;
-			PhysicalDevice& _physicalDevice;
-			Window& _window;
-			std::optional<RenderPass> _renderpass;
-			std::vector<FrameBuffer> _frameBuffers;
+		mutable std::optional<std::vector<Image>> _swapChainImages;
+		mutable std::optional<std::vector<ImageView>> _swapChainImageViews;
+		VkExtent2D _windowExtent;
+		VkFormat _swapChainImageFormat;
+		Image _depthImage;
+		ImageView _depthImageView;
+		PhysicalDevice& _physicalDevice;
+		Window& _window;
+		std::unique_ptr<RenderPass> _renderpass;
+		std::vector<FrameBuffer> _frameBuffers;
 	};
 } // Concerto::Graphics::Wrapper
 

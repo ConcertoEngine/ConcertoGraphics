@@ -13,7 +13,8 @@
 namespace Concerto::Graphics
 {
 	RenderPass::RenderPass(Device& device, Swapchain& swapchain) : Object<VkRenderPass>(device, [](Device &device, VkRenderPass handle)
-	{ vkDestroyRenderPass(*device.Get(), handle, nullptr); })
+	{ vkDestroyRenderPass(*device.Get(), handle, nullptr); }),
+	_swapchain(swapchain)
 	{
 		VkAttachmentDescription color_attachment = {};
 		color_attachment.format = swapchain.GetImageFormat();
@@ -87,5 +88,9 @@ namespace Concerto::Graphics
 		{
 			throw std::runtime_error("failed to create render pass!");
 		}
+	}
+	VkExtent2D RenderPass::GetWindowExtent() const
+	{
+		return _swapchain.GetExtent();
 	}
 } // Concerto::Graphics::Wrapper

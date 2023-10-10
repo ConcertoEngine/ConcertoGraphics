@@ -14,16 +14,16 @@ end
 target('ConcertoGraphics')
     set_kind('shared')
     set_languages('cxx20')
-    if is_mode('debug') then
-        set_symbols('debug')
-    end
+    -- if is_mode('debug') then
+    set_symbols('debug')
+    -- end
     add_defines('CONCERTO_GRAPHICS_BUILD')
     add_files('Src/**.cpp')
     add_includedirs('Include/',
                     'Include/Concerto/',
                     'Include/Concerto/Graphics',
                     'Include/Concerto/Graphics/thirdParty',
-                    'Include/Concerto/Graphics/window',
+                    'Include/Concerto/Graphics/Window',
                     'Include/Concerto/Graphics/Vulkan/Wrapper',
                     'Include/Concerto/Graphics/Vulkan',
                     { public = true })

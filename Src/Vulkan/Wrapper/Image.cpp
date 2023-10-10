@@ -64,7 +64,7 @@ namespace Concerto::Graphics
 		void* pixelPtr = pixels;
 		VkDeviceSize imageSize = textureWidth * textureHeight * 4;
 		Buffer stagingBuffer(device.GetAllocator(), imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VMA_MEMORY_USAGE_CPU_ONLY);
-		MapAndCopy(device.GetAllocator(), stagingBuffer, pixelPtr, imageSize);
+		stagingBuffer.Copy(pixelPtr, imageSize);
 
 		VkExtent3D imageExtent = {
 				static_cast<uint32_t>(textureWidth),

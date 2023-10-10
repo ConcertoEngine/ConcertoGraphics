@@ -65,7 +65,7 @@ namespace Concerto::Graphics
 		int i = 0;
 		for (auto& material : materials)
 		{
-			MaterialPtr mat = std::make_shared<Material>();
+			MaterialPtr mat = std::make_shared<MaterialInfo>();
 			mat->diffuseTexturePath = material.diffuse_texname;
 			mat->diffuseColor.x = material.diffuse[0];
 			mat->diffuseColor.y = material.diffuse[1];

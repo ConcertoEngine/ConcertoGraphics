@@ -15,12 +15,12 @@
 
 namespace Concerto::Graphics
 {
-	class Material
+	class MaterialInfo
 	{
 	 public:
 		struct Hash
 		{
-			std::size_t operator()(const Material& material) const
+			std::size_t operator()(const MaterialInfo& material) const
 			{
 				std::size_t h1 = std::hash<std::string>{}(material.diffuseTexturePath);
 				std::size_t h2 = std::hash<glm::vec3>{}(material.diffuseColor);
@@ -33,8 +33,8 @@ namespace Concerto::Graphics
 				return h1 ^ (h2 << 1) ^ (h3 << 2) ^ (h4 << 3) ^ (h5 << 4) ^ (h6 << 5) ^ (h7 << 6) ^ (h8 << 7);
 			}
 		};
-		Material() = default;
-		bool operator==(const Material& other) const
+		MaterialInfo() = default;
+		bool operator==(const MaterialInfo& other) const
 		{
 			return diffuseTexture == other.diffuseTexture && diffuseColor == other.diffuseColor
 				&& metallic == other.metallic && specular == other.specular && roughness == other.roughness
@@ -53,7 +53,9 @@ namespace Concerto::Graphics
 		TexturePtr normalTexture;
 		std::string normalTexturePath;
 		std::string name;
+		std::string vertexShaderPath;
+		std::string fragmentShaderPath;
 	};
-	using MaterialPtr = std::shared_ptr<Material>;
+	using MaterialPtr = std::shared_ptr<MaterialInfo>;
 }
 #endif //CONCERTOGRAPHICS_INCLUDE_MATERIAL_HPP_

@@ -18,7 +18,7 @@ namespace Concerto::Graphics
 
 	Swapchain::Swapchain(Device& device, Window& window)
 			: Object<VkSwapchainKHR>(device, [](Device &device, VkSwapchainKHR handle){vkDestroySwapchainKHR(*device.Get(), handle, nullptr);}),
-			  _windowExtent({window.GetHeight(), window.GetWidth()}),
+			  _windowExtent({window.GetWidth(), window.GetHeight()}),
 			  _swapChainImages(),
 			  _depthImage(device, _windowExtent, VK_FORMAT_D32_SFLOAT),
 			  _depthImageView(device, _depthImage, VK_IMAGE_ASPECT_DEPTH_BIT),
@@ -113,8 +113,8 @@ namespace Concerto::Graphics
 
 	RenderPass* Swapchain::GetRenderPass()
 	{
-		if (_renderpass.has_value())
-			return &_renderpass.value();
+		if (_renderpass != nullptr)
+			return _renderpass.get();
 		return nullptr;
 	}
 
@@ -137,14 +137,15 @@ namespace Concerto::Graphics
 
 	void Swapchain::CreateRenderPass()
 	{
-		_renderpass = RenderPass(*_device, *this);
+		_renderpass = std::make_unique<RenderPass>(*_device, *this);
 	}
 
 	void Swapchain::CreateFrameBuffers()
 	{
+		CONCERTO_ASSERT(_renderpass != nullptr);
 		auto imagesViews = GetImageViews();
 		_frameBuffers.reserve(imagesViews.size());
 		for (auto& imageView : imagesViews)
-			_frameBuffers.emplace_back(*_device, _renderpass.value(), imageView, _depthImageView, _windowExtent);
+			_frameBuffers.emplace_back(*_device, *_renderpass, imageView, _depthImageView, _windowExtent);
 	}
 }

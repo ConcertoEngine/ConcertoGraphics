@@ -81,7 +81,18 @@ namespace Concerto::Graphics
 		*/
 		void WaitIdle() const;
 
+		/**
+		* @brief Update the contents of a descriptor set object
+		*/ 
+		void UpdateDescriptorSetsWrite(std::span<VkWriteDescriptorSet> descriptorWrites);
+		
+		/**
+		* @brief Update the contents of a descriptor set object
+		*/
+		void UpdateDescriptorSetWrite(VkWriteDescriptorSet descriptorWrite);
 
+		void SetObjectName(UInt64 object, std::string_view name);
+		
 		PhysicalDevice& GetPhysicalDevice();
 
 		Allocator& GetAllocator();
@@ -91,7 +102,7 @@ namespace Concerto::Graphics
 	private:
 		void CreateAllocator(Instance& instance);
 	
-		PhysicalDevice* _physicalDevice;
+		PhysicalDevice& _physicalDevice;
 		VkDevice _device;
 		std::unique_ptr<Allocator> _allocator;
 		std::unordered_map<Queue::Type, Queue> _queues;

@@ -8,11 +8,13 @@
 #include <unordered_map>
 #include <vector>
 
-#include "Concerto/Graphics/Defines.hpp"
 #include <vulkan/vulkan.h>
 #include <NZSL/Ast/RecursiveVisitor.hpp>
 #include <NZSL/Math/FieldOffsets.hpp>
 #include <NZSL/Ast/Module.hpp>
+
+#include "Concerto/Graphics/Defines.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/DescriptorSetLayout.hpp"
 
 namespace Concerto::Graphics
 {
@@ -29,9 +31,9 @@ namespace Concerto::Graphics
 		Max = UniformBuffer
 	};
 
-	struct RenderPipelineLayoutInfo
+	struct CONCERTO_GRAPHICS_API RenderPipelineLayoutInfo
 	{
-		struct Binding
+		struct CONCERTO_GRAPHICS_API Binding
 		{
 			UInt32 setIndex = 0;
 			UInt32 bindingIndex;
@@ -59,6 +61,20 @@ namespace Concerto::Graphics
 		return VK_DESCRIPTOR_TYPE_SAMPLER;
 	}
 
+	inline VkShaderStageFlags ToVulkan(nzsl::ShaderStageType stageType)
+	{
+		switch (stageType)
+		{
+		case nzsl::ShaderStageType::Vertex:
+			return VK_SHADER_STAGE_VERTEX_BIT;
+		case nzsl::ShaderStageType::Fragment:
+			return VK_SHADER_STAGE_FRAGMENT_BIT;
+		case nzsl::ShaderStageType::Compute:
+			return VK_SHADER_STAGE_COMPUTE_BIT;
+		}
+		return VK_SHADER_STAGE_ALL;
+	}
+
 	inline VkShaderStageFlags ToVulkan(nzsl::ShaderStageTypeFlags stageType)
 	{
 		VkShaderStageFlags shaderStageBits = 0;
@@ -76,7 +92,7 @@ namespace Concerto::Graphics
 
 		void Reflect(nzsl::Ast::Module& module);
 
-		PipelineLayout BuildPipelineLayout(Device& device) const;
+		std::unique_ptr<PipelineLayout> BuildPipelineLayout(Device& device);
 		
 		struct ExternalData
 		{
@@ -84,24 +100,24 @@ namespace Concerto::Graphics
 			UInt32 bindingIndex;
 		};
 		
-		struct ExternalUniformBlock : ExternalData
+		struct CONCERTO_GRAPHICS_API ExternalUniformBlock : ExternalData
 		{
 			std::size_t structIndex;
 		};
 
-		struct ExternalStorageBlock : ExternalData
+		struct CONCERTO_GRAPHICS_API ExternalStorageBlock : ExternalData
 		{
 			std::size_t structIndex;
 		};
-		
-		struct ExternalSampler : ExternalData
+
+		struct CONCERTO_GRAPHICS_API ExternalSampler : ExternalData
 		{
 			UInt32 arraySize;
 			nzsl::ImageType imageType;
 			nzsl::Ast::PrimitiveType sampledType;
 		};
 
-		struct ExternalTexture : ExternalData
+		struct CONCERTO_GRAPHICS_API ExternalTexture : ExternalData
 		{
 			UInt32 arraySize;
 			nzsl::AccessPolicy accessPolicy;
@@ -109,29 +125,29 @@ namespace Concerto::Graphics
 			nzsl::ImageType imageType;
 			nzsl::Ast::PrimitiveType baseType;
 		};
-		
-		struct ExternalBlockData
+
+		struct CONCERTO_GRAPHICS_API ExternalBlockData
 		{
 			std::unordered_map<std::string /*tag*/, ExternalSampler> samplers;
 			std::unordered_map<std::string /*tag*/, ExternalStorageBlock> storageBlocks;
 			std::unordered_map<std::string /*tag*/, ExternalTexture> textures;
 			std::unordered_map<std::string /*tag*/, ExternalUniformBlock> uniformBlocks;
 		};
-		
-		struct StructMemberData
+
+		struct CONCERTO_GRAPHICS_API StructMemberData
 		{
 			std::size_t offset;
 			std::size_t size;
 			nzsl::Ast::ExpressionType type;
 		};
 
-		struct OptionData
+		struct CONCERTO_GRAPHICS_API OptionData
 		{
 			nzsl::Ast::ExpressionType type;
 			UInt32 hash;
 		};
 
-		struct StructData
+		struct CONCERTO_GRAPHICS_API StructData
 		{
 			StructData(nzsl::StructLayout layout) : fieldOffsets(layout) {}
 
@@ -150,7 +166,32 @@ namespace Concerto::Graphics
 		std::unordered_map<std::size_t /*structIndex*/, StructData> _structs;
 		bool _isConditional;
 		RenderPipelineLayoutInfo _pipelineLayoutInfo;
+		struct VkDescriptorSetLayoutBindingHash
+		{
+			std::size_t operator()(const VkDescriptorSetLayoutBinding& binding) const
+			{
+				return std::hash<UInt32>()(binding.binding) ^
+					   std::hash<UInt32>()(binding.descriptorCount) ^
+					   std::hash<UInt32>()(UInt32(binding.descriptorType)) ^
+					   std::hash<UInt32>()(UInt32(binding.stageFlags));
+			}
+
+		};
+		std::unordered_map<VkDescriptorSetLayoutBinding, DescriptorSetLayoutPtr, VkDescriptorSetLayoutBindingHash> _descriptorSetLayoutsCache;
 	};
+}
+
+inline bool operator==(const VkDescriptorSetLayoutBinding& lhs, const VkDescriptorSetLayoutBinding& rhs)
+{
+	return lhs.binding == rhs.binding &&
+		lhs.descriptorCount == rhs.descriptorCount &&
+		lhs.descriptorType == rhs.descriptorType &&
+		lhs.stageFlags == rhs.stageFlags;
+}
+
+inline bool operator!=(const VkDescriptorSetLayoutBinding& lhs, const VkDescriptorSetLayoutBinding& rhs)
+{
+	return !(lhs == rhs);
 }
 
 #endif //CONCERTOGRAPHICS_INCLUDE_SHADERREFLECTION_HPP_

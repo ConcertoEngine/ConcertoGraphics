@@ -33,6 +33,8 @@ namespace Concerto::Graphics
 		 */
 		ShaderModule(Device& device, const std::string& shaderPath);
 
+		ShaderModule(Device& device, const std::vector<UInt32>& bytes);
+
 		ShaderModule(ShaderModule&&) = default;
 
 		ShaderModule(const ShaderModule&) = delete;

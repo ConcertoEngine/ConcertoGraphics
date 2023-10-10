@@ -12,7 +12,7 @@ namespace Concerto::Graphics
     {
 
 #if defined(CONCERTO_PLATFORM_WINDOWS)
-        std::vector<const char*> extensions = { "VK_KHR_surface", "VK_KHR_win32_surface" };
+        std::vector<const char*> extensions = { "VK_KHR_surface", "VK_KHR_win32_surface", "VK_EXT_debug_report"};
 #elif defined(CONCERTO_PLATFORM_POSIX)
         std::vector<const char*> extensions = { "VK_KHR_surface", "VK_KHR_xcb_surface", "VK_KHR_xlib_surface", "VK_KHR_wayland_surface" };
 #endif
@@ -26,7 +26,7 @@ namespace Concerto::Graphics
         _info(std::move(info)),
 		_vkInstance(_info.applicationName,
                     _info.applicationName,
-                    { 1, 2, 0 },
+                    { 1, 3, 0 },
                     _info.applicationVersion,
                     { 1, 0, 0 }, TMP::extensions, TMP::layers),
         _physicalDevices(_vkInstance.EnumeratePhysicalDevices())

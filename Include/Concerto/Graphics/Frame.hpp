@@ -26,12 +26,9 @@ namespace Concerto::Graphics
 	class CommandPool;
 	class Device;
 
-	struct FrameData
+	struct CONCERTO_GRAPHICS_API FrameData
 	{
-		FrameData(Device& device, UInt32 queueFamily, DescriptorPool& pool,
-				DescriptorSetLayout& globalDescriptorSetLayout, DescriptorSetLayout& objectDescriptorSetLayout,
-				Buffer& sceneParameterBuffer,
-				bool signaled = true);
+		FrameData(Device& device, bool signaled = true);
 
 		FrameData(FrameData&&) = default;
 
@@ -45,14 +42,8 @@ namespace Concerto::Graphics
 		std::unique_ptr<CommandPool> _commandPool;
 		std::unique_ptr<CommandBuffer> _mainCommandBuffer;
 
-		Buffer _cameraBuffer;
-		DescriptorSet globalDescriptor;
-
-		Buffer _objectBuffer;
-		DescriptorSet objectDescriptor;
-
 		Buffer _indirectBuffer;
-		bool _isResized = true;
+		bool _isResized;
 	};
 }
 #endif //CONCERTOGRAPHICS_FRAME_HPP

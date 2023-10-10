@@ -19,6 +19,16 @@ namespace Concerto::Graphics
 		createShaderModule();
 	}
 
+	ShaderModule::ShaderModule(Device& device, const std::vector<UInt32>& bytes) : Object<VkShaderModule>(device, [this](Device& device, VkShaderModule handle)
+		{ vkDestroyShaderModule(*device.Get(), handle, nullptr); })
+	{
+		_shaderModuleCreateInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+		_shaderModuleCreateInfo.pNext = nullptr;
+		_shaderModuleCreateInfo.codeSize = bytes.size() * sizeof(UInt32);
+		_shaderModuleCreateInfo.pCode = reinterpret_cast<const UInt32*>(bytes.data());
+		createShaderModule();
+	}
+
 	void ShaderModule::loadShaderModule(const std::string& shaderPath)
 	{
 		std::ifstream file(shaderPath, std::ios::ate | std::ios::binary);

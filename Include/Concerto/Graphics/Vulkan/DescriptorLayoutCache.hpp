@@ -9,8 +9,8 @@
 
 #include <vulkan/vulkan.h>
 
-#include "Concerto/Graphics/Vulkan/wrapper/DescriptorSetLayout.hpp"
-#include "Concerto/Graphics/Vulkan/wrapper/Device.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/DescriptorSetLayout.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Device.hpp"
 
 namespace Concerto::Graphics
 {

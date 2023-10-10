@@ -42,10 +42,13 @@ namespace Concerto::Graphics
 
 		RenderPass& operator=(const RenderPass&) = delete;
 
+		VkExtent2D GetWindowExtent() const;
+
 	private:
 		std::vector<VkAttachmentDescription> _attachments;
 		std::vector<VkSubpassDescription> _subpasses;
 		std::vector<VkSubpassDependency> _dependencies;
+		Swapchain& _swapchain;
 	};
 
 } // Concerto

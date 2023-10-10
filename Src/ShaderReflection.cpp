@@ -11,22 +11,14 @@
 
 namespace Concerto::Graphics
 {
-	void ShaderReflection::Reflect(nzsl::Ast::Module& module)
-	{
-		for (auto& importedModule : module.importedModules)
-			importedModule.module->rootNode->Visit(*this);
-
-		module.rootNode->Visit(*this);
-	}
-
-	PipelineLayout ShaderReflection::BuildPipelineLayout(Device& device) const
+	std::unique_ptr<PipelineLayout> ShaderReflection::BuildPipelineLayout(Device& device)
 	{
 		std::vector<VkDescriptorSetLayoutBinding> bindings(_pipelineLayoutInfo.bindings.size());
-
+		
 		for (std::size_t i = 0; i < _pipelineLayoutInfo.bindings.size(); ++i)
 		{
 			const auto& binding = _pipelineLayoutInfo.bindings[i];
-
+			bindings[i] = {};
 			bindings[i].binding = binding.bindingIndex;
 			bindings[i].descriptorCount = binding.arraySize;
 			bindings[i].descriptorType = ToVulkan(binding.type);
@@ -37,26 +29,43 @@ namespace Concerto::Graphics
 		UInt32 setCount = 0;
 		for (const auto& bindingInfo : _pipelineLayoutInfo.bindings)
 			setCount = std::max(setCount, bindingInfo.setIndex + 1);
-		
-		std::vector<VkDescriptorSetLayout> setLayouts(setCount);
-		std::vector<VkDescriptorSetLayoutBinding> setLayoutInfo(setCount);
 
+		std::vector<VkDescriptorSetLayoutBinding> setLayoutInfo(setCount);
+		std::size_t setLayoutInfoIndex = 0;
 		for (const auto& bindingInfo : _pipelineLayoutInfo.bindings)
 		{
-			VkDescriptorSetLayoutBinding& layoutBinding = setLayoutInfo.emplace_back();
-			layoutBinding.binding = bindingInfo.bindingIndex;
+			VkDescriptorSetLayoutBinding& layoutBinding = setLayoutInfo[bindingInfo.setIndex];
+			layoutBinding.binding = setLayoutInfoIndex++;
 			layoutBinding.descriptorCount = bindingInfo.arraySize;
 			layoutBinding.descriptorType = ToVulkan(bindingInfo.type);
 			layoutBinding.pImmutableSamplers = nullptr;
 			layoutBinding.stageFlags = ToVulkan(bindingInfo.shaderStageFlags);
 		}
-		std::vector<DescriptorSetLayoutPtr> _descriptorSetLayouts(setCount);
+		std::vector<DescriptorSetLayoutPtr> _descriptorSetLayouts;
+		_descriptorSetLayouts.reserve(setCount);
 		for (UInt32 i = 0; i < setCount; ++i)
 		{
-			_descriptorSetLayouts[i] = MakeDescriptorSetLayout(device, {setLayoutInfo[i]});
-			setLayouts[i] = *_descriptorSetLayouts[i]->Get();
+			auto it = _descriptorSetLayoutsCache.find(setLayoutInfo[i]);
+			if (it == _descriptorSetLayoutsCache.end())
+			{
+				auto descriptorSetPtr = MakeDescriptorSetLayout(device, setLayoutInfo);
+				_descriptorSetLayoutsCache[setLayoutInfo[i]] = descriptorSetPtr;
+				_descriptorSetLayouts.push_back(descriptorSetPtr);
+			}
+			else
+				_descriptorSetLayouts.push_back(it->second);
 		}
-		return PipelineLayout(device, setLayouts);
+		return std::make_unique<PipelineLayout>(device, std::move(_descriptorSetLayouts));
+	}
+
+	void ShaderReflection::Reflect(nzsl::Ast::Module& module)
+	{
+		_isConditional = false;
+
+		for (auto& importedModule : module.importedModules)
+			importedModule.module->rootNode->Visit(*this);
+
+		module.rootNode->Visit(*this);
 	}
 
 	void ShaderReflection::Visit(nzsl::Ast::ConditionalStatement& node)
@@ -114,13 +123,13 @@ namespace Concerto::Graphics
 			else
 				throw std::runtime_error("unexpected type " + nzsl::Ast::ToString(varType));
 
-
+			// TODO: Get more precise shader stage type
 			_pipelineLayoutInfo.bindings.push_back({
-				bindingSet,
-				bindingIndex,
-				arraySize,
-				bindingType,
-				nzsl::ShaderStageType_All
+				bindingSet,               // setIndex
+				bindingIndex,             // bindingIndex
+				arraySize,                // arraySize
+				bindingType,              // type
+				nzsl::ShaderStageType_All // shaderStageFlags
 				});
 
 			if (!externalVar.tag.empty() && externalBlock)

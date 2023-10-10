@@ -35,7 +35,7 @@ namespace Concerto::Graphics
 
 		DescriptorSetLayout& operator=(DescriptorSetLayout&&) = default;
 
-		~DescriptorSetLayout() = default;
+		~DescriptorSetLayout(){CONCERTO_ASSERT_FALSE;};
 	};
 	using DescriptorSetLayoutPtr = std::shared_ptr<DescriptorSetLayout>;
 

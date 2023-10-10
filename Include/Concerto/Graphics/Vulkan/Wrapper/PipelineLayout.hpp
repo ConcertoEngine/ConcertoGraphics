@@ -28,7 +28,7 @@ namespace Concerto::Graphics
 	class CONCERTO_GRAPHICS_API PipelineLayout : public Object<VkPipelineLayout>
 	{
 	public:
-		PipelineLayout(Device& device, const std::vector<VkDescriptorSetLayout>& descriptorSetLayouts);
+		PipelineLayout(Device& device, std::vector<DescriptorSetLayoutPtr> descriptorSetLayouts);
 
 		PipelineLayout(PipelineLayout&&) = default;
 
@@ -37,6 +37,10 @@ namespace Concerto::Graphics
 		PipelineLayout& operator=(PipelineLayout&&) = default;
 
 		PipelineLayout& operator=(const PipelineLayout&) = delete;
+
+		const std::vector<DescriptorSetLayoutPtr>& GetDescriptorSetLayouts() const;
+	private:
+		std::vector<DescriptorSetLayoutPtr> _descriptorSetLayouts;
 	};
 } // Concerto::Graphics::Wrapper
 

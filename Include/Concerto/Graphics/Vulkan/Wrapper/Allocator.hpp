@@ -50,8 +50,7 @@ namespace Concerto::Graphics
 		*/
 		[[nodiscard]] Device& GetDevice() const;
 
-	private:
-		Device* _device;
+		void SetDevice(Device* device);
 	};
 }
 

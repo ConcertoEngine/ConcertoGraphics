@@ -35,11 +35,8 @@ namespace Concerto::Graphics
 			VMA_MEMORY_USAGE_CPU_ONLY));
 		commandBuffer.ImmediateSubmit(fence, commandPool, queue, [&](CommandBuffer& cb)
 		{
-		  MapAndCopy(allocator,
-			  stagingBuffer,
-			  _subMesh->GetVertices().data(),
-			  _subMesh->GetVertices().size() * sizeof(Vertex));
-		  cb.CopyBuffer(stagingBuffer, _vertexBuffer, _subMesh->GetVertices().size() * sizeof(Vertex));
+			stagingBuffer.Copy(_subMesh->GetVertices().data(), _subMesh->GetVertices().size() * sizeof(Vertex));
+			cb.CopyBuffer(stagingBuffer, _vertexBuffer, _subMesh->GetVertices().size() * sizeof(Vertex));
 		});
 	}
 

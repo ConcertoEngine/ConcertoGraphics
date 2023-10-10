@@ -10,13 +10,13 @@
 
 namespace Concerto::Graphics
 {
-	std::vector<const char*> deviceExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
+	std::vector<const char*> deviceExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME, VK_EXT_DEBUG_MARKER_EXTENSION_NAME };
 	Device::Device(PhysicalDevice& physicalDevice, Instance& instance) :
-		_physicalDevice(&physicalDevice),
+		_physicalDevice(physicalDevice),
 		_device(VK_NULL_HANDLE),
 		_allocator(nullptr)
 	{
-		std::span<VkQueueFamilyProperties> queueFamilyProperties = _physicalDevice->GetQueueFamilyProperties();
+		std::span<VkQueueFamilyProperties> queueFamilyProperties = _physicalDevice.GetQueueFamilyProperties();
 		std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
 		queueCreateInfos.reserve(queueFamilyProperties.size());
 
@@ -54,7 +54,7 @@ namespace Concerto::Graphics
 		createInfo.pNext = &shader_draw_parameters_features;
 		createInfo.enabledExtensionCount = deviceExtensions.size();
 		createInfo.ppEnabledExtensionNames = deviceExtensions.data();
-		if (vkCreateDevice(*_physicalDevice->Get(), &createInfo, nullptr, &_device) != VK_SUCCESS)
+		if (vkCreateDevice(*_physicalDevice.Get(), &createInfo, nullptr, &_device) != VK_SUCCESS)
 			throw std::runtime_error("failed to create logical device!");
 		CreateAllocator(instance);
 		_uploadContext = std::make_unique<UploadContext>(*this, GetQueueFamilyIndex(Queue::Type::Graphics));
@@ -62,9 +62,9 @@ namespace Concerto::Graphics
 
 	UInt32 Device::GetQueueFamilyIndex(Queue::Type queueType)
 	{
-		std::span<VkQueueFamilyProperties> queueFamilyProperties = _physicalDevice->GetQueueFamilyProperties();
+		std::span<VkQueueFamilyProperties> queueFamilyProperties = _physicalDevice.GetQueueFamilyProperties();
 		UInt32 i = 0;
-		for (VkQueueFamilyProperties properties: queueFamilyProperties)
+		for (const VkQueueFamilyProperties& properties: queueFamilyProperties)
 		{
 			if (properties.queueFlags & VK_QUEUE_GRAPHICS_BIT && queueType == Queue::Type::Graphics)
 				return i;
@@ -79,7 +79,7 @@ namespace Concerto::Graphics
 
 	UInt32 Device::GetQueueFamilyIndex(UInt32 flag)
 	{
-		std::span<VkQueueFamilyProperties> queueFamilyProperties = _physicalDevice->GetQueueFamilyProperties();
+		std::span<VkQueueFamilyProperties> queueFamilyProperties = _physicalDevice.GetQueueFamilyProperties();
 		UInt32 i = 0;
 		for (VkQueueFamilyProperties properties: queueFamilyProperties)
 		{
@@ -116,9 +116,35 @@ namespace Concerto::Graphics
 			throw std::runtime_error("Failed to Wait for device idle" + std::to_string(res));
 	}
 
+	void Device::UpdateDescriptorSetsWrite(std::span<VkWriteDescriptorSet> descriptorWrites)
+	{
+		vkUpdateDescriptorSets(_device, descriptorWrites.size(), descriptorWrites.data(), 0, nullptr);
+	}
+
+	void Device::UpdateDescriptorSetWrite(VkWriteDescriptorSet descriptorWrite)
+	{
+		vkUpdateDescriptorSets(_device, 1, &descriptorWrite, 0, nullptr);
+	}
+
+	void Device::SetObjectName(UInt64 object, std::string_view name)
+	{
+		auto pfnDebugMarkerSetObjectTag = (PFN_vkDebugMarkerSetObjectTagEXT)vkGetDeviceProcAddr(_device, "vkDebugMarkerSetObjectTagEXT");
+		auto pfnDebugMarkerSetObjectName = (PFN_vkDebugMarkerSetObjectNameEXT)vkGetDeviceProcAddr(_device, "vkDebugMarkerSetObjectNameEXT");
+		auto pfnCmdDebugMarkerBegin = (PFN_vkCmdDebugMarkerBeginEXT)vkGetDeviceProcAddr(_device, "vkCmdDebugMarkerBeginEXT");
+		auto pfnCmdDebugMarkerEnd = (PFN_vkCmdDebugMarkerEndEXT)vkGetDeviceProcAddr(_device, "vkCmdDebugMarkerEndEXT");
+		auto pfnCmdDebugMarkerInsert = (PFN_vkCmdDebugMarkerInsertEXT)vkGetDeviceProcAddr(_device, "vkCmdDebugMarkerInsertEXT");
+		
+		VkDebugMarkerObjectNameInfoEXT nameInfo = {};
+		nameInfo.sType = VK_STRUCTURE_TYPE_DEBUG_MARKER_OBJECT_NAME_INFO_EXT;
+		nameInfo.objectType = VK_DEBUG_REPORT_OBJECT_TYPE_UNKNOWN_EXT;
+		nameInfo.object = object;
+		nameInfo.pObjectName = name.data();
+		pfnDebugMarkerSetObjectName(_device, &nameInfo);
+	}
+
 	PhysicalDevice& Device::GetPhysicalDevice()
 	{
-		return *_physicalDevice;
+		return _physicalDevice;
 	}
 
 	Allocator& Device::GetAllocator()
@@ -134,7 +160,7 @@ namespace Concerto::Graphics
 
 	void Device::CreateAllocator(Instance& instance)
 	{
-		_allocator = std::make_unique<Allocator>(*_physicalDevice, *this, instance);
+		_allocator = std::make_unique<Allocator>(_physicalDevice, *this, instance);
 		CONCERTO_ASSERT(_allocator != nullptr)
 	}
 
