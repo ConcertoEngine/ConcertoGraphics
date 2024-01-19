@@ -7,6 +7,9 @@
 #include <cassert>
 
 #include "Concerto/Graphics/Vulkan/Wrapper/RenderPass.hpp"
+
+#include <Concerto/Core/Assert.hpp>
+
 #include "Concerto/Graphics/Vulkan/Wrapper/Swapchain.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/Device.hpp"
 
@@ -86,6 +89,7 @@ namespace Concerto::Graphics
 
 		if (vkCreateRenderPass(*_device->Get(), &render_pass_info, nullptr, &_handle) != VK_SUCCESS)
 		{
+			CONCERTO_ASSERT_FALSE;
 			throw std::runtime_error("failed to create render pass!");
 		}
 	}

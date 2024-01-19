@@ -2,8 +2,8 @@
 // Created by arthur on 21/12/2022.
 //
 
-#ifndef CONCERTOGRAPHICS_RENDERINGCONTEXT_HPP
-#define CONCERTOGRAPHICS_RENDERINGCONTEXT_HPP
+#ifndef CONCERTO_GRAPHICS_RENDERINGCONTEXT_HPP
+#define CONCERTO_GRAPHICS_RENDERINGCONTEXT_HPP
 
 #include <cstdint>
 #include <vulkan/vulkan.h>
@@ -40,4 +40,4 @@ namespace Concerto::Graphics
 		CommandPool* commandPool;
 	};
 } // Concerto::Graphics
-#endif //CONCERTOGRAPHICS_RENDERINGCONTEXT_HPP
+#endif //CONCERTO_GRAPHICS_RENDERINGCONTEXT_HPP

@@ -2,8 +2,8 @@
 // Created by arthur on 17/02/2023.
 //
 
-#ifndef CONCERTOGRAPHICS_INCLUDE_MATERIAL_HPP_
-#define CONCERTOGRAPHICS_INCLUDE_MATERIAL_HPP_
+#ifndef CONCERTO_GRAPHICS_INCLUDE_MATERIAL_HPP_
+#define CONCERTO_GRAPHICS_INCLUDE_MATERIAL_HPP_
 
 #include <string>
 #include <memory>
@@ -58,4 +58,4 @@ namespace Concerto::Graphics
 	};
 	using MaterialPtr = std::shared_ptr<MaterialInfo>;
 }
-#endif //CONCERTOGRAPHICS_INCLUDE_MATERIAL_HPP_
+#endif //CONCERTO_GRAPHICS_INCLUDE_MATERIAL_HPP_

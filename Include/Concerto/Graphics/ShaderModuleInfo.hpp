@@ -2,8 +2,8 @@
 // Created by arthur on 28/08/2023.
 //
 
-#ifndef CONCERTOGRAPHICS_INCLUDE_SHADERMODULEINFO_HPP_
-#define CONCERTOGRAPHICS_INCLUDE_SHADERMODULEINFO_HPP_
+#ifndef CONCERTO_GRAPHICS_INCLUDE_SHADERMODULEINFO_HPP_
+#define CONCERTO_GRAPHICS_INCLUDE_SHADERMODULEINFO_HPP_
 
 #include <string_view>
 
@@ -26,11 +26,11 @@ namespace Concerto::Graphics
 	
 		nzsl::Ast::ModulePtr shaderAst;
 		nzsl::Ast::ModulePtr sanitizedModule;
-		std::unique_ptr<PipelineLayout> pipelineLayout;
 		std::vector<UInt32> spirv;
 		std::unique_ptr<ShaderModule> shaderModule;
+		std::unordered_map<UInt32 /*binding set*/, std::vector<VkDescriptorSetLayoutBinding>> bindings;
 	private:
-		VkDescriptorType GetBindingType(const nzsl::Ast::ExpressionType* expression);
+		VkDescriptorType GetBindingType(const nzsl::Ast::ExpressionType* varType);
 	};
 }
-#endif //CONCERTOGRAPHICS_INCLUDE_SHADERMODULEINFO_HPP_
+#endif //CONCERTO_GRAPHICS_INCLUDE_SHADERMODULEINFO_HPP_

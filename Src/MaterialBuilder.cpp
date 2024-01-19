@@ -2,20 +2,19 @@
 // Created by arthur on 17/02/2023.
 //
 
-#include <iostream>
-
 #include "Concerto/Graphics/MaterialBuilder.hpp"
+
+#include <ranges>
+
+#include "Concerto/Graphics/TextureBuilder.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/Device.hpp"
-#include "Concerto/Graphics/Vulkan/DescriptorBuilder.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/Sampler.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/ShaderModule.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/RenderPass.hpp"
-#include "Concerto/Graphics/ShaderModuleInfo.hpp"
 
 namespace Concerto::Graphics
 {
 	MaterialBuilder::MaterialBuilder(Device& device) :
-		_layoutCache(device),
 		_allocator(device),
 		_sampler(device, VK_FILTER_NEAREST),
 		_device(device),
@@ -25,78 +24,113 @@ namespace Concerto::Graphics
 
 	}
 
-	VkMaterialPtr MaterialBuilder::BuildMaterial(const MaterialInfo& material, RenderPass& renderpass)
+	VkMaterialPtr MaterialBuilder::BuildMaterial(MaterialInfo& material, RenderPass& renderpass)
 	{
+		/*auto it = std::ranges::find_if(_materialsCache, [&](const auto& pair)
+		{
+			return pair.first.vertexShaderPath == material.vertexShaderPath && pair.first.fragmentShaderPath == material.fragmentShaderPath;
+		});
+		if (it != _materialsCache.end())
+			return it->second;*/
 		auto& vertShaderModuleInfo = _shaderModuleInfos.emplace(material.vertexShaderPath, new ShaderModuleInfo(_device, material.vertexShaderPath)).first->second;
 		auto& fragShaderModuleInfo = _shaderModuleInfos.emplace(material.fragmentShaderPath, new ShaderModuleInfo(_device, material.fragmentShaderPath)).first->second;
 		
-		std::vector<VkPipelineShaderStageCreateInfo> shaderStages = {
+		std::vector shaderStages = {
 			VulkanInitializer::PipelineShaderStageCreateInfo(VK_SHADER_STAGE_VERTEX_BIT, *vertShaderModuleInfo->shaderModule->Get()),
 			VulkanInitializer::PipelineShaderStageCreateInfo(VK_SHADER_STAGE_FRAGMENT_BIT, *fragShaderModuleInfo->shaderModule->Get())
 		};
-		std::vector<DescriptorSetLayoutPtr> descriptorSetLayouts;
-		descriptorSetLayouts.reserve(vertShaderModuleInfo->pipelineLayout->GetDescriptorSetLayouts().size() + fragShaderModuleInfo->pipelineLayout->GetDescriptorSetLayouts().size());
-		for (auto& descriptorSetLayout : vertShaderModuleInfo->pipelineLayout->GetDescriptorSetLayouts())
-			descriptorSetLayouts.emplace_back(descriptorSetLayout);
-		for (auto& descriptorSetLayout : fragShaderModuleInfo->pipelineLayout->GetDescriptorSetLayouts())
-			descriptorSetLayouts.emplace_back(descriptorSetLayout);
 
-		PipelineLayout pl(_device, descriptorSetLayouts);
+		std::unordered_map<UInt32 /*set*/, std::vector<VkDescriptorSetLayoutBinding>> bindings = vertShaderModuleInfo->bindings;
+		for (auto& [set, setBindings] : fragShaderModuleInfo->bindings)
+		{
+			auto it = bindings.find(set);
+			if (it == bindings.end())
+				bindings.emplace(set, setBindings);
+			else
+				it->second.insert(it->second.end(), setBindings.begin(), setBindings.end());
+		}
+
+		std::vector<DescriptorSetLayoutPtr> descriptorSetLayouts;
+		for (auto& setBindings : bindings | std::views::values)
+			descriptorSetLayouts.push_back(GeDescriptorSetLayout(setBindings));
+
+		auto pl = std::make_shared<PipelineLayout>(_device, descriptorSetLayouts);
 
 		PipelineInfo pipelineInfo(std::move(shaderStages), renderpass.GetWindowExtent(), pl);
 		
 		auto pipeline = std::make_shared<Pipeline>(_device, pipelineInfo);
 		pipeline->BuildPipeline(*renderpass.Get());
-		auto it = _materialsCache.find(material);
-		if (it != _materialsCache.end())
-			return it->second;
-		
-		const auto& vertDescriptorSetLayouts = vertShaderModuleInfo->pipelineLayout->GetDescriptorSetLayouts();
-		const auto& fragDescriptorSetLayouts = fragShaderModuleInfo->pipelineLayout->GetDescriptorSetLayouts();
+
 		auto vkMaterialPtr = std::make_shared<VkMaterial>();
-		vkMaterialPtr->_descriptorSets.reserve(vertDescriptorSetLayouts.size() + fragDescriptorSetLayouts.size());
+		_materialsCache.emplace(vkMaterialPtr);
+		vkMaterialPtr->descriptorSets.reserve(descriptorSetLayouts.size());
 		
-		for (auto& descriptorSetLayout : vertDescriptorSetLayouts)
+		for (auto& descriptorSetLayout : descriptorSetLayouts)
 		{
-			DescriptoSetInfoPtr descriptorSetInfo = std::make_shared<DescriptoSetInfo>(DescriptorSet(_device, _descriptorPool, *descriptorSetLayout));
-			vkMaterialPtr->_descriptorSets.push_back(std::move(descriptorSetInfo));
+			auto& descriptorSet = vkMaterialPtr->descriptorSets.emplace_back();
+			if (!_allocator.Allocate(descriptorSet, *descriptorSetLayout))
+			{
+				CONCERTO_ASSERT_FALSE;
+			}
 		}
 
-		for (auto& descriptorSetLayout : fragDescriptorSetLayouts)
-		{
-			DescriptoSetInfoPtr descriptorSetInfo = std::make_shared<DescriptoSetInfo>(DescriptorSet(_device, _descriptorPool, *descriptorSetLayout));
-			vkMaterialPtr->_descriptorSets.push_back(std::move(descriptorSetInfo));
-		}
-		
-		vkMaterialPtr->_pipeline = pipeline;
-		vkMaterialPtr->_pipelineLayout = vertShaderModuleInfo->pipelineLayout.get();
-		vkMaterialPtr->_diffuseTextureSet = nullptr;
-		vkMaterialPtr->_normalTextureSet = nullptr;
-		_materialsCache[material] = vkMaterialPtr;
-		if (material.diffuseTexture == nullptr)
+		vkMaterialPtr->pipeline = pipeline;
+		vkMaterialPtr->pipelineLayout = pipeline->GetPipelineLayout();
+		vkMaterialPtr->diffuseTextureSet = nullptr;
+		vkMaterialPtr->normalTextureSet = nullptr;
+
+		if (material.diffuseTexturePath.empty())
 			return vkMaterialPtr;
-		//DescriptorBuilder descriptorBuilder(_layoutCache, _allocator);
-		//VkDescriptorImageInfo imageInfo{};
-		//imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-		//imageInfo.imageView = *material.diffuseTexture->_imageView.Get();
-		//imageInfo.sampler = *_sampler.Get();
-		//descriptorBuilder.BindImage(0, &imageInfo, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT);
-		//if (!descriptorBuilder.Build(vkMaterialPtr->_diffuseTextureSet))
-		//{
-		//	std::cerr << "Failed to build diffuse texture descriptor set" << std::endl;
-		//}
-		//vkMaterialPtr->_diffuseTextureSet->WriteImageSamplerDescriptor(_sampler, material.diffuseTexture->_imageView);
-		//return vkMaterialPtr;
-		return nullptr;
+		material.diffuseTexture = TextureBuilder::Instance()->BuildTexture(material.diffuseTexturePath);
+		VkDescriptorImageInfo imageInfo = {};
+		imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+		imageInfo.imageView = *material.diffuseTexture->_imageView.Get();
+		imageInfo.sampler = *_sampler.Get();
+
+		VkWriteDescriptorSet newWrite = {};
+		newWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		newWrite.pNext = nullptr;
+		newWrite.descriptorCount = 1;
+		newWrite.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+		newWrite.pImageInfo = &imageInfo;
+		newWrite.dstBinding = 0;
+		newWrite.dstSet = *vkMaterialPtr->descriptorSets[2]->Get();
+
+		_device.UpdateDescriptorSetWrite(newWrite);
+		vkMaterialPtr->descriptorSets[2]->WriteImageSamplerDescriptor(_sampler, material.diffuseTexture->_imageView);
+		return vkMaterialPtr;
 	}
 
 	VkMaterialPtr MaterialBuilder::GetMaterial(const std::string& materialName)
 	{
-		for (auto& [material, vkMaterial] : _materialsCache)
+		/*for (auto& [material, vkMaterial] : _materialsCache)
 		{
 			if (material.name == materialName)
 				return vkMaterial;
-		}
+		}*/
 		return nullptr;
+	}
+
+	std::set<VkMaterialPtr> MaterialBuilder::GetMaterials()
+	{
+		/*std::set<VkMaterial*> materials;
+		auto toto = this->_materialsCache.size();
+		for (auto& [materialInfo, vkMaterial] : _materialsCache)
+			materials.emplace(vkMaterial.get());
+		return materials;*/
+		return _materialsCache;
+	}
+
+	DescriptorSetLayoutPtr MaterialBuilder::GeDescriptorSetLayout(const std::vector<VkDescriptorSetLayoutBinding>& bindings)
+	{
+		UInt64 hash = DescriptorSetLayout::GetHash(bindings);
+
+		const auto it = _descriptorSetLayoutsCache.find(hash);
+		if (it != _descriptorSetLayoutsCache.end())
+			return it->second;
+
+		DescriptorSetLayoutPtr descriptorSetLayout = MakeDescriptorSetLayout(_device, bindings);
+		_descriptorSetLayoutsCache.emplace(hash, descriptorSetLayout);
+		return descriptorSetLayout;
 	}
 }

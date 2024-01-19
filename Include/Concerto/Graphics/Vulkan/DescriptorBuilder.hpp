@@ -2,20 +2,18 @@
 // Created by arthur on 16/02/2023.
 //
 
-#ifndef CONCERTOGRAPHICS_INCLUDE_DESCRIPTORBUILDER_HPP_
-#define CONCERTOGRAPHICS_INCLUDE_DESCRIPTORBUILDER_HPP_
-
-#include <memory>
+#ifndef CONCERTO_GRAPHICS_INCLUDE_DESCRIPTORBUILDER_HPP_
+#define CONCERTO_GRAPHICS_INCLUDE_DESCRIPTORBUILDER_HPP_
 
 #include "Concerto/Graphics/Defines.hpp"
 
 #include "Concerto/Graphics/Vulkan/DescriptorLayoutCache.hpp"
 #include "Concerto/Graphics/Vulkan/DescriptorAllocator.hpp"
-#include "Concerto/Graphics/Vulkan/Wrapper/DescriptorSet.hpp"
 
 namespace Concerto::Graphics
 {
 	class DescriptorSetLayout;
+	class DescriptorSet;
 
 	class CONCERTO_GRAPHICS_API DescriptorBuilder
 	{
@@ -29,11 +27,11 @@ namespace Concerto::Graphics
 		bool Build(DescriptorSetPtr& set);
 	 private:
 
-		std::vector<VkWriteDescriptorSet> writes;
-		std::vector<VkDescriptorSetLayoutBinding> bindings;
+		std::vector<VkWriteDescriptorSet> _writes;
+		std::vector<VkDescriptorSetLayoutBinding> _bindings;
 
-		DescriptorLayoutCache& cache;
-		DescriptorAllocator& alloc;
+		DescriptorLayoutCache& _cache;
+		DescriptorAllocator& _alloc;
 	};
 }
-#endif //CONCERTOGRAPHICS_INCLUDE_DESCRIPTORBUILDER_HPP_
+#endif //CONCERTO_GRAPHICS_INCLUDE_DESCRIPTORBUILDER_HPP_

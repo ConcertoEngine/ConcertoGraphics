@@ -2,8 +2,8 @@
 // Created by arthur on 16/02/2023.
 //
 
-#ifndef CONCERTOGRAPHICS_INCLUDE_DESCRIPTORALLOCATOR_HPP_
-#define CONCERTOGRAPHICS_INCLUDE_DESCRIPTORALLOCATOR_HPP_
+#ifndef CONCERTO_GRAPHICS_INCLUDE_DESCRIPTORALLOCATOR_HPP_
+#define CONCERTO_GRAPHICS_INCLUDE_DESCRIPTORALLOCATOR_HPP_
 
 #include <vector>
 
@@ -38,12 +38,12 @@ namespace Concerto::Graphics
 				};
 		};
 		explicit DescriptorAllocator(Device &device);
-		bool Allocate(DescriptorSetPtr &descriptorSet, DescriptorSetLayout &layout);
+		bool Allocate(DescriptorSetPtr &descriptorSet, const DescriptorSetLayout &layout);
 	 	/**
 	 	 * @brief Reset the allocator, resetting all the descriptors in the pool.
 	 	 */
 		void Reset();
-		Device &GetDevice();
+		Device &GetDevice() const;
 	 private:
 		DescriptorPoolPtr CreatePool(VkDescriptorPoolCreateFlags flags);
 		DescriptorPoolPtr GetPool();
@@ -52,7 +52,8 @@ namespace Concerto::Graphics
 		DescriptorPoolPtr _currentPool;
 		std::vector<DescriptorPoolPtr> _usedPools;
 		std::vector<DescriptorPoolPtr> _freePools;
+		std::unordered_map<UInt64 /*Hash of bindings*/, DescriptorSetPtr> _cache;
 	};
 }
 
-#endif //CONCERTOGRAPHICS_INCLUDE_DESCRIPTORALLOCATOR_HPP_
+#endif //CONCERTO_GRAPHICS_INCLUDE_DESCRIPTORALLOCATOR_HPP_

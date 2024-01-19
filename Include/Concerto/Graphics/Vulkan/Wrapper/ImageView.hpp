@@ -2,8 +2,8 @@
 // Created by arthur on 18/09/2022.
 //
 
-#ifndef CONCERTOGRAPHICS_IMAGEVIEW_HPP
-#define CONCERTOGRAPHICS_IMAGEVIEW_HPP
+#ifndef CONCERTO_GRAPHICS_IMAGEVIEW_HPP
+#define CONCERTO_GRAPHICS_IMAGEVIEW_HPP
 
 #include <vulkan/vulkan.h>
 #include "Concerto/Graphics/Defines.hpp"
@@ -30,4 +30,4 @@ namespace Concerto::Graphics
 	};
 }
 
-#endif //CONCERTOGRAPHICS_IMAGEVIEW_HPP
+#endif //CONCERTO_GRAPHICS_IMAGEVIEW_HPP

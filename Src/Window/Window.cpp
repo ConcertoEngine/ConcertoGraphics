@@ -5,8 +5,11 @@
 #include <stdexcept>
 
 #include <Concerto/Core/Logger.hpp>
+#include <Concerto/Core/Assert.hpp>
+
 #include "Concerto/Graphics/Window/Window.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/Instance.hpp"
+#include "Concerto/Graphics/Window/Event.hpp"
 
 #if __linux__
 #define GLFW_EXPOSE_NATIVE_X11
@@ -34,12 +37,18 @@ namespace Concerto::Graphics
 	{
 		glfwSetErrorCallback(ErrorCallback);
 		if (glfwInit() == GLFW_FALSE)
+		{
+			CONCERTO_ASSERT_FALSE;
 			throw std::runtime_error("GLFW3 initialization failed");
+		}
 		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 		_window = glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);;
 		if (!_window)
+		{
+			CONCERTO_ASSERT_FALSE;
 			throw std::runtime_error("GLFW3 Window creation failed");
-
+		}
+		RegisterInputCallbacks();
 	}
 	Window::~Window()
 	{
@@ -107,12 +116,12 @@ namespace Concerto::Graphics
 		return w;
 	}
 
-	bool Window::CreateVulkanSurface(Instance& instance, VkSurfaceKHR* surface)
+	bool Window::CreateVulkanSurface(Instance& instance, VkSurfaceKHR* surface) const
 	{
-		auto res = glfwCreateWindowSurface(*instance.Get(), _window, nullptr, surface);
+		const auto res = glfwCreateWindowSurface(*instance.Get(), _window, nullptr, surface);
 		if (res != VK_SUCCESS)
 		{
-			Logger::Warning("Unable to create vulkan surface error code: " + std::to_string(int(res)));
+			Logger::Warning("Unable to create vulkan surface error code: " + std::to_string(res));
 			return false;
 		}
 		return true;
@@ -185,5 +194,49 @@ namespace Concerto::Graphics
 			auto* self = static_cast<Window*>(glfwGetWindowUserPointer(window));
 			self->_cursorPosCallback(*self, xpos, ypos);
 		});
+	}
+
+	Input& Window::GetInputManager()
+	{
+		return _input;
+	}
+
+	void Window::RegisterInputCallbacks()
+	{
+		RegisterCursorPosCallback([&](Window& window, double x, double y)
+		{
+			//imGui->UpdateMousePosition(x, y);
+			MouseEvent mouseEvent{};
+			static double deltaX = 0, deltaY = 0;
+			deltaX = x - deltaX;
+			deltaY = y - deltaY;
+			mouseEvent.type = MouseEvent::Type::Moved;
+			mouseEvent.mouseMove.x = x;
+			mouseEvent.mouseMove.y = y;
+			mouseEvent.mouseMove.deltaX = deltaX;
+			mouseEvent.mouseMove.deltaY = deltaY;
+			_input.TriggerMouseEvent(mouseEvent);
+			deltaX = x;
+			deltaY = y;
+		});
+
+		RegisterMouseButtonCallback([&](Window& window, int button, int action, int mods)
+		{
+			//imGui->UpdateMouseButton(button, action == GLFW_PRESS);
+			MouseEvent mouseEvent{};
+			mouseEvent.type = MouseEvent::Type::Button;
+			mouseEvent.button.button = static_cast<MouseButton::Button>(button);
+			mouseEvent.button.triggerType = static_cast<TriggerType>(action);
+			_input.TriggerMouseEvent(mouseEvent);
+		});
+
+		RegisterKeyCallback([&](Window& window, Key key, int scanCode, int action, int mods)
+		{
+			KeyEvent keyEvent{};
+			keyEvent.key = key;
+			keyEvent.triggerType = static_cast<TriggerType>(action);
+			_input.TriggerKeyEvent(keyEvent);
+		});
+
 	}
 }

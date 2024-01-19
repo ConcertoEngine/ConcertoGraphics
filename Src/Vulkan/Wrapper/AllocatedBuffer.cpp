@@ -11,7 +11,18 @@
 namespace Concerto::Graphics
 {
 
-	Buffer::Buffer(Allocator& allocator, std::size_t allocSize, VkBufferUsageFlags usage, VmaMemoryUsage memoryUsage) : 
+	Buffer::Buffer(Allocator& allocator, std::size_t allocSize, VkBufferUsageFlags usage, VmaMemoryUsage memoryUsage) :
+		Object(allocator.GetDevice(), [&](Device&, VkBuffer buffer)
+		{
+			if (_mapCount != 0)
+			{
+				CONCERTO_ASSERT_FALSE; // trying to destroy a buffer that is mapped
+				Logger::Error("Trying to destroy a buffer that is mapped");
+			}
+			_allocator.GetDevice().WaitIdle();
+			vmaDestroyBuffer(*_allocator.Get(), buffer, _allocation);
+		}),
+		_allocatedSize(allocSize),
 		_allocator(allocator)
 	{
 		VkBufferCreateInfo bufferInfo = {};
@@ -24,18 +35,21 @@ namespace Concerto::Graphics
 		VmaAllocationCreateInfo vmaAllocInfo = {};
 		vmaAllocInfo.usage = memoryUsage;
 
-		if (vmaCreateBuffer(*allocator.Get(), &bufferInfo, &vmaAllocInfo, &_buffer, &_allocation, nullptr) !=
+		if (vmaCreateBuffer(*allocator.Get(), &bufferInfo, &vmaAllocInfo, &_handle, &_allocation, nullptr) !=
 			VK_SUCCESS)
 		{
+			CONCERTO_ASSERT_FALSE; // Failed to allocate buffer
 			throw std::runtime_error("Failed to allocate buffer");
 		}
 	}
 
 	Buffer::Buffer(Buffer&& other) noexcept :
+		Object(other._allocator.GetDevice()),
+		_allocatedSize(other._allocatedSize),
 		_allocator(other._allocator)
 	{
 		//_allocator = std::exchange(other._allocator, nullptr);
-		_buffer = std::exchange(other._buffer, VK_NULL_HANDLE);
+		_handle = std::exchange(other._handle, VK_NULL_HANDLE);
 		_allocation = std::exchange(other._allocation, nullptr);
 	}
 
@@ -44,21 +58,51 @@ namespace Concerto::Graphics
 		return *this;
 	}
 
-	Buffer::~Buffer()
+	void Buffer::Copy(void* object, std::size_t size, std::size_t padding)
 	{
-		if (_buffer == VK_NULL_HANDLE)
+		Byte* data = nullptr;
+		if (Map(&data) == false)
+		{
+			CONCERTO_ASSERT_FALSE;
 			return;
-		_allocator.GetDevice().WaitIdle();
-		vmaDestroyBuffer(*_allocator.Get(), _buffer, _allocation);
+		}
+		data += padding;
+		std::memcpy(data, object, size);
+		UnMap();
 	}
 
-	bool Buffer::Map(void** data)
+	bool Buffer::Map(Byte** data)
 	{
-		return vmaMapMemory(*_allocator.Get(), _allocation, data) == VK_SUCCESS;
+		const auto res = vmaMapMemory(*_allocator.Get(), _allocation, reinterpret_cast<void**>(data));
+		if (res != VK_SUCCESS)
+		{
+			CONCERTO_ASSERT_FALSE; //Cannot map memory
+			return false;
+		}
+		_mapCount++;
+		return true;
 	}
 	
 	void Buffer::UnMap()
 	{
+		if (_mapCount == 0)
+			CONCERTO_ASSERT_FALSE; // trying to unmap a buffer that is not mapped
+		_mapCount--;
 		vmaUnmapMemory(*_allocator.Get(), _allocation);
+	}
+
+	VmaAllocation Buffer::GetAllocation() const
+	{
+		return _allocation;
+	}
+
+	Allocator& Buffer::GetAllocator() const
+	{
+		return _allocator;
+	}
+
+	std::size_t Buffer::GetAllocatedSize() const
+	{
+		return _allocatedSize;
 	}
 }

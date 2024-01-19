@@ -3,6 +3,9 @@
 //
 
 #include "Concerto/Graphics/ShaderModuleInfo.hpp"
+
+#include <fstream>
+
 #include "Concerto/Graphics/ShaderReflection.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/Device.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/ShaderModule.hpp"
@@ -12,8 +15,7 @@ namespace Concerto::Graphics
 {
 	ShaderModuleInfo::ShaderModuleInfo(Device& device, std::string_view path) : 
 		shaderAst(nzsl::ParseFromFile(path)),
-		sanitizedModule(nzsl::Ast::Sanitize(*shaderAst)),
-		pipelineLayout()
+		sanitizedModule(nzsl::Ast::Sanitize(*shaderAst))
 	{
 		nzsl::Ast::ReflectVisitor::Callbacks callbacks;
 		std::vector<VkDescriptorSetLayoutBinding> descriptorSetLayouts;
@@ -27,11 +29,14 @@ namespace Concerto::Graphics
 			for (auto& externalVariable : extDecl.externalVars)
 			{
 				const auto* varType = &externalVariable.type.GetResultingValue();
-
-				VkDescriptorSetLayoutBinding descriptorSetLayoutBinding = VulkanInitializer::DescriptorSetLayoutBinding(
-					GetBindingType(&externalVariable.type.GetResultingValue()),
-					shaderStageFlag,	externalVariable.bindingIndex.GetResultingValue());
-				descriptorSetLayouts.push_back(descriptorSetLayoutBinding);
+				const VkDescriptorType descriptorType = GetBindingType(varType);
+				UInt32 bindingSet = externalVariable.bindingSet.GetResultingValue();
+				auto descriptorSetLayoutBinding = VulkanInitializer::DescriptorSetLayoutBinding(descriptorType, shaderStageFlag,	externalVariable.bindingIndex.GetResultingValue());
+				auto layoutBindings = bindings.find(bindingSet);
+				if (layoutBindings == bindings.end())
+					bindings[bindingSet] = std::vector{ descriptorSetLayoutBinding };
+				else
+					layoutBindings->second.push_back(descriptorSetLayoutBinding);
 			}
 		};
 		//callbacks.onFunctionDeclaration = [](const nzsl::Ast::DeclareFunctionStatement& funcDecl) {};
@@ -47,16 +52,6 @@ namespace Concerto::Graphics
 		nzsl::Ast::ReflectVisitor reflectVisitor;
 		reflectVisitor.Reflect(*sanitizedModule, callbacks);
 
-		std::vector<DescriptorSetLayoutPtr> descriptorSetLayoutsPtrs;
-		descriptorSetLayoutsPtrs.reserve(descriptorSetLayouts.size());
-		
-		for (auto& descriptorSetLayout : descriptorSetLayouts)
-		{
-			descriptorSetLayoutsPtrs.push_back(std::make_shared<DescriptorSetLayout>(device, std::vector{descriptorSetLayout}));
-		}
-		
-		pipelineLayout = std::make_unique<PipelineLayout>(device, descriptorSetLayoutsPtrs);
-		
 		nzsl::SpirvWriter spirvWriter;
 		auto sprivVersion = spirvWriter.GetMaximumSupportedVersion(1, 3);
 		nzsl::SpirvWriter::Environment env = {
@@ -72,14 +67,14 @@ namespace Concerto::Graphics
 	{
 		if (IsStorageType(*varType))
 			return VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
-		else if (IsSamplerType(*varType))
+		if (IsSamplerType(*varType))
 			return VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-		else if (IsTextureType(*varType))
+		if (IsTextureType(*varType))
 			return VK_DESCRIPTOR_TYPE_STORAGE_IMAGE;
-		else if (IsUniformType(*varType))
+		if (IsUniformType(*varType))
 			return VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-		else
-			throw std::runtime_error("unexpected type " + nzsl::Ast::ToString(varType));
+		CONCERTO_ASSERT_FALSE;
+		throw std::runtime_error("unexpected type " + nzsl::Ast::ToString(varType));
 
 	}
 }

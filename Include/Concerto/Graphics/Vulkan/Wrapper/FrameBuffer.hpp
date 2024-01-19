@@ -2,8 +2,8 @@
 // Created by arthur on 12/06/22.
 //
 
-#ifndef CONCERTOGRAPHICS_FRAMEBUFFER_HPP
-#define CONCERTOGRAPHICS_FRAMEBUFFER_HPP
+#ifndef CONCERTO_GRAPHICS_FRAMEBUFFER_HPP
+#define CONCERTO_GRAPHICS_FRAMEBUFFER_HPP
 
 #include <vector>
 
@@ -53,4 +53,4 @@ namespace Concerto::Graphics
 
 } // Concerto::Graphics::Wrapper
 
-#endif //CONCERTOGRAPHICS_FRAMEBUFFER_HPP
+#endif //CONCERTO_GRAPHICS_FRAMEBUFFER_HPP

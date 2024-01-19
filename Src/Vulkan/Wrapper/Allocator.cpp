@@ -6,6 +6,9 @@
 #define VMA_IMPLEMENTATION
 #define VMA_STATIC_VULKAN_FUNCTIONS 0
 #include "Concerto/Graphics/Vulkan/Wrapper/Allocator.hpp"
+
+#include <Concerto/Core/Assert.hpp>
+
 #include "Concerto/Graphics/Vulkan/Wrapper/Instance.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/PhysicalDevice.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/Device.hpp"
@@ -47,6 +50,7 @@ namespace Concerto::Graphics
 		
 		if (vmaCreateAllocator(&allocatorInfo, &_handle) != VK_SUCCESS)
 		{
+			CONCERTO_ASSERT_FALSE;
 			throw std::runtime_error("VMA : Unable to create allocator");
 		}
 	}

@@ -2,8 +2,8 @@
 // Created by arthur on 03/11/2022.
 //
 
-#ifndef CONCERTOGRAPHICS_OBJECT_HPP
-#define CONCERTOGRAPHICS_OBJECT_HPP
+#ifndef CONCERTO_GRAPHICS_OBJECT_HPP
+#define CONCERTO_GRAPHICS_OBJECT_HPP
 
 #include <functional>
 #include <vulkan/vulkan.h>
@@ -75,4 +75,4 @@ namespace Concerto::Graphics
 
 #include "Object.inl"
 
-#endif //CONCERTOGRAPHICS_OBJECT_HPP
+#endif //CONCERTO_GRAPHICS_OBJECT_HPP

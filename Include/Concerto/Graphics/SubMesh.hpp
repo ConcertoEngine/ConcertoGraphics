@@ -2,8 +2,8 @@
 // Created by arthur on 18/02/2023.
 //
 
-#ifndef CONCERTOGRAPHICS_INCLUDE_SUBMESH_HPP_
-#define CONCERTOGRAPHICS_INCLUDE_SUBMESH_HPP_
+#ifndef CONCERTO_GRAPHICS_INCLUDE_SUBMESH_HPP_
+#define CONCERTO_GRAPHICS_INCLUDE_SUBMESH_HPP_
 
 #include <memory>
 
@@ -29,4 +29,4 @@ namespace Concerto::Graphics
 	};
 	using SubMeshPtr = std::shared_ptr<SubMesh>;
 }
-#endif //CONCERTOGRAPHICS_INCLUDE_SUBMESH_HPP_
+#endif //CONCERTO_GRAPHICS_INCLUDE_SUBMESH_HPP_

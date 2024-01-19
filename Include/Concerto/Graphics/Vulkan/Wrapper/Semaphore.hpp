@@ -2,8 +2,8 @@
 // Created by arthur on 15/06/22.
 //
 
-#ifndef CONCERTOGRAPHICS_SEMAPHORE_HPP
-#define CONCERTOGRAPHICS_SEMAPHORE_HPP
+#ifndef CONCERTO_GRAPHICS_SEMAPHORE_HPP
+#define CONCERTO_GRAPHICS_SEMAPHORE_HPP
 
 #include <vulkan/vulkan.hpp>
 #include "Concerto/Graphics/Defines.hpp"
@@ -35,4 +35,4 @@ namespace Concerto::Graphics
 	};
 } // namespace Concerto::Graphics
 
-#endif //CONCERTOGRAPHICS_SEMAPHORE_HPP
+#endif //CONCERTO_GRAPHICS_SEMAPHORE_HPP

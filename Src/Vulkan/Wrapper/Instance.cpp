@@ -8,6 +8,9 @@
 #include <vector>
 
 #include "Concerto/Graphics/Vulkan/Wrapper/Instance.hpp"
+
+#include <Concerto/Core/Assert.hpp>
+
 #include "Concerto/Graphics/Vulkan/Wrapper/PhysicalDevice.hpp"
 
 namespace Concerto::Graphics
@@ -70,6 +73,7 @@ namespace Concerto::Graphics
 		_lastResult = vkCreateInstance(&createInfo, nullptr, &_instance);
 		if (_lastResult != VK_SUCCESS)
 		{
+			CONCERTO_ASSERT_FALSE;
 			throw std::runtime_error("Failed to create instance" + std::to_string(_lastResult));
 		}
 	}
@@ -93,12 +97,14 @@ namespace Concerto::Graphics
 		_lastResult = vkEnumeratePhysicalDevices(_instance, &deviceCount, nullptr);
 		if (_lastResult != VK_SUCCESS)
 		{
+			CONCERTO_ASSERT_FALSE;
 			throw std::runtime_error("Failed to get physical device count" + std::to_string(_lastResult));
 		}
 		std::vector<VkPhysicalDevice> devices(deviceCount);
 		_lastResult = vkEnumeratePhysicalDevices(_instance, &deviceCount, devices.data());
 		if (_lastResult != VK_SUCCESS)
 		{
+			CONCERTO_ASSERT_FALSE;
 			throw std::runtime_error("Failed to get physical devices" + std::to_string(_lastResult));
 		}
 		std::vector<PhysicalDevice> physicalDevices;

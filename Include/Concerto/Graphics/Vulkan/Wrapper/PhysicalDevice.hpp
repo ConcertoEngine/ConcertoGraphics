@@ -2,8 +2,8 @@
 // Created by arthur on 25/10/2022.
 //
 
-#ifndef CONCERTOGRAPHICS_PHYSICALDEVICE_HPP
-#define CONCERTOGRAPHICS_PHYSICALDEVICE_HPP
+#ifndef CONCERTO_GRAPHICS_PHYSICALDEVICE_HPP
+#define CONCERTO_GRAPHICS_PHYSICALDEVICE_HPP
 
 #include <span>
 #include <optional>
@@ -100,6 +100,8 @@ namespace Concerto::Graphics
 
 		[[nodiscard]] VkPhysicalDevice* Get();
 
+		[[nodiscard]] VkPhysicalDevice Get() const;
+
 		[[nodiscard]] VkSurfaceKHR GetSurface();
 
 		void SetSurface(VkSurfaceKHR surface);
@@ -120,4 +122,4 @@ namespace Concerto::Graphics
 
 } // Concerto::Graphics::Wrapper
 
-#endif //CONCERTOGRAPHICS_PHYSICALDEVICE_HPP
+#endif //CONCERTO_GRAPHICS_PHYSICALDEVICE_HPP

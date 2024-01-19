@@ -2,8 +2,8 @@
 // Created by arthur on 11/06/22.
 //
 
-#ifndef CONCERTOGRAPHICS_SWAPCHAIN_HPP
-#define CONCERTOGRAPHICS_SWAPCHAIN_HPP
+#ifndef CONCERTO_GRAPHICS_SWAPCHAIN_HPP
+#define CONCERTO_GRAPHICS_SWAPCHAIN_HPP
 
 #include <vector>
 #include <optional>
@@ -73,7 +73,11 @@ namespace Concerto::Graphics
 
 		[[nodiscard]] RenderPass* GetRenderPass();
 		
-		[[nodiscard]] FrameBuffer& GetFrameBuffer(std::size_t index);
+		[[nodiscard]] FrameBuffer& GetFrameBuffer(UInt32 index);
+
+		[[nodiscard]] UInt32 GetCurrentImageIndex() const;
+
+		[[nodiscard]] FrameBuffer& GetCurrentFrameBuffer();
 		/**
 		 * @brief Acquire the next image in the swapchain.
 		 * @param semaphore A reference to the semaphore.
@@ -97,7 +101,8 @@ namespace Concerto::Graphics
 		Window& _window;
 		std::unique_ptr<RenderPass> _renderpass;
 		std::vector<FrameBuffer> _frameBuffers;
+		UInt32 _currentImageIndex;
 	};
 } // Concerto::Graphics::Wrapper
 
-#endif //CONCERTOGRAPHICS_SWAPCHAIN_HPP
+#endif //CONCERTO_GRAPHICS_SWAPCHAIN_HPP

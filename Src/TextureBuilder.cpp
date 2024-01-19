@@ -12,6 +12,8 @@
 
 namespace Concerto::Graphics
 {
+	TextureBuilder* TextureBuilder::_instance = nullptr;
+
 	TextureBuilder::TextureBuilder(Device& device, Allocator& allocator,
 		CommandBuffer& commandBuffer, UploadContext& uploadContext, Queue& queue) :
 		_device(device),
@@ -19,7 +21,23 @@ namespace Concerto::Graphics
 		_uploadContext(uploadContext),
 		_queue(queue)
 	{
+		if (_instance != nullptr)
+		{
+			CONCERTO_ASSERT_FALSE;
+			return;
+		}
+		_instance = this;
+	}
 
+	TextureBuilder::~TextureBuilder()
+	{
+		_instance = nullptr;
+	}
+
+	TextureBuilder* TextureBuilder::Instance()
+	{
+		CONCERTO_ASSERT(_instance);
+		return _instance;
 	}
 
 	TexturePtr TextureBuilder::BuildTexture(const std::string& path)

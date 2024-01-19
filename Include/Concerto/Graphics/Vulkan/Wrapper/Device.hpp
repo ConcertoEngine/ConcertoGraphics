@@ -2,8 +2,8 @@
 // Created by arthur on 25/10/2022.
 //
 
-#ifndef CONCERTOGRAPHICS_DEVICE_HPP
-#define CONCERTOGRAPHICS_DEVICE_HPP
+#ifndef CONCERTO_GRAPHICS_DEVICE_HPP
+#define CONCERTO_GRAPHICS_DEVICE_HPP
 
 #include <cstdint>
 #include <span>
@@ -49,7 +49,7 @@ namespace Concerto::Graphics
 		*
 		* @return The index of the queue family for the given queue type.
 		*/
-		UInt32 GetQueueFamilyIndex(Queue::Type queueType);
+		UInt32 GetQueueFamilyIndex(Queue::Type queueType) const;
 
 		/**
 		* @brief Retrieves the queue family index for a given queue flag.
@@ -58,7 +58,7 @@ namespace Concerto::Graphics
 		*
 		* @return The index of the queue family for the given queue flag.
 		*/
-		UInt32 GetQueueFamilyIndex(UInt32 queueFlag);
+		UInt32 GetQueueFamilyIndex(UInt32 queueFlag) const;
 
 		/**
 		* @brief Retrieves a queue of a given type.
@@ -97,8 +97,6 @@ namespace Concerto::Graphics
 
 		Allocator& GetAllocator();
 		
-		UploadContext& GetUploadContext();
-
 	private:
 		void CreateAllocator(Instance& instance);
 	
@@ -106,9 +104,8 @@ namespace Concerto::Graphics
 		VkDevice _device;
 		std::unique_ptr<Allocator> _allocator;
 		std::unordered_map<Queue::Type, Queue> _queues;
-		std::unique_ptr<UploadContext> _uploadContext;
 	};
 
 } // Concerto::Graphics::Wrapper
 
-#endif //CONCERTOGRAPHICS_DEVICE_HPP
+#endif //CONCERTO_GRAPHICS_DEVICE_HPP

@@ -2,18 +2,18 @@
 // Created by arthur on 23/05/22.
 //
 
-#ifndef CONCERTO_AWINDOW_HPP
-#define CONCERTO_AWINDOW_HPP
+#ifndef CONCERTO_GRAPHICS_WINDOW_HPP
+#define CONCERTO_GRAPHICS_WINDOW_HPP
 
 #include <string>
 #include <functional>
 #include <optional>
-#include <memory>
 
 #include <vulkan/vulkan.h>
 
 #include "Concerto/Graphics/Defines.hpp"
 #include "Concerto/Graphics/Window/Key.hpp"
+#include "Concerto/Graphics/Window/Input.hpp"
 
 class GLFWwindow;
 
@@ -46,9 +46,10 @@ namespace Concerto::Graphics
 		/**
 		 * @brief Create a Vulkan surface
 		 * @param instance The Vulkan instance
-		 * @return The Vulkan surface
+		 * @param surface The surface to draw on
+		 * @return True if the surface is successfully created, false otherwise
 		 */
-		bool CreateVulkanSurface(Instance& instance, VkSurfaceKHR* surface);
+		bool CreateVulkanSurface(Instance& instance, VkSurfaceKHR* surface) const;
 
 		/**
 		* @brief Get the raw Window
@@ -130,14 +131,26 @@ namespace Concerto::Graphics
 		 */
 		void RegisterKeyCallback(std::function<void(Window& window, Key button, int scancode, int action, int mods)> callback);
 
+		/**
+		 * @brief Register a callback function that will be called when a mouse button is pressed
+		 * @param callback The callback function
+		 */
 		void RegisterMouseButtonCallback(std::function<void(Window& window, int button, int action, int mods)> callback);
 
+		/**
+		 * @brief Register a callback function that will be called when the mouse cursor has moved
+		 * @param callback The callback function
+		 */
 		void RegisterCursorPosCallback(std::function<void(Window& window, double xpos, double ypos)> callback);
+
+		Input& GetInputManager();
 	protected:
+		void RegisterInputCallbacks();
 		std::string _title;
 		std::size_t _width;
 		std::size_t _height;
 		GLFWwindow* _window;
+		Input _input;
 		std::function<void(Window& window)> _resizeCallback;
 		std::function<void(Window& window, Key key, int scancode, int action, int mods)> _keyCallback;
 		std::function<void(Window& window, int button, int action, int mods)> _mouseButtonCallback;
@@ -145,4 +158,4 @@ namespace Concerto::Graphics
 	};
 }
 
-#endif //CONCERTO_AWINDOW_HPP
+#endif //CONCERTO_GRAPHICS_WINDOW_HPP

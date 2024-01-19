@@ -2,8 +2,8 @@
 // Created by arthur on 17/02/2023.
 //
 
-#ifndef CONCERTOGRAPHICS_INCLUDE_TEXTUREBUILDER_HPP_
-#define CONCERTOGRAPHICS_INCLUDE_TEXTUREBUILDER_HPP_
+#ifndef CONCERTO_GRAPHICS_INCLUDE_TEXTUREBUILDER_HPP_
+#define CONCERTO_GRAPHICS_INCLUDE_TEXTUREBUILDER_HPP_
 
 #include <unordered_map>
 #include <memory>
@@ -25,9 +25,13 @@ namespace Concerto::Graphics
 	{
 	 public:
 		TextureBuilder(Device& device, Allocator& allocator, CommandBuffer& commandBuffer, UploadContext& uploadContext, Queue& queue);
+		~TextureBuilder();
+
+		static TextureBuilder* Instance();
 
 		std::shared_ptr<Texture> BuildTexture(const std::string& path);
 	 private:
+		static TextureBuilder* _instance;
 		std::unordered_map<std::string, std::shared_ptr<Texture>> _texturesCache;
 		Device& _device;
 		CommandBuffer& _commandBuffer;
@@ -36,4 +40,4 @@ namespace Concerto::Graphics
 	};
 }
 
-#endif //CONCERTOGRAPHICS_INCLUDE_TEXTUREBUILDER_HPP_
+#endif //CONCERTO_GRAPHICS_INCLUDE_TEXTUREBUILDER_HPP_

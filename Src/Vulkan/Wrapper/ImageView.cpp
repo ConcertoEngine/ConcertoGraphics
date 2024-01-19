@@ -6,6 +6,9 @@
 
 #include "Concerto/Graphics/Vulkan/Wrapper/Device.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/ImageView.hpp"
+
+#include <Concerto/Core/Assert.hpp>
+
 #include "Concerto/Graphics/Vulkan/Wrapper/Image.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/VulkanInitializer.hpp"
 
@@ -19,6 +22,7 @@ namespace Concerto::Graphics
 		auto imageInfo = VulkanInitializer::ImageViewCreateInfo(image.GetFormat(), *image.Get(), aspectFlags);
 		if (vkCreateImageView(*_device->Get(), &imageInfo, nullptr, &_handle) != VK_SUCCESS)
 		{
+			CONCERTO_ASSERT_FALSE;
 			throw std::runtime_error("failed to create image view");
 		}
 	}

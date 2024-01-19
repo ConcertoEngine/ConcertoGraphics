@@ -2,8 +2,8 @@
 // Created by arthur on 25/10/2022.
 //
 
-#ifndef CONCERTOGRAPHICS_VERSION_HPP
-#define CONCERTOGRAPHICS_VERSION_HPP
+#ifndef CONCERTO_GRAPHICS_VERSION_HPP
+#define CONCERTO_GRAPHICS_VERSION_HPP
 
 #include "Concerto/Graphics/Defines.hpp"
 
@@ -16,4 +16,4 @@ namespace Concerto::Graphics
 		UInt32 patch;
 	};
 }
-#endif //CONCERTOGRAPHICS_VERSION_HPP
+#endif //CONCERTO_GRAPHICS_VERSION_HPP

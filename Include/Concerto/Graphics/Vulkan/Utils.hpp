@@ -2,8 +2,8 @@
 // Created by arthur on 14/09/2022.
 //
 
-#ifndef CONCERTOGRAPHICS_UTILS_HPP
-#define CONCERTOGRAPHICS_UTILS_HPP
+#ifndef CONCERTO_GRAPHICS_UTILS_HPP
+#define CONCERTO_GRAPHICS_UTILS_HPP
 
 #include <vector>
 #include <functional>
@@ -31,4 +31,4 @@ namespace Concerto::Graphics
 	}
 }
 
-#endif //CONCERTOGRAPHICS_UTILS_HPP
+#endif //CONCERTO_GRAPHICS_UTILS_HPP

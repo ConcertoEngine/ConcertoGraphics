@@ -2,8 +2,8 @@
 // Created by arthur on 13/09/2022.
 //
 
-#ifndef CONCERTOGRAPHICS_QUEUE_HPP
-#define CONCERTOGRAPHICS_QUEUE_HPP
+#ifndef CONCERTO_GRAPHICS_QUEUE_HPP
+#define CONCERTO_GRAPHICS_QUEUE_HPP
 
 #include "Concerto/Graphics/Defines.hpp"
 
@@ -43,6 +43,8 @@ namespace Concerto::Graphics
 		*/
 		explicit Queue(Device& device, UInt32 queueFamilyIndex);
 
+		~Queue() = default;
+
 		Queue(Queue&&) = default;
 
 		Queue(const Queue&) = delete;
@@ -81,4 +83,4 @@ namespace Concerto::Graphics
 	};
 } // namespace Concerto::Graphics
 
-#endif //CONCERTOGRAPHICS_QUEUE_HPP
+#endif //CONCERTO_GRAPHICS_QUEUE_HPP

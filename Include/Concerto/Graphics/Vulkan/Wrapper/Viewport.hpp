@@ -2,8 +2,8 @@
 // Created by arthur on 10/06/22.
 //
 
-#ifndef CONCERTOGRAPHICS_VIEWPORT_HPP
-#define CONCERTOGRAPHICS_VIEWPORT_HPP
+#ifndef CONCERTO_GRAPHICS_VIEWPORT_HPP
+#define CONCERTO_GRAPHICS_VIEWPORT_HPP
 
 namespace Concerto::Graphics
 {
@@ -19,4 +19,4 @@ namespace Concerto::Graphics
 
 } // Concerto::Graphics::Wrapper
 
-#endif //CONCERTOGRAPHICS_VIEWPORT_HPP
+#endif //CONCERTO_GRAPHICS_VIEWPORT_HPP

@@ -2,8 +2,8 @@
 // Created by arthur on 10/06/22.
 //
 
-#ifndef CONCERTOGRAPHICS_SHADERMODULE_HPP
-#define CONCERTOGRAPHICS_SHADERMODULE_HPP
+#ifndef CONCERTO_GRAPHICS_SHADERMODULE_HPP
+#define CONCERTO_GRAPHICS_SHADERMODULE_HPP
 
 #include <string>
 #include <vector>
@@ -52,4 +52,4 @@ namespace Concerto::Graphics
 	};
 }
 
-#endif //CONCERTOGRAPHICS_SHADERMODULE_HPP
+#endif //CONCERTO_GRAPHICS_SHADERMODULE_HPP

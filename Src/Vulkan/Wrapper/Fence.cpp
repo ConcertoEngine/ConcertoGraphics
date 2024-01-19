@@ -6,6 +6,9 @@
 #include <stdexcept>
 
 #include "Concerto/Graphics/Vulkan/Wrapper/Fence.hpp"
+
+#include <Concerto/Core/Assert.hpp>
+
 #include "Concerto/Graphics/Vulkan/Wrapper/Device.hpp"
 
 namespace Concerto::Graphics
@@ -20,6 +23,7 @@ namespace Concerto::Graphics
 		info.flags = signaled ? VK_FENCE_CREATE_SIGNALED_BIT : 0;
 		if (vkCreateFence(*_device->Get(), &info, nullptr, &_handle) != VK_SUCCESS)
 		{
+			CONCERTO_ASSERT_FALSE;
 			throw std::runtime_error("Failed to create fence");
 		}
 	}
@@ -29,6 +33,7 @@ namespace Concerto::Graphics
 		auto result = vkWaitForFences(*_device->Get(), 1, &_handle, true, timeout);
 		if ( result != VK_SUCCESS)
 		{
+			CONCERTO_ASSERT_FALSE;
 			throw std::runtime_error("vkWaitForFences fail error code : " + std::to_string(int(result)));
 		}
 	}
@@ -37,6 +42,7 @@ namespace Concerto::Graphics
 	{
 		if (vkResetFences(*_device->Get(), 1, &_handle) != VK_SUCCESS)
 		{
+			CONCERTO_ASSERT_FALSE;
 			throw std::runtime_error("vkResetFences fail");
 		}
 	}

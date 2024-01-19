@@ -7,6 +7,9 @@
 #include <iostream>
 
 #include "Concerto/Graphics/Vulkan/Wrapper/ShaderModule.hpp"
+
+#include <Concerto/Core/Assert.hpp>
+
 #include "Concerto/Graphics/Vulkan/Wrapper/Device.hpp"
 
 namespace Concerto::Graphics
@@ -33,7 +36,10 @@ namespace Concerto::Graphics
 	{
 		std::ifstream file(shaderPath, std::ios::ate | std::ios::binary);
 		if (!file.is_open())
+		{
+			CONCERTO_ASSERT_FALSE;
 			throw std::runtime_error("Failed to open the file " + shaderPath);
+		}
 		std::streamsize fileSize = file.tellg();
 		_buffer.resize(fileSize / sizeof(UInt32));
 		file.seekg(0);
@@ -49,6 +55,7 @@ namespace Concerto::Graphics
 	{
 		if (vkCreateShaderModule(*_device->Get(), &_shaderModuleCreateInfo, nullptr, &_handle) != VK_SUCCESS)
 		{
+			CONCERTO_ASSERT_FALSE;
 			throw std::runtime_error("Failed to create shader module");
 		}
 	}

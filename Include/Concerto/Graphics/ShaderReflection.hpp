@@ -2,8 +2,8 @@
 // Created by arthur on 23/08/2023.
 //
 
-#ifndef CONCERTOGRAPHICS_INCLUDE_SHADERREFLECTION_HPP_
-#define CONCERTOGRAPHICS_INCLUDE_SHADERREFLECTION_HPP_
+#ifndef CONCERTO_GRAPHICS_INCLUDE_SHADERREFLECTION_HPP_
+#define CONCERTO_GRAPHICS_INCLUDE_SHADERREFLECTION_HPP_
 
 #include <unordered_map>
 #include <vector>
@@ -194,4 +194,4 @@ inline bool operator!=(const VkDescriptorSetLayoutBinding& lhs, const VkDescript
 	return !(lhs == rhs);
 }
 
-#endif //CONCERTOGRAPHICS_INCLUDE_SHADERREFLECTION_HPP_
+#endif //CONCERTO_GRAPHICS_INCLUDE_SHADERREFLECTION_HPP_

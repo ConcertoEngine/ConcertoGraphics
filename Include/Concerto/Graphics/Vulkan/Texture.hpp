@@ -2,8 +2,8 @@
 // Created by arthur on 18/09/2022.
 //
 
-#ifndef CONCERTOGRAPHICS_TEXTURE_HPP
-#define CONCERTOGRAPHICS_TEXTURE_HPP
+#ifndef CONCERTO_GRAPHICS_TEXTURE_HPP
+#define CONCERTO_GRAPHICS_TEXTURE_HPP
 
 #include <memory>
 #include <string>
@@ -36,4 +36,4 @@ namespace Concerto::Graphics
 	};
 	using TexturePtr = std::shared_ptr<Texture>;
 }
-#endif //CONCERTOGRAPHICS_TEXTURE_HPP
+#endif //CONCERTO_GRAPHICS_TEXTURE_HPP

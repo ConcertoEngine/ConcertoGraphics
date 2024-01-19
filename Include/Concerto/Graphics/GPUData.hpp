@@ -2,8 +2,8 @@
 // Created by arthur on 13/09/2022.
 //
 
-#ifndef CONCERTOGRAPHICS_GPUDATA_HPP
-#define CONCERTOGRAPHICS_GPUDATA_HPP
+#ifndef CONCERTO_GRAPHICS_GPUDATA_HPP
+#define CONCERTO_GRAPHICS_GPUDATA_HPP
 
 #include <glm/vec4.hpp>
 #include <glm/mat4x4.hpp>
@@ -37,4 +37,4 @@ namespace Concerto::Graphics
 		glm::vec4 clearColor;
 	};
 }
-#endif //CONCERTOGRAPHICS_GPUDATA_HPP
+#endif //CONCERTO_GRAPHICS_GPUDATA_HPP

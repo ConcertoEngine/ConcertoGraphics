@@ -1,8 +1,11 @@
 //
 // Created by arthur on 25/10/2022.
 //
+
 #include <cassert>
 #include <stdexcept>
+
+#include <Concerto/Core/Assert.hpp>
 
 #include "Concerto/Graphics/Vulkan/Wrapper/Device.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/PhysicalDevice.hpp"
@@ -55,14 +58,16 @@ namespace Concerto::Graphics
 		createInfo.enabledExtensionCount = deviceExtensions.size();
 		createInfo.ppEnabledExtensionNames = deviceExtensions.data();
 		if (vkCreateDevice(*_physicalDevice.Get(), &createInfo, nullptr, &_device) != VK_SUCCESS)
+		{
+			CONCERTO_ASSERT_FALSE;
 			throw std::runtime_error("failed to create logical device!");
+		}
 		CreateAllocator(instance);
-		_uploadContext = std::make_unique<UploadContext>(*this, GetQueueFamilyIndex(Queue::Type::Graphics));
 	}
 
-	UInt32 Device::GetQueueFamilyIndex(Queue::Type queueType)
+	UInt32 Device::GetQueueFamilyIndex(Queue::Type queueType) const
 	{
-		std::span<VkQueueFamilyProperties> queueFamilyProperties = _physicalDevice.GetQueueFamilyProperties();
+		const std::span<VkQueueFamilyProperties> queueFamilyProperties = _physicalDevice.GetQueueFamilyProperties();
 		UInt32 i = 0;
 		for (const VkQueueFamilyProperties& properties: queueFamilyProperties)
 		{
@@ -74,23 +79,25 @@ namespace Concerto::Graphics
 				return i;
 			i++;
 		}
+		CONCERTO_ASSERT_FALSE;
 		throw std::runtime_error("No queue family found");
 	}
 
-	UInt32 Device::GetQueueFamilyIndex(UInt32 flag)
+	UInt32 Device::GetQueueFamilyIndex(UInt32 flag) const
 	{
-		std::span<VkQueueFamilyProperties> queueFamilyProperties = _physicalDevice.GetQueueFamilyProperties();
+		const std::span<VkQueueFamilyProperties> queueFamilyProperties = _physicalDevice.GetQueueFamilyProperties();
 		UInt32 i = 0;
-		for (VkQueueFamilyProperties properties: queueFamilyProperties)
+		for (const VkQueueFamilyProperties properties: queueFamilyProperties)
 		{
 			if (properties.queueFlags == flag && flag & VK_QUEUE_GRAPHICS_BIT)
 				return i;
-			else if (properties.queueFlags == flag && flag & VK_QUEUE_COMPUTE_BIT)
+			if (properties.queueFlags == flag && flag & VK_QUEUE_COMPUTE_BIT)
 				return i;
-			else if (properties.queueFlags == flag && flag & VK_QUEUE_TRANSFER_BIT)
+			if (properties.queueFlags == flag && flag & VK_QUEUE_TRANSFER_BIT)
 				return i;
 			++i;
 		}
+		CONCERTO_ASSERT_FALSE;
 		throw std::runtime_error("No queue family found");
 	}
 
@@ -105,7 +112,7 @@ namespace Concerto::Graphics
 
 	VkDevice* Device::Get()
 	{
-		assert(_device != VK_NULL_HANDLE);
+		CONCERTO_ASSERT(_device != VK_NULL_HANDLE);
 		return &_device;
 	}
 
@@ -113,7 +120,10 @@ namespace Concerto::Graphics
 	{
 		auto res = vkDeviceWaitIdle(_device);
 		if (res != VK_SUCCESS)
+		{
+			CONCERTO_ASSERT_FALSE;
 			throw std::runtime_error("Failed to Wait for device idle" + std::to_string(res));
+		}
 	}
 
 	void Device::UpdateDescriptorSetsWrite(std::span<VkWriteDescriptorSet> descriptorWrites)
@@ -139,7 +149,8 @@ namespace Concerto::Graphics
 		nameInfo.objectType = VK_DEBUG_REPORT_OBJECT_TYPE_UNKNOWN_EXT;
 		nameInfo.object = object;
 		nameInfo.pObjectName = name.data();
-		pfnDebugMarkerSetObjectName(_device, &nameInfo);
+		if (pfnDebugMarkerSetObjectName)
+			pfnDebugMarkerSetObjectName(_device, &nameInfo);
 	}
 
 	PhysicalDevice& Device::GetPhysicalDevice()
@@ -153,15 +164,10 @@ namespace Concerto::Graphics
 		return *_allocator;
 	}
 
-	UploadContext& Device::GetUploadContext()
-	{
-		return *_uploadContext;
-	}
-
 	void Device::CreateAllocator(Instance& instance)
 	{
 		_allocator = std::make_unique<Allocator>(_physicalDevice, *this, instance);
-		CONCERTO_ASSERT(_allocator != nullptr)
+		CONCERTO_ASSERT(_allocator != nullptr);
 	}
 
 } // Concerto::Graphics::Wrapper

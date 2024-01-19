@@ -2,8 +2,8 @@
 // Created by arthur on 17/08/2023.
 //
 
-#ifndef CONCERTOGRAPHICS_INCLUDE_VULKAN_HPP_
-#define CONCERTOGRAPHICS_INCLUDE_VULKAN_HPP_
+#ifndef CONCERTO_GRAPHICS_INCLUDE_VULKAN_HPP_
+#define CONCERTO_GRAPHICS_INCLUDE_VULKAN_HPP_
 
 #include <span>
 #include <string>
@@ -58,4 +58,4 @@ namespace Concerto::Graphics
 	};
 }
 
-#endif //CONCERTOGRAPHICS_INCLUDE_VULKAN_HPP_
+#endif //CONCERTO_GRAPHICS_INCLUDE_VULKAN_HPP_

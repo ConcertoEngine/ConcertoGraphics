@@ -2,10 +2,12 @@
 // Created by arthur on 14/06/22.
 //
 
-#ifndef CONCERTOGRAPHICS_COMMANDBUFFER_HPP
-#define CONCERTOGRAPHICS_COMMANDBUFFER_HPP
+#ifndef CONCERTO_GRAPHICS_COMMANDBUFFER_HPP
+#define CONCERTO_GRAPHICS_COMMANDBUFFER_HPP
 
 #include <functional>
+#include <span>
+#include <memory>
 
 #include <vulkan/vulkan.h>
 #include "Concerto/Graphics/Defines.hpp"
@@ -121,6 +123,23 @@ namespace Concerto::Graphics
 				UInt32 firstSet, UInt32 descriptorSetCount, DescriptorSet& descriptorSet);
 
 		/**
+		 * @brief Binds descriptor sets to the command buffer.
+		 * @param pipelineBindPoint The bind point of the pipeline.
+		 * @param pipelineLayout The VkPipelineLayout associated with the pipeline.
+		 * @param descriptorSets The DescriptorSet object to bind.
+		 */
+		void BindDescriptorSets(VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout pipelineLayout, std::span<DescriptorSet> descriptorSets);
+
+
+		/**
+		 * @brief Binds descriptor sets to the command buffer.
+		 * @param pipelineBindPoint The bind point of the pipeline.
+		 * @param pipelineLayout The VkPipelineLayout associated with the pipeline.
+		 * @param descriptorSets The DescriptorSet object to bind.
+		 */
+		void BindDescriptorSets(VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout pipelineLayout, std::span<std::shared_ptr<DescriptorSet>> descriptorSets);
+
+		/**
 		 * @brief Binds vertex buffers to the command buffer.
 		 * @param buffer The Buffer object to bind.
 		 */
@@ -196,4 +215,4 @@ namespace Concerto::Graphics
 	};
 } // namespace Concerto::Graphics
 
-#endif //CONCERTOGRAPHICS_COMMANDBUFFER_HPP
+#endif //CONCERTO_GRAPHICS_COMMANDBUFFER_HPP

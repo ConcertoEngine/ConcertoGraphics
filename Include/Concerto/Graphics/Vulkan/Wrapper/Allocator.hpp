@@ -2,8 +2,8 @@
 // Created by arthu on 21/06/2022.
 //
 
-#ifndef CONCERTOGRAPHICS_ALLOCATOR_HPP
-#define CONCERTOGRAPHICS_ALLOCATOR_HPP
+#ifndef CONCERTO_GRAPHICS_ALLOCATOR_HPP
+#define CONCERTO_GRAPHICS_ALLOCATOR_HPP
 
 #include <vulkan/vulkan.h>
 #include <vk_mem_alloc.h>
@@ -54,4 +54,4 @@ namespace Concerto::Graphics
 	};
 }
 
-#endif //CONCERTOGRAPHICS_ALLOCATOR_HPP
+#endif //CONCERTO_GRAPHICS_ALLOCATOR_HPP

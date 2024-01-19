@@ -39,6 +39,7 @@ namespace Concerto::Graphics
 		if (vmaCreateImage(*device.GetAllocator().Get(), &dimg_info, &dimg_allocinfo, &_handle, &_allocation, nullptr) !=
 			VK_SUCCESS)
 		{
+			CONCERTO_ASSERT_FALSE;
 			throw std::runtime_error("Failed to create image");
 		}
 	}
@@ -58,13 +59,14 @@ namespace Concerto::Graphics
 		stbi_uc* pixels = stbi_load(file.c_str(), &textureWidth, &textureHeight, &textureChannels, STBI_rgb_alpha);
 		if (!pixels)
 		{
+			CONCERTO_ASSERT_FALSE;
 			throw std::runtime_error("Failed to load texture image");
 		}
 
 		void* pixelPtr = pixels;
 		VkDeviceSize imageSize = textureWidth * textureHeight * 4;
 		Buffer stagingBuffer(device.GetAllocator(), imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VMA_MEMORY_USAGE_CPU_ONLY);
-		stagingBuffer.Copy(pixelPtr, imageSize);
+		stagingBuffer.Copy(pixelPtr, imageSize, 0);
 
 		VkExtent3D imageExtent = {
 				static_cast<uint32_t>(textureWidth),
@@ -79,6 +81,7 @@ namespace Concerto::Graphics
 		if (vmaCreateImage(*device.GetAllocator().Get(), &dimg_info, &dimg_allocinfo, &_handle, &_allocation, nullptr) !=
 			VK_SUCCESS)
 		{
+			CONCERTO_ASSERT_FALSE;
 			throw std::runtime_error("Failed to create image");
 		}
 		commandBuffer.ImmediateSubmit(uploadContext._uploadFence, uploadContext._commandPool, queue,
@@ -118,7 +121,7 @@ namespace Concerto::Graphics
 					copyRegion.imageExtent = imageExtent;
 
 					//copy the buffer into the image
-					vkCmdCopyBufferToImage(cb.Get(), stagingBuffer._buffer, _handle,
+					vkCmdCopyBufferToImage(cb.Get(), *stagingBuffer.Get(), _handle,
 							VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &copyRegion);
 
 					VkImageMemoryBarrier imageBarrier_toReadable = imageBarrier_toTransfer;

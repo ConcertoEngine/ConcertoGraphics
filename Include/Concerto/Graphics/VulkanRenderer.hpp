@@ -2,8 +2,8 @@
 //// Created by arthur on 25/10/2022.
 ////
 //
-//#ifndef CONCERTOGRAPHICS_VULKANRENDERER_HPP
-//#define CONCERTOGRAPHICS_VULKANRENDERER_HPP
+//#ifndef CONCERTO_GRAPHICS_VULKANRENDERER_HPP
+//#define CONCERTO_GRAPHICS_VULKANRENDERER_HPP
 //
 //#include <string>
 //#include <optional>
@@ -141,4 +141,4 @@
 //
 //} // Concerto::Graphics
 //
-//#endif //CONCERTOGRAPHICS_VULKANRENDERER_HPP
+//#endif //CONCERTO_GRAPHICS_VULKANRENDERER_HPP

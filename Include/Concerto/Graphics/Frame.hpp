@@ -2,8 +2,8 @@
 // Created by arthur on 13/09/2022.
 //
 
-#ifndef CONCERTOGRAPHICS_FRAME_HPP
-#define CONCERTOGRAPHICS_FRAME_HPP
+#ifndef CONCERTO_GRAPHICS_FRAME_HPP
+#define CONCERTO_GRAPHICS_FRAME_HPP
 
 #include <memory>
 
@@ -16,34 +16,40 @@
 #include "Concerto/Graphics/Vulkan/Wrapper/DescriptorPool.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/Fence.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/Semaphore.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/CommandBuffer.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/CommandPool.hpp"
 #include "Concerto/Graphics/GPUData.hpp"
 
 #define MAX_OBJECTS 1000
 
 namespace Concerto::Graphics
 {
-	class CommandBuffer;
-	class CommandPool;
 	class Device;
 
-	struct CONCERTO_GRAPHICS_API FrameData
+	class CONCERTO_GRAPHICS_API FrameData
 	{
-		FrameData(Device& device, bool signaled = true);
-
-		FrameData(FrameData&&) = default;
-
+	public:
 		FrameData() = delete;
+
+		FrameData(Device& device, bool signaled = true);
 
 		~FrameData() = default;
 
-		Semaphore _presentSemaphore, _renderSemaphore;
-		Fence _renderFence;
+		FrameData(FrameData&&) = default;
 
-		std::unique_ptr<CommandPool> _commandPool;
-		std::unique_ptr<CommandBuffer> _mainCommandBuffer;
+		FrameData(FrameData&) = delete;
 
-		Buffer _indirectBuffer;
-		bool _isResized;
+		FrameData& operator=(FrameData&&) = default;
+		FrameData& operator=(FrameData&) = delete;
+		
+		Semaphore presentSemaphore, renderSemaphore;
+		Fence renderFence;
+
+		CommandPool commandPool;
+		CommandBuffer commandBuffer;
+
+		Buffer indirectBuffer;
+		bool isResized;
 	};
 }
-#endif //CONCERTOGRAPHICS_FRAME_HPP
+#endif //CONCERTO_GRAPHICS_FRAME_HPP

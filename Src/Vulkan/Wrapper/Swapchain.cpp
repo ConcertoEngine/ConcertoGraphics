@@ -6,6 +6,7 @@
 
 #include <vulkan/vulkan.h>
 #include <vk_mem_alloc.h>
+#include <Concerto/Core/Assert.hpp>
 
 #include "Concerto/Graphics/Vulkan/Wrapper/Swapchain.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/VulkanInitializer.hpp"
@@ -18,12 +19,12 @@ namespace Concerto::Graphics
 
 	Swapchain::Swapchain(Device& device, Window& window)
 			: Object<VkSwapchainKHR>(device, [](Device &device, VkSwapchainKHR handle){vkDestroySwapchainKHR(*device.Get(), handle, nullptr);}),
-			  _windowExtent({window.GetWidth(), window.GetHeight()}),
 			  _swapChainImages(),
+			  _swapChainImageViews(),
+			  _windowExtent({window.GetWidth(), window.GetHeight()}),
+			  _swapChainImageFormat(VK_FORMAT_B8G8R8A8_SRGB),
 			  _depthImage(device, _windowExtent, VK_FORMAT_D32_SFLOAT),
 			  _depthImageView(device, _depthImage, VK_IMAGE_ASPECT_DEPTH_BIT),
-			  _swapChainImageViews(),
-			  _swapChainImageFormat(VK_FORMAT_B8G8R8A8_SRGB),
 			  _physicalDevice(device.GetPhysicalDevice()),
 			  _window(window),
 			  _renderpass(),
@@ -51,7 +52,10 @@ namespace Concerto::Graphics
 		swapChainCreateInfo.clipped = VK_TRUE;
 		swapChainCreateInfo.oldSwapchain = VK_NULL_HANDLE;
 		if (vkCreateSwapchainKHR(*_device->Get(), &swapChainCreateInfo, nullptr, &_handle) != VK_SUCCESS)
+		{
+			CONCERTO_ASSERT_FALSE;
 			throw std::runtime_error("failed to create swap chain!");
+		}
 		CreateRenderPass();
 		CreateFrameBuffers();
 	}
@@ -118,21 +122,31 @@ namespace Concerto::Graphics
 		return nullptr;
 	}
 
-	FrameBuffer& Swapchain::GetFrameBuffer(std::size_t index)
+	FrameBuffer& Swapchain::GetFrameBuffer(UInt32 index)
 	{
 		CONCERTO_ASSERT(index < _frameBuffers.size());
 		return _frameBuffers[index];
 	}
 
+	UInt32 Swapchain::GetCurrentImageIndex() const
+	{
+		return _currentImageIndex;
+	}
+
+	FrameBuffer& Swapchain::GetCurrentFrameBuffer()
+	{
+		return GetFrameBuffer(_currentImageIndex);
+	}
+
 	UInt32 Swapchain::AcquireNextImage(Semaphore& semaphore, Fence& fence, std::uint64_t timeout)
 	{
-		UInt32 index = 0;
-		if (vkAcquireNextImageKHR(*_device->Get(), _handle, timeout, *semaphore.Get(), VK_NULL_HANDLE, &index) !=
+		if (vkAcquireNextImageKHR(*_device->Get(), _handle, timeout, *semaphore.Get(), VK_NULL_HANDLE, &_currentImageIndex) !=
 			VK_SUCCESS)
 		{
+			CONCERTO_ASSERT_FALSE;
 			throw std::runtime_error("vkAcquireNextImageKHR fail");
 		}
-		return index;
+		return _currentImageIndex;
 	}
 
 	void Swapchain::CreateRenderPass()

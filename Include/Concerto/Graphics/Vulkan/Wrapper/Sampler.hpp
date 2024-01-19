@@ -2,8 +2,8 @@
 // Created by arthur on 24/10/2022.
 //
 
-#ifndef CONCERTOGRAPHICS_SAMPLER_HPP
-#define CONCERTOGRAPHICS_SAMPLER_HPP
+#ifndef CONCERTO_GRAPHICS_SAMPLER_HPP
+#define CONCERTO_GRAPHICS_SAMPLER_HPP
 
 #include <vulkan/vulkan.h>
 #include "Concerto/Graphics/Defines.hpp"
@@ -35,4 +35,4 @@ namespace Concerto::Graphics
 }
 
 
-#endif //CONCERTOGRAPHICS_SAMPLER_HPP
+#endif //CONCERTO_GRAPHICS_SAMPLER_HPP

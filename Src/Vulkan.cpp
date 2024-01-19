@@ -2,21 +2,23 @@
 // Created by arthur on 17/08/2023.
 //
 
+#include <Concerto/Core/Assert.hpp>
+
 #include "Concerto/Graphics/Vulkan.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/PhysicalDevice.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/Device.hpp"
 
 namespace Concerto::Graphics
 {
-    namespace TMP
+    namespace
     {
 
 #if defined(CONCERTO_PLATFORM_WINDOWS)
-        std::vector<const char*> extensions = { "VK_KHR_surface", "VK_KHR_win32_surface", "VK_EXT_debug_report"};
+        std::array extensions = { "VK_KHR_surface", "VK_KHR_win32_surface", "VK_EXT_debug_report"};
 #elif defined(CONCERTO_PLATFORM_POSIX)
-        std::vector<const char*> extensions = { "VK_KHR_surface", "VK_KHR_xcb_surface", "VK_KHR_xlib_surface", "VK_KHR_wayland_surface" };
+        std::array extensions = { "VK_KHR_surface", "VK_KHR_xcb_surface", "VK_KHR_xlib_surface", "VK_KHR_wayland_surface" };
 #endif
-        std::vector<const char*> layers = { "VK_LAYER_KHRONOS_validation" /*, "VK_LAYER_LUNARG_api_dump"*/ };
+        std::array layers = { "VK_LAYER_KHRONOS_validation" /*, "VK_LAYER_LUNARG_api_dump"*/ };
     }
 
     
@@ -28,7 +30,7 @@ namespace Concerto::Graphics
                     _info.applicationName,
                     { 1, 3, 0 },
                     _info.applicationVersion,
-                    { 1, 0, 0 }, TMP::extensions, TMP::layers),
+                    { 1, 0, 0 }, extensions, layers),
         _physicalDevices(_vkInstance.EnumeratePhysicalDevices())
     {
 		CONCERTO_ASSERT(_instance == nullptr); // Only one renderer can be created

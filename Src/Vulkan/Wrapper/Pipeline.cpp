@@ -62,7 +62,7 @@ namespace Concerto::Graphics
 		pipelineInfo.pRasterizationState = &_pipelineInfo._rasterizer;
 		pipelineInfo.pMultisampleState = &_pipelineInfo._multisampling;
 		pipelineInfo.pColorBlendState = &colorBlending;
-		pipelineInfo.layout = _pipelineInfo._pipelineLayout;
+		pipelineInfo.layout = *_pipelineInfo._pipelineLayout->Get();
 		pipelineInfo.renderPass = renderPass;
 		pipelineInfo.subpass = 0;
 		pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
@@ -105,5 +105,10 @@ namespace Concerto::Graphics
 		colorBlending.attachmentCount = 1;
 		colorBlending.pAttachments = &colorBlendAttachment;
 		return colorBlending;
+	}
+
+	std::shared_ptr<PipelineLayout> Pipeline::GetPipelineLayout() const
+	{
+		return _pipelineInfo._pipelineLayout;
 	}
 }

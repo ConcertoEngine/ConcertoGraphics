@@ -2,8 +2,8 @@
 // Created by arthur on 16/06/22.
 //
 
-#ifndef CONCERTOGRAPHICS_DESCRIPTORSET_HPP
-#define CONCERTOGRAPHICS_DESCRIPTORSET_HPP
+#ifndef CONCERTO_GRAPHICS_DESCRIPTORSET_HPP
+#define CONCERTO_GRAPHICS_DESCRIPTORSET_HPP
 
 #include <memory>
 
@@ -39,13 +39,13 @@ namespace Concerto::Graphics
 		* @param pool The descriptor pool to allocate the descriptor set from.
 		* @param descriptorSetLayout The layout of the descriptor set.
 		*/
-		DescriptorSet(Device& device, DescriptorPool& pool,	DescriptorSetLayout& descriptorSetLayout);
+		DescriptorSet(Device& device, DescriptorPool& pool, const DescriptorSetLayout& descriptorSetLayout);
 
 		DescriptorSet(DescriptorSet&&) noexcept;
 
 		DescriptorSet(const DescriptorSet&) = delete;
 
-		DescriptorSet& operator=(DescriptorSet&&) noexcept = default;
+		DescriptorSet& operator=(DescriptorSet&&) noexcept;
 
 		DescriptorSet& operator=(const DescriptorSet&) = delete;
 
@@ -56,12 +56,11 @@ namespace Concerto::Graphics
 		* @param imageView The image view to write to the descriptor set.
 		* @param imageLayout The layout of the image in the descriptor set.
 		*/
-		void WriteImageSamplerDescriptor(Sampler& sampler, ImageView& imageView,
-				VkImageLayout imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+		void WriteImageSamplerDescriptor(const Sampler& sampler, const ImageView& imageView, VkImageLayout imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL) const;
 	private:
 		DescriptorPool* _pool{};
 	};
 	using DescriptorSetPtr = std::shared_ptr<DescriptorSet>;
 }
 
-#endif //CONCERTOGRAPHICS_DESCRIPTORSET_HPP
+#endif //CONCERTO_GRAPHICS_DESCRIPTORSET_HPP

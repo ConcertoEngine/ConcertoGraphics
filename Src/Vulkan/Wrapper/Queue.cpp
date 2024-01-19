@@ -2,8 +2,6 @@
 // Created by arthur on 13/09/2022.
 //
 
-#include <cassert>
-
 #include "Concerto/Graphics/Vulkan/Wrapper/Queue.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/Swapchain.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/CommandBuffer.hpp"
@@ -24,20 +22,21 @@ namespace Concerto::Graphics
 
 	void Queue::Submit(const FrameData& frame)
 	{
-		VkCommandBuffer vkCommandBuffer = frame._mainCommandBuffer->Get();
+		VkCommandBuffer vkCommandBuffer = frame.commandBuffer.Get();
 		VkPipelineStageFlags waitStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
 		VkSubmitInfo submit = {};
 		submit.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 		submit.pNext = nullptr;
 		submit.pWaitDstStageMask = &waitStage;
 		submit.waitSemaphoreCount = 1;
-		submit.pWaitSemaphores = frame._presentSemaphore.Get();
+		submit.pWaitSemaphores = frame.presentSemaphore.Get();
 		submit.signalSemaphoreCount = 1;
-		submit.pSignalSemaphores = frame._renderSemaphore.Get();
+		submit.pSignalSemaphores = frame.renderSemaphore.Get();
 		submit.commandBufferCount = 1;
 		submit.pCommandBuffers = &vkCommandBuffer;
-		if (vkQueueSubmit(_handle, 1, &submit, *frame._renderFence.Get()) != VK_SUCCESS)
+		if (vkQueueSubmit(_handle, 1, &submit, *frame.renderFence.Get()) != VK_SUCCESS)
 		{
+			CONCERTO_ASSERT_FALSE;
 			throw std::runtime_error("vkQueueSubmit fail");
 		}
 	}
@@ -49,7 +48,7 @@ namespace Concerto::Graphics
 		present.pNext = nullptr;
 		present.pSwapchains = swapchain.Get();
 		present.swapchainCount = 1;
-		present.pWaitSemaphores = frame._renderSemaphore.Get();
+		present.pWaitSemaphores = frame.renderSemaphore.Get();
 		present.waitSemaphoreCount = 1;
 		present.pImageIndices = &swapchainImageIndex;
 		auto vkResult = vkQueuePresentKHR(_handle, &present);
@@ -59,6 +58,7 @@ namespace Concerto::Graphics
 		}
 		else if (vkResult != VK_SUCCESS)
 		{
+			CONCERTO_ASSERT_FALSE;
 			throw std::runtime_error("vkQueuePresentKHR fail");
 		}
 		return true;

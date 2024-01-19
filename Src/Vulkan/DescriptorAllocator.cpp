@@ -19,8 +19,14 @@ namespace Concerto::Graphics
 
 	}
 
-	bool DescriptorAllocator::Allocate(DescriptorSetPtr& descriptorSet, DescriptorSetLayout& layout)
+	bool DescriptorAllocator::Allocate(DescriptorSetPtr& descriptorSet, const DescriptorSetLayout& layout)
 	{
+		auto it = _cache.find(layout.GetHash());
+		if (it != _cache.end())
+		{
+			descriptorSet = it->second;
+			return true;
+		}
 		if (_currentPool == VK_NULL_HANDLE)
 		{
 			_currentPool = GetPool();
@@ -42,7 +48,7 @@ namespace Concerto::Graphics
 		default:
 			return false;
 		}
-
+		_cache.emplace(layout.GetHash(), descriptorSet);
 		return false;
 	}
 
@@ -50,10 +56,8 @@ namespace Concerto::Graphics
 	{
 		std::vector<VkDescriptorPoolSize> sizes;
 		sizes.reserve(_poolSizes.sizes.size());
-		for (auto sz : _poolSizes.sizes)
-		{
-			sizes.push_back({ sz.first, uint32_t(sz.second * DESCRIPTOR_POOL_SIZE) });
-		}
+		for (const auto& [descriptorType, number] : _poolSizes.sizes)
+			sizes.push_back({ descriptorType, static_cast<UInt32>(number * DESCRIPTOR_POOL_SIZE) });
 		return std::make_shared<DescriptorPool>(*_device, sizes);
 	}
 
@@ -77,7 +81,7 @@ namespace Concerto::Graphics
 		_currentPool = VK_NULL_HANDLE;
 	}
 
-	Device& DescriptorAllocator::GetDevice()
+	Device& DescriptorAllocator::GetDevice() const
 	{
 		assert(_device != nullptr);
 		return *_device;

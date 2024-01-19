@@ -2,8 +2,8 @@
 // Created by arthur on 10/06/22.
 //
 
-#ifndef CONCERTOGRAPHICS_PIPELINE_HPP
-#define CONCERTOGRAPHICS_PIPELINE_HPP
+#ifndef CONCERTO_GRAPHICS_PIPELINE_HPP
+#define CONCERTO_GRAPHICS_PIPELINE_HPP
 
 #include <unordered_map>
 #include <string>
@@ -63,6 +63,7 @@ namespace Concerto::Graphics
 		 */
 		[[nodiscard]] VkPipelineColorBlendStateCreateInfo BuildColorBlendState() const;
 
+		std::shared_ptr<PipelineLayout> GetPipelineLayout() const;
 		/**
 		 * @struct CreateInfo
 		 * @brief Struct containing the create info for building the pipeline
@@ -80,4 +81,4 @@ namespace Concerto::Graphics
 
 } // Concerto
 
-#endif //CONCERTOGRAPHICS_PIPELINE_HPP
+#endif //CONCERTO_GRAPHICS_PIPELINE_HPP

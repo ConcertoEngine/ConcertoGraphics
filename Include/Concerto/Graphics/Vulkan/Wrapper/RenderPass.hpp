@@ -2,14 +2,14 @@
 // Created by arthur on 12/06/22.
 //
 
-#ifndef CONCERTOGRAPHICS_RENDERPASS_HPP
-#define CONCERTOGRAPHICS_RENDERPASS_HPP
+#ifndef CONCERTO_GRAPHICS_RENDERPASS_HPP
+#define CONCERTO_GRAPHICS_RENDERPASS_HPP
 
 #include <vector>
 
 #include <vulkan/vulkan.h>
-#include "Concerto/Graphics/Defines.hpp"
 
+#include "Concerto/Graphics/Defines.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/Object.hpp"
 
 namespace Concerto::Graphics
@@ -53,4 +53,4 @@ namespace Concerto::Graphics
 
 } // Concerto
 
-#endif //CONCERTOGRAPHICS_RENDERPASS_HPP
+#endif //CONCERTO_GRAPHICS_RENDERPASS_HPP

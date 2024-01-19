@@ -2,8 +2,8 @@
 // Created by arthur on 09/06/22.
 //
 
-#ifndef CONCERTOGRAPHICS_VERTEX_HPP
-#define CONCERTOGRAPHICS_VERTEX_HPP
+#ifndef CONCERTO_GRAPHICS_VERTEX_HPP
+#define CONCERTO_GRAPHICS_VERTEX_HPP
 
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
@@ -35,4 +35,4 @@ namespace Concerto::Graphics
 
 } // Concerto
 
-#endif //CONCERTOGRAPHICS_VERTEX_HPP
+#endif //CONCERTO_GRAPHICS_VERTEX_HPP

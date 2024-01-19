@@ -2,8 +2,8 @@
 // Created by arthur on 16/06/22.
 //
 
-#ifndef CONCERTOGRAPHICS_DESCRIPTORPOOL_HPP
-#define CONCERTOGRAPHICS_DESCRIPTORPOOL_HPP
+#ifndef CONCERTO_GRAPHICS_DESCRIPTORPOOL_HPP
+#define CONCERTO_GRAPHICS_DESCRIPTORPOOL_HPP
 
 #include <vector>
 #include <memory>
@@ -58,4 +58,4 @@ namespace Concerto::Graphics
 	using DescriptorPoolPtr = std::shared_ptr<DescriptorPool>;
 }
 
-#endif //CONCERTOGRAPHICS_DESCRIPTORPOOL_HPP
+#endif //CONCERTO_GRAPHICS_DESCRIPTORPOOL_HPP

@@ -51,7 +51,7 @@ namespace Concerto::Graphics
 		_context.commandBuffer->ImmediateSubmit(*_context.fence, *_context.commandPool, *_context.queue,
 				[](CommandBuffer& cb)
 				{
-					ImGui_ImplVulkan_CreateFontsTexture(cb.Get());
+					ImGui_ImplVulkan_CreateFontsTexture();
 				});
 	}
 

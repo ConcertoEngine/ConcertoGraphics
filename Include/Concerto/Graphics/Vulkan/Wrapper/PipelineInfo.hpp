@@ -2,16 +2,15 @@
 // Created by arthur on 10/06/22.
 //
 
-#ifndef CONCERTOGRAPHICS_PIPELINEINFO_HPP
-#define CONCERTOGRAPHICS_PIPELINEINFO_HPP
+#ifndef CONCERTO_GRAPHICS_PIPELINEINFO_HPP
+#define CONCERTO_GRAPHICS_PIPELINEINFO_HPP
 
-#include <utility>
 #include <vector>
+#include <memory>
 
 #include <vulkan/vulkan.h>
 
 #include "Concerto/Graphics/Vulkan/Wrapper/PipelineLayout.hpp"
-#include "Concerto/Graphics/Vulkan/Vertex.hpp"
 
 namespace Concerto::Graphics
 {
@@ -19,7 +18,7 @@ namespace Concerto::Graphics
 	class PipelineInfo
 	{
 	public:
-		PipelineInfo(std::vector<VkPipelineShaderStageCreateInfo> shaderStages, VkExtent2D windowExtent, PipelineLayout& pipelineLayout);
+		PipelineInfo(std::vector<VkPipelineShaderStageCreateInfo> shaderStages, VkExtent2D windowExtent, std::shared_ptr<PipelineLayout>& pipelineLayout);
 
 		std::vector<VkPipelineShaderStageCreateInfo> _shaderStages;
 		VkPipelineVertexInputStateCreateInfo _vertexInputInfo;
@@ -29,10 +28,10 @@ namespace Concerto::Graphics
 		VkPipelineRasterizationStateCreateInfo _rasterizer;
 		VkPipelineColorBlendAttachmentState _colorBlendAttachment;
 		VkPipelineMultisampleStateCreateInfo _multisampling;
-		VkPipelineLayout _pipelineLayout;
+		std::shared_ptr<PipelineLayout> _pipelineLayout;
 		VkPipelineDepthStencilStateCreateInfo _depthStencil;
 	};
 
 } // Concerto::Graphics::Wrapper
 
-#endif //CONCERTOGRAPHICS_PIPELINEINFO_HPP
+#endif //CONCERTO_GRAPHICS_PIPELINEINFO_HPP

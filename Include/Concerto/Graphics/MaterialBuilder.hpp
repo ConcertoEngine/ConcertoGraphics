@@ -2,9 +2,10 @@
 // Created by arthur on 17/02/2023.
 //
 
-#ifndef CONCERTOGRAPHICS_INCLUDE_MATERIALBUILDER_HPP_
-#define CONCERTOGRAPHICS_INCLUDE_MATERIALBUILDER_HPP_
+#ifndef CONCERTO_GRAPHICS_INCLUDE_MATERIALBUILDER_HPP_
+#define CONCERTO_GRAPHICS_INCLUDE_MATERIALBUILDER_HPP_
 
+#include <set>
 #include <string>
 #include <unordered_map>
 
@@ -14,9 +15,7 @@
 #include "Concerto/Graphics/Vulkan/DescriptorAllocator.hpp"
 #include "Concerto/Graphics/Vulkan/DescriptorLayoutCache.hpp"
 #include "Concerto/Graphics/ShaderModuleInfo.hpp"
-#include <NZSL/Parser.hpp>
-#include <NZSL/SpirvWriter.hpp>
-#include <NZSL/Ast/ReflectVisitor.hpp>
+#include "Concerto/Graphics/Vulkan/DescriptorBuilder.hpp"
 #include <NZSL/Ast/SanitizeVisitor.hpp>
 
 namespace Concerto::Graphics
@@ -26,17 +25,20 @@ namespace Concerto::Graphics
 	class CONCERTO_GRAPHICS_API MaterialBuilder
 	{
 	 public:
-		MaterialBuilder(Device& device);
-		VkMaterialPtr BuildMaterial(const MaterialInfo& material, RenderPass& renderpass);
+		explicit MaterialBuilder(Device& device);
+		VkMaterialPtr BuildMaterial(MaterialInfo& material, RenderPass& renderpass);
 		VkMaterialPtr GetMaterial(const std::string& materialName);
+		std::set<VkMaterialPtr> GetMaterials();
 	 private:
-		DescriptorLayoutCache _layoutCache;
+		DescriptorSetLayoutPtr GeDescriptorSetLayout(const std::vector<VkDescriptorSetLayoutBinding>& bindings);
+		
 		DescriptorAllocator _allocator;
 		Sampler _sampler;
 		Device& _device;
-		std::unordered_map<MaterialInfo, VkMaterialPtr, MaterialInfo::Hash> _materialsCache;
+		std::set<VkMaterialPtr> _materialsCache;
 		std::unordered_map<std::string, ShaderModuleInfo*> _shaderModuleInfos;
 		DescriptorPool _descriptorPool;
+		std::unordered_map<UInt64 /*hash*/, DescriptorSetLayoutPtr> _descriptorSetLayoutsCache;
 	};
 }
-#endif //CONCERTOGRAPHICS_INCLUDE_MATERIALBUILDER_HPP_
+#endif //CONCERTO_GRAPHICS_INCLUDE_MATERIALBUILDER_HPP_

@@ -13,7 +13,7 @@ struct SceneData
 
 external
 {
-    [binding(1)] sceneData: uniform[SceneData]
+    [set(0), binding(1)] sceneData: uniform[SceneData]
 }
 
 struct FragOut

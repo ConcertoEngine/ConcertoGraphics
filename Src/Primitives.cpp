@@ -14,7 +14,7 @@ namespace Concerto::Graphics
 	Vertices Primitive::MakeCone(float radius, float height, UInt32 slices)
 	{
 		Vertices vertices;
-		const float angleStep = 2.0f * Math::Pi<float> / static_cast<float>(slices);
+		const float angleStep = 2.0f * Concerto::Pi<float> / static_cast<float>(slices);
 		const glm::vec3 baseCenter(0.0f, -0.5f * height, 0.0f);
 		for (UInt32 i = 0; i < slices; ++i)
 		{
@@ -115,8 +115,8 @@ namespace Concerto::Graphics
 		vertices.push_back({ bottom, glm::vec3(0.0f, -1.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f),
 							 glm::vec2(0.0f, 0.0f) });
 
-		const float phiStep = Math::Pi<float> / static_cast<float>(stacks + 1);
-		const float thetaStep = 2.0f * Math::Pi<float> / static_cast<float>(slices);
+		const float phiStep = Concerto::Pi<float> / static_cast<float>(stacks + 1);
+		const float thetaStep = 2.0f * Concerto::Pi<float> / static_cast<float>(slices);
 		for (UInt32 i = 1; i <= stacks; ++i)
 		{
 			const float phi = static_cast<float>(i) * phiStep;

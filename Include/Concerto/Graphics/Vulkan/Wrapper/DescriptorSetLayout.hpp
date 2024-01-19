@@ -2,15 +2,16 @@
 // Created by arthur on 16/06/22.
 //
 
-#ifndef CONCERTOGRAPHICS_DESCRIPTORSETLAYOUT_HPP
-#define CONCERTOGRAPHICS_DESCRIPTORSETLAYOUT_HPP
+#ifndef CONCERTO_GRAPHICS_DESCRIPTORSETLAYOUT_HPP
+#define CONCERTO_GRAPHICS_DESCRIPTORSETLAYOUT_HPP
 
 #include <vector>
 #include <memory>
 
+#include <Concerto/Core/Assert.hpp>
 #include <vulkan/vulkan.h>
-#include "Concerto/Graphics/Defines.hpp"
 
+#include "Concerto/Graphics/Defines.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/Object.hpp"
 
 namespace Concerto::Graphics
@@ -35,11 +36,18 @@ namespace Concerto::Graphics
 
 		DescriptorSetLayout& operator=(DescriptorSetLayout&&) = default;
 
-		~DescriptorSetLayout(){CONCERTO_ASSERT_FALSE;};
+		~DescriptorSetLayout() = default;
+
+		UInt64 GetHash() const;
+
+		static UInt64 GetHash(const std::vector<VkDescriptorSetLayoutBinding>& bindings);
+
+	private:
+		std::vector<VkDescriptorSetLayoutBinding> _bindings;
 	};
 	using DescriptorSetLayoutPtr = std::shared_ptr<DescriptorSetLayout>;
 
 	DescriptorSetLayoutPtr MakeDescriptorSetLayout(Device& device, const std::vector<VkDescriptorSetLayoutBinding>& bindings);
 }
 
-#endif //CONCERTOGRAPHICS_DESCRIPTORSETLAYOUT_HPP
+#endif //CONCERTO_GRAPHICS_DESCRIPTORSETLAYOUT_HPP

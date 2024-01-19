@@ -2,16 +2,15 @@
 // Created by arthur on 17/02/2023.
 //
 
+#define TINYOBJLOADER_IMPLEMENTATION
+
 #include <iostream>
-#include <stdexcept>
+#include <filesystem>
 
 #include <Concerto/Core/Logger.hpp>
 #include <Concerto/Graphics/thirdParty/tiny_obj_loader.h>
 
 #include "Concerto/Graphics/Mesh.hpp"
-#include "Concerto/Graphics/Vulkan/VkMesh.hpp"
-#include "Concerto/Graphics/UploadContext.hpp"
-#include "Concerto/Graphics/Vulkan/Wrapper/Device.hpp"
 
 namespace Concerto::Graphics
 {
@@ -37,8 +36,7 @@ namespace Concerto::Graphics
 		std::string err;
 		tinyobj::ObjReaderConfig readerConfig;
 		tinyobj::ObjReader reader;
-
-//		readerConfig.mtl_search_path = ;
+		
 		if (!reader.ParseFromFile(fileName, readerConfig))
 		{
 			if (!reader.Error().empty())
@@ -63,10 +61,13 @@ namespace Concerto::Graphics
 		auto& materials = reader.GetMaterials();
 
 		int i = 0;
+		std::filesystem::path path = GetPath();
+		path = path.parent_path();
 		for (auto& material : materials)
 		{
 			MaterialPtr mat = std::make_shared<MaterialInfo>();
-			mat->diffuseTexturePath = material.diffuse_texname;
+			mat->diffuseTexturePath = material.diffuse_texname.empty() ? "" : (path / material.diffuse_texname).string();
+			mat->normalTexturePath = material.normal_texname.empty() ? "" : (path / material.normal_texname).string();
 			mat->diffuseColor.x = material.diffuse[0];
 			mat->diffuseColor.y = material.diffuse[1];
 			mat->diffuseColor.z = material.diffuse[2];
@@ -79,7 +80,6 @@ namespace Concerto::Graphics
 			mat->emissiveColor.x = material.emission[0];
 			mat->emissiveColor.y = material.emission[1];
 			mat->emissiveColor.z = material.emission[2];
-			mat->normalTexturePath = material.normal_texname;
 			mat->name = material.name;
 			_materials[material.name] = std::move(mat);
 			++i;
@@ -140,8 +140,6 @@ namespace Concerto::Graphics
 	{
 		return _materials;
 	}
-
-
 
 	//VkMesh& Mesh::CreateGPUMesh(Device& device)
 	//{

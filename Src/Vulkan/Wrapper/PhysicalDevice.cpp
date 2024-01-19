@@ -9,6 +9,8 @@
 
 #include "Concerto/Graphics/Vulkan/Wrapper/PhysicalDevice.hpp"
 
+#include <Concerto/Core/Assert.hpp>
+
 namespace Concerto::Graphics
 {
 	PhysicalDevice::PhysicalDevice(VkPhysicalDevice physicalDevice) : _physicalDevice(physicalDevice)
@@ -103,8 +105,13 @@ namespace Concerto::Graphics
 
 	VkPhysicalDevice* PhysicalDevice::Get()
 	{
-		assert(_physicalDevice != VK_NULL_HANDLE);
+		CONCERTO_ASSERT(_physicalDevice != VK_NULL_HANDLE);
 		return &_physicalDevice;
+	}
+
+	VkPhysicalDevice PhysicalDevice::Get() const
+	{
+		return _physicalDevice;
 	}
 
 	std::span<const char*> PhysicalDevice::GetExtensionPropertiesNames() const
@@ -127,6 +134,7 @@ namespace Concerto::Graphics
 		VkSurfaceCapabilitiesKHR capabilities;
 		if (vkGetPhysicalDeviceSurfaceCapabilitiesKHR(_physicalDevice, _surface, &capabilities) != VK_SUCCESS)
 		{
+			CONCERTO_ASSERT_FALSE;
 			throw std::runtime_error("vkGetPhysicalDeviceSurfaceCapabilitiesKHR fail");
 		}
 		_capabilities = capabilities;

@@ -2,7 +2,7 @@
 module;
 
 [layout(std140)]
-struct  CameraBuffer
+struct CameraBuffer
 {
     view: mat4[f32],
     proj: mat4[f32],

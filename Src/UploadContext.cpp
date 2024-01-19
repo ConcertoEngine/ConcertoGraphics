@@ -8,7 +8,7 @@
 namespace Concerto::Graphics
 {
 	UploadContext::UploadContext(Device& device, UInt32 queueFamily) :
-		_uploadFence(device),
+		_uploadFence(device, false),
 		_commandPool(device, queueFamily),
 		_commandBuffer(device, *_commandPool.Get())
 	{

@@ -32,6 +32,7 @@ namespace Concerto::Graphics
 		pipelineLayoutCreateInfo.pPushConstantRanges = nullptr;
 		if (vkCreatePipelineLayout(*_device->Get(), &pipelineLayoutCreateInfo, nullptr, &_handle) != VK_SUCCESS)
 		{
+			CONCERTO_ASSERT_FALSE;
 			throw std::runtime_error("failed to create pipeline layout!");
 		}
 	}

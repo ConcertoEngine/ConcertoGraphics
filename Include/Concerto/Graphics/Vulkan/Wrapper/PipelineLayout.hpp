@@ -2,12 +2,10 @@
 // Created by arthur on 30/06/2022.
 //
 
-#ifndef CONCERTOGRAPHICS_PIPELINELAYOUT_HPP
-#define CONCERTOGRAPHICS_PIPELINELAYOUT_HPP
+#ifndef CONCERTO_GRAPHICS_PIPELINELAYOUT_HPP
+#define CONCERTO_GRAPHICS_PIPELINELAYOUT_HPP
 
-#include <cstddef>
 #include <vector>
-#include <functional>
 
 #include <vulkan/vulkan.h>
 #include "Concerto/Graphics/Defines.hpp"
@@ -44,4 +42,4 @@ namespace Concerto::Graphics
 	};
 } // Concerto::Graphics::Wrapper
 
-#endif //CONCERTOGRAPHICS_PIPELINELAYOUT_HPP
+#endif //CONCERTO_GRAPHICS_PIPELINELAYOUT_HPP
