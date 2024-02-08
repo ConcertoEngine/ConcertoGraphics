@@ -14,19 +14,17 @@
 
 #include "Concerto/Graphics/Vulkan/Wrapper/Object.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/Image.hpp"
-#include "Concerto/Graphics/Vulkan/Wrapper/Allocator.hpp"
-#include "Concerto/Graphics/Vulkan/Wrapper/Semaphore.hpp"
-#include "Concerto/Graphics/Vulkan/Wrapper/Fence.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/ImageView.hpp"
-#include "Concerto/Graphics/Vulkan/Wrapper/RenderPass.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/FrameBuffer.hpp"
-#include "Concerto/Graphics/Window/Window.hpp"
 
 namespace Concerto::Graphics
 {
 	class Device;
-
 	class PhysicalDevice;
+	class Window;
+	class RenderPass;
+	class Fence;
+	class Semaphore;
 
 	/**
 	 * @class Swapchain
@@ -39,11 +37,11 @@ namespace Concerto::Graphics
 		/**
 		 * @brief Construct a new Swapchain object
 		 * @param device A reference to the logical device.
-		 * @param allocator A reference to the allocator.
-		 * @param windowExtent The size of the Window.
-		 * @param physicalDevice A reference to the physical device.
+		 * @param window A reference to the window.
 		 */
 		Swapchain(Device& device, Window& window);
+
+		~Swapchain() = default;
 
 		Swapchain(Swapchain&&) noexcept = default;
 
@@ -72,7 +70,7 @@ namespace Concerto::Graphics
 		[[nodiscard]] VkFormat GetDepthFormat() const;
 
 		[[nodiscard]] RenderPass* GetRenderPass();
-		
+
 		[[nodiscard]] FrameBuffer& GetFrameBuffer(UInt32 index);
 
 		[[nodiscard]] UInt32 GetCurrentImageIndex() const;
@@ -86,7 +84,7 @@ namespace Concerto::Graphics
 		 * @return The index of the acquired image.
 		 */
 		UInt32 AcquireNextImage(Semaphore& semaphore, Fence& fence, std::uint64_t timeout);
-		
+
 	private:
 		void CreateRenderPass();
 		void CreateFrameBuffers();

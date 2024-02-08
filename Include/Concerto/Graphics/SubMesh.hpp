@@ -14,17 +14,19 @@
 namespace Concerto::Graphics
 {
 	class Mesh;
+	class MaterialInfo;
+
 	class CONCERTO_GRAPHICS_API SubMesh
 	{
 	 public:
 		explicit SubMesh(Mesh* parent);
-		SubMesh(const Vertices& vertices, MaterialPtr& material, Mesh* parent);
+		SubMesh(const Vertices& vertices, std::shared_ptr<MaterialInfo>& material, Mesh* parent);
 		[[nodiscard]] Vertices& GetVertices();
-		[[nodiscard]] MaterialPtr& GetMaterial();
+		[[nodiscard]] std::shared_ptr<MaterialInfo>& GetMaterial();
 		[[nodiscard]] Mesh* GetParent();
 	 private:
 		Vertices _vertices;
-		MaterialPtr _material;
+		std::shared_ptr<MaterialInfo> _material;
 		Mesh* _parent;
 	};
 	using SubMeshPtr = std::shared_ptr<SubMesh>;

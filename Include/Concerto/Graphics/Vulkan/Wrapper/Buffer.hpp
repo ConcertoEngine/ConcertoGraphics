@@ -6,7 +6,6 @@
 #define CONCERTO_GRAPHICS_BUFFER_HPP
 
 #include <cstddef>
-#include <cstring>
 
 #include <Concerto/Core/Assert.hpp>
 
@@ -45,49 +44,17 @@ namespace Concerto::Graphics
 		~Buffer() = default;
 
 		template<typename T>
-		void Copy(T& object, std::size_t padding = 0)
-		{
-			Byte* data = nullptr;
-			if(Map(&data) == false)
-			{
-				CONCERTO_ASSERT_FALSE;
-				return;
-			}
-			data += padding;
-			std::memcpy(data, &object, sizeof(T));
-			UnMap();
-		}
+		void Copy(T& object, std::size_t padding = 0);
 
 		void Copy(void* object, std::size_t size, std::size_t padding = 0);
 
 		template<typename DestBuffer, typename SrcObj>
-		void Copy(std::vector<SrcObj>& objects, std::function<void(DestBuffer& destBuffer, SrcObj& srcObj)>&& copyFunc, std::size_t padding = 0)
-		{
-			Byte* data = nullptr;
-			if (Map(&data) == false)
-			{
-				CONCERTO_ASSERT_FALSE;
-				return;
-			}
-			data += padding;
-			auto* destBuffer = static_cast<DestBuffer*>(data);
-			for (std::size_t i = 0; i < objects.size(); i++)
-			{
-				copyFunc(destBuffer[i], objects[i]);
-			}
-			UnMap();
-		}
+		void Copy(std::vector<SrcObj>& objects, std::function<void(DestBuffer& destBuffer, SrcObj& srcObj)>&& copyFunc, std::size_t padding = 0);
 
 		bool Map(Byte** data);
 
 		template<typename T>
-		T* Map()
-		{
-			Byte* data = nullptr;
-			if (Map(&data) == false)
-				CONCERTO_ASSERT_FALSE;
-			return reinterpret_cast<T*>(data);
-		}
+		T* Map();
 
 		void UnMap();
 
@@ -144,6 +111,8 @@ namespace Concerto::Graphics
 	{
 		return { allocator, sizeof(T) * objNumber, usage, memoryUsage };
 	}
-
 } // Concerto::Graphics::Wrapper
+
+#include "Concerto/Graphics/Vulkan/Wrapper/Buffer.inl"
+
 #endif //CONCERTO_GRAPHICS_BUFFER_HPP

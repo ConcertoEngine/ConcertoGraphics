@@ -5,14 +5,12 @@
 #ifndef CONCERTO_GRAPHICS_INCLUDE_SHADERMODULEINFO_HPP_
 #define CONCERTO_GRAPHICS_INCLUDE_SHADERMODULEINFO_HPP_
 
-#include <string_view>
-
+#include <vulkan/vulkan.h>
 #include <NZSL/Parser.hpp>
 #include <NZSL/SpirvWriter.hpp>
 #include <NZSL/Ast/ReflectVisitor.hpp>
-#include <NZSL/Ast/SanitizeVisitor.hpp>
 
-#include "Concerto/Graphics/Vulkan/Wrapper/PipelineLayout.hpp"
+#include "Concerto/Graphics/Defines.hpp"
 
 namespace Concerto::Graphics
 {

@@ -322,7 +322,7 @@ int main()
 			PipelinePtr lasPipeline;
 			for (const auto& subMesh : vkMesh->subMeshes)
 			{
-				const auto vkMaterial = subMesh->_material;
+				const auto vkMaterial = subMesh->material;
 				if (vkMaterial == nullptr)
 				{
 					Logger::Error("Could not found the material {}", subMesh->GetMaterial()->name);
@@ -335,7 +335,7 @@ int main()
 					lasPipeline = vkMaterial->pipeline;
 				}
 				frame.commandBuffer.BindDescriptorSets(VK_PIPELINE_BIND_POINT_GRAPHICS, *vkMaterial->pipeline->GetPipelineLayout()->Get(), vkMaterial->descriptorSets);
-				frame.commandBuffer.BindVertexBuffers(subMesh->_vertexBuffer);
+				frame.commandBuffer.BindVertexBuffers(subMesh->vertexBuffer);
 				frame.commandBuffer.DrawIndirect(frame.indirectBuffer, sizeof(VkDrawIndirectCommand) * i, drawIndirectCommand[i].instanceCount, sizeof(VkDrawIndirectCommand));
 				++i;
 			}

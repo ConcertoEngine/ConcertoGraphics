@@ -102,7 +102,7 @@ namespace Concerto::Graphics
 
 	Device& DescriptorAllocator::GetDevice() const
 	{
-		assert(_device != nullptr);
+		CONCERTO_ASSERT(_device != nullptr);
 		return *_device;
 	}
 

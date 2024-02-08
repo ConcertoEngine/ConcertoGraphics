@@ -10,6 +10,7 @@
 #include <vector>
 
 #include <vulkan/vulkan.h>
+
 #include "Concerto/Graphics/Defines.hpp"
 
 namespace Concerto::Graphics
@@ -37,6 +38,8 @@ namespace Concerto::Graphics
 		PhysicalDevice() = default;
 
 		explicit PhysicalDevice(VkPhysicalDevice physicalDevice);
+
+		~PhysicalDevice() = default;
 
 		PhysicalDevice(const PhysicalDevice&) = delete;
 		

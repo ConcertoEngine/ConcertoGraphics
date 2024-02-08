@@ -6,8 +6,8 @@
 #define CONCERTO_GRAPHICS_SAMPLER_HPP
 
 #include <vulkan/vulkan.h>
-#include "Concerto/Graphics/Defines.hpp"
 
+#include "Concerto/Graphics/Defines.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/Object.hpp"
 
 namespace Concerto::Graphics
@@ -29,8 +29,7 @@ namespace Concerto::Graphics
 		 * @param filter The filter to use when sampling the image.
 		 * @param samplerAddressMode The addressing mode to use for the sampler.
 		 */
-		Sampler(Device& device, VkFilter filter,
-				VkSamplerAddressMode samplerAddressMode = VK_SAMPLER_ADDRESS_MODE_REPEAT);
+		Sampler(Device& device, VkFilter filter, VkSamplerAddressMode samplerAddressMode = VK_SAMPLER_ADDRESS_MODE_REPEAT);
 	};
 }
 

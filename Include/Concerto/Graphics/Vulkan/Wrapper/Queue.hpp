@@ -6,7 +6,6 @@
 #define CONCERTO_GRAPHICS_QUEUE_HPP
 
 #include "Concerto/Graphics/Defines.hpp"
-
 #include "Concerto/Graphics/Vulkan/Wrapper/Object.hpp"
 
 namespace Concerto::Graphics

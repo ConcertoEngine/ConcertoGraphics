@@ -3,6 +3,9 @@
 //
 
 #include "Concerto/Graphics/Vulkan/DescriptorBuilder.hpp"
+
+#include "Concerto/Graphics/Vulkan/DescriptorAllocator.hpp"
+#include "Concerto/Graphics/Vulkan/DescriptorLayoutCache.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/DescriptorSet.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/DescriptorSetLayout.hpp"
 
@@ -71,7 +74,7 @@ namespace Concerto::Graphics
 		return *this;
 	}
 
-	bool DescriptorBuilder::Build(DescriptorSetPtr& set, DescriptorSetLayoutPtr& layout)
+	bool DescriptorBuilder::Build(std::shared_ptr<DescriptorSet>& set, std::shared_ptr<DescriptorSetLayout>& layout)
 	{
 		VkDescriptorSetLayoutCreateInfo layoutInfo{};
 		layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
@@ -82,7 +85,7 @@ namespace Concerto::Graphics
 
 		layout = _cache.GetLayout(layoutInfo);
 
-		bool success = _alloc.Allocate(set, *layout);
+		const bool success = _alloc.Allocate(set, *layout);
 		if (!success)
 			return false;
 
@@ -95,7 +98,7 @@ namespace Concerto::Graphics
 		return true;
 	}
 
-	bool DescriptorBuilder::Build(DescriptorSetPtr& set)
+	bool DescriptorBuilder::Build(std::shared_ptr<DescriptorSet>& set)
 	{
 		DescriptorSetLayoutPtr layout;
 		return Build(set, layout);

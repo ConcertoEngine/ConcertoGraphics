@@ -11,7 +11,6 @@
 
 #include "Concerto/Graphics/Defines.hpp"
 
-
 namespace Concerto::Graphics
 {
 	class UploadContext;

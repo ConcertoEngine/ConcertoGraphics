@@ -5,10 +5,8 @@
 #ifndef CONCERTO_GRAPHICS_FRAMEBUFFER_HPP
 #define CONCERTO_GRAPHICS_FRAMEBUFFER_HPP
 
-#include <vector>
 
 #include "Concerto/Graphics/Defines.hpp"
-
 #include "Concerto/Graphics/Vulkan/Wrapper/Object.hpp"
 
 namespace Concerto::Graphics
@@ -39,8 +37,9 @@ namespace Concerto::Graphics
 		* @param depthImageView The depth image view for the frame buffer.
 		* @param extent The dimensions of the frame buffer.
 		*/
-		FrameBuffer(Device& device, RenderPass& renderPass, ImageView& imageView, ImageView& depthImageView,
-				VkExtent2D extent);
+		FrameBuffer(Device& device, RenderPass& renderPass, ImageView& imageView, ImageView& depthImageView, VkExtent2D extent);
+
+		~FrameBuffer() = default;
 
 		FrameBuffer(FrameBuffer&&) noexcept = default;
 

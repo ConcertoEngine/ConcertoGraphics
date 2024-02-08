@@ -65,7 +65,7 @@ namespace Concerto::Graphics
 		path = path.parent_path();
 		for (auto& material : materials)
 		{
-			MaterialPtr mat = std::make_shared<MaterialInfo>();
+			std::shared_ptr<MaterialInfo> mat = std::make_shared<MaterialInfo>();
 			mat->diffuseTexturePath = material.diffuse_texname.empty() ? "" : (path / material.diffuse_texname).string();
 			mat->normalTexturePath = material.normal_texname.empty() ? "" : (path / material.normal_texname).string();
 			mat->diffuseColor.x = material.diffuse[0];
@@ -120,10 +120,10 @@ namespace Concerto::Graphics
 					tinyobj::real_t ux = attrib.texcoords[2 * idx.texcoord_index + 0];
 					tinyobj::real_t uy = attrib.texcoords[2 * idx.texcoord_index + 1];
 
-					currentSubMesh->GetVertices().emplace_back(Vertex{{ vx, vy, vz },
+					currentSubMesh->GetVertices().emplace_back(Vertex{ { vx, vy, vz },
 																	  { nx, ny, nz },
 																	  { nx, ny, nz },
-																	  { ux, 1 - uy }});
+																	  { ux, 1 - uy } });
 				}
 				index_offset += fv;
 			}
@@ -136,43 +136,8 @@ namespace Concerto::Graphics
 		return _path;
 	}
 
-	std::unordered_map<std::string, MaterialPtr>& Mesh::GetMaterials()
+	std::unordered_map<std::string, std::shared_ptr<MaterialInfo>>& Mesh::GetMaterials()
 	{
 		return _materials;
 	}
-
-	//VkMesh& Mesh::CreateGPUMesh(Device& device)
-	//{
-	//	//_gpuMesh = std::make_unique<VkMesh>();
-	//	//Allocator& allocator = device.GetAllocator();
-	//	//UploadContext& uploadContext = device.GetUploadContext();
-
-	//	//for (SubMeshPtr& subMesh : _subMeshes)
-	//	//{
-	//	//	VkSubMeshPtr vkSubMesh = std::make_shared<VkSubMesh>(subMesh, allocator,
-	//	//		VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
-	//	//		VMA_MEMORY_USAGE_GPU_ONLY);
-	//	//	vkSubMesh->Upload(uploadContext._commandBuffer, uploadContext._commandPool,uploadContext._uploadFence, device.GetQueue(Queue::Type::Graphics), allocator);
-	//	//	_gpuMesh->subMeshes.push_back(vkSubMesh);
-	//	//	//TODO: Add support for all material properties
-	//	//	VkPipelineLayout pipelineLayout = *_meshPipelineLayout->Get();
-	//	//	VkPipeline pipeline = *_coloredShaderPipeline->Get();
-	//	//	if (!subMesh->GetMaterial()->diffuseTexturePath.empty())
-	//	//	{
-	//	//		pipelineLayout = *_texturedSetLayout->Get();
-	//	//		pipeline = *_texturedPipeline->Get();
-	//	//	}
-	//	//	if (!subMesh->GetMaterial()->diffuseTexturePath.empty())
-	//	//	{
-	//	//		std::filesystem::path path = _path;
-	//	//		path = path.parent_path() / subMesh->GetMaterial()->diffuseTexturePath;
-	//	//		subMesh->GetMaterial()->diffuseTexture = _textureBuilder->BuildTexture(path.string());
-	//	//		_materialBuilder->BuildMaterial(*subMesh->GetMaterial(), pipelineLayout, pipeline);
-	//	//	}
-	//	//	else
-	//	//	{
-	//	//		_materialBuilder->BuildMaterial(*subMesh->GetMaterial(), pipelineLayout, pipeline);
-	//	//	}
-	//	}
-	//}
 }

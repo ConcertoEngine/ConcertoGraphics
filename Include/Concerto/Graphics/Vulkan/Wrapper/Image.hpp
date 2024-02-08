@@ -9,10 +9,9 @@
 
 #include <vulkan/vulkan.h>
 #include <vk_mem_alloc.h>
-#include "Concerto/Graphics/Defines.hpp"
 
+#include "Concerto/Graphics/Defines.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/Object.hpp"
-#include "Concerto/Graphics/Vulkan/Wrapper/VulkanInitializer.hpp"
 
 namespace Concerto::Graphics
 {

@@ -15,7 +15,6 @@
 
 #include "Concerto/Graphics/Vulkan/Wrapper/Queue.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/Allocator.hpp"
-#include "Concerto/Graphics/UploadContext.hpp"
 
 namespace Concerto::Graphics
 {
@@ -49,7 +48,7 @@ namespace Concerto::Graphics
 		*
 		* @return The index of the queue family for the given queue type.
 		*/
-		UInt32 GetQueueFamilyIndex(Queue::Type queueType) const;
+		[[nodiscard]] UInt32 GetQueueFamilyIndex(Queue::Type queueType) const;
 
 		/**
 		* @brief Retrieves the queue family index for a given queue flag.
@@ -58,7 +57,7 @@ namespace Concerto::Graphics
 		*
 		* @return The index of the queue family for the given queue flag.
 		*/
-		UInt32 GetQueueFamilyIndex(UInt32 queueFlag) const;
+		[[nodiscard]] UInt32 GetQueueFamilyIndex(UInt32 queueFlag) const;
 
 		/**
 		* @brief Retrieves a queue of a given type.

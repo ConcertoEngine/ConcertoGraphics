@@ -6,11 +6,12 @@
 
 #include <stb_image.h>
 
+#include "Concerto/Graphics/Vulkan/Wrapper/Device.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/Buffer.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/Image.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/CommandBuffer.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/Queue.hpp"
-#include "Concerto/Graphics/Vulkan/Utils.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/VulkanInitializer.hpp"
 #include "Concerto/Graphics/UploadContext.hpp"
 
 namespace Concerto::Graphics

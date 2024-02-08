@@ -413,9 +413,9 @@ typedef double real_t;
 		//
 		// For pybind11
 		//
-		const std::vector<real_t> &GetVertices() const { return vertices; }
+		[[nodiscard]] const std::vector<real_t> &GetVertices() const { return vertices; }
 
-		const std::vector<real_t> &GetVertexWeights() const { return vertex_weights; }
+		[[nodiscard]] const std::vector<real_t> &GetVertexWeights() const { return vertex_weights; }
 	};
 
 	struct callback_t {
@@ -556,23 +556,23 @@ typedef double real_t;
 		///
 		/// .obj was loaded or parsed correctly.
 		///
-		bool Valid() const { return valid_; }
+		[[nodiscard]] bool Valid() const { return valid_; }
 
-		const attrib_t &GetAttrib() const { return attrib_; }
+		[[nodiscard]] const attrib_t &GetAttrib() const { return attrib_; }
 
-		const std::vector<shape_t> &GetShapes() const { return shapes_; }
+		[[nodiscard]] const std::vector<shape_t> &GetShapes() const { return shapes_; }
 
-		const std::vector<material_t> &GetMaterials() const { return materials_; }
+		[[nodiscard]] const std::vector<material_t> &GetMaterials() const { return materials_; }
 
 		///
 		/// Warning message(may be filled after `Load` or `Parse`)
 		///
-		const std::string &Warning() const { return warning_; }
+		[[nodiscard]] const std::string &Warning() const { return warning_; }
 
 		///
 		/// Error message(filled when `Load` or `Parse` failed)
 		///
-		const std::string &Error() const { return error_; }
+		[[nodiscard]] const std::string &Error() const { return error_; }
 
 	private:
 		bool valid_;
@@ -748,7 +748,7 @@ struct PrimGroup {
     pointsGroup.clear();
   }
 
-  bool IsEmpty() const {
+  [[nodiscard]] bool IsEmpty() const {
     return faceGroup.empty() && lineGroup.empty() && pointsGroup.empty();
   }
 

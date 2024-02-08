@@ -6,6 +6,10 @@
 
 #include <ranges>
 
+#include "Concerto/Graphics/Vulkan/Wrapper/DescriptorSetLayout.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Pipeline.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/PipelineInfo.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/VulkanInitializer.hpp"
 #include "Concerto/Graphics/TextureBuilder.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/Device.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/Sampler.hpp"
@@ -49,8 +53,8 @@ namespace Concerto::Graphics
 				it->second.insert(it->second.end(), setBindings.begin(), setBindings.end());
 		}
 
-		std::vector<DescriptorSetLayoutPtr> descriptorSetLayouts;
-		DescriptorSetLayoutPtr texture = nullptr;
+		std::vector<std::shared_ptr<DescriptorSetLayout>> descriptorSetLayouts;
+		std::shared_ptr<DescriptorSetLayout> texture = nullptr;
 		DescriptorSetPtr textureDescriptorSet = nullptr;
 		UInt32 destinationBinding = 0;
 		for (auto& setBindings : bindings | std::views::values)
@@ -154,9 +158,9 @@ namespace Concerto::Graphics
 		return shaderStages;
 	}
 
-	std::vector<DescriptorSetLayoutPtr> MaterialBuilder::GetDescriptorSetLayouts() const
+	std::vector<std::shared_ptr<DescriptorSetLayout>> MaterialBuilder::GetDescriptorSetLayouts() const
 	{
-		std::vector<DescriptorSetLayoutPtr> descriptorSetLayouts;
+		std::vector<std::shared_ptr<DescriptorSetLayout>> descriptorSetLayouts;
 
 		for (const auto& layout : _descriptorSetLayoutsCache | std::views::values)
 			descriptorSetLayouts.push_back(layout);
@@ -168,7 +172,7 @@ namespace Concerto::Graphics
 		return _materialsCache;
 	}
 
-	DescriptorSetLayoutPtr MaterialBuilder::GeDescriptorSetLayout(const std::vector<VkDescriptorSetLayoutBinding>& bindings)
+	std::shared_ptr<DescriptorSetLayout> MaterialBuilder::GeDescriptorSetLayout(const std::vector<VkDescriptorSetLayoutBinding>& bindings)
 	{
 		UInt64 hash = DescriptorSetLayout::GetHash(bindings);
 
@@ -176,7 +180,7 @@ namespace Concerto::Graphics
 		if (it != _descriptorSetLayoutsCache.end())
 			return it->second;
 
-		DescriptorSetLayoutPtr descriptorSetLayout = MakeDescriptorSetLayout(_device, bindings);
+		std::shared_ptr<DescriptorSetLayout> descriptorSetLayout = MakeDescriptorSetLayout(_device, bindings);
 		_descriptorSetLayoutsCache.emplace(hash, descriptorSetLayout);
 		return descriptorSetLayout;
 	}

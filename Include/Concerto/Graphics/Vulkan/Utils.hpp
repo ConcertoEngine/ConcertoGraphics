@@ -5,22 +5,15 @@
 #ifndef CONCERTO_GRAPHICS_UTILS_HPP
 #define CONCERTO_GRAPHICS_UTILS_HPP
 
-#include <vector>
-#include <functional>
-
 #include <glm/vec4.hpp>
 #include <glm/mat4x4.hpp>
 
-#include "Concerto/Graphics/Vulkan/Wrapper/Allocator.hpp"
-#include "Concerto/Graphics/Vulkan/Wrapper/Buffer.hpp"
-#include "Concerto/Graphics/Vulkan/Wrapper/Device.hpp"
-
 namespace Concerto::Graphics
 {
-	struct MeshPushConstants
+	class MeshPushConstants
 	{
-		glm::vec4 data;
-		glm::mat4 render_matrix;
+		glm::vec4 _data = {};
+		glm::mat4 _renderMatrix = {};
 	};
 
 	inline std::size_t PadUniformBuffer(std::size_t size, std::size_t minUniformBufferOffsetAlignment)

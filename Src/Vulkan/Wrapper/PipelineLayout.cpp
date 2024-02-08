@@ -2,16 +2,16 @@
 // Created by arthur on 30/06/2022.
 //
 
-#include <cassert>
 #include <stdexcept>
 
+#include "Concerto/Graphics/Vulkan/Wrapper/DescriptorSetLayout.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/PipelineLayout.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/Device.hpp"
 
 namespace Concerto::Graphics
 {
 
-	PipelineLayout::PipelineLayout(Device& device, std::vector<DescriptorSetLayoutPtr> descriptorSetLayouts) :
+	PipelineLayout::PipelineLayout(Device& device, std::vector<std::shared_ptr<DescriptorSetLayout>> descriptorSetLayouts) :
 		Object<VkPipelineLayout>(device, [](Device &device, VkPipelineLayout handle)
 			{ vkDestroyPipelineLayout(*device.Get(), handle, nullptr); }),
 		_descriptorSetLayouts(std::move(descriptorSetLayouts))
@@ -37,7 +37,7 @@ namespace Concerto::Graphics
 		}
 	}
 
-	const std::vector<DescriptorSetLayoutPtr>& PipelineLayout::GetDescriptorSetLayouts() const
+	const std::vector<std::shared_ptr<DescriptorSetLayout>>& PipelineLayout::GetDescriptorSetLayouts() const
 	{
 		return _descriptorSetLayouts;
 	}

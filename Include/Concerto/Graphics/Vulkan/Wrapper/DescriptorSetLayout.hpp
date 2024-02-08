@@ -8,8 +8,8 @@
 #include <vector>
 #include <memory>
 
-#include <Concerto/Core/Assert.hpp>
 #include <vulkan/vulkan.h>
+#include <Concerto/Core/Assert.hpp>
 
 #include "Concerto/Graphics/Defines.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/Object.hpp"
@@ -38,9 +38,9 @@ namespace Concerto::Graphics
 
 		~DescriptorSetLayout() = default;
 
-		const std::vector<VkDescriptorSetLayoutBinding>& GetBindings() const;
+		[[nodiscard]] const std::vector<VkDescriptorSetLayoutBinding>& GetBindings() const;
 
-		UInt64 GetHash() const;
+		[[nodiscard]] UInt64 GetHash() const;
 
 		static UInt64 GetHash(const std::vector<VkDescriptorSetLayoutBinding>& bindings);
 

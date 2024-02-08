@@ -8,13 +8,12 @@
 #include <memory>
 #include <vector>
 
-#include "Concerto/Graphics/Vulkan/Wrapper/DescriptorSet.hpp"
-#include "Concerto/Graphics/Vulkan/Wrapper/Buffer.hpp"
-#include "Concerto/Graphics/Vulkan/Wrapper/Pipeline.hpp"
-#include "Concerto/Graphics/Vulkan/Texture.hpp"
-
 namespace Concerto::Graphics
 {
+	class DescriptorSet;
+	class Pipeline;
+	class Texture;
+
 	struct CONCERTO_GRAPHICS_API VkMaterial
 	{
 		VkMaterial() = default;
@@ -24,8 +23,8 @@ namespace Concerto::Graphics
 		VkMaterial& operator=(VkMaterial&) = delete;
 
 		std::shared_ptr<Pipeline> pipeline;
-		std::vector<DescriptorSetPtr> descriptorSets;
-		TexturePtr diffuseTexture;
+		std::vector<std::shared_ptr<DescriptorSet>> descriptorSets;
+		std::shared_ptr<Texture> diffuseTexture;
 	};
 	using VkMaterialPtr = std::shared_ptr<VkMaterial>;
 }

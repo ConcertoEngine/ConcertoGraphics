@@ -13,8 +13,9 @@
 
 namespace Concerto::Graphics
 {
-	struct VkMesh
+	class VkMesh
 	{
+	public:
 		std::vector<VkSubMeshPtr> subMeshes;
 		glm::mat4 transformMatrix;
 	};

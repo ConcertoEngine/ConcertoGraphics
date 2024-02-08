@@ -11,8 +11,8 @@
 #include <vector>
 
 #include <vulkan/vulkan.h>
-#include "Concerto/Graphics/Defines.hpp"
 
+#include "Concerto/Graphics/Defines.hpp"
 #include "Concerto/Graphics/Version.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/PhysicalDevice.hpp"
 

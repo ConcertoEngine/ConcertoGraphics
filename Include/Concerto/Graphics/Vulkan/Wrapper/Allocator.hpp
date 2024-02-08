@@ -5,7 +5,6 @@
 #ifndef CONCERTO_GRAPHICS_ALLOCATOR_HPP
 #define CONCERTO_GRAPHICS_ALLOCATOR_HPP
 
-#include <vulkan/vulkan.h>
 #include <vk_mem_alloc.h>
 #include "Concerto/Graphics/Defines.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/Object.hpp"

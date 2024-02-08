@@ -15,7 +15,7 @@ namespace Concerto::Graphics
 
 	}
 
-	SubMesh::SubMesh(const Vertices& vertices, MaterialPtr& material, Mesh* parent) :
+	SubMesh::SubMesh(const Vertices& vertices, std::shared_ptr<MaterialInfo>& material, Mesh* parent) :
 		_vertices(vertices),
 		_material(material),
 		_parent(parent)
@@ -28,7 +28,7 @@ namespace Concerto::Graphics
 		return _vertices;
 	}
 
-	MaterialPtr& SubMesh::GetMaterial()
+	std::shared_ptr<MaterialInfo>& SubMesh::GetMaterial()
 	{
 		return _material;
 	}

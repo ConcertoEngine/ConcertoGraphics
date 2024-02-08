@@ -12,15 +12,12 @@
 #include "Concerto/Graphics/Defines.hpp"
 
 #include "Concerto/Graphics/Vulkan/Wrapper/Object.hpp"
-#include "Concerto/Graphics/Vulkan/Wrapper/Viewport.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/PipelineInfo.hpp"
-#include "Concerto/Graphics/Vulkan/Wrapper/PipelineLayout.hpp"
-#include "Concerto/Graphics/Vulkan/Wrapper/DescriptorSet.hpp"
 
 namespace Concerto::Graphics
 {
-
 	class Device;
+	class PipelineLayout;
 
 	/**
 	 * @class Pipeline
@@ -35,6 +32,8 @@ namespace Concerto::Graphics
 		 * @param pipeLineInfo The pipeline information required to build the pipeline
 		 */
 		Pipeline(Device& device, PipelineInfo pipeLineInfo);
+
+		~Pipeline() = default;
 
 		Pipeline(Pipeline&&) = default;
 
@@ -63,7 +62,7 @@ namespace Concerto::Graphics
 		 */
 		[[nodiscard]] VkPipelineColorBlendStateCreateInfo BuildColorBlendState() const;
 
-		std::shared_ptr<PipelineLayout> GetPipelineLayout() const;
+		[[nodiscard]] std::shared_ptr<PipelineLayout> GetPipelineLayout() const;
 		/**
 		 * @struct CreateInfo
 		 * @brief Struct containing the create info for building the pipeline

@@ -2,17 +2,17 @@
 // Created by arthur on 11/06/22.
 //
 
-#include <cassert>
-
 #include <vulkan/vulkan.h>
-#include <vk_mem_alloc.h>
 #include <Concerto/Core/Assert.hpp>
 
 #include "Concerto/Graphics/Vulkan/Wrapper/Swapchain.hpp"
-#include "Concerto/Graphics/Vulkan/Wrapper/VulkanInitializer.hpp"
+
+#include "Fence.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/PhysicalDevice.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/Device.hpp"
-#include "Concerto/Graphics/Vulkan/Wrapper/ImageView.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/RenderPass.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Semaphore.hpp"
+#include "Concerto/Graphics/Window/Window.hpp"
 
 namespace Concerto::Graphics
 {

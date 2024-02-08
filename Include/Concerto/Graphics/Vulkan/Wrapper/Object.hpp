@@ -8,8 +8,6 @@
 #include <functional>
 #include <vulkan/vulkan.h>
 
-#include "Concerto/Graphics/Defines.hpp"
-
 namespace Concerto::Graphics
 {
 	class Device;

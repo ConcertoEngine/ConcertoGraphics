@@ -21,8 +21,8 @@ namespace Concerto::Graphics
 		_stageFlags(stageFlags),
 		_entryPoint(std::move(entryPoint))
 	{
-		loadShaderModule(shaderPath);
-		createShaderModule();
+		LoadShaderModule(shaderPath);
+		CreateShaderModule();
 	}
 
 	ShaderModule::ShaderModule(Device& device, const std::vector<UInt32>& bytes, VkShaderStageFlagBits stageFlags, std::string entryPoint /*= "main"*/) :
@@ -35,7 +35,7 @@ namespace Concerto::Graphics
 		_shaderModuleCreateInfo.pNext = nullptr;
 		_shaderModuleCreateInfo.codeSize = bytes.size() * sizeof(UInt32);
 		_shaderModuleCreateInfo.pCode = reinterpret_cast<const UInt32*>(bytes.data());
-		createShaderModule();
+		CreateShaderModule();
 	}
 
 	VkPipelineShaderStageCreateInfo ShaderModule::GetPipelineShaderStageCreateInfo() const
@@ -51,7 +51,7 @@ namespace Concerto::Graphics
 		};
 	}
 
-	void ShaderModule::loadShaderModule(const std::string& shaderPath)
+	void ShaderModule::LoadShaderModule(const std::string& shaderPath)
 	{
 		std::ifstream file(shaderPath, std::ios::ate | std::ios::binary);
 		if (!file.is_open())
@@ -70,7 +70,7 @@ namespace Concerto::Graphics
 		_shaderModuleCreateInfo.pCode = _buffer.data();
 	}
 
-	void ShaderModule::createShaderModule()
+	void ShaderModule::CreateShaderModule()
 	{
 		if (vkCreateShaderModule(*_device->Get(), &_shaderModuleCreateInfo, nullptr, &_handle) != VK_SUCCESS)
 		{

@@ -20,6 +20,7 @@ class GLFWwindow;
 namespace Concerto::Graphics
 {
 	class Instance;
+
 	class CONCERTO_GRAPHICS_API Window
 	{
 	public:

@@ -6,8 +6,8 @@
 #define CONCERTO_GRAPHICS_SEMAPHORE_HPP
 
 #include <vulkan/vulkan.hpp>
-#include "Concerto/Graphics/Defines.hpp"
 
+#include "Concerto/Graphics/Defines.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/Object.hpp"
 
 namespace Concerto::Graphics

@@ -15,7 +15,6 @@
 namespace Concerto::Graphics
 {
 	class Swapchain;
-
 	class Device;
 
 	/**
@@ -42,7 +41,7 @@ namespace Concerto::Graphics
 
 		RenderPass& operator=(const RenderPass&) = delete;
 
-		VkExtent2D GetWindowExtent() const;
+		[[nodiscard]] VkExtent2D GetWindowExtent() const;
 
 	private:
 		std::vector<VkAttachmentDescription> _attachments;

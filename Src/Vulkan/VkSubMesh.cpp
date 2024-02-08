@@ -4,40 +4,38 @@
 
 #include "Concerto/Graphics/Vulkan/Wrapper/CommandBuffer.hpp"
 #include "Concerto/Graphics/Vulkan/VkSubMesh.hpp"
-#include "Concerto/Graphics/Vulkan/Utils.hpp"
+#include "Concerto/Graphics/Vulkan/VkMaterial.hpp"
 
 using namespace Concerto::Graphics;
 
 namespace Concerto::Graphics
 {
-	VkSubMesh::VkSubMesh(SubMeshPtr meshPtr, Allocator& allocator, const VkBufferUsageFlags usage, const VmaMemoryUsage memoryUsage, VkMaterialPtr material) :
-		_subMesh(std::move(meshPtr)),
-		_vertexBuffer(allocator, _subMesh->GetVertices().size() * sizeof(Vertex), usage, memoryUsage),
-		_material(std::move(material))
+	VkSubMesh::VkSubMesh(SubMeshPtr meshPtr, Allocator& allocator, const VkBufferUsageFlags usage, const VmaMemoryUsage memoryUsage, std::shared_ptr<VkMaterial> material) :
+		subMesh(std::move(meshPtr)),
+		vertexBuffer(allocator, subMesh->GetVertices().size() * sizeof(Vertex), usage, memoryUsage),
+		material(std::move(material))
 	{
 
 	}
 
-	void VkSubMesh::Upload(CommandBuffer& commandBuffer, CommandPool& commandPool, Fence& fence, Queue& queue,
-		Allocator& allocator)
+	void VkSubMesh::Upload(CommandBuffer& commandBuffer, CommandPool& commandPool, Fence& fence, Queue& queue, Allocator& allocator)
 	{
-		Buffer stagingBuffer(MakeBuffer<Vertex>(allocator, _subMesh->GetVertices().size() * sizeof(Vertex),
-											  VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VMA_MEMORY_USAGE_CPU_ONLY));
+		Buffer stagingBuffer(MakeBuffer<Vertex>(allocator, subMesh->GetVertices().size() * sizeof(Vertex),VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VMA_MEMORY_USAGE_CPU_ONLY));
 		commandBuffer.ImmediateSubmit(fence, commandPool, queue, [&](CommandBuffer& cb)
 		{
-			stagingBuffer.Copy(_subMesh->GetVertices().data(), _subMesh->GetVertices().size() * sizeof(Vertex));
-			cb.CopyBuffer(stagingBuffer, _vertexBuffer, _subMesh->GetVertices().size() * sizeof(Vertex));
+			stagingBuffer.Copy(subMesh->GetVertices().data(), subMesh->GetVertices().size() * sizeof(Vertex));
+			cb.CopyBuffer(stagingBuffer, vertexBuffer, subMesh->GetVertices().size() * sizeof(Vertex));
 		});
 	}
 
 	const Vertices& VkSubMesh::GetVertices() const
 	{
-		return _subMesh->GetVertices();
+		return subMesh->GetVertices();
 	}
 
 	const MaterialPtr& VkSubMesh::GetMaterial() const
 	{
-		return _subMesh->GetMaterial();
+		return subMesh->GetMaterial();
 	}
 
 } // Concerto::Graphics::Wrapper

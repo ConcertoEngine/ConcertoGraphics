@@ -6,8 +6,8 @@
 #define CONCERTO_GRAPHICS_IMAGEVIEW_HPP
 
 #include <vulkan/vulkan.h>
-#include "Concerto/Graphics/Defines.hpp"
 
+#include "Concerto/Graphics/Defines.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/Object.hpp"
 
 namespace Concerto::Graphics

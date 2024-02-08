@@ -13,14 +13,13 @@
 #include "Concerto/Graphics/Vulkan/VkMaterial.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/Sampler.hpp"
 #include "Concerto/Graphics/Vulkan/DescriptorAllocator.hpp"
-#include "Concerto/Graphics/Vulkan/DescriptorLayoutCache.hpp"
 #include "Concerto/Graphics/ShaderModuleInfo.hpp"
-#include "Concerto/Graphics/Vulkan/DescriptorBuilder.hpp"
-#include <NZSL/Ast/SanitizeVisitor.hpp>
 
 namespace Concerto::Graphics
 {
 	class RenderPass;
+	class Pipeline;
+	class DescriptorLayoutCache;
 	
 	class CONCERTO_GRAPHICS_API MaterialBuilder
 	{
@@ -28,19 +27,19 @@ namespace Concerto::Graphics
 		explicit MaterialBuilder(Device& device);
 		VkMaterialPtr BuildMaterial(MaterialInfo& material, RenderPass& renderPass);
 
-		std::vector<VkPipelineShaderStageCreateInfo> GetShaderStages() const;
-		std::vector<DescriptorSetLayoutPtr> GetDescriptorSetLayouts() const;
+		[[nodiscard]] std::vector<VkPipelineShaderStageCreateInfo> GetShaderStages() const;
+		[[nodiscard]] std::vector<std::shared_ptr<DescriptorSetLayout>> GetDescriptorSetLayouts() const;
 		std::set<VkMaterialPtr> GetMaterials();
 	 private:
-		DescriptorSetLayoutPtr GeDescriptorSetLayout(const std::vector<VkDescriptorSetLayoutBinding>& bindings);
+		std::shared_ptr<DescriptorSetLayout> GeDescriptorSetLayout(const std::vector<VkDescriptorSetLayoutBinding>& bindings);
 		
 		DescriptorAllocator _allocator;
 		Device& _device;
 		std::set<VkMaterialPtr> _materialsCache;
-		std::unordered_map<UInt64 /*hash*/, PipelinePtr> _pipelinesCache;
+		std::unordered_map<UInt64 /*hash*/, std::shared_ptr<Pipeline>> _pipelinesCache;
 		std::unordered_map<std::string, ShaderModuleInfo> _shaderModuleInfos;
 		DescriptorPool _descriptorPool;
-		std::unordered_map<UInt64 /*hash*/, DescriptorSetLayoutPtr> _descriptorSetLayoutsCache;
+		std::unordered_map<UInt64 /*hash*/, std::shared_ptr<DescriptorSetLayout>> _descriptorSetLayoutsCache;
 		std::vector<Pipeline> _pipelines;
 		Sampler _sampler;
 	};

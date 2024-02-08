@@ -6,16 +6,17 @@
 #define CONCERTO_GRAPHICS_PIPELINELAYOUT_HPP
 
 #include <vector>
+#include <memory>
 
 #include <vulkan/vulkan.h>
-#include "Concerto/Graphics/Defines.hpp"
 
+#include "Concerto/Graphics/Defines.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/Object.hpp"
-#include "Concerto/Graphics/Vulkan/Wrapper/DescriptorSetLayout.hpp"
 
 namespace Concerto::Graphics
 {
 	class Device;
+	class DescriptorSetLayout;
 
 	/**
 	 * @class Pipeline
@@ -26,7 +27,7 @@ namespace Concerto::Graphics
 	class CONCERTO_GRAPHICS_API PipelineLayout : public Object<VkPipelineLayout>
 	{
 	public:
-		PipelineLayout(Device& device, std::vector<DescriptorSetLayoutPtr> descriptorSetLayouts);
+		PipelineLayout(Device& device, std::vector<std::shared_ptr<DescriptorSetLayout>> descriptorSetLayouts);
 
 		PipelineLayout(PipelineLayout&&) = default;
 
@@ -36,9 +37,9 @@ namespace Concerto::Graphics
 
 		PipelineLayout& operator=(const PipelineLayout&) = delete;
 
-		const std::vector<DescriptorSetLayoutPtr>& GetDescriptorSetLayouts() const;
+		[[nodiscard]] const std::vector<std::shared_ptr<DescriptorSetLayout>>& GetDescriptorSetLayouts() const;
 	private:
-		std::vector<DescriptorSetLayoutPtr> _descriptorSetLayouts;
+		std::vector<std::shared_ptr<DescriptorSetLayout>> _descriptorSetLayouts;
 	};
 } // Concerto::Graphics::Wrapper
 

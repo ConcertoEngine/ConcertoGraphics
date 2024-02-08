@@ -9,7 +9,6 @@
 #include <memory>
 
 #include "Concerto/Graphics/Defines.hpp"
-#include "Concerto/Graphics/Vulkan/Vertex.hpp"
 #include "Concerto/Graphics/Material.hpp"
 #include "Concerto/Graphics/SubMesh.hpp"
 
@@ -17,6 +16,7 @@ namespace Concerto::Graphics
 {
 	class Device;
 	class VkMesh;
+	class MaterialInfo;
 
 	class CONCERTO_GRAPHICS_API Mesh
 	{
@@ -24,19 +24,19 @@ namespace Concerto::Graphics
 		explicit Mesh(std::string filePath);
 		
 		explicit Mesh(Vertices vertices);
-		
-		const std::string& GetPath() const;
+
+		[[nodiscard]] const std::string& GetPath() const;
 
 		std::vector<SubMeshPtr>& GetSubMeshes();
 
-		std::unordered_map<std::string, MaterialPtr>& GetMaterials();
+		std::unordered_map<std::string, std::shared_ptr<MaterialInfo>>& GetMaterials();
 
 		bool LoadFromFile(const std::string& fileName);
 
 	private:
 		std::string _path;
 		std::vector<SubMeshPtr> _subMeshes;
-		std::unordered_map<std::string, MaterialPtr> _materials;
+		std::unordered_map<std::string, std::shared_ptr<MaterialInfo>> _materials;
 	};
 	using MeshPtr = std::shared_ptr<Mesh>;
 }

@@ -6,6 +6,7 @@
 #define CONCERTO_GRAPHICS_INCLUDE_DESCRIPTORLAYOUTCACHE_HPP_
 
 #include <unordered_map>
+#include <algorithm>
 
 #include <vulkan/vulkan.h>
 

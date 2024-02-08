@@ -2,6 +2,8 @@
 // Created by arthur on 17/08/2023.
 //
 
+#include <array>
+
 #include <Concerto/Core/Assert.hpp>
 
 #include "Concerto/Graphics/Vulkan.hpp"

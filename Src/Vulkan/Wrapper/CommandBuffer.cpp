@@ -15,6 +15,7 @@
 #include "Concerto/Graphics/Vulkan/Wrapper/PipelineLayout.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/CommandPool.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/Queue.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/DescriptorSet.hpp"
 #include "Concerto/Graphics/Vulkan/Utils.hpp"
 
 namespace Concerto::Graphics
@@ -64,7 +65,6 @@ namespace Concerto::Graphics
 		CONCERTO_ASSERT(_commandBuffer != VK_NULL_HANDLE);
 		return _commandBuffer;
 	}
-
 
 	void CommandBuffer::Reset() const
 	{

@@ -44,7 +44,7 @@ namespace Concerto::Graphics
 	 	 * @brief Reset the allocator, resetting all the descriptors in the pool.
 	 	 */
 		void Reset();
-		Device &GetDevice() const;
+		[[nodiscard]] Device &GetDevice() const;
 		DescriptorPoolPtr GetDescriptorPool();
 
 	private:
