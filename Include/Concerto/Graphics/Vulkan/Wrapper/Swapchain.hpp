@@ -2,15 +2,15 @@
 // Created by arthur on 11/06/22.
 //
 
-#ifndef CONCERTOGRAPHICS_SWAPCHAIN_HPP
-#define CONCERTOGRAPHICS_SWAPCHAIN_HPP
+#ifndef CONCERTO_GRAPHICS_SWAPCHAIN_HPP
+#define CONCERTO_GRAPHICS_SWAPCHAIN_HPP
 
 #include <vector>
 #include <optional>
 #include <span>
 
 #include <vulkan/vulkan.h>
-#include <Concerto/Core/Types.hpp>
+#include "Concerto/Graphics/Defines.hpp"
 
 #include "Concerto/Graphics/Vulkan/Wrapper/Object.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/Image.hpp"
@@ -18,6 +18,9 @@
 #include "Concerto/Graphics/Vulkan/Wrapper/Semaphore.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/Fence.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/ImageView.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/RenderPass.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/FrameBuffer.hpp"
+#include "Concerto/Graphics/Window/Window.hpp"
 
 namespace Concerto::Graphics
 {
@@ -30,7 +33,7 @@ namespace Concerto::Graphics
 	 * @brief Represents a swapchain in the vulkan API.
 	 * A swapchain is a collection of images that are used for rendering and displaying.
 	 */
-	class CONCERTO_PUBLIC_API Swapchain : public Object<VkSwapchainKHR>
+	class CONCERTO_GRAPHICS_API Swapchain : public Object<VkSwapchainKHR>
 	{
 	public:
 		/**
@@ -40,7 +43,7 @@ namespace Concerto::Graphics
 		 * @param windowExtent The size of the Window.
 		 * @param physicalDevice A reference to the physical device.
 		 */
-		Swapchain(Device& device, Allocator& allocator, VkExtent2D windowExtent, PhysicalDevice& physicalDevice);
+		Swapchain(Device& device, Window& window);
 
 		Swapchain(Swapchain&&) noexcept = default;
 
@@ -68,6 +71,13 @@ namespace Concerto::Graphics
 
 		[[nodiscard]] VkFormat GetDepthFormat() const;
 
+		[[nodiscard]] RenderPass* GetRenderPass();
+		
+		[[nodiscard]] FrameBuffer& GetFrameBuffer(UInt32 index);
+
+		[[nodiscard]] UInt32 GetCurrentImageIndex() const;
+
+		[[nodiscard]] FrameBuffer& GetCurrentFrameBuffer();
 		/**
 		 * @brief Acquire the next image in the swapchain.
 		 * @param semaphore A reference to the semaphore.
@@ -75,18 +85,24 @@ namespace Concerto::Graphics
 		 * @param timeout The timeout.
 		 * @return The index of the acquired image.
 		 */
-		std::uint32_t AcquireNextImage(Semaphore& semaphore, Fence& fence, std::uint64_t timeout);
+		UInt32 AcquireNextImage(Semaphore& semaphore, Fence& fence, std::uint64_t timeout);
+		
+	private:
+		void CreateRenderPass();
+		void CreateFrameBuffers();
 
-
-		private:
-			mutable std::optional<std::vector<Image>> _swapChainImages;
-			mutable std::optional<std::vector<ImageView>> _swapChainImageViews;
-			VkExtent2D _windowExtent;
-			VkFormat _swapChainImageFormat;
-			Image _depthImage;
-			ImageView _depthImageView;
-			PhysicalDevice* _physicalDevice;
+		mutable std::optional<std::vector<Image>> _swapChainImages;
+		mutable std::optional<std::vector<ImageView>> _swapChainImageViews;
+		VkExtent2D _windowExtent;
+		VkFormat _swapChainImageFormat;
+		Image _depthImage;
+		ImageView _depthImageView;
+		PhysicalDevice& _physicalDevice;
+		Window& _window;
+		std::unique_ptr<RenderPass> _renderpass;
+		std::vector<FrameBuffer> _frameBuffers;
+		UInt32 _currentImageIndex;
 	};
 } // Concerto::Graphics::Wrapper
 
-#endif //CONCERTOGRAPHICS_SWAPCHAIN_HPP
+#endif //CONCERTO_GRAPHICS_SWAPCHAIN_HPP

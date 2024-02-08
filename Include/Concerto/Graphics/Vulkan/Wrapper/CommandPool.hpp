@@ -2,13 +2,13 @@
 // Created by arthur on 14/06/22.
 //
 
-#ifndef CONCERTOGRAPHICS_COMMANDPOOL_HPP
-#define CONCERTOGRAPHICS_COMMANDPOOL_HPP
+#ifndef CONCERTO_GRAPHICS_COMMANDPOOL_HPP
+#define CONCERTO_GRAPHICS_COMMANDPOOL_HPP
 
 #include <cstdint>
 
 #include <vulkan/vulkan.h>
-#include <Concerto/Core/Types.hpp>
+#include "Concerto/Graphics/Defines.hpp"
 
 #include "Concerto/Graphics/Vulkan/Wrapper/Object.hpp"
 
@@ -28,7 +28,7 @@ namespace Concerto::Graphics
 	 *
 	 * @author [Your name]
 	 */
-	class CONCERTO_PUBLIC_API CommandPool : public Object<VkCommandPool>
+	class CONCERTO_GRAPHICS_API CommandPool : public Object<VkCommandPool>
 	{
 	public:
 		/**
@@ -37,7 +37,7 @@ namespace Concerto::Graphics
 		* @param device The Device object used to create the command pool.
 		* @param queueFamily The queue family index used to create the command pool.
 		*/
-		CommandPool(Device& device, std::uint32_t queueFamily);
+		CommandPool(Device& device, UInt32 queueFamily);
 
 		CommandPool(CommandPool&&) = default;
 
@@ -54,8 +54,8 @@ namespace Concerto::Graphics
 		void Reset();
 
 	private:
-		std::uint32_t _queueFamily;
+		UInt32 _queueFamily;
 	};
 }
 
-#endif //CONCERTOGRAPHICS_COMMANDPOOL_HPP
+#endif //CONCERTO_GRAPHICS_COMMANDPOOL_HPP

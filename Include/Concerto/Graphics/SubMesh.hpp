@@ -2,19 +2,19 @@
 // Created by arthur on 18/02/2023.
 //
 
-#ifndef CONCERTOGRAPHICS_INCLUDE_SUBMESH_HPP_
-#define CONCERTOGRAPHICS_INCLUDE_SUBMESH_HPP_
+#ifndef CONCERTO_GRAPHICS_INCLUDE_SUBMESH_HPP_
+#define CONCERTO_GRAPHICS_INCLUDE_SUBMESH_HPP_
 
 #include <memory>
 
-#include <Concerto/Core/Types.hpp>
+#include "Concerto/Graphics/Defines.hpp"
 #include "Concerto/Graphics/Vulkan/Vertex.hpp"
 #include "Concerto/Graphics/Material.hpp"
 
 namespace Concerto::Graphics
 {
 	class Mesh;
-	class CONCERTO_PUBLIC_API SubMesh
+	class CONCERTO_GRAPHICS_API SubMesh
 	{
 	 public:
 		explicit SubMesh(Mesh* parent);
@@ -29,4 +29,4 @@ namespace Concerto::Graphics
 	};
 	using SubMeshPtr = std::shared_ptr<SubMesh>;
 }
-#endif //CONCERTOGRAPHICS_INCLUDE_SUBMESH_HPP_
+#endif //CONCERTO_GRAPHICS_INCLUDE_SUBMESH_HPP_

@@ -9,7 +9,7 @@ namespace Concerto::Graphics
 {
 	SubMesh::SubMesh(Mesh* parent) :
 		_vertices(),
-		_material(std::make_shared<Material>()),
+		_material(std::make_shared<MaterialInfo>()),
 		_parent(parent)
 	{
 

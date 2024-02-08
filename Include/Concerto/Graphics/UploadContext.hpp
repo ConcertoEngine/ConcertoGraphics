@@ -2,29 +2,21 @@
 // Created by arthu on 14/09/2022.
 //
 
-#ifndef CONCERTOGRAPHICS_UPLOADCONTEXT_HPP
-#define CONCERTOGRAPHICS_UPLOADCONTEXT_HPP
+#ifndef CONCERTO_GRAPHICS_UPLOADCONTEXT_HPP
+#define CONCERTO_GRAPHICS_UPLOADCONTEXT_HPP
 
 #include "Concerto/Graphics/Vulkan/Wrapper/CommandPool.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/CommandBuffer.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/Fence.hpp"
-#include "Concerto/Graphics/Vulkan/Wrapper/Device.hpp"
 
 namespace Concerto::Graphics
 {
-	struct UploadContext
+	class CONCERTO_GRAPHICS_API UploadContext
 	{
+	public:
 		UploadContext() = delete;
 
-		UploadContext(Device& device, std::uint32_t queueFamily) : _uploadFence(device, false),
-																			_commandPool(
-																					device,
-																					queueFamily),
-																			_commandBuffer(
-																					device,
-																					*_commandPool.Get())
-		{
-		}
+		UploadContext(Device& device, UInt32 queueFamily);
 
 		~UploadContext() = default;
 
@@ -42,4 +34,4 @@ namespace Concerto::Graphics
 	};
 }
 
-#endif //CONCERTOGRAPHICS_UPLOADCONTEXT_HPP
+#endif //CONCERTO_GRAPHICS_UPLOADCONTEXT_HPP

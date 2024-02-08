@@ -5,6 +5,9 @@
 #include <cassert>
 
 #include "Concerto/Graphics/Vulkan/Wrapper/Sampler.hpp"
+
+#include <Concerto/Core/Assert.hpp>
+
 #include "Concerto/Graphics/Vulkan/Wrapper/Device.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/VulkanInitializer.hpp"
 
@@ -15,6 +18,7 @@ namespace Concerto::Graphics
 		VkSamplerCreateInfo samplerInfo = VulkanInitializer::SamplerCreateInfo(filter, samplerAddressMode);
 		if (vkCreateSampler(*_device->Get(), &samplerInfo, nullptr, &_handle) != VK_SUCCESS)
 		{
+			CONCERTO_ASSERT_FALSE;
 			throw std::runtime_error("failed to create texture sampler!");
 		}
 	}

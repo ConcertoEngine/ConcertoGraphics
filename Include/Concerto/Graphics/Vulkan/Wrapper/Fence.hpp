@@ -2,11 +2,11 @@
 // Created by arthur on 15/06/22.
 //
 
-#ifndef CONCERTOGRAPHICS_FENCE_HPP
-#define CONCERTOGRAPHICS_FENCE_HPP
+#ifndef CONCERTO_GRAPHICS_FENCE_HPP
+#define CONCERTO_GRAPHICS_FENCE_HPP
 
 #include <vulkan/vulkan.hpp>
-#include <Concerto/Core/Types.hpp>
+#include "Concerto/Graphics/Defines.hpp"
 
 #include "Concerto/Graphics/Vulkan/Wrapper/Object.hpp"
 
@@ -22,7 +22,7 @@ namespace Concerto::Graphics
 	*
 	* @note This class is not copyable, but it is movable.
 	*/
-	class CONCERTO_PUBLIC_API Fence : public Object<VkFence>
+	class CONCERTO_GRAPHICS_API Fence : public Object<VkFence>
 	{
 	public:
 		/**
@@ -46,7 +46,7 @@ namespace Concerto::Graphics
 		*
 		* @param timeout The maximum time, in nanoseconds, to wait for the fence to be signaled.
 		*/
-		void Wait(std::uint64_t timeout);
+		void Wait(UInt64 timeout);
 
 		/**
 		* @brief Resets the fence to an unsignaled state.
@@ -55,4 +55,4 @@ namespace Concerto::Graphics
 	};
 } // namespace Concerto::Graphics
 
-#endif //CONCERTOGRAPHICS_FENCE_HPP
+#endif //CONCERTO_GRAPHICS_FENCE_HPP

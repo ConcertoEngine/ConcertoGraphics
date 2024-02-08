@@ -2,8 +2,8 @@
 // Created by arthur on 25/10/2022.
 //
 
-#ifndef CONCERTOGRAPHICS_INSTANCE_HPP
-#define CONCERTOGRAPHICS_INSTANCE_HPP
+#ifndef CONCERTO_GRAPHICS_INSTANCE_HPP
+#define CONCERTO_GRAPHICS_INSTANCE_HPP
 
 #include <optional>
 #include <span>
@@ -11,14 +11,13 @@
 #include <vector>
 
 #include <vulkan/vulkan.h>
-#include <Concerto/Core/Types.hpp>
+#include "Concerto/Graphics/Defines.hpp"
 
 #include "Concerto/Graphics/Version.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/PhysicalDevice.hpp"
 
 namespace Concerto::Graphics
 {
-	class PhysicalDevice;
-
 	/**
 	* @class Instance
 	*
@@ -27,7 +26,7 @@ namespace Concerto::Graphics
 	* The Instance class represents a Vulkan instance, which is the root object of the Vulkan API.
 	* It is responsible for creating and managing other objects in the Vulkan API, such as physical devices and logical devices.
 	*/
-	class CONCERTO_PUBLIC_API Instance
+	class CONCERTO_GRAPHICS_API Instance
 	{
 	public:
 		/**
@@ -86,4 +85,4 @@ namespace Concerto::Graphics
 	};
 } // Concerto::Graphics::Wrapper
 
-#endif //CONCERTOGRAPHICS_INSTANCE_HPP
+#endif //CONCERTO_GRAPHICS_INSTANCE_HPP

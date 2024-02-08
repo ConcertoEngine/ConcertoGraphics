@@ -24,6 +24,9 @@ int main()
 	};
 	Input input;
 	GLFW3WindowPtr window = std::make_unique<GlfW3>(info.applicationName, 1280, 720);
+	Swapchain swapchain();
+
+	
 	VulkanRenderer engine(std::move(info), *window.get());
 	Concerto::Graphics::ImGUI* imGui = engine.GetImGUIContext();
 	assert(imGui != nullptr);

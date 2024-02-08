@@ -2,15 +2,15 @@
 // Created by arthur on 16/02/2023.
 //
 
-#ifndef CONCERTOGRAPHICS_INCLUDE_DESCRIPTORLAYOUTCACHE_HPP_
-#define CONCERTOGRAPHICS_INCLUDE_DESCRIPTORLAYOUTCACHE_HPP_
+#ifndef CONCERTO_GRAPHICS_INCLUDE_DESCRIPTORLAYOUTCACHE_HPP_
+#define CONCERTO_GRAPHICS_INCLUDE_DESCRIPTORLAYOUTCACHE_HPP_
 
 #include <unordered_map>
 
 #include <vulkan/vulkan.h>
 
-#include "Concerto/Graphics/Vulkan/wrapper/DescriptorSetLayout.hpp"
-#include "Concerto/Graphics/Vulkan/wrapper/Device.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/DescriptorSetLayout.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Device.hpp"
 
 namespace Concerto::Graphics
 {
@@ -25,32 +25,19 @@ namespace Concerto::Graphics
 			bool operator==(const DescriptorLayoutInfo& other) const
 			{
 				if (other.bindings.size() != bindings.size())
-				{
 					return false;
-				}
-				else
+				for (int i = 0; i < bindings.size(); i++)
 				{
-					for (int i = 0; i < bindings.size(); i++)
-					{
-						if (other.bindings[i].binding != bindings[i].binding)
-						{
-							return false;
-						}
-						if (other.bindings[i].descriptorType != bindings[i].descriptorType)
-						{
-							return false;
-						}
-						if (other.bindings[i].descriptorCount != bindings[i].descriptorCount)
-						{
-							return false;
-						}
-						if (other.bindings[i].stageFlags != bindings[i].stageFlags)
-						{
-							return false;
-						}
-					}
-					return true;
+					if (other.bindings[i].binding != bindings[i].binding)
+						return false;
+					if (other.bindings[i].descriptorType != bindings[i].descriptorType)
+						return false;
+					if (other.bindings[i].descriptorCount != bindings[i].descriptorCount)
+						return false;
+					if (other.bindings[i].stageFlags != bindings[i].stageFlags)
+						return false;
 				}
+				return true;
 			}
 
 			[[nodiscard]] std::size_t hash() const
@@ -58,8 +45,7 @@ namespace Concerto::Graphics
 				std::size_t result = std::hash<std::size_t>()(bindings.size());
 				for (const VkDescriptorSetLayoutBinding& b : bindings)
 				{
-					std::size_t
-						binding_hash = b.binding | b.descriptorType << 8 | b.descriptorCount << 16 | b.stageFlags << 24;
+					std::size_t	binding_hash = b.binding | b.descriptorType << 8 | b.descriptorCount << 16 | b.stageFlags << 24;
 					result ^= std::hash<std::size_t>()(binding_hash);
 				}
 				return result;
@@ -74,7 +60,8 @@ namespace Concerto::Graphics
 			}
 		};
 	 public:
-		explicit DescriptorLayoutCache(Device& device) : _device(&device)
+		explicit DescriptorLayoutCache(Device& device) :
+			_device(&device)
 		{
 		}
 
@@ -90,14 +77,10 @@ namespace Concerto::Graphics
 				layoutInfo.bindings.push_back(createInfo.pBindings[i]);
 
 				if (createInfo.pBindings[i].binding > lastBinding)
-				{
 					lastBinding = createInfo.pBindings[i].binding;
-				}
-				else
-				{
-					isSorted = false;
-				}
+				else isSorted = false;
 			}
+
 			if (!isSorted)
 			{
 				std::sort(layoutInfo.bindings.begin(),
@@ -110,9 +93,7 @@ namespace Concerto::Graphics
 
 			auto it = _layoutsCache.find(layoutInfo);
 			if (it != _layoutsCache.end())
-			{
 				return (*it).second;
-			}
 			auto [elementIt, _] =
 				_layoutsCache.emplace(layoutInfo, MakeDescriptorSetLayout(*_device, layoutInfo.bindings));
 			return elementIt->second;
@@ -123,4 +104,4 @@ namespace Concerto::Graphics
 		std::unordered_map<DescriptorLayoutInfo, DescriptorSetLayoutPtr, DescriptorLayoutHash> _layoutsCache;
 	};
 }
-#endif //CONCERTOGRAPHICS_INCLUDE_DESCRIPTORLAYOUTCACHE_HPP_
+#endif //CONCERTO_GRAPHICS_INCLUDE_DESCRIPTORLAYOUTCACHE_HPP_

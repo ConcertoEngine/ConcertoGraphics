@@ -2,23 +2,24 @@
 // Created by arthur on 21/12/2022.
 //
 
-#ifndef CONCERTOGRAPHICS_IMGUI_HPP
-#define CONCERTOGRAPHICS_IMGUI_HPP
+#ifndef CONCERTO_GRAPHICS_IMGUI_HPP
+#define CONCERTO_GRAPHICS_IMGUI_HPP
 
 #include <imgui.h>
-#include <Concerto/Core/Types.hpp>
+#include "Concerto/Graphics/Defines.hpp"
+
 #include "Concerto/Graphics/Vulkan/RenderingContext.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/DescriptorPool.hpp"
 
 namespace Concerto::Graphics
 {
-	class GlfW3;
+	class Window;
 	class CommandBuffer;
 
-	class CONCERTO_PUBLIC_API ImGUI
+	class CONCERTO_GRAPHICS_API ImGUI
 	{
 	public:
-		explicit ImGUI(RenderingContext &context, GlfW3 &window);
+		explicit ImGUI(RenderingContext &context, Window &window);
 		~ImGUI();
 
 		/**
@@ -61,10 +62,10 @@ namespace Concerto::Graphics
 	private:
 		RenderingContext& _context;
 		DescriptorPool _descriptorPool;
-		GlfW3 &_window;
+		Window &_window;
 		ImGuiContext* _imGuiContext;
 	};
 
 } // Concerto::Graphics
 
-#endif //CONCERTOGRAPHICS_IMGUI_HPP
+#endif //CONCERTO_GRAPHICS_IMGUI_HPP

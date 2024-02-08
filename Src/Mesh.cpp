@@ -2,8 +2,10 @@
 // Created by arthur on 17/02/2023.
 //
 
+#define TINYOBJLOADER_IMPLEMENTATION
+
 #include <iostream>
-#include <stdexcept>
+#include <filesystem>
 
 #include <Concerto/Core/Logger.hpp>
 #include <Concerto/Graphics/thirdParty/tiny_obj_loader.h>
@@ -34,19 +36,18 @@ namespace Concerto::Graphics
 		std::string err;
 		tinyobj::ObjReaderConfig readerConfig;
 		tinyobj::ObjReader reader;
-
-//		readerConfig.mtl_search_path = ;
+		
 		if (!reader.ParseFromFile(fileName, readerConfig))
 		{
 			if (!reader.Error().empty())
 			{
-				Logger::Error("TinyObjReader: " + reader.Error());
+				Logger::Error("TinyObjReader: {}", reader.Error());
 				return false;
 			}
 		}
 		if (!reader.Warning().empty())
 		{
-			Logger::Error("TinyObjReader: " + reader.Warning());
+			Logger::Error("TinyObjReader: {}", reader.Warning());
 		}
 
 		if (!err.empty())
@@ -60,10 +61,13 @@ namespace Concerto::Graphics
 		auto& materials = reader.GetMaterials();
 
 		int i = 0;
+		std::filesystem::path path = GetPath();
+		path = path.parent_path();
 		for (auto& material : materials)
 		{
-			MaterialPtr mat = std::make_shared<Material>();
-			mat->diffuseTexturePath = material.diffuse_texname;
+			MaterialPtr mat = std::make_shared<MaterialInfo>();
+			mat->diffuseTexturePath = material.diffuse_texname.empty() ? "" : (path / material.diffuse_texname).string();
+			mat->normalTexturePath = material.normal_texname.empty() ? "" : (path / material.normal_texname).string();
 			mat->diffuseColor.x = material.diffuse[0];
 			mat->diffuseColor.y = material.diffuse[1];
 			mat->diffuseColor.z = material.diffuse[2];
@@ -76,7 +80,6 @@ namespace Concerto::Graphics
 			mat->emissiveColor.x = material.emission[0];
 			mat->emissiveColor.y = material.emission[1];
 			mat->emissiveColor.z = material.emission[2];
-			mat->normalTexturePath = material.normal_texname;
 			mat->name = material.name;
 			_materials[material.name] = std::move(mat);
 			++i;
@@ -137,4 +140,39 @@ namespace Concerto::Graphics
 	{
 		return _materials;
 	}
+
+	//VkMesh& Mesh::CreateGPUMesh(Device& device)
+	//{
+	//	//_gpuMesh = std::make_unique<VkMesh>();
+	//	//Allocator& allocator = device.GetAllocator();
+	//	//UploadContext& uploadContext = device.GetUploadContext();
+
+	//	//for (SubMeshPtr& subMesh : _subMeshes)
+	//	//{
+	//	//	VkSubMeshPtr vkSubMesh = std::make_shared<VkSubMesh>(subMesh, allocator,
+	//	//		VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
+	//	//		VMA_MEMORY_USAGE_GPU_ONLY);
+	//	//	vkSubMesh->Upload(uploadContext._commandBuffer, uploadContext._commandPool,uploadContext._uploadFence, device.GetQueue(Queue::Type::Graphics), allocator);
+	//	//	_gpuMesh->subMeshes.push_back(vkSubMesh);
+	//	//	//TODO: Add support for all material properties
+	//	//	VkPipelineLayout pipelineLayout = *_meshPipelineLayout->Get();
+	//	//	VkPipeline pipeline = *_coloredShaderPipeline->Get();
+	//	//	if (!subMesh->GetMaterial()->diffuseTexturePath.empty())
+	//	//	{
+	//	//		pipelineLayout = *_texturedSetLayout->Get();
+	//	//		pipeline = *_texturedPipeline->Get();
+	//	//	}
+	//	//	if (!subMesh->GetMaterial()->diffuseTexturePath.empty())
+	//	//	{
+	//	//		std::filesystem::path path = _path;
+	//	//		path = path.parent_path() / subMesh->GetMaterial()->diffuseTexturePath;
+	//	//		subMesh->GetMaterial()->diffuseTexture = _textureBuilder->BuildTexture(path.string());
+	//	//		_materialBuilder->BuildMaterial(*subMesh->GetMaterial(), pipelineLayout, pipeline);
+	//	//	}
+	//	//	else
+	//	//	{
+	//	//		_materialBuilder->BuildMaterial(*subMesh->GetMaterial(), pipelineLayout, pipeline);
+	//	//	}
+	//	}
+	//}
 }

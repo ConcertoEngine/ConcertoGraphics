@@ -6,9 +6,16 @@
 #include <stdexcept>
 #include <utility>
 
-#include "Concerto/Graphics/Vulkan/wrapper/CommandBuffer.hpp"
-#include "Concerto/Graphics/Vulkan/wrapper/Device.hpp"
-#include "Concerto/Graphics/Vulkan/wrapper/VulkanInitializer.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/CommandBuffer.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Fence.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Device.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/VulkanInitializer.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Buffer.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Pipeline.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/PipelineLayout.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/CommandPool.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Queue.hpp"
+#include "Concerto/Graphics/Vulkan/Utils.hpp"
 
 namespace Concerto::Graphics
 {
@@ -24,6 +31,7 @@ namespace Concerto::Graphics
 
 		if (vkAllocateCommandBuffers(*_device->Get(), &info, &_commandBuffer) != VK_SUCCESS)
 		{
+			CONCERTO_ASSERT_FALSE;
 			throw std::runtime_error("Failed to allocate command buffer");
 		}
 	}
@@ -53,7 +61,7 @@ namespace Concerto::Graphics
 
 	VkCommandBuffer CommandBuffer::Get() const
 	{
-		assert(_commandBuffer != VK_NULL_HANDLE);
+		CONCERTO_ASSERT(_commandBuffer != VK_NULL_HANDLE);
 		return _commandBuffer;
 	}
 
@@ -62,6 +70,7 @@ namespace Concerto::Graphics
 	{
 		if (vkResetCommandBuffer(_commandBuffer, 0) != VK_SUCCESS)
 		{
+			CONCERTO_ASSERT_FALSE;
 			throw std::runtime_error("vkResetCommandBuffer fail");
 		}
 	}
@@ -77,6 +86,7 @@ namespace Concerto::Graphics
 
 		if (vkBeginCommandBuffer(_commandBuffer, &cmdBeginInfo) != VK_SUCCESS)
 		{
+			CONCERTO_ASSERT_FALSE;
 			throw std::runtime_error("vkBeginCommandBuffer fail");
 		}
 	}
@@ -85,6 +95,7 @@ namespace Concerto::Graphics
 	{
 		if (vkEndCommandBuffer(_commandBuffer) != VK_SUCCESS)
 		{
+			CONCERTO_ASSERT_FALSE;
 			throw std::runtime_error("vkEndCommandBuffer fail");
 		}
 	}
@@ -109,21 +120,21 @@ namespace Concerto::Graphics
 		vkCmdBindPipeline(_commandBuffer, pipelineBindPoint, pipeline);
 	}
 
-	void CommandBuffer::Draw(std::uint32_t vertexCount, std::uint32_t instanceCount, std::uint32_t firstVertex,
-			std::uint32_t firstInstance)
+	void CommandBuffer::Draw(UInt32 vertexCount, UInt32 instanceCount, UInt32 firstVertex,
+			UInt32 firstInstance)
 	{
 		vkCmdDraw(_commandBuffer, vertexCount, instanceCount, firstVertex, firstInstance);
 	}
 
-	void CommandBuffer::DrawIndirect(Buffer& buffer, std::uint32_t offset, std::uint32_t drawCount, std::uint32_t stride)
+	void CommandBuffer::DrawIndirect(Buffer& buffer, UInt32 offset, UInt32 drawCount, UInt32 stride)
 	{
-		vkCmdDrawIndirect(_commandBuffer, buffer._buffer, offset, drawCount, stride);
+		vkCmdDrawIndirect(_commandBuffer, *buffer.Get(), offset, drawCount, stride);
 	}
 
 	void CommandBuffer::BindVertexBuffers(const Buffer& buffer)
 	{
 		VkDeviceSize offset = 0;
-		vkCmdBindVertexBuffers(_commandBuffer, 0, 1, &buffer._buffer, &offset);
+		vkCmdBindVertexBuffers(_commandBuffer, 0, 1,  buffer.Get(), &offset);
 	}
 
 	void CommandBuffer::UpdatePushConstants(PipelineLayout& pipelineLayout, MeshPushConstants& meshPushConstants)
@@ -139,22 +150,44 @@ namespace Concerto::Graphics
 	}
 
 	void CommandBuffer::BindDescriptorSets(VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout pipelineLayout,
-			std::uint32_t firstSet, std::uint32_t descriptorSetCount, DescriptorSet& descriptorSet,
-			std::uint32_t dynamicOffsets)
+			UInt32 firstSet, UInt32 descriptorSetCount, DescriptorSet& descriptorSet,
+			UInt32 dynamicOffsets)
 	{
 		vkCmdBindDescriptorSets(_commandBuffer, pipelineBindPoint, pipelineLayout, firstSet, descriptorSetCount,
 				descriptorSet.Get(), 1, &dynamicOffsets);
 	}
 
 	void CommandBuffer::BindDescriptorSets(VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout pipelineLayout,
-			std::uint32_t firstSet, std::uint32_t descriptorSetCount, DescriptorSet& descriptorSet)
+			UInt32 firstSet, UInt32 descriptorSetCount, DescriptorSet& descriptorSet)
 	{
 		vkCmdBindDescriptorSets(_commandBuffer, pipelineBindPoint, pipelineLayout, firstSet, descriptorSetCount,
 				descriptorSet.Get(), 0, nullptr);
 	}
 
+	void CommandBuffer::BindDescriptorSets(VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout pipelineLayout,
+		std::span<DescriptorSet> descriptorSets)
+	{
+		std::vector<VkDescriptorSet> vkDescriptorSets;
+		vkDescriptorSets.reserve(descriptorSets.size());
+		for (const auto& descriptorSet : descriptorSets)
+			vkDescriptorSets.push_back(*descriptorSet.Get());
+		vkCmdBindDescriptorSets(_commandBuffer, pipelineBindPoint, pipelineLayout, 0, vkDescriptorSets.size(),
+			vkDescriptorSets.data(), 0, nullptr);
+	}
+
+	void CommandBuffer::BindDescriptorSets(VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout pipelineLayout,
+		std::span<DescriptorSetPtr> descriptorSets)
+	{
+		std::vector<VkDescriptorSet> vkDescriptorSets;
+		vkDescriptorSets.reserve(descriptorSets.size());
+		for (const auto& descriptorSet : descriptorSets)
+			vkDescriptorSets.push_back(*descriptorSet->Get());
+		vkCmdBindDescriptorSets(_commandBuffer, pipelineBindPoint, pipelineLayout, 0, vkDescriptorSets.size(),
+			vkDescriptorSets.data(), 0, nullptr);
+	}
+
 	void CommandBuffer::ImmediateSubmit(Fence& fence, CommandPool& commandPool, Queue& queue,
-			std::function<void(CommandBuffer&)>&& function)
+	                                    std::function<void(CommandBuffer&)>&& function)
 	{
 		VkSubmitInfo submitInfo = VulkanInitializer::SubmitInfo(&_commandBuffer);
 		Begin();
@@ -165,6 +198,7 @@ namespace Concerto::Graphics
 
 		if (vkQueueSubmit(*queue.Get(), 1, &submitInfo, *fence.Get()) != VK_SUCCESS)
 		{
+			CONCERTO_ASSERT_FALSE;
 			throw std::runtime_error("vkQueueSubmit fail");
 		}
 		fence.Wait(9999999999);
@@ -174,11 +208,12 @@ namespace Concerto::Graphics
 
 	void CommandBuffer::CopyBuffer(Buffer& src, Buffer& dest, std::size_t size)
 	{
-		VkBufferCopy copyRegion = {};
-		copyRegion.srcOffset = 0;
-		copyRegion.dstOffset = 0;
-		copyRegion.size = size;
-		vkCmdCopyBuffer(_commandBuffer, src._buffer, dest._buffer, 1, &copyRegion);
+		const VkBufferCopy copyRegion = {
+			.srcOffset = 0,
+			.dstOffset = 0,
+			.size = size
+		};
+		vkCmdCopyBuffer(_commandBuffer, *src.Get(), *dest.Get(), 1, &copyRegion);
 	}
 
 	void CommandBuffer::SetViewport(VkViewport viewport)

@@ -2,14 +2,14 @@
 // Created by arthur on 10/06/22.
 //
 
-#ifndef CONCERTOGRAPHICS_PIPELINE_HPP
-#define CONCERTOGRAPHICS_PIPELINE_HPP
+#ifndef CONCERTO_GRAPHICS_PIPELINE_HPP
+#define CONCERTO_GRAPHICS_PIPELINE_HPP
 
 #include <unordered_map>
-#include <string>
+#include <memory>
 
 #include <vulkan/vulkan.h>
-#include <Concerto/Core/Types.hpp>
+#include "Concerto/Graphics/Defines.hpp"
 
 #include "Concerto/Graphics/Vulkan/Wrapper/Object.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/Viewport.hpp"
@@ -26,7 +26,7 @@ namespace Concerto::Graphics
 	 * @class Pipeline
 	 * @brief Class representing a pipeline in the Vulkan API
 	 */
-	class CONCERTO_PUBLIC_API Pipeline : public Object<VkPipeline>
+	class CONCERTO_GRAPHICS_API Pipeline : public Object<VkPipeline>
 	{
 	public:
 		/**
@@ -34,7 +34,7 @@ namespace Concerto::Graphics
 		 * @param device The device that the pipeline will be associated with
 		 * @param pipeLineInfo The pipeline information required to build the pipeline
 		 */
-		explicit Pipeline(Device& device, PipelineInfo pipeLineInfo);
+		Pipeline(Device& device, PipelineInfo pipeLineInfo);
 
 		Pipeline(Pipeline&&) = default;
 
@@ -63,6 +63,7 @@ namespace Concerto::Graphics
 		 */
 		[[nodiscard]] VkPipelineColorBlendStateCreateInfo BuildColorBlendState() const;
 
+		std::shared_ptr<PipelineLayout> GetPipelineLayout() const;
 		/**
 		 * @struct CreateInfo
 		 * @brief Struct containing the create info for building the pipeline
@@ -78,6 +79,7 @@ namespace Concerto::Graphics
 		CreateInfo _createInfo;
 	};
 
+	using PipelinePtr = std::shared_ptr<Pipeline>;
 } // Concerto
 
-#endif //CONCERTOGRAPHICS_PIPELINE_HPP
+#endif //CONCERTO_GRAPHICS_PIPELINE_HPP

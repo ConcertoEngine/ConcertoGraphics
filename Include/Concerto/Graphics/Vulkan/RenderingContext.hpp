@@ -2,8 +2,8 @@
 // Created by arthur on 21/12/2022.
 //
 
-#ifndef CONCERTOGRAPHICS_RENDERINGCONTEXT_HPP
-#define CONCERTOGRAPHICS_RENDERINGCONTEXT_HPP
+#ifndef CONCERTO_GRAPHICS_RENDERINGCONTEXT_HPP
+#define CONCERTO_GRAPHICS_RENDERINGCONTEXT_HPP
 
 #include <cstdint>
 #include <vulkan/vulkan.h>
@@ -27,17 +27,17 @@ namespace Concerto::Graphics
 		Instance* instance;
 		PhysicalDevice* physicalDevice;
 		Device* device;
-		std::uint32_t queueFamilyIndex;
+		UInt32 queueFamilyIndex;
 		Queue* queue;
 		Pipeline* pipeline;
 		RenderPass* renderPass;
-		std::uint32_t subPass;
-		std::uint32_t minImageCount;
-		std::uint32_t imageCount;
+		UInt32 subPass;
+		UInt32 minImageCount;
+		UInt32 imageCount;
 		VkSampleCountFlagBits MSAASamples;
 		CommandBuffer* commandBuffer;
 		Fence* fence;
 		CommandPool* commandPool;
 	};
 } // Concerto::Graphics
-#endif //CONCERTOGRAPHICS_RENDERINGCONTEXT_HPP
+#endif //CONCERTO_GRAPHICS_RENDERINGCONTEXT_HPP

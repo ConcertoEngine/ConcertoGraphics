@@ -2,14 +2,14 @@
 // Created by arthur on 12/06/22.
 //
 
-#ifndef CONCERTOGRAPHICS_RENDERPASS_HPP
-#define CONCERTOGRAPHICS_RENDERPASS_HPP
+#ifndef CONCERTO_GRAPHICS_RENDERPASS_HPP
+#define CONCERTO_GRAPHICS_RENDERPASS_HPP
 
 #include <vector>
 
 #include <vulkan/vulkan.h>
-#include <Concerto/Core/Types.hpp>
 
+#include "Concerto/Graphics/Defines.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/Object.hpp"
 
 namespace Concerto::Graphics
@@ -24,7 +24,7 @@ namespace Concerto::Graphics
 	 *
 	 * A render pass defines a set of attachments, subpasses and dependencies that describe the rendering operations that will be performed.
 	 */
-	class CONCERTO_PUBLIC_API RenderPass : public Object<VkRenderPass>
+	class CONCERTO_GRAPHICS_API RenderPass : public Object<VkRenderPass>
 	{
 	public:
 		/**
@@ -42,12 +42,15 @@ namespace Concerto::Graphics
 
 		RenderPass& operator=(const RenderPass&) = delete;
 
+		VkExtent2D GetWindowExtent() const;
+
 	private:
 		std::vector<VkAttachmentDescription> _attachments;
 		std::vector<VkSubpassDescription> _subpasses;
 		std::vector<VkSubpassDependency> _dependencies;
+		Swapchain& _swapchain;
 	};
 
 } // Concerto
 
-#endif //CONCERTOGRAPHICS_RENDERPASS_HPP
+#endif //CONCERTO_GRAPHICS_RENDERPASS_HPP

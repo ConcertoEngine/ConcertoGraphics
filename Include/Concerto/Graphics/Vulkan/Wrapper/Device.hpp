@@ -2,20 +2,26 @@
 // Created by arthur on 25/10/2022.
 //
 
-#ifndef CONCERTOGRAPHICS_DEVICE_HPP
-#define CONCERTOGRAPHICS_DEVICE_HPP
+#ifndef CONCERTO_GRAPHICS_DEVICE_HPP
+#define CONCERTO_GRAPHICS_DEVICE_HPP
 
 #include <cstdint>
 #include <span>
+#include <unordered_map>
+#include <memory>
 
 #include <vulkan/vulkan.h>
-#include <Concerto/Core/Types.hpp>
+#include "Concerto/Graphics/Defines.hpp"
 
 #include "Concerto/Graphics/Vulkan/Wrapper/Queue.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Allocator.hpp"
+#include "Concerto/Graphics/UploadContext.hpp"
 
 namespace Concerto::Graphics
 {
 	class PhysicalDevice;
+	class Instance;
+	class UploadContext;
 
 	/**
 	* @class Device
@@ -23,18 +29,18 @@ namespace Concerto::Graphics
 	* A device is a virtual representation of a physical device,
 	* such as a GPU, and provides access to the resources of that physical device.
 	*/
-	class CONCERTO_PUBLIC_API Device
+	class CONCERTO_GRAPHICS_API Device
 	{
 	public:
-		Device() = default;
+		Device() = delete;
 
 		/**
 		* @brief Constructs a new device from a physical device and a list of extensions.
 		*
 		* @param physicalDevice The physical device to create the device on.
-		* @param extensions The list of extensions to enable for the device.
+		* @param instance The instance to create the device on.
 		*/
-		explicit Device(PhysicalDevice& physicalDevice, std::span<const char*> extensions);
+		Device(PhysicalDevice& physicalDevice, Instance& instance);
 
 		/**
 		* @brief Retrieves the queue family index for a given queue type.
@@ -43,7 +49,7 @@ namespace Concerto::Graphics
 		*
 		* @return The index of the queue family for the given queue type.
 		*/
-		std::uint32_t GetQueueFamilyIndex(Queue::Type queueType);
+		UInt32 GetQueueFamilyIndex(Queue::Type queueType) const;
 
 		/**
 		* @brief Retrieves the queue family index for a given queue flag.
@@ -52,7 +58,7 @@ namespace Concerto::Graphics
 		*
 		* @return The index of the queue family for the given queue flag.
 		*/
-		std::uint32_t GetQueueFamilyIndex(std::uint32_t queueFlag);
+		UInt32 GetQueueFamilyIndex(UInt32 queueFlag) const;
 
 		/**
 		* @brief Retrieves a queue of a given type.
@@ -61,7 +67,7 @@ namespace Concerto::Graphics
 		*
 		* @return The queue of the given type.
 		*/
-		Queue GetQueue(Queue::Type queueType);
+		Queue& GetQueue(Queue::Type queueType);
 
 		/**
 		* @brief Retrieves a pointer to the underlying VkDevice handle.
@@ -75,11 +81,31 @@ namespace Concerto::Graphics
 		*/
 		void WaitIdle() const;
 
+		/**
+		* @brief Update the contents of a descriptor set object
+		*/ 
+		void UpdateDescriptorSetsWrite(std::span<VkWriteDescriptorSet> descriptorWrites);
+		
+		/**
+		* @brief Update the contents of a descriptor set object
+		*/
+		void UpdateDescriptorSetWrite(VkWriteDescriptorSet descriptorWrite);
+
+		void SetObjectName(UInt64 object, std::string_view name);
+		
+		PhysicalDevice& GetPhysicalDevice();
+
+		Allocator& GetAllocator();
+		
 	private:
-		PhysicalDevice* _physicalDevice;
+		void CreateAllocator(Instance& instance);
+	
+		PhysicalDevice& _physicalDevice;
 		VkDevice _device;
+		std::unique_ptr<Allocator> _allocator;
+		std::unordered_map<Queue::Type, Queue> _queues;
 	};
 
 } // Concerto::Graphics::Wrapper
 
-#endif //CONCERTOGRAPHICS_DEVICE_HPP
+#endif //CONCERTO_GRAPHICS_DEVICE_HPP

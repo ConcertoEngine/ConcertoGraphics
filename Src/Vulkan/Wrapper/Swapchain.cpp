@@ -6,6 +6,7 @@
 
 #include <vulkan/vulkan.h>
 #include <vk_mem_alloc.h>
+#include <Concerto/Core/Assert.hpp>
 
 #include "Concerto/Graphics/Vulkan/Wrapper/Swapchain.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/VulkanInitializer.hpp"
@@ -16,25 +17,28 @@
 namespace Concerto::Graphics
 {
 
-	Swapchain::Swapchain(Device& device, Allocator& allocator, VkExtent2D windowExtent, PhysicalDevice& physicalDevice)
+	Swapchain::Swapchain(Device& device, Window& window)
 			: Object<VkSwapchainKHR>(device, [](Device &device, VkSwapchainKHR handle){vkDestroySwapchainKHR(*device.Get(), handle, nullptr);}),
-			  _windowExtent(windowExtent),
 			  _swapChainImages(),
-			  _depthImage(device, windowExtent, VK_FORMAT_D32_SFLOAT, allocator),
-			  _depthImageView(device, _depthImage, VK_IMAGE_ASPECT_DEPTH_BIT),
 			  _swapChainImageViews(),
+			  _windowExtent({window.GetWidth(), window.GetHeight()}),
 			  _swapChainImageFormat(VK_FORMAT_B8G8R8A8_SRGB),
-			  _physicalDevice(&physicalDevice)
+			  _depthImage(device, _windowExtent, VK_FORMAT_D32_SFLOAT),
+			  _depthImageView(device, _depthImage, VK_IMAGE_ASPECT_DEPTH_BIT),
+			  _physicalDevice(device.GetPhysicalDevice()),
+			  _window(window),
+			  _renderpass(),
+			  _frameBuffers()
 	{
-		PhysicalDevice::SurfaceSupportDetails surfaceSupportDetails = _physicalDevice->GetSurfaceSupportDetails();
+		PhysicalDevice::SurfaceSupportDetails surfaceSupportDetails = _physicalDevice.GetSurfaceSupportDetails();
 		VkSwapchainCreateInfoKHR swapChainCreateInfo{};
-		std::uint32_t imageCount = surfaceSupportDetails.capabilities.minImageCount + 1;
+		UInt32 imageCount = surfaceSupportDetails.capabilities.minImageCount + 1;
 		if (surfaceSupportDetails.capabilities.maxImageCount > 0 &&
 			imageCount > surfaceSupportDetails.capabilities.maxImageCount)
 			imageCount = surfaceSupportDetails.capabilities.maxImageCount;
 
 		swapChainCreateInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
-		swapChainCreateInfo.surface = _physicalDevice->GetSurface();
+		swapChainCreateInfo.surface = _physicalDevice.GetSurface();
 		swapChainCreateInfo.minImageCount = imageCount;
 		swapChainCreateInfo.imageFormat = _swapChainImageFormat;
 		swapChainCreateInfo.imageColorSpace = VK_COLOR_SPACE_SRGB_NONLINEAR_KHR;
@@ -48,14 +52,19 @@ namespace Concerto::Graphics
 		swapChainCreateInfo.clipped = VK_TRUE;
 		swapChainCreateInfo.oldSwapchain = VK_NULL_HANDLE;
 		if (vkCreateSwapchainKHR(*_device->Get(), &swapChainCreateInfo, nullptr, &_handle) != VK_SUCCESS)
+		{
+			CONCERTO_ASSERT_FALSE;
 			throw std::runtime_error("failed to create swap chain!");
+		}
+		CreateRenderPass();
+		CreateFrameBuffers();
 	}
 
 	std::span<Image> Swapchain::GetImages()
 	{
 		if (_swapChainImages.has_value())
 			return _swapChainImages.value();
-		std::uint32_t imageCount;
+		UInt32 imageCount;
 		std::vector<VkImage> swapChainImages;
 		vkGetSwapchainImagesKHR(*_device->Get(), _handle, &imageCount, nullptr);
 		swapChainImages.resize(imageCount);
@@ -106,14 +115,51 @@ namespace Concerto::Graphics
 		return _depthImage.GetFormat();
 	}
 
-	std::uint32_t Swapchain::AcquireNextImage(Semaphore& semaphore, Fence& fence, std::uint64_t timeout)
+	RenderPass* Swapchain::GetRenderPass()
 	{
-		std::uint32_t index = 0;
-		if (vkAcquireNextImageKHR(*_device->Get(), _handle, timeout, *semaphore.Get(), VK_NULL_HANDLE, &index) !=
+		if (_renderpass != nullptr)
+			return _renderpass.get();
+		return nullptr;
+	}
+
+	FrameBuffer& Swapchain::GetFrameBuffer(UInt32 index)
+	{
+		CONCERTO_ASSERT(index < _frameBuffers.size());
+		return _frameBuffers[index];
+	}
+
+	UInt32 Swapchain::GetCurrentImageIndex() const
+	{
+		return _currentImageIndex;
+	}
+
+	FrameBuffer& Swapchain::GetCurrentFrameBuffer()
+	{
+		return GetFrameBuffer(_currentImageIndex);
+	}
+
+	UInt32 Swapchain::AcquireNextImage(Semaphore& semaphore, Fence& fence, std::uint64_t timeout)
+	{
+		if (vkAcquireNextImageKHR(*_device->Get(), _handle, timeout, *semaphore.Get(), VK_NULL_HANDLE, &_currentImageIndex) !=
 			VK_SUCCESS)
 		{
+			CONCERTO_ASSERT_FALSE;
 			throw std::runtime_error("vkAcquireNextImageKHR fail");
 		}
-		return index;
+		return _currentImageIndex;
+	}
+
+	void Swapchain::CreateRenderPass()
+	{
+		_renderpass = std::make_unique<RenderPass>(*_device, *this);
+	}
+
+	void Swapchain::CreateFrameBuffers()
+	{
+		CONCERTO_ASSERT(_renderpass != nullptr);
+		auto imagesViews = GetImageViews();
+		_frameBuffers.reserve(imagesViews.size());
+		for (auto& imageView : imagesViews)
+			_frameBuffers.emplace_back(*_device, *_renderpass, imageView, _depthImageView, _windowExtent);
 	}
 }

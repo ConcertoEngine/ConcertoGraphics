@@ -2,24 +2,27 @@
 // Created by arthur on 14/06/22.
 //
 
-#ifndef CONCERTOGRAPHICS_COMMANDBUFFER_HPP
-#define CONCERTOGRAPHICS_COMMANDBUFFER_HPP
+#ifndef CONCERTO_GRAPHICS_COMMANDBUFFER_HPP
+#define CONCERTO_GRAPHICS_COMMANDBUFFER_HPP
 
 #include <functional>
+#include <span>
+#include <memory>
 
 #include <vulkan/vulkan.h>
-#include <Concerto/Core/Types.hpp>
-
-#include "Concerto/Graphics/Vulkan/Wrapper/Pipeline.hpp"
-#include "Concerto/Graphics/Vulkan/Wrapper/Buffer.hpp"
-#include "Concerto/Graphics/Vulkan/Wrapper/PipelineLayout.hpp"
-#include "Concerto/Graphics/Vulkan/Wrapper/CommandPool.hpp"
-#include "Concerto/Graphics/Vulkan/Wrapper/Queue.hpp"
-#include "Concerto/Graphics/Vulkan/Utils.hpp"
+#include "Concerto/Graphics/Defines.hpp"
 
 namespace Concerto::Graphics
 {
 	class Device;
+	class Fence;
+	class Pipeline;
+	class PipelineLayout;
+	class CommandPool;
+	class Queue;
+	class Buffer;
+	class MeshPushConstants;
+	class DescriptorSet;
 
 	/**
 	 * @class CommandBuffer
@@ -28,7 +31,7 @@ namespace Concerto::Graphics
 	 * This class is used to record and submit commands to the GPU for execution, such as rendering commands,
 	 * memory management commands, and compute commands.
 	 */
-	class CONCERTO_PUBLIC_API CommandBuffer
+	class CONCERTO_GRAPHICS_API CommandBuffer
 	{
 	public:
 		/**
@@ -105,8 +108,8 @@ namespace Concerto::Graphics
 		 * @param dynamicOffsets The dynamic offset value for each descriptor set.
 		 */
 		void BindDescriptorSets(VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout pipelineLayout,
-				std::uint32_t firstSet, std::uint32_t descriptorSetCount, DescriptorSet& descriptorSet,
-				std::uint32_t dynamicOffsets);
+				UInt32 firstSet, UInt32 descriptorSetCount, DescriptorSet& descriptorSet,
+				UInt32 dynamicOffsets);
 
 		/**
 		 * @brief Binds descriptor sets to the command buffer.
@@ -117,7 +120,24 @@ namespace Concerto::Graphics
 		 * @param descriptorSet The DescriptorSet object to bind.
 		 */
 		void BindDescriptorSets(VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout pipelineLayout,
-				std::uint32_t firstSet, std::uint32_t descriptorSetCount, DescriptorSet& descriptorSet);
+				UInt32 firstSet, UInt32 descriptorSetCount, DescriptorSet& descriptorSet);
+
+		/**
+		 * @brief Binds descriptor sets to the command buffer.
+		 * @param pipelineBindPoint The bind point of the pipeline.
+		 * @param pipelineLayout The VkPipelineLayout associated with the pipeline.
+		 * @param descriptorSets The DescriptorSet object to bind.
+		 */
+		void BindDescriptorSets(VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout pipelineLayout, std::span<DescriptorSet> descriptorSets);
+
+
+		/**
+		 * @brief Binds descriptor sets to the command buffer.
+		 * @param pipelineBindPoint The bind point of the pipeline.
+		 * @param pipelineLayout The VkPipelineLayout associated with the pipeline.
+		 * @param descriptorSets The DescriptorSet object to bind.
+		 */
+		void BindDescriptorSets(VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout pipelineLayout, std::span<std::shared_ptr<DescriptorSet>> descriptorSets);
 
 		/**
 		 * @brief Binds vertex buffers to the command buffer.
@@ -146,8 +166,8 @@ namespace Concerto::Graphics
 		 * @param firstVertex The index of the first vertex to draw.
 		 * @param firstInstance The instance ID of the first instance to draw.
 		 */
-		void Draw(std::uint32_t vertexCount, std::uint32_t instanceCount, std::uint32_t firstVertex,
-				std::uint32_t firstInstance);
+		void Draw(UInt32 vertexCount, UInt32 instanceCount, UInt32 firstVertex,
+				UInt32 firstInstance);
 
 		/**
 		 * @brief Draws indexed vertex data on the command buffer.
@@ -156,7 +176,7 @@ namespace Concerto::Graphics
 		 * @param drawCount The number of draws to perform.
 		 * @param stride The stride between each draw.
 		 */
-		void DrawIndirect(Buffer& buffer, std::uint32_t offset, std::uint32_t drawCount, std::uint32_t stride);
+		void DrawIndirect(Buffer& buffer, UInt32 offset, UInt32 drawCount, UInt32 stride);
 
 		/**
 		 * @brief Submits the command buffer to the queue, and waits for the fence to signal.
@@ -195,4 +215,4 @@ namespace Concerto::Graphics
 	};
 } // namespace Concerto::Graphics
 
-#endif //CONCERTOGRAPHICS_COMMANDBUFFER_HPP
+#endif //CONCERTO_GRAPHICS_COMMANDBUFFER_HPP

@@ -2,17 +2,17 @@
 // Created by arthur on 03/11/2022.
 //
 
-#ifndef CONCERTOGRAPHICS_OBJECT_HPP
-#define CONCERTOGRAPHICS_OBJECT_HPP
+#ifndef CONCERTO_GRAPHICS_OBJECT_HPP
+#define CONCERTO_GRAPHICS_OBJECT_HPP
 
 #include <functional>
 #include <vulkan/vulkan.h>
-#include <Concerto/Core/Types.hpp>
+
+#include "Concerto/Graphics/Defines.hpp"
 
 namespace Concerto::Graphics
 {
 	class Device;
-
 
 	/**
 	 * @brief `Object` is a template class that represents a Vulkan object.
@@ -27,7 +27,7 @@ namespace Concerto::Graphics
 		/**
 		 * @brief Default constructor.
 		 * @attention If you need to clean up the object by calling a Vulkan function, you mustn't use this constructor.
-		 */
+		*/
 		explicit Object(Device& device);
 
 		/**
@@ -76,4 +76,4 @@ namespace Concerto::Graphics
 
 #include "Object.inl"
 
-#endif //CONCERTOGRAPHICS_OBJECT_HPP
+#endif //CONCERTO_GRAPHICS_OBJECT_HPP

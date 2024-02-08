@@ -2,32 +2,47 @@
 // Created by arthur on 17/02/2023.
 //
 
-#ifndef CONCERTOGRAPHICS_INCLUDE_MATERIALBUILDER_HPP_
-#define CONCERTOGRAPHICS_INCLUDE_MATERIALBUILDER_HPP_
+#ifndef CONCERTO_GRAPHICS_INCLUDE_MATERIALBUILDER_HPP_
+#define CONCERTO_GRAPHICS_INCLUDE_MATERIALBUILDER_HPP_
 
+#include <set>
 #include <string>
 #include <unordered_map>
 
 #include "Concerto/Graphics/Material.hpp"
 #include "Concerto/Graphics/Vulkan/VkMaterial.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Sampler.hpp"
+#include "Concerto/Graphics/Vulkan/DescriptorAllocator.hpp"
+#include "Concerto/Graphics/Vulkan/DescriptorLayoutCache.hpp"
+#include "Concerto/Graphics/ShaderModuleInfo.hpp"
+#include "Concerto/Graphics/Vulkan/DescriptorBuilder.hpp"
+#include <NZSL/Ast/SanitizeVisitor.hpp>
 
 namespace Concerto::Graphics
 {
-	class DescriptorLayoutCache;
-	class DescriptorAllocator;
-	class Sampler;
-
-	class MaterialBuilder
+	class RenderPass;
+	
+	class CONCERTO_GRAPHICS_API MaterialBuilder
 	{
 	 public:
-		MaterialBuilder(DescriptorLayoutCache& layoutCache, DescriptorAllocator& allocator, Sampler &sampler);
-		VkMaterialPtr BuildMaterial(const Material& material, VkPipelineLayout pipelineLayout, VkPipeline pipeline);
-		VkMaterialPtr GetMaterial(const std::string& materialName);
+		explicit MaterialBuilder(Device& device);
+		VkMaterialPtr BuildMaterial(MaterialInfo& material, RenderPass& renderPass);
+
+		std::vector<VkPipelineShaderStageCreateInfo> GetShaderStages() const;
+		std::vector<DescriptorSetLayoutPtr> GetDescriptorSetLayouts() const;
+		std::set<VkMaterialPtr> GetMaterials();
 	 private:
-		std::unordered_map<Material, VkMaterialPtr, Material::Hash> _materialsCache;
-		DescriptorLayoutCache& _layoutCache;
-		DescriptorAllocator& _allocator;
-		Sampler& _sampler;
+		DescriptorSetLayoutPtr GeDescriptorSetLayout(const std::vector<VkDescriptorSetLayoutBinding>& bindings);
+		
+		DescriptorAllocator _allocator;
+		Device& _device;
+		std::set<VkMaterialPtr> _materialsCache;
+		std::unordered_map<UInt64 /*hash*/, PipelinePtr> _pipelinesCache;
+		std::unordered_map<std::string, ShaderModuleInfo> _shaderModuleInfos;
+		DescriptorPool _descriptorPool;
+		std::unordered_map<UInt64 /*hash*/, DescriptorSetLayoutPtr> _descriptorSetLayoutsCache;
+		std::vector<Pipeline> _pipelines;
+		Sampler _sampler;
 	};
 }
-#endif //CONCERTOGRAPHICS_INCLUDE_MATERIALBUILDER_HPP_
+#endif //CONCERTO_GRAPHICS_INCLUDE_MATERIALBUILDER_HPP_

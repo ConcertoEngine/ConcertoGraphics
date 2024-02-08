@@ -2,18 +2,18 @@
 // Created by arthur on 13/09/2022.
 //
 
-#ifndef CONCERTOGRAPHICS_QUEUE_HPP
-#define CONCERTOGRAPHICS_QUEUE_HPP
+#ifndef CONCERTO_GRAPHICS_QUEUE_HPP
+#define CONCERTO_GRAPHICS_QUEUE_HPP
 
-#include <Concerto/Core/Types.hpp>
+#include "Concerto/Graphics/Defines.hpp"
 
-#include "Concerto/Graphics/Frame.hpp"
-#include "Concerto/Graphics/Vulkan/Wrapper/Swapchain.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/Object.hpp"
 
 namespace Concerto::Graphics
 {
 	class Device;
+	class Swapchain;
+	class FrameData;
 
 	/**
 	* @class Queue
@@ -25,7 +25,7 @@ namespace Concerto::Graphics
 	*  The Queue class provides an interface to submit commands to the device and present images to the swapchain.
 	*
 	*/
-	class CONCERTO_PUBLIC_API Queue : public Object<VkQueue>
+	class CONCERTO_GRAPHICS_API Queue : public Object<VkQueue>
 	{
 	 public:
 		enum class Type
@@ -41,7 +41,9 @@ namespace Concerto::Graphics
 		* @param device The device that the queue will be associated with.
 		* @param queueFamilyIndex The index of the queue family that the queue will be associated with.
 		*/
-		explicit Queue(Device& device, std::uint32_t queueFamilyIndex);
+		explicit Queue(Device& device, UInt32 queueFamilyIndex);
+
+		~Queue() = default;
 
 		Queue(Queue&&) = default;
 
@@ -56,7 +58,7 @@ namespace Concerto::Graphics
 		*
 		* @return The index of the queue family.
 		*/
-		[[nodiscard]] std::uint32_t GetFamilyIndex() const;
+		[[nodiscard]] UInt32 GetFamilyIndex() const;
 
 		/**
 		* @brief Submits a set of commands to the queue for execution.
@@ -74,11 +76,11 @@ namespace Concerto::Graphics
 		*
 		* @return true if the presentation was successful, false otherwise.
 		*/
-		bool Present(const FrameData& frame, Swapchain& swapchain, std::uint32_t swapchainImageIndex);
+		bool Present(const FrameData& frame, Swapchain& swapchain, UInt32 swapchainImageIndex);
 
 	 private:
-		std::uint32_t _queueFamilyIndex;
+		UInt32 _queueFamilyIndex;
 	};
 } // namespace Concerto::Graphics
 
-#endif //CONCERTOGRAPHICS_QUEUE_HPP
+#endif //CONCERTO_GRAPHICS_QUEUE_HPP

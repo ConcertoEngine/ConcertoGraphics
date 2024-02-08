@@ -2,13 +2,15 @@
 // Created by arthur on 09/06/22.
 //
 
-#ifndef CONCERTOGRAPHICS_BUFFER_HPP
-#define CONCERTOGRAPHICS_BUFFER_HPP
+#ifndef CONCERTO_GRAPHICS_BUFFER_HPP
+#define CONCERTO_GRAPHICS_BUFFER_HPP
 
 #include <cstddef>
-#include <vulkan/vulkan.h>
-#include <vk_mem_alloc.h>
-#include <Concerto/Core/Types.hpp>
+#include <cstring>
+
+#include <Concerto/Core/Assert.hpp>
+
+#include "Concerto/Graphics/Vulkan/Wrapper/Object.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/Allocator.hpp"
 
 namespace Concerto::Graphics
@@ -19,7 +21,7 @@ namespace Concerto::Graphics
 	 *
 	 * Buffer class is a Wrapper for VkBuffer, it encapsulate the VkBuffer object and its corresponding allocation
 	 */
-	class CONCERTO_PUBLIC_API Buffer
+	class CONCERTO_GRAPHICS_API Buffer : public Object<VkBuffer>
 	{
 	 public:
 		/**
@@ -40,10 +42,74 @@ namespace Concerto::Graphics
 
 		Buffer& operator=(const Buffer&) = delete;
 
-		~Buffer();
+		~Buffer() = default;
 
-		Allocator* _allocator;
-		VkBuffer _buffer{ VK_NULL_HANDLE };
+		template<typename T>
+		void Copy(T& object, std::size_t padding = 0)
+		{
+			Byte* data = nullptr;
+			if(Map(&data) == false)
+			{
+				CONCERTO_ASSERT_FALSE;
+				return;
+			}
+			data += padding;
+			std::memcpy(data, &object, sizeof(T));
+			UnMap();
+		}
+
+		void Copy(void* object, std::size_t size, std::size_t padding = 0);
+
+		template<typename DestBuffer, typename SrcObj>
+		void Copy(std::vector<SrcObj>& objects, std::function<void(DestBuffer& destBuffer, SrcObj& srcObj)>&& copyFunc, std::size_t padding = 0)
+		{
+			Byte* data = nullptr;
+			if (Map(&data) == false)
+			{
+				CONCERTO_ASSERT_FALSE;
+				return;
+			}
+			data += padding;
+			auto* destBuffer = static_cast<DestBuffer*>(data);
+			for (std::size_t i = 0; i < objects.size(); i++)
+			{
+				copyFunc(destBuffer[i], objects[i]);
+			}
+			UnMap();
+		}
+
+		bool Map(Byte** data);
+
+		template<typename T>
+		T* Map()
+		{
+			Byte* data = nullptr;
+			if (Map(&data) == false)
+				CONCERTO_ASSERT_FALSE;
+			return reinterpret_cast<T*>(data);
+		}
+
+		void UnMap();
+
+		/**
+		 * @return The allocation object.
+		 */
+		[[nodiscard]] VmaAllocation GetAllocation() const;
+
+		/**
+		 * @return The allocator which allocated the memory.
+		 */
+		[[nodiscard]] Allocator& GetAllocator() const;
+
+		/**
+		 * @return The allocated size
+		 */
+		[[nodiscard]] std::size_t GetAllocatedSize() const;
+
+	private:
+		UInt32 _mapCount = 0;
+		std::size_t _allocatedSize;
+		Allocator& _allocator;
 		VmaAllocation _allocation{ VK_NULL_HANDLE };
 	};
 
@@ -80,4 +146,4 @@ namespace Concerto::Graphics
 	}
 
 } // Concerto::Graphics::Wrapper
-#endif //CONCERTOGRAPHICS_BUFFER_HPP
+#endif //CONCERTO_GRAPHICS_BUFFER_HPP

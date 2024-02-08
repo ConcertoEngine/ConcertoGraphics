@@ -2,14 +2,15 @@
 // Created by arthur on 10/06/22.
 //
 
-#ifndef CONCERTOGRAPHICS_SHADERMODULE_HPP
-#define CONCERTOGRAPHICS_SHADERMODULE_HPP
+#ifndef CONCERTO_GRAPHICS_SHADERMODULE_HPP
+#define CONCERTO_GRAPHICS_SHADERMODULE_HPP
 
 #include <string>
 #include <vector>
-#include <vulkan/vulkan.h>
-#include <Concerto/Core/Types.hpp>
 
+#include <vulkan/vulkan.h>
+
+#include "Concerto/Graphics/Defines.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/Object.hpp"
 
 namespace Concerto::Graphics
@@ -22,7 +23,7 @@ namespace Concerto::Graphics
 	 *
 	 * A ShaderModule is a class that encapsulate the creation, loading and handling of a VkShaderModule object.
 	 */
-	class CONCERTO_PUBLIC_API ShaderModule : public Object<VkShaderModule>
+	class CONCERTO_GRAPHICS_API ShaderModule : public Object<VkShaderModule>
 	{
 	public:
 		/**
@@ -30,7 +31,9 @@ namespace Concerto::Graphics
 		 * @param device The Device object associated with the ShaderModule.
 		 * @param shaderPath The path to the shader source file.
 		 */
-		ShaderModule(Device& device, const std::string& shaderPath);
+		ShaderModule(Device& device, const std::string& shaderPath, VkShaderStageFlagBits stageFlags, std::string entryPoint = "main");
+
+		ShaderModule(Device& device, const std::vector<UInt32>& bytes, VkShaderStageFlagBits stageFlags, std::string entryPoint = "main");
 
 		ShaderModule(ShaderModule&&) = default;
 
@@ -39,14 +42,19 @@ namespace Concerto::Graphics
 		ShaderModule& operator=(ShaderModule&&) = default;
 
 		ShaderModule& operator=(const ShaderModule&) = delete;
+
+		VkPipelineShaderStageCreateInfo GetPipelineShaderStageCreateInfo() const;
 	private:
 		void loadShaderModule(const std::string& shaderPath);
 
 		void createShaderModule();
 
 		VkShaderModuleCreateInfo _shaderModuleCreateInfo{};
-		std::vector<std::uint32_t> _buffer;
+		std::vector<UInt32> _buffer;
+		VkShaderStageFlagBits _stageFlags;
+		std::string _entryPoint;
+
 	};
 }
 
-#endif //CONCERTOGRAPHICS_SHADERMODULE_HPP
+#endif //CONCERTO_GRAPHICS_SHADERMODULE_HPP

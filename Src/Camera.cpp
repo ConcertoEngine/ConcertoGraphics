@@ -13,14 +13,14 @@ namespace Concerto::Graphics
 		_near(near),
 		_far(far),
 		_aspectRatio(aspectRatio),
-		_clearColor(Math::Vector4f(0.0f, 0.0f, 0.0f, 1.0f)),
+		_clearColor(Vector4f(0.0f, 0.0f, 0.0f, 1.0f)),
 		_position(glm::vec3(0.0f, 0.0f, 0.0f)),
 		_zoom(ZOOM),
 		_up(0.0f, 1.0f, 0.0f),
 		_worldUp(_up),
 		_movementSpeed(SPEED),
 		_mouseSensitivity(SENSITIVITY),
-		_eulerAngles(Math::EulerAnglesf(PITCH, YAW, 0.0f))
+		_eulerAngles(EulerAnglesf(PITCH, YAW, 0.0f))
 	{
 		UpdateProjectionMatrix();
 		UpdateViewMatrix();
@@ -30,13 +30,13 @@ namespace Concerto::Graphics
 	void Camera::Move(FreeFlyCameraMovement direction, float deltaTime)
 	{
 		float velocity = _movementSpeed * deltaTime;
-		if (direction == Forward)
+		if (direction == FreeFlyCameraMovement::Forward)
 			_position += _front * velocity;
-		if (direction == Backward)
+		if (direction == FreeFlyCameraMovement::Backward)
 			_position -= _front * velocity;
-		if (direction == Left)
+		if (direction == FreeFlyCameraMovement::Left)
 			_position -= _right * velocity;
-		if (direction == Right)
+		if (direction == FreeFlyCameraMovement::Right)
 			_position += _right * velocity;
 		updateCameraVectors();
 	}
@@ -85,19 +85,19 @@ namespace Concerto::Graphics
 		UpdateViewProjectionMatrix();
 	}
 
-	const Math::EulerAnglesf& Camera::GetRotation() const
+	const EulerAnglesf& Camera::GetRotation() const
 	{
 		return _eulerAngles;
 	}
 
-	const Math::Vector4f& Camera::GetClearColor() const
+	const Vector4f& Camera::GetClearColor() const
 	{
 		return _clearColor;
 	}
 
-	Math::Vector3f Camera::GetPosition() const
+	Vector3f Camera::GetPosition() const
 	{
-		return Math::Vector3f(_position.x, _position.y, _position.z);
+		return Vector3f(_position.x, _position.y, _position.z);
 	}
 
 	float Camera::GetFov() const
@@ -120,12 +120,12 @@ namespace Concerto::Graphics
 		return _aspectRatio;
 	}
 
-	void Camera::SetClearColor(const Math::Vector4f& clearColor)
+	void Camera::SetClearColor(const Vector4f& clearColor)
 	{
 		_clearColor = clearColor;
 	}
 
-	void Camera::SetPosition(const Math::Vector3f& position)
+	void Camera::SetPosition(const Vector3f& position)
 	{
 		_position = glm::vec3(position.X(), position.Y(), position.Z());
 		updateCameraVectors();

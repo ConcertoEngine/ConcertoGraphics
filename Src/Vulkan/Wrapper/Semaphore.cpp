@@ -6,6 +6,9 @@
 #include <stdexcept>
 
 #include "Concerto/Graphics/Vulkan/Wrapper/Semaphore.hpp"
+
+#include <Concerto/Core/Assert.hpp>
+
 #include "Concerto/Graphics/Vulkan/Wrapper/Device.hpp"
 
 namespace Concerto::Graphics
@@ -20,6 +23,7 @@ namespace Concerto::Graphics
 		info.flags = 0;
 		if (vkCreateSemaphore(*_device->Get(), &info, nullptr, &_handle) != VK_SUCCESS)
 		{
+			CONCERTO_ASSERT_FALSE;
 			throw std::runtime_error("Failed to create semaphore");
 		}
 	}

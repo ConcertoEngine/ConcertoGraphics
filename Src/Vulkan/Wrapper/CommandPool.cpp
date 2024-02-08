@@ -6,12 +6,15 @@
 #include <stdexcept>
 #include <iostream>
 
-#include "Concerto/Graphics/Vulkan/wrapper/CommandPool.hpp"
-#include "Concerto/Graphics/Vulkan/wrapper/Device.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/CommandPool.hpp"
+
+#include <Concerto/Core/Assert.hpp>
+
+#include "Concerto/Graphics/Vulkan/Wrapper/Device.hpp"
 
 namespace Concerto::Graphics
 {
-	CommandPool::CommandPool(Device& device, std::uint32_t queueFamily) : Object<VkCommandPool>(device,
+	CommandPool::CommandPool(Device& device, UInt32 queueFamily) : Object<VkCommandPool>(device,
 			[](Device &device, VkCommandPool handle)
 			{
 				vkDestroyCommandPool(*device.Get(), handle, nullptr);
@@ -26,6 +29,7 @@ namespace Concerto::Graphics
 		VkResult result = vkCreateCommandPool(*_device->Get(), &info, nullptr, &_handle);
 		if (result != VK_SUCCESS)
 		{
+			CONCERTO_ASSERT_FALSE;
 			throw std::runtime_error("Failed to create command pool");
 		}
 	}
@@ -34,6 +38,7 @@ namespace Concerto::Graphics
 	{
 		if (vkResetCommandPool(*_device->Get(), _handle, 0) != VK_SUCCESS)
 		{
+			CONCERTO_ASSERT_FALSE;
 			throw std::runtime_error("vkResetCommandPool fail");
 		}
 	}

@@ -11,32 +11,34 @@
 namespace Concerto::Graphics
 {
 
-	PipelineLayout::PipelineLayout(Device& device, std::size_t size,
-			const std::vector<std::reference_wrapper<DescriptorSetLayout>>& descriptorSetLayouts)
-			: Object<VkPipelineLayout>(device, [](Device &device, VkPipelineLayout handle)
-	{ vkDestroyPipelineLayout(*device.Get(), handle, nullptr); })
+	PipelineLayout::PipelineLayout(Device& device, std::vector<DescriptorSetLayoutPtr> descriptorSetLayouts) :
+		Object<VkPipelineLayout>(device, [](Device &device, VkPipelineLayout handle)
+			{ vkDestroyPipelineLayout(*device.Get(), handle, nullptr); }),
+		_descriptorSetLayouts(std::move(descriptorSetLayouts))
 	{
-		VkPipelineLayoutCreateInfo pipelineLayoutCreateInfo;
-		VkPushConstantRange push_constant;
-		std::vector<VkDescriptorSetLayout> set_layout;
-		set_layout.reserve(descriptorSetLayouts.size());
-		for (const auto& descriptorSetLayout: descriptorSetLayouts)
+		std::vector<VkDescriptorSetLayout> vkDescriptorSetLayouts;
+		vkDescriptorSetLayouts.reserve(_descriptorSetLayouts.size());
+		for (const auto& descriptorSetLayout : _descriptorSetLayouts)
 		{
-			set_layout.push_back(*descriptorSetLayout.get().Get());
+			vkDescriptorSetLayouts.push_back(*descriptorSetLayout->Get());
 		}
-		push_constant.offset = 0;
-		push_constant.size = size;
-		push_constant.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+		VkPipelineLayoutCreateInfo pipelineLayoutCreateInfo;
 		pipelineLayoutCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
 		pipelineLayoutCreateInfo.pNext = nullptr;
 		pipelineLayoutCreateInfo.flags = 0;
-		pipelineLayoutCreateInfo.setLayoutCount = set_layout.size();
-		pipelineLayoutCreateInfo.pSetLayouts = set_layout.data();
-		pipelineLayoutCreateInfo.pushConstantRangeCount = 1;
-		pipelineLayoutCreateInfo.pPushConstantRanges = &push_constant;
+		pipelineLayoutCreateInfo.setLayoutCount = vkDescriptorSetLayouts.size();
+		pipelineLayoutCreateInfo.pSetLayouts = vkDescriptorSetLayouts.data();
+		pipelineLayoutCreateInfo.pushConstantRangeCount = 0;
+		pipelineLayoutCreateInfo.pPushConstantRanges = nullptr;
 		if (vkCreatePipelineLayout(*_device->Get(), &pipelineLayoutCreateInfo, nullptr, &_handle) != VK_SUCCESS)
 		{
+			CONCERTO_ASSERT_FALSE;
 			throw std::runtime_error("failed to create pipeline layout!");
 		}
+	}
+
+	const std::vector<DescriptorSetLayoutPtr>& PipelineLayout::GetDescriptorSetLayouts() const
+	{
+		return _descriptorSetLayouts;
 	}
 }

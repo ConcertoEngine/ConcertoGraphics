@@ -12,7 +12,7 @@
 
 namespace Concerto
 {
-	enum TriggerType
+	enum class TriggerType
 	{
 		Released = 0,
 		Pressed = 1,
@@ -27,7 +27,7 @@ namespace Concerto
 
 	struct MouseButton
 	{
-		enum Button
+		enum class Button
 		{
 			// GLFW buttons
 			Button1 = 0,
@@ -63,7 +63,7 @@ namespace Concerto
 
 	struct MouseEvent
 	{
-		enum Type
+		enum class Type
 		{
 			Button,
 			Moved,
@@ -77,7 +77,7 @@ namespace Concerto
 
 	struct Event
 	{
-		enum Type
+		enum class Type
 		{
 			Key,
 			Mouse,

@@ -12,11 +12,11 @@
 #include "Concerto/Graphics/Vulkan/Wrapper/Device.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/RenderPass.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/CommandBuffer.hpp"
-#include "Concerto/Graphics/Window/GlfW3.hpp"
+#include "Concerto/Graphics/Window/Window.hpp"
 
 namespace Concerto::Graphics
 {
-	Graphics::ImGUI::ImGUI(RenderingContext& context, GlfW3& window) : _context(context),
+	ImGUI::ImGUI(RenderingContext& context, Window& window) : _context(context),
 																	   _descriptorPool(*_context.device,
 																			   {{ VK_DESCRIPTOR_TYPE_SAMPLER,                1000 },
 																				{ VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1000 },
@@ -51,7 +51,7 @@ namespace Concerto::Graphics
 		_context.commandBuffer->ImmediateSubmit(*_context.fence, *_context.commandPool, *_context.queue,
 				[](CommandBuffer& cb)
 				{
-					ImGui_ImplVulkan_CreateFontsTexture(cb.Get());
+					ImGui_ImplVulkan_CreateFontsTexture();
 				});
 	}
 

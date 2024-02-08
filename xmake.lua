@@ -1,7 +1,8 @@
 add_rules('mode.debug')
 add_repositories('Concerto-xrepo https://github.com/ConcertoEngine/xmake-repo.git main')
+add_repositories("nazara-repo https://github.com/NazaraEngine/xmake-repo")
 add_requires('imgui', {configs = {glfw_vulkan = true}})
-add_requireconfs("**.vulkan-headers", {override = true, version = "1.3.246"})
+add_requires('ConcertoCore', 'vulkan-loader', 'vulkan-memory-allocator', 'glm', 'stb', 'glfw', 'nzsl')
 
 if (has_config('examples')) then
     add_requires("glslang", {configs = {binaryonly = true}})
@@ -10,42 +11,41 @@ if (has_config('examples')) then
     add_rules('download.assets', 'compile.shaders')
 end
 
-local packagesList = {
-    'ConcertoCore',
-    'vulkan-loader',
-    'vulkan-memory-allocator',
-    'glm',
-    'stb',
-    'glfw'
-}
-
-local function AddPackagesToTarget(packages)
-    for _, package in ipairs(packages) do
-        add_requires(package)
-        add_packages(package, { public = true })
-    end
-end
-
-local function AddIncludesToTarget(includes)
-    for _, include in ipairs(includes) do
-        add_includedirs(include, { public = true })
-    end
-end
-
-AddPackagesToTarget(packagesList)
-
 target('ConcertoGraphics')
     set_kind('shared')
-    set_symbols('debug')
-    if is_mode('debug') then
-        add_defines('DEBUG')
-    end
-    add_defines('CONCERTO_BUILD')
     set_languages('cxx20')
-    add_files('Src/*.cpp', 'Src/Vulkan/Wrapper/*.cpp', 'Src/Window/*.cpp', 'Src/Vulkan/*.cpp')
-    AddIncludesToTarget({'Include/', 'Include/Concerto/', 'Include/Concerto/Graphics', 'Include/Concerto/Graphics/thirdParty', 'Include/Concerto/Graphics/window', 'Include/Concerto/Graphics/Vulkan/Wrapper', 'Include/Concerto/Graphics/Vulkan'})
-    add_headerfiles('Include/(Concerto/Graphics/*.hpp)', 'Include/(ConcertoGraphics/thirdParty/**.h)', 'Include/(Concerto/Graphics/Window/**.hpp)', 'Include/(Concerto/Graphics/Vulkan/Wrapper/*.hpp)', 'Include/(Concerto/Graphics/Vulkan/*.hpp)', 'Include/(Concerto/Graphics/Vulkan/Wrapper/*.inl)')
-    add_packages('imgui', { public = true })
+    set_warnings('allextra')
+    if is_mode('debug') then
+        set_symbols('debug')
+    end
+    add_defines('CONCERTO_GRAPHICS_BUILD')
+    add_files('Src/**.cpp')
+    add_includedirs('Include/',
+                    'Include/Concerto/',
+                    'Include/Concerto/Graphics',
+                    'Include/Concerto/Graphics/thirdParty',
+                    'Include/Concerto/Graphics/Window',
+                    'Include/Concerto/Graphics/Vulkan/Wrapper',
+                    'Include/Concerto/Graphics/Vulkan',
+                    { public = true })
+
+    add_headerfiles('Include/(Concerto/Graphics/*.hpp)',
+                    'Include/(Concerto/Graphics/thirdParty/*.h)',
+                    'Include/(Concerto/Graphics/Window/*.hpp)',
+                    'Include/(Concerto/Graphics/Vulkan/*.hpp)',
+                    'Include/(Concerto/Graphics/Vulkan/Wrapper/*.hpp)',
+                    'Include/(Concerto/Graphics/Vulkan/Wrapper/*.inl)')
+
+    add_packages('ConcertoCore',
+                 'vulkan-loader',
+                 'vulkan-memory-allocator',
+                 'glm',
+                 'stb',
+                 'glfw',
+                 'imgui',
+                 'nzsl',
+                 { public = true })
+    add_defines("GLM_ENABLE_EXPERIMENTAL")
 
 includes('Xmake/Rules/*.lua')
 includes('Examples/xmake.lua')

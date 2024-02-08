@@ -6,6 +6,9 @@
 
 #include "Concerto/Graphics/Vulkan/Wrapper/Device.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/FrameBuffer.hpp"
+
+#include <Concerto/Core/Assert.hpp>
+
 #include "Concerto/Graphics/Vulkan/Wrapper/VulkanInitializer.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/RenderPass.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/ImageView.hpp"
@@ -28,6 +31,7 @@ namespace Concerto::Graphics
 		fb_info.attachmentCount = 2;
 		if (vkCreateFramebuffer(*_device->Get(), &fb_info, nullptr, &_handle) != VK_SUCCESS)
 		{
+			CONCERTO_ASSERT_FALSE;
 			throw std::runtime_error("failed to create framebuffer!");
 		}
 

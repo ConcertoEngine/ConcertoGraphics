@@ -2,15 +2,16 @@
 // Created by arthur on 16/06/22.
 //
 
-#ifndef CONCERTOGRAPHICS_DESCRIPTORSETLAYOUT_HPP
-#define CONCERTOGRAPHICS_DESCRIPTORSETLAYOUT_HPP
+#ifndef CONCERTO_GRAPHICS_DESCRIPTORSETLAYOUT_HPP
+#define CONCERTO_GRAPHICS_DESCRIPTORSETLAYOUT_HPP
 
 #include <vector>
 #include <memory>
 
+#include <Concerto/Core/Assert.hpp>
 #include <vulkan/vulkan.h>
-#include <Concerto/Core/Types.hpp>
 
+#include "Concerto/Graphics/Defines.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/Object.hpp"
 
 namespace Concerto::Graphics
@@ -24,7 +25,7 @@ namespace Concerto::Graphics
 	*
 	* @note This class is not copyable, but it is movable.
 	*/
-	class CONCERTO_PUBLIC_API DescriptorSetLayout : public Object<VkDescriptorSetLayout>
+	class CONCERTO_GRAPHICS_API DescriptorSetLayout : public Object<VkDescriptorSetLayout>
 	{
 	public:
 		DescriptorSetLayout(Device& device, std::vector<VkDescriptorSetLayoutBinding> bindings);
@@ -36,10 +37,19 @@ namespace Concerto::Graphics
 		DescriptorSetLayout& operator=(DescriptorSetLayout&&) = default;
 
 		~DescriptorSetLayout() = default;
+
+		const std::vector<VkDescriptorSetLayoutBinding>& GetBindings() const;
+
+		UInt64 GetHash() const;
+
+		static UInt64 GetHash(const std::vector<VkDescriptorSetLayoutBinding>& bindings);
+
+	private:
+		std::vector<VkDescriptorSetLayoutBinding> _bindings;
 	};
 	using DescriptorSetLayoutPtr = std::shared_ptr<DescriptorSetLayout>;
 
 	DescriptorSetLayoutPtr MakeDescriptorSetLayout(Device& device, const std::vector<VkDescriptorSetLayoutBinding>& bindings);
 }
 
-#endif //CONCERTOGRAPHICS_DESCRIPTORSETLAYOUT_HPP
+#endif //CONCERTO_GRAPHICS_DESCRIPTORSETLAYOUT_HPP

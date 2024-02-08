@@ -2,12 +2,12 @@
 // Created by arthur on 12/06/22.
 //
 
-#ifndef CONCERTOGRAPHICS_FRAMEBUFFER_HPP
-#define CONCERTOGRAPHICS_FRAMEBUFFER_HPP
+#ifndef CONCERTO_GRAPHICS_FRAMEBUFFER_HPP
+#define CONCERTO_GRAPHICS_FRAMEBUFFER_HPP
 
 #include <vector>
 
-#include <Concerto/Core/Types.hpp>
+#include "Concerto/Graphics/Defines.hpp"
 
 #include "Concerto/Graphics/Vulkan/Wrapper/Object.hpp"
 
@@ -27,7 +27,7 @@ namespace Concerto::Graphics
 	* This class is a Wrapper around the VkFramebuffer handle and provides
 	* a simpler interface for interacting with frame buffers.
 	*/
-	class CONCERTO_PUBLIC_API FrameBuffer : public Object<VkFramebuffer>
+	class CONCERTO_GRAPHICS_API FrameBuffer : public Object<VkFramebuffer>
 	{
 	public:
 		/**
@@ -53,4 +53,4 @@ namespace Concerto::Graphics
 
 } // Concerto::Graphics::Wrapper
 
-#endif //CONCERTOGRAPHICS_FRAMEBUFFER_HPP
+#endif //CONCERTO_GRAPHICS_FRAMEBUFFER_HPP

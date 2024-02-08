@@ -6,8 +6,11 @@
 #include <stdexcept>
 #include <cassert>
 
-#include "Concerto/Graphics/Vulkan/wrapper/DescriptorPool.hpp"
-#include "Concerto/Graphics/Vulkan/wrapper/Device.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/DescriptorPool.hpp"
+
+#include <Concerto/Core/Assert.hpp>
+
+#include "Concerto/Graphics/Vulkan/Wrapper/Device.hpp"
 
 namespace Concerto::Graphics
 {
@@ -31,6 +34,7 @@ namespace Concerto::Graphics
 		pool_info.pPoolSizes = sizes.data();
 		if (vkCreateDescriptorPool(*device.Get(), &pool_info, nullptr, &_handle) != VK_SUCCESS)
 		{
+			CONCERTO_ASSERT_FALSE;
 			throw std::runtime_error("Failed to create descriptor pool");
 		}
 	}
@@ -49,6 +53,7 @@ namespace Concerto::Graphics
 		pool_info.pPoolSizes = poolSizes.data();
 		if (vkCreateDescriptorPool(*device.Get(), &pool_info, nullptr, &_handle) != VK_SUCCESS)
 		{
+			CONCERTO_ASSERT_FALSE;
 			throw std::runtime_error("Failed to create descriptor pool");
 		}
 	}

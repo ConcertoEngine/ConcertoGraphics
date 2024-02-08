@@ -2,20 +2,18 @@
 // Created by arthu on 21/06/2022.
 //
 
-#ifndef CONCERTOGRAPHICS_ALLOCATOR_HPP
-#define CONCERTOGRAPHICS_ALLOCATOR_HPP
+#ifndef CONCERTO_GRAPHICS_ALLOCATOR_HPP
+#define CONCERTO_GRAPHICS_ALLOCATOR_HPP
 
 #include <vulkan/vulkan.h>
 #include <vk_mem_alloc.h>
-#include <Concerto/Core/Types.hpp>
+#include "Concerto/Graphics/Defines.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/Object.hpp"
 
 namespace Concerto::Graphics
 {
 	class Instance;
-
 	class PhysicalDevice;
-
 	class Device;
 
 	/**
@@ -26,7 +24,7 @@ namespace Concerto::Graphics
 	*  it also provide some utility functions for creating the VmaAllocator.
 	*
 	*/
-	class CONCERTO_PUBLIC_API Allocator : public Object<VmaAllocator>
+	class CONCERTO_GRAPHICS_API Allocator : public Object<VmaAllocator>
 	{
 	public:
 		/**
@@ -52,9 +50,8 @@ namespace Concerto::Graphics
 		*/
 		[[nodiscard]] Device& GetDevice() const;
 
-	private:
-		Device* _device;
+		void SetDevice(Device* device);
 	};
 }
 
-#endif //CONCERTOGRAPHICS_ALLOCATOR_HPP
+#endif //CONCERTO_GRAPHICS_ALLOCATOR_HPP

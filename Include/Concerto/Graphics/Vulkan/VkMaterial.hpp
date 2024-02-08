@@ -2,46 +2,31 @@
 // Created by arthur on 13/09/2022.
 //
 
-#ifndef CONCERTOGRAPHICS_MATERIAL_HPP
-#define CONCERTOGRAPHICS_MATERIAL_HPP
+#ifndef CONCERTO_GRAPHICS_MATERIAL_HPP
+#define CONCERTO_GRAPHICS_MATERIAL_HPP
 
-#include <optional>
 #include <memory>
-#include <vulkan/vulkan.h>
+#include <vector>
 
 #include "Concerto/Graphics/Vulkan/Wrapper/DescriptorSet.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Buffer.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Pipeline.hpp"
+#include "Concerto/Graphics/Vulkan/Texture.hpp"
 
 namespace Concerto::Graphics
 {
-	class VkMaterial
+	struct CONCERTO_GRAPHICS_API VkMaterial
 	{
-	 public:
-		VkMaterial() : _pipelineLayout(VK_NULL_HANDLE),
-					   _pipeline(VK_NULL_HANDLE)
-		{
+		VkMaterial() = default;
+		VkMaterial(VkMaterial&&other) = default;
+		VkMaterial(VkMaterial&) = delete;
+		VkMaterial& operator=(VkMaterial&& other) = default;
+		VkMaterial& operator=(VkMaterial&) = delete;
 
-		}
-
-		VkMaterial(VkPipelineLayout pipelineLayout, VkPipeline pipeline) : _pipelineLayout(pipelineLayout),
-																		   _pipeline(pipeline)
-		{
-		}
-
-		bool operator==(const VkMaterial& other) const
-		{
-			return _pipelineLayout == other._pipelineLayout && _pipeline == other._pipeline;
-		}
-
-		bool operator!=(const VkMaterial& other) const
-		{
-			return !(*this == other);
-		}
-
-		VkPipeline _pipeline;
-		VkPipelineLayout _pipelineLayout;
-		DescriptorSetPtr _diffuseTextureSet;
-		DescriptorSetPtr _normalTextureSet;
+		std::shared_ptr<Pipeline> pipeline;
+		std::vector<DescriptorSetPtr> descriptorSets;
+		TexturePtr diffuseTexture;
 	};
 	using VkMaterialPtr = std::shared_ptr<VkMaterial>;
 }
-#endif //CONCERTOGRAPHICS_MATERIAL_HPP
+#endif //CONCERTO_GRAPHICS_MATERIAL_HPP

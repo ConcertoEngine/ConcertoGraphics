@@ -2,8 +2,8 @@
 // Created by arthur on 13/09/2022.
 //
 
-#ifndef CONCERTOGRAPHICS_RENDEROBJECT_HPP
-#define CONCERTOGRAPHICS_RENDEROBJECT_HPP
+#ifndef CONCERTO_GRAPHICS_RENDEROBJECT_HPP
+#define CONCERTO_GRAPHICS_RENDEROBJECT_HPP
 
 #include <memory>
 #include <vector>
@@ -22,4 +22,4 @@ namespace Concerto::Graphics
 	};
 	using RenderObjectPtr = std::shared_ptr<RenderObject>;
 }
-#endif //CONCERTOGRAPHICS_RENDEROBJECT_HPP
+#endif //CONCERTO_GRAPHICS_RENDEROBJECT_HPP

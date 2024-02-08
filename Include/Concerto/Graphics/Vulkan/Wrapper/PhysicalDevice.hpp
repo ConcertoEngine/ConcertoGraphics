@@ -2,15 +2,15 @@
 // Created by arthur on 25/10/2022.
 //
 
-#ifndef CONCERTOGRAPHICS_PHYSICALDEVICE_HPP
-#define CONCERTOGRAPHICS_PHYSICALDEVICE_HPP
+#ifndef CONCERTO_GRAPHICS_PHYSICALDEVICE_HPP
+#define CONCERTO_GRAPHICS_PHYSICALDEVICE_HPP
 
 #include <span>
 #include <optional>
 #include <vector>
 
 #include <vulkan/vulkan.h>
-#include <Concerto/Core/Types.hpp>
+#include "Concerto/Graphics/Defines.hpp"
 
 namespace Concerto::Graphics
 {
@@ -24,7 +24,7 @@ namespace Concerto::Graphics
 	* The PhysicalDevice class represents a physical device, such as a GPU, in a Vulkan instance.
 	* It is responsible for providing information about the device and its capabilities, such as its queue families, properties, features, and memory properties.
 	*/
-	class CONCERTO_PUBLIC_API PhysicalDevice
+	class CONCERTO_GRAPHICS_API PhysicalDevice
 	{
 	public:
 		struct SurfaceSupportDetails
@@ -37,9 +37,13 @@ namespace Concerto::Graphics
 		PhysicalDevice() = default;
 
 		explicit PhysicalDevice(VkPhysicalDevice physicalDevice);
+
 		PhysicalDevice(const PhysicalDevice&) = delete;
+		
 		PhysicalDevice(PhysicalDevice&&) noexcept;
+		
 		PhysicalDevice& operator=(const PhysicalDevice&) = delete;
+		
 		PhysicalDevice& operator=(PhysicalDevice&&) noexcept;
 
 		/**
@@ -96,6 +100,8 @@ namespace Concerto::Graphics
 
 		[[nodiscard]] VkPhysicalDevice* Get();
 
+		[[nodiscard]] VkPhysicalDevice Get() const;
+
 		[[nodiscard]] VkSurfaceKHR GetSurface();
 
 		void SetSurface(VkSurfaceKHR surface);
@@ -116,4 +122,4 @@ namespace Concerto::Graphics
 
 } // Concerto::Graphics::Wrapper
 
-#endif //CONCERTOGRAPHICS_PHYSICALDEVICE_HPP
+#endif //CONCERTO_GRAPHICS_PHYSICALDEVICE_HPP

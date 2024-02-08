@@ -10,12 +10,12 @@ namespace Concerto::Graphics
 {
 
 	DescriptorBuilder::DescriptorBuilder(DescriptorLayoutCache& layoutCache, DescriptorAllocator& allocator) :
-		cache(layoutCache), alloc(allocator)
+		_cache(layoutCache), _alloc(allocator)
 	{
 
 	}
 
-	DescriptorBuilder& DescriptorBuilder::BindBuffer(std::uint32_t binding,
+	DescriptorBuilder& DescriptorBuilder::BindBuffer(UInt32 binding,
 		VkDescriptorBufferInfo* bufferInfo,
 		VkDescriptorType type,
 		VkShaderStageFlags stageFlags)
@@ -28,7 +28,7 @@ namespace Concerto::Graphics
 		newBinding.stageFlags = stageFlags;
 		newBinding.binding = binding;
 
-		bindings.push_back(newBinding);
+		_bindings.push_back(newBinding);
 
 		VkWriteDescriptorSet newWrite{};
 		newWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
@@ -39,11 +39,11 @@ namespace Concerto::Graphics
 		newWrite.pBufferInfo = bufferInfo;
 		newWrite.dstBinding = binding;
 
-		writes.push_back(newWrite);
+		_writes.push_back(newWrite);
 		return *this;
 	}
 
-	DescriptorBuilder& DescriptorBuilder::BindImage(std::uint32_t binding,
+	DescriptorBuilder& DescriptorBuilder::BindImage(UInt32 binding,
 		VkDescriptorImageInfo* imageInfo,
 		VkDescriptorType type,
 		VkShaderStageFlags stageFlags)
@@ -56,7 +56,7 @@ namespace Concerto::Graphics
 		newBinding.stageFlags = stageFlags;
 		newBinding.binding = binding;
 
-		bindings.push_back(newBinding);
+		_bindings.push_back(newBinding);
 
 		VkWriteDescriptorSet newWrite{};
 		newWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
@@ -67,7 +67,7 @@ namespace Concerto::Graphics
 		newWrite.pImageInfo = imageInfo;
 		newWrite.dstBinding = binding;
 
-		writes.push_back(newWrite);
+		_writes.push_back(newWrite);
 		return *this;
 	}
 
@@ -77,20 +77,21 @@ namespace Concerto::Graphics
 		layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
 		layoutInfo.pNext = nullptr;
 
-		layoutInfo.pBindings = bindings.data();
-		layoutInfo.bindingCount = bindings.size();
+		layoutInfo.pBindings = _bindings.data();
+		layoutInfo.bindingCount = _bindings.size();
 
-		layout = cache.GetLayout(layoutInfo);
+		layout = _cache.GetLayout(layoutInfo);
 
-		bool success = alloc.Allocate(set, *layout);
+		bool success = _alloc.Allocate(set, *layout);
 		if (!success)
 			return false;
 
-		for (VkWriteDescriptorSet& w : writes)
+		for (VkWriteDescriptorSet& w : _writes)
 			w.dstSet = *set->Get();
 
-		vkUpdateDescriptorSets(*alloc.GetDevice().Get(), writes.size(), writes.data(), 0, nullptr);
-
+		vkUpdateDescriptorSets(*_alloc.GetDevice().Get(), _writes.size(), _writes.data(), 0, nullptr);
+		_bindings.clear();
+		_writes.clear();
 		return true;
 	}
 

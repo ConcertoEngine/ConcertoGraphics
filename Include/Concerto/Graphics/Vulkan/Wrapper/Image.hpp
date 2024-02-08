@@ -2,29 +2,23 @@
 // Created by arthur on 09/06/22.
 //
 
-#ifndef CONCERTOGRAPHICS_IMAGE_HPP
-#define CONCERTOGRAPHICS_IMAGE_HPP
+#ifndef CONCERTO_GRAPHICS_IMAGE_HPP
+#define CONCERTO_GRAPHICS_IMAGE_HPP
 
 #include <string>
 
 #include <vulkan/vulkan.h>
 #include <vk_mem_alloc.h>
-#include <Concerto/Core/Types.hpp>
+#include "Concerto/Graphics/Defines.hpp"
 
 #include "Concerto/Graphics/Vulkan/Wrapper/Object.hpp"
-#include "Concerto/Graphics/Vulkan/Wrapper/Allocator.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/VulkanInitializer.hpp"
 
 namespace Concerto::Graphics
 {
 	class UploadContext;
-}
-namespace Concerto::Graphics
-{
 	class CommandBuffer;
-
 	class Queue;
-
 	class Device;
 
 	/**
@@ -33,7 +27,7 @@ namespace Concerto::Graphics
 	* An image is a two-dimensional array of pixels that can be used as a source or destination for rendering.
 	*
 	*/
-	class CONCERTO_PUBLIC_API Image : public Object<VkImage>
+	class CONCERTO_GRAPHICS_API Image : public Object<VkImage>
 	{
 	public:
 		/**
@@ -43,7 +37,7 @@ namespace Concerto::Graphics
 		* @param image The existing image handle.
 		* @param imageFormat The format of the image.
 		*/
-		explicit Image(Device& device, VkImage image, VkFormat imageFormat);
+		Image(Device& device, VkImage image, VkFormat imageFormat);
 
 		/**
 		* @brief Constructs a new image with the specified extent and format.
@@ -51,22 +45,19 @@ namespace Concerto::Graphics
 		* @param device The device to create the image on.
 		* @param extent The dimensions of the image.
 		* @param depthFormat The format of the image.
-		* @param allocator The allocator to use for memory allocation.
 		*/
-		Image(Device& device, VkExtent2D extent, VkFormat depthFormat, Allocator& allocator);
+		Image(Device& device, VkExtent2D extent, VkFormat depthFormat);
 
 		/**
 		* @brief Constructs a new image from a file.
 		*
 		* @param device The device to create the image on.
 		* @param file The path to the image file.
-		* @param allocator The allocator to use for memory allocation.
 		* @param commandBuffer The command buffer to use for uploading the image data.
 		* @param uploadContext The upload context to use for uploading the image data.
 		* @param queue The queue to use for uploading the image data.
 		*/
-		Image(Device& device, const std::string& file, Allocator& allocator, CommandBuffer& commandBuffer,
-				UploadContext& uploadContext, Queue& queue);
+		Image(Device& device, const std::string& file, CommandBuffer& commandBuffer, UploadContext& uploadContext, Queue& queue);
 
 		Image(Image&&) = default;
 
@@ -87,8 +78,7 @@ namespace Concerto::Graphics
 		bool _isAllocated;
 		VkFormat _imageFormat{};
 		VmaAllocation _allocation{};
-		VmaAllocator _allocator;
 	};
 }
 
-#endif //CONCERTOGRAPHICS_IMAGE_HPP
+#endif //CONCERTO_GRAPHICS_IMAGE_HPP

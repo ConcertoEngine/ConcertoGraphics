@@ -2,14 +2,14 @@
 // Created by arthur on 16/02/2023.
 //
 
-#ifndef CONCERTOGRAPHICS_INCLUDE_DESCRIPTORALLOCATOR_HPP_
-#define CONCERTOGRAPHICS_INCLUDE_DESCRIPTORALLOCATOR_HPP_
+#ifndef CONCERTO_GRAPHICS_INCLUDE_DESCRIPTORALLOCATOR_HPP_
+#define CONCERTO_GRAPHICS_INCLUDE_DESCRIPTORALLOCATOR_HPP_
 
 #include <vector>
 
 #include <vulkan/vulkan.h>
-#include <Concerto/Core/Types.hpp>
 
+#include "Concerto/Graphics/Defines.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/DescriptorPool.hpp"
 
 namespace Concerto::Graphics
@@ -18,7 +18,7 @@ namespace Concerto::Graphics
 	class DescriptorSetLayout;
 	class Device;
 
-	class CONCERTO_PUBLIC_API DescriptorAllocator
+	class CONCERTO_GRAPHICS_API DescriptorAllocator
 	{
 	 public:
 		struct PoolSizes {
@@ -38,21 +38,27 @@ namespace Concerto::Graphics
 				};
 		};
 		explicit DescriptorAllocator(Device &device);
-		bool Allocate(DescriptorSetPtr &descriptorSet, DescriptorSetLayout &layout);
+		bool Allocate(DescriptorSetPtr &descriptorSet, const DescriptorSetLayout &layout);
+		bool AllocateWithoutCache(DescriptorSetPtr& descriptorSet, const DescriptorSetLayout& layout);
 	 	/**
 	 	 * @brief Reset the allocator, resetting all the descriptors in the pool.
 	 	 */
 		void Reset();
-		Device &GetDevice();
-	 private:
+		Device &GetDevice() const;
+		DescriptorPoolPtr GetDescriptorPool();
+
+	private:
 		DescriptorPoolPtr CreatePool(VkDescriptorPoolCreateFlags flags);
 		DescriptorPoolPtr GetPool();
+
+		DescriptorSetPtr TryAllocate(const DescriptorSetLayout& layout);
 		Device *_device;
 		PoolSizes _poolSizes;
 		DescriptorPoolPtr _currentPool;
 		std::vector<DescriptorPoolPtr> _usedPools;
 		std::vector<DescriptorPoolPtr> _freePools;
+		std::unordered_map<UInt64 /*Hash of bindings*/, DescriptorSetPtr> _cache;
 	};
 }
 
-#endif //CONCERTOGRAPHICS_INCLUDE_DESCRIPTORALLOCATOR_HPP_
+#endif //CONCERTO_GRAPHICS_INCLUDE_DESCRIPTORALLOCATOR_HPP_

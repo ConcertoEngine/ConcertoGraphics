@@ -7,14 +7,14 @@
 
 #include <Concerto/Core/Math/Quaternion.hpp>
 #include <Concerto/Core/Math/Vector.hpp>
-#include <Concerto/Core/Types.hpp>
+#include "Concerto/Graphics/Defines.hpp"
 #include <glm/mat4x4.hpp>
 
 #include "Concerto/Graphics/GPUData.hpp"
 
 namespace Concerto::Graphics
 {
-	enum FreeFlyCameraMovement
+	enum class FreeFlyCameraMovement
 	{
 		Forward,
 		Backward,
@@ -30,7 +30,7 @@ namespace Concerto::Graphics
 	inline constexpr float ZOOM = 45.0f;
 
 
-	class CONCERTO_PUBLIC_API Camera : public GPUCamera
+	class CONCERTO_GRAPHICS_API Camera : public GPUCamera
 	{
 	 public:
 
@@ -40,16 +40,16 @@ namespace Concerto::Graphics
 		Camera& operator=(const Camera&) = default;
 		Camera& operator=(Camera&&) = default;
 
-		[[nodiscard]] const Math::EulerAnglesf& GetRotation() const;
-		[[nodiscard]] const Math::Vector4f& GetClearColor() const;
-		[[nodiscard]] Math::Vector3f GetPosition() const;
+		[[nodiscard]] const EulerAnglesf& GetRotation() const;
+		[[nodiscard]] const Vector4f& GetClearColor() const;
+		[[nodiscard]] Vector3f GetPosition() const;
 		[[nodiscard]] float GetFov() const;
 		[[nodiscard]] float GetNear() const;
 		[[nodiscard]] float GetFar() const;
 		[[nodiscard]] float GetAspectRatio() const;
 
-		void SetClearColor(const Math::Vector4f& clearColor);
-		void SetPosition(const Math::Vector3f& position);
+		void SetClearColor(const Vector4f& clearColor);
+		void SetPosition(const Vector3f& position);
 		void SetFov(float fov);
 		void SetNear(float near);
 		void SetFar(float far);
@@ -75,7 +75,7 @@ namespace Concerto::Graphics
 		glm::vec3 _up;
 		glm::vec3 _right;
 		glm::vec3 _worldUp;
-		Math::EulerAnglesf _eulerAngles;
+		EulerAnglesf _eulerAngles;
 		float _movementSpeed;
 		float _mouseSensitivity;
 		float _zoom;
@@ -83,7 +83,7 @@ namespace Concerto::Graphics
 		float _near;
 		float _far;
 		float _aspectRatio;
-		Math::Vector4f _clearColor;
+		Vector4f _clearColor;
 	};
 }
 
