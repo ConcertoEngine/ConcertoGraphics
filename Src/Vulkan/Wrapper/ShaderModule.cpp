@@ -15,21 +15,40 @@
 namespace Concerto::Graphics
 {
 
-	ShaderModule::ShaderModule(Device& device, const std::string& shaderPath) : Object<VkShaderModule>(device, [this](Device &device, VkShaderModule handle)
-	{ vkDestroyShaderModule(*device.Get(), handle, nullptr); })
+	ShaderModule::ShaderModule(Device& device, const std::string& shaderPath, VkShaderStageFlagBits stageFlags, std::string entryPoint /*= "main"*/) :
+		Object<VkShaderModule>(device, [this](Device& device, VkShaderModule handle)
+			{ vkDestroyShaderModule(*device.Get(), handle, nullptr); }),
+		_stageFlags(stageFlags),
+		_entryPoint(std::move(entryPoint))
 	{
 		loadShaderModule(shaderPath);
 		createShaderModule();
 	}
 
-	ShaderModule::ShaderModule(Device& device, const std::vector<UInt32>& bytes) : Object<VkShaderModule>(device, [this](Device& device, VkShaderModule handle)
-		{ vkDestroyShaderModule(*device.Get(), handle, nullptr); })
+	ShaderModule::ShaderModule(Device& device, const std::vector<UInt32>& bytes, VkShaderStageFlagBits stageFlags, std::string entryPoint /*= "main"*/) :
+		Object<VkShaderModule>(device, [this](Device& device, VkShaderModule handle)
+														{ vkDestroyShaderModule(*device.Get(), handle, nullptr); }),
+		_stageFlags(stageFlags),
+		_entryPoint(std::move(entryPoint))
 	{
 		_shaderModuleCreateInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
 		_shaderModuleCreateInfo.pNext = nullptr;
 		_shaderModuleCreateInfo.codeSize = bytes.size() * sizeof(UInt32);
 		_shaderModuleCreateInfo.pCode = reinterpret_cast<const UInt32*>(bytes.data());
 		createShaderModule();
+	}
+
+	VkPipelineShaderStageCreateInfo ShaderModule::GetPipelineShaderStageCreateInfo() const
+	{
+		return VkPipelineShaderStageCreateInfo {
+			VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
+			nullptr,
+			{},
+			_stageFlags,
+			_handle,
+			_entryPoint.c_str(),
+			nullptr
+		};
 	}
 
 	void ShaderModule::loadShaderModule(const std::string& shaderPath)

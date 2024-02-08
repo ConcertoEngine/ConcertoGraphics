@@ -22,13 +22,18 @@ namespace Concerto::Graphics
 		createInfo.flags = 0;
 		createInfo.pNext = nullptr;
 		createInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-		createInfo.pBindings = bindings.data();
-		createInfo.bindingCount = bindings.size();
+		createInfo.pBindings = _bindings.data();
+		createInfo.bindingCount = _bindings.size();
 		if (vkCreateDescriptorSetLayout(*_device->Get(), &createInfo, nullptr, &_handle) != VK_SUCCESS)
 		{
 			CONCERTO_ASSERT_FALSE;
 			throw std::runtime_error("failed to create descriptor set layout!");
 		}
+	}
+
+	const std::vector<VkDescriptorSetLayoutBinding>& DescriptorSetLayout::GetBindings() const
+	{
+		return _bindings;
 	}
 
 	UInt64 DescriptorSetLayout::GetHash() const

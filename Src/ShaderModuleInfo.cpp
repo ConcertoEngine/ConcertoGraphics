@@ -22,6 +22,7 @@ namespace Concerto::Graphics
 		VkShaderStageFlags shaderStageFlag = VK_SHADER_STAGE_ALL;
 		callbacks.onEntryPointDeclaration = [&](nzsl::ShaderStageType stageType, const std::string& functionName) {
 			shaderStageFlag = ToVulkan(stageType);
+			entryPointName = functionName;
 		};
 		//callbacks.onAliasDeclaration = [](const nzsl::Ast::DeclareAliasStatement& aliasDeclaration){};
 		//callbacks.onConstDeclaration = [](const nzsl::Ast::DeclareConstStatement& constDecl){};
@@ -60,7 +61,7 @@ namespace Concerto::Graphics
 		};
 		spirvWriter.SetEnv(env);
 		spirv = spirvWriter.Generate(*sanitizedModule);
-		shaderModule = std::make_unique<ShaderModule>(device, spirv);
+		shaderModule = std::make_unique<ShaderModule>(device, spirv, static_cast<VkShaderStageFlagBits>(shaderStageFlag), std::move(entryPointName));
 	}
 
 	VkDescriptorType ShaderModuleInfo::GetBindingType(const nzsl::Ast::ExpressionType* varType)

@@ -26,7 +26,7 @@ namespace Concerto::Graphics
 {
 	void ErrorCallback(int ec, const char* description)
 	{
-		Logger::Error("GLFW Error: <" + std::to_string(ec) + "> " + std::string(description));
+		Logger::Error("GLFW Error: code {}, description '{}'", std::to_string(ec), std::string(description));
 	}
 
 	Window::Window(const std::string& title, int width, int height) :
@@ -121,7 +121,7 @@ namespace Concerto::Graphics
 		const auto res = glfwCreateWindowSurface(*instance.Get(), _window, nullptr, surface);
 		if (res != VK_SUCCESS)
 		{
-			Logger::Warning("Unable to create vulkan surface error code: " + std::to_string(res));
+			Logger::Warning("Unable to create vulkan surface error code: {}",  std::to_string(res));
 			return false;
 		}
 		return true;

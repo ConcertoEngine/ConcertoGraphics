@@ -38,6 +38,8 @@ namespace Concerto::Graphics
 
 		~DescriptorSetLayout() = default;
 
+		const std::vector<VkDescriptorSetLayoutBinding>& GetBindings() const;
+
 		UInt64 GetHash() const;
 
 		static UInt64 GetHash(const std::vector<VkDescriptorSetLayoutBinding>& bindings);

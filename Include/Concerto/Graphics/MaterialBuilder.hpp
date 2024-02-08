@@ -26,19 +26,23 @@ namespace Concerto::Graphics
 	{
 	 public:
 		explicit MaterialBuilder(Device& device);
-		VkMaterialPtr BuildMaterial(MaterialInfo& material, RenderPass& renderpass);
-		VkMaterialPtr GetMaterial(const std::string& materialName);
+		VkMaterialPtr BuildMaterial(MaterialInfo& material, RenderPass& renderPass);
+
+		std::vector<VkPipelineShaderStageCreateInfo> GetShaderStages() const;
+		std::vector<DescriptorSetLayoutPtr> GetDescriptorSetLayouts() const;
 		std::set<VkMaterialPtr> GetMaterials();
 	 private:
 		DescriptorSetLayoutPtr GeDescriptorSetLayout(const std::vector<VkDescriptorSetLayoutBinding>& bindings);
 		
 		DescriptorAllocator _allocator;
-		Sampler _sampler;
 		Device& _device;
 		std::set<VkMaterialPtr> _materialsCache;
-		std::unordered_map<std::string, ShaderModuleInfo*> _shaderModuleInfos;
+		std::unordered_map<UInt64 /*hash*/, PipelinePtr> _pipelinesCache;
+		std::unordered_map<std::string, ShaderModuleInfo> _shaderModuleInfos;
 		DescriptorPool _descriptorPool;
 		std::unordered_map<UInt64 /*hash*/, DescriptorSetLayoutPtr> _descriptorSetLayoutsCache;
+		std::vector<Pipeline> _pipelines;
+		Sampler _sampler;
 	};
 }
 #endif //CONCERTO_GRAPHICS_INCLUDE_MATERIALBUILDER_HPP_

@@ -16,12 +16,12 @@
 
 namespace Concerto::Graphics
 {
-	DescriptorSet::DescriptorSet(Device& device, DescriptorPool& pool,
-	                             const DescriptorSetLayout& descriptorSetLayout) : Object<VkDescriptorSet>(device, [this](Device &device, VkDescriptorSet handle)
-	                             {
-		                             if (_pool != nullptr)
-			                             vkFreeDescriptorSets(*device.Get(), *_pool->Get(), 1, &handle);
-	                             }), _pool(&pool)
+	DescriptorSet::DescriptorSet(Device& device, DescriptorPool& pool, const DescriptorSetLayout& descriptorSetLayout) :
+		Object<VkDescriptorSet>(device, [this](Device& device, VkDescriptorSet handle)
+			{
+				if (_pool != nullptr)
+					vkFreeDescriptorSets(*device.Get(), *_pool->Get(), 1, &handle);
+			}), _pool(&pool)
 	{
 		VkDescriptorSetAllocateInfo allocInfo = {};
 		allocInfo.pNext = nullptr;

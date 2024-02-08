@@ -7,7 +7,8 @@
 
 #include <functional>
 #include <vulkan/vulkan.h>
-#include <Concerto/Core/Types.hpp>
+
+#include "Concerto/Graphics/Defines.hpp"
 
 namespace Concerto::Graphics
 {

@@ -41,13 +41,13 @@ namespace Concerto::Graphics
 		{
 			if (!reader.Error().empty())
 			{
-				Logger::Error("TinyObjReader: " + reader.Error());
+				Logger::Error("TinyObjReader: {}", reader.Error());
 				return false;
 			}
 		}
 		if (!reader.Warning().empty())
 		{
-			Logger::Error("TinyObjReader: " + reader.Warning());
+			Logger::Error("TinyObjReader: {}", reader.Warning());
 		}
 
 		if (!err.empty())

@@ -39,14 +39,19 @@ namespace Concerto::Graphics
 		};
 		explicit DescriptorAllocator(Device &device);
 		bool Allocate(DescriptorSetPtr &descriptorSet, const DescriptorSetLayout &layout);
+		bool AllocateWithoutCache(DescriptorSetPtr& descriptorSet, const DescriptorSetLayout& layout);
 	 	/**
 	 	 * @brief Reset the allocator, resetting all the descriptors in the pool.
 	 	 */
 		void Reset();
 		Device &GetDevice() const;
-	 private:
+		DescriptorPoolPtr GetDescriptorPool();
+
+	private:
 		DescriptorPoolPtr CreatePool(VkDescriptorPoolCreateFlags flags);
 		DescriptorPoolPtr GetPool();
+
+		DescriptorSetPtr TryAllocate(const DescriptorSetLayout& layout);
 		Device *_device;
 		PoolSizes _poolSizes;
 		DescriptorPoolPtr _currentPool;

@@ -31,9 +31,9 @@ namespace Concerto::Graphics
 		 * @param device The Device object associated with the ShaderModule.
 		 * @param shaderPath The path to the shader source file.
 		 */
-		ShaderModule(Device& device, const std::string& shaderPath);
+		ShaderModule(Device& device, const std::string& shaderPath, VkShaderStageFlagBits stageFlags, std::string entryPoint = "main");
 
-		ShaderModule(Device& device, const std::vector<UInt32>& bytes);
+		ShaderModule(Device& device, const std::vector<UInt32>& bytes, VkShaderStageFlagBits stageFlags, std::string entryPoint = "main");
 
 		ShaderModule(ShaderModule&&) = default;
 
@@ -42,6 +42,8 @@ namespace Concerto::Graphics
 		ShaderModule& operator=(ShaderModule&&) = default;
 
 		ShaderModule& operator=(const ShaderModule&) = delete;
+
+		VkPipelineShaderStageCreateInfo GetPipelineShaderStageCreateInfo() const;
 	private:
 		void loadShaderModule(const std::string& shaderPath);
 
@@ -49,6 +51,9 @@ namespace Concerto::Graphics
 
 		VkShaderModuleCreateInfo _shaderModuleCreateInfo{};
 		std::vector<UInt32> _buffer;
+		VkShaderStageFlagBits _stageFlags;
+		std::string _entryPoint;
+
 	};
 }
 

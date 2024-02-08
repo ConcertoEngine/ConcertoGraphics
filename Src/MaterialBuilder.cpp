@@ -16,31 +16,30 @@ namespace Concerto::Graphics
 {
 	MaterialBuilder::MaterialBuilder(Device& device) :
 		_allocator(device),
-		_sampler(device, VK_FILTER_NEAREST),
 		_device(device),
 		_materialsCache(),
-		_descriptorPool(device)
+		_descriptorPool(device),
+		_sampler(device, VK_FILTER_NEAREST)
 	{
 
 	}
 
-	VkMaterialPtr MaterialBuilder::BuildMaterial(MaterialInfo& material, RenderPass& renderpass)
+	VkMaterialPtr MaterialBuilder::BuildMaterial(MaterialInfo& material, RenderPass& renderPass)
 	{
-		/*auto it = std::ranges::find_if(_materialsCache, [&](const auto& pair)
+		ShaderModuleInfo* vertexShaderModuleInfo = nullptr;
+		ShaderModuleInfo* fragShaderModuleInfo = nullptr;
 		{
-			return pair.first.vertexShaderPath == material.vertexShaderPath && pair.first.fragmentShaderPath == material.fragmentShaderPath;
-		});
-		if (it != _materialsCache.end())
-			return it->second;*/
-		auto& vertShaderModuleInfo = _shaderModuleInfos.emplace(material.vertexShaderPath, new ShaderModuleInfo(_device, material.vertexShaderPath)).first->second;
-		auto& fragShaderModuleInfo = _shaderModuleInfos.emplace(material.fragmentShaderPath, new ShaderModuleInfo(_device, material.fragmentShaderPath)).first->second;
+			auto it = _shaderModuleInfos.find(material.vertexShaderPath);
+			if (it == _shaderModuleInfos.end())
+				vertexShaderModuleInfo = &_shaderModuleInfos.emplace(material.vertexShaderPath, ShaderModuleInfo(_device, material.vertexShaderPath)).first->second;
+			else vertexShaderModuleInfo = &it->second;
+			it = _shaderModuleInfos.find(material.fragmentShaderPath);
+			if (it == _shaderModuleInfos.end())
+				fragShaderModuleInfo = &_shaderModuleInfos.emplace(material.fragmentShaderPath, ShaderModuleInfo(_device, material.fragmentShaderPath)).first->second;
+			else fragShaderModuleInfo = &it->second;
+		}
 		
-		std::vector shaderStages = {
-			VulkanInitializer::PipelineShaderStageCreateInfo(VK_SHADER_STAGE_VERTEX_BIT, *vertShaderModuleInfo->shaderModule->Get()),
-			VulkanInitializer::PipelineShaderStageCreateInfo(VK_SHADER_STAGE_FRAGMENT_BIT, *fragShaderModuleInfo->shaderModule->Get())
-		};
-
-		std::unordered_map<UInt32 /*set*/, std::vector<VkDescriptorSetLayoutBinding>> bindings = vertShaderModuleInfo->bindings;
+		std::unordered_map<UInt32 /*set*/, std::vector<VkDescriptorSetLayoutBinding>> bindings = vertexShaderModuleInfo->bindings;
 		for (auto& [set, setBindings] : fragShaderModuleInfo->bindings)
 		{
 			auto it = bindings.find(set);
@@ -51,73 +50,121 @@ namespace Concerto::Graphics
 		}
 
 		std::vector<DescriptorSetLayoutPtr> descriptorSetLayouts;
+		DescriptorSetLayoutPtr texture = nullptr;
+		DescriptorSetPtr textureDescriptorSet = nullptr;
+		UInt32 destinationBinding = 0;
 		for (auto& setBindings : bindings | std::views::values)
+		{
+			if (setBindings.size() == 1 && setBindings[0].descriptorType == VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER)
+			{
+				if (!texture)
+				{
+					for (auto binding : setBindings)
+					{
+						if (binding.descriptorType == VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER)
+							destinationBinding = binding.binding;
+					}
+					texture = MakeDescriptorSetLayout(_device, setBindings);
+					descriptorSetLayouts.push_back(texture);
+				}
+				else CONCERTO_ASSERT_FALSE;
+				continue;
+			}
 			descriptorSetLayouts.push_back(GeDescriptorSetLayout(setBindings));
-
-		auto pl = std::make_shared<PipelineLayout>(_device, descriptorSetLayouts);
-
-		PipelineInfo pipelineInfo(std::move(shaderStages), renderpass.GetWindowExtent(), pl);
-		
-		auto pipeline = std::make_shared<Pipeline>(_device, pipelineInfo);
-		pipeline->BuildPipeline(*renderpass.Get());
+		}
 
 		auto vkMaterialPtr = std::make_shared<VkMaterial>();
 		_materialsCache.emplace(vkMaterialPtr);
 		vkMaterialPtr->descriptorSets.reserve(descriptorSetLayouts.size());
-		
+
+		PipelinePtr pipeline;
+		UInt64 hash = 0;
+		std::hash<std::string> hasher;
+		hash ^= hasher(material.vertexShaderPath) + 0x9e3779b9 + (hash << 6) + (hash >> 2);
+		hash ^= hasher(material.fragmentShaderPath) + 0x9e3779b9 + (hash << 6) + (hash >> 2);
+		{
+			auto it = _pipelinesCache.find(hash);
+			if (it != _pipelinesCache.end())
+				pipeline = it->second;
+			else
+			{
+				std::vector shaderStages = {
+					VulkanInitializer::PipelineShaderStageCreateInfo(VK_SHADER_STAGE_VERTEX_BIT, *vertexShaderModuleInfo->shaderModule->Get()),
+					VulkanInitializer::PipelineShaderStageCreateInfo(VK_SHADER_STAGE_FRAGMENT_BIT, *fragShaderModuleInfo->shaderModule->Get())
+				};
+				auto pl = std::make_shared<PipelineLayout>(_device, descriptorSetLayouts);
+				PipelineInfo pipelineInfo(std::move(shaderStages), renderPass.GetWindowExtent(), pl);
+				pipeline = std::make_shared<Pipeline>(_device, std::move(pipelineInfo));
+				pipeline->BuildPipeline(*renderPass.Get());
+				_pipelinesCache.emplace(hash, pipeline);
+			}
+		}
+		vkMaterialPtr->pipeline = pipeline;
+
 		for (auto& descriptorSetLayout : descriptorSetLayouts)
 		{
 			auto& descriptorSet = vkMaterialPtr->descriptorSets.emplace_back();
-			if (!_allocator.Allocate(descriptorSet, *descriptorSetLayout))
+			bool needNewDescriptor = false;
+			for (auto& binding : descriptorSetLayout->GetBindings())
 			{
-				CONCERTO_ASSERT_FALSE;
+				if (binding.descriptorType == VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER)
+					needNewDescriptor = true;
+			}
+			if (needNewDescriptor)
+			{
+				if (!_allocator.AllocateWithoutCache(descriptorSet, *descriptorSetLayout))
+					CONCERTO_ASSERT_FALSE;
+				textureDescriptorSet = descriptorSet;
+			}
+			else
+			{
+				if (!_allocator.Allocate(descriptorSet, *descriptorSetLayout))
+					CONCERTO_ASSERT_FALSE;
 			}
 		}
 
-		vkMaterialPtr->pipeline = pipeline;
-		vkMaterialPtr->pipelineLayout = pipeline->GetPipelineLayout();
-		vkMaterialPtr->diffuseTextureSet = nullptr;
-		vkMaterialPtr->normalTextureSet = nullptr;
+		if (!material.diffuseTexturePath.empty())
+		{
+			vkMaterialPtr->diffuseTexture = TextureBuilder::Instance()->BuildTexture(material.diffuseTexturePath);
+			VkDescriptorImageInfo imageInfo = {};
+			imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+			imageInfo.imageView = *vkMaterialPtr->diffuseTexture->_imageView.Get();
+			imageInfo.sampler = *_sampler.Get();
 
-		if (material.diffuseTexturePath.empty())
-			return vkMaterialPtr;
-		material.diffuseTexture = TextureBuilder::Instance()->BuildTexture(material.diffuseTexturePath);
-		VkDescriptorImageInfo imageInfo = {};
-		imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-		imageInfo.imageView = *material.diffuseTexture->_imageView.Get();
-		imageInfo.sampler = *_sampler.Get();
+			VkWriteDescriptorSet newWrite = {};
+			newWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+			newWrite.pNext = nullptr;
+			newWrite.descriptorCount = 1;
+			newWrite.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+			newWrite.pImageInfo = &imageInfo;
+			newWrite.dstBinding = destinationBinding;
+			newWrite.dstSet = *textureDescriptorSet->Get();
 
-		VkWriteDescriptorSet newWrite = {};
-		newWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-		newWrite.pNext = nullptr;
-		newWrite.descriptorCount = 1;
-		newWrite.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-		newWrite.pImageInfo = &imageInfo;
-		newWrite.dstBinding = 0;
-		newWrite.dstSet = *vkMaterialPtr->descriptorSets[2]->Get();
-
-		_device.UpdateDescriptorSetWrite(newWrite);
-		vkMaterialPtr->descriptorSets[2]->WriteImageSamplerDescriptor(_sampler, material.diffuseTexture->_imageView);
+			_device.UpdateDescriptorSetWrite(newWrite);
+			textureDescriptorSet->WriteImageSamplerDescriptor(_sampler, vkMaterialPtr->diffuseTexture->_imageView);
+		}
 		return vkMaterialPtr;
 	}
 
-	VkMaterialPtr MaterialBuilder::GetMaterial(const std::string& materialName)
+	std::vector<VkPipelineShaderStageCreateInfo> MaterialBuilder::GetShaderStages() const
 	{
-		/*for (auto& [material, vkMaterial] : _materialsCache)
-		{
-			if (material.name == materialName)
-				return vkMaterial;
-		}*/
-		return nullptr;
+		std::vector<VkPipelineShaderStageCreateInfo> shaderStages;
+		for (const auto& shaderModuleInfo : _shaderModuleInfos | std::views::values)
+			shaderStages.push_back(shaderModuleInfo.shaderModule->GetPipelineShaderStageCreateInfo());
+		return shaderStages;
+	}
+
+	std::vector<DescriptorSetLayoutPtr> MaterialBuilder::GetDescriptorSetLayouts() const
+	{
+		std::vector<DescriptorSetLayoutPtr> descriptorSetLayouts;
+
+		for (const auto& layout : _descriptorSetLayoutsCache | std::views::values)
+			descriptorSetLayouts.push_back(layout);
+		return descriptorSetLayouts;
 	}
 
 	std::set<VkMaterialPtr> MaterialBuilder::GetMaterials()
 	{
-		/*std::set<VkMaterial*> materials;
-		auto toto = this->_materialsCache.size();
-		for (auto& [materialInfo, vkMaterial] : _materialsCache)
-			materials.emplace(vkMaterial.get());
-		return materials;*/
 		return _materialsCache;
 	}
 

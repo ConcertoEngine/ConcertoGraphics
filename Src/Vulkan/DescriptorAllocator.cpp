@@ -27,29 +27,19 @@ namespace Concerto::Graphics
 			descriptorSet = it->second;
 			return true;
 		}
-		if (_currentPool == VK_NULL_HANDLE)
+		if (auto set = TryAllocate(layout))
 		{
-			_currentPool = GetPool();
-			_usedPools.push_back(_currentPool);
-		}
-		descriptorSet = std::make_shared<DescriptorSet>(*_device, *_currentPool, layout);
-		switch (descriptorSet->GetLastResult())
-		{
-		case VK_SUCCESS:
+			descriptorSet = set;
+			_cache.emplace(layout.GetHash(), set);
 			return true;
-		case VK_ERROR_FRAGMENTED_POOL:
-		case VK_ERROR_OUT_OF_POOL_MEMORY:
-			_currentPool = GetPool();
-			_usedPools.push_back(_currentPool);
-			descriptorSet = std::make_shared<DescriptorSet>(*_device, *_currentPool, layout);
-			if (descriptorSet->GetLastResult() == VK_SUCCESS)
-				return true;
-			break;
-		default:
-			return false;
 		}
-		_cache.emplace(layout.GetHash(), descriptorSet);
 		return false;
+	}
+
+	bool DescriptorAllocator::AllocateWithoutCache(DescriptorSetPtr& descriptorSet, const DescriptorSetLayout& layout)
+	{
+		descriptorSet = TryAllocate(layout);
+		return descriptorSet != nullptr;
 	}
 
 	DescriptorPoolPtr DescriptorAllocator::CreatePool(VkDescriptorPoolCreateFlags flags)
@@ -70,6 +60,35 @@ namespace Concerto::Graphics
 		return pool;
 	}
 
+	DescriptorSetPtr DescriptorAllocator::TryAllocate(const DescriptorSetLayout& layout)
+	{
+		if (_currentPool == VK_NULL_HANDLE)
+		{
+			_currentPool = GetPool();
+			_usedPools.push_back(_currentPool);
+		}
+		auto descriptorSet = std::make_shared<DescriptorSet>(*_device, *_currentPool, layout);
+		switch (descriptorSet->GetLastResult())
+		{
+		case VK_SUCCESS:
+			return descriptorSet;
+		case VK_ERROR_FRAGMENTED_POOL:
+		case VK_ERROR_OUT_OF_POOL_MEMORY:
+			_currentPool = GetPool();
+			_usedPools.push_back(_currentPool);
+			descriptorSet = std::make_shared<DescriptorSet>(*_device, *_currentPool, layout);
+			if (descriptorSet->GetLastResult() == VK_SUCCESS)
+			{
+				_cache.emplace(layout.GetHash(), descriptorSet);
+				return descriptorSet;
+			}
+			break;
+		default:
+			return nullptr;
+		}
+		return nullptr;
+	}
+
 	void DescriptorAllocator::Reset()
 	{
 		for (auto& pool : _usedPools)
@@ -85,5 +104,10 @@ namespace Concerto::Graphics
 	{
 		assert(_device != nullptr);
 		return *_device;
+	}
+
+	DescriptorPoolPtr DescriptorAllocator::GetDescriptorPool()
+	{
+		return _currentPool;
 	}
 }

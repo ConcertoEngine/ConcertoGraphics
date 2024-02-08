@@ -6,7 +6,7 @@
 #define CONCERTO_GRAPHICS_PIPELINE_HPP
 
 #include <unordered_map>
-#include <string>
+#include <memory>
 
 #include <vulkan/vulkan.h>
 #include "Concerto/Graphics/Defines.hpp"
@@ -79,6 +79,7 @@ namespace Concerto::Graphics
 		CreateInfo _createInfo;
 	};
 
+	using PipelinePtr = std::shared_ptr<Pipeline>;
 } // Concerto
 
 #endif //CONCERTO_GRAPHICS_PIPELINE_HPP

@@ -14,6 +14,7 @@ end
 target('ConcertoGraphics')
     set_kind('shared')
     set_languages('cxx20')
+    set_warnings('allextra')
     if is_mode('debug') then
         set_symbols('debug')
     end
@@ -44,6 +45,7 @@ target('ConcertoGraphics')
                  'imgui',
                  'nzsl',
                  { public = true })
+    add_defines("GLM_ENABLE_EXPERIMENTAL")
 
 includes('Xmake/Rules/*.lua')
 includes('Examples/xmake.lua')

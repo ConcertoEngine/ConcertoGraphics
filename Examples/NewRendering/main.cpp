@@ -47,11 +47,11 @@ void PrintPhysicalDeviceProperties(const PhysicalDevice& physicalDevice)
 
 	Logger::Info("Physical Device Properties:");
 	Logger::Info("--------------------------------");
-	Logger::Info(std::string("Device Name: ") + deviceProperties.deviceName);
-	Logger::Info("API Version: " + std::to_string(VK_VERSION_MAJOR(deviceProperties.apiVersion)) + "." + std::to_string(VK_VERSION_MINOR(deviceProperties.apiVersion)) + "." + std::to_string(VK_VERSION_PATCH(deviceProperties.apiVersion)));
-	Logger::Info("Driver Version: " + std::to_string(deviceProperties.driverVersion));
-	Logger::Info("Vendor ID: " + std::to_string(deviceProperties.vendorID));
-	Logger::Info("Device ID: " + std::to_string(deviceProperties.deviceID));
+	Logger::Info("Device Name: {}", deviceProperties.deviceName);
+	Logger::Info("API Version: {}.{}.{}", VK_VERSION_MAJOR(deviceProperties.apiVersion), VK_VERSION_MINOR(deviceProperties.apiVersion), VK_VERSION_PATCH(deviceProperties.apiVersion));
+	Logger::Info("Driver Version: {}", deviceProperties.driverVersion);
+	Logger::Info("Vendor ID: ", deviceProperties.vendorID);
+	Logger::Info("Device ID: ", deviceProperties.deviceID);
 	std::string type("Device Type: ");
 	switch (deviceProperties.deviceType) {
 	case VK_PHYSICAL_DEVICE_TYPE_OTHER:
@@ -73,7 +73,7 @@ void PrintPhysicalDeviceProperties(const PhysicalDevice& physicalDevice)
 		type += "Unknown";
 		break;
 	}
-	Logger::Info(type);
+	Logger::Info("{}", type);
 
 	Logger::Info("--------------------------------");
 }
@@ -116,19 +116,17 @@ void PrintPhysicalDeviceMemoryProperties(const PhysicalDevice& physicalDevice) {
 
 	Logger::Info("Physical Device Memory Properties:");
 	Logger::Info("--------------------------------");
-	Logger::Info("Memory Types: " + std::to_string(memoryProperties.memoryTypeCount));
+	Logger::Info("Memory Types: {}", memoryProperties.memoryTypeCount);
 	for (UInt32 i = 0; i < memoryProperties.memoryTypeCount; ++i)
-	{
-		Logger::Info("  Type " + std::string(GetMemoryTypeString(i)) + ": Heap Index " + std::to_string(memoryProperties.memoryTypes[i].heapIndex));
-	}
+		Logger::Info("  Type {}: Heap Index {}", GetMemoryTypeString(i), memoryProperties.memoryTypes[i].heapIndex);
 
-	Logger::Info("Memory Heaps: " + std::to_string(memoryProperties.memoryHeapCount));
+	Logger::Info("Memory Heaps: {}", memoryProperties.memoryHeapCount);
 	for (uint32_t i = 0; i < memoryProperties.memoryHeapCount; ++i)
 	{
-		Logger::Info("  Heap " + std::to_string(i) + ": Size " +
-			std::to_string(static_cast<float>(memoryProperties.memoryHeaps[i].size) / (1024.f * 1024.f)) + " MB (" +
-			std::to_string(static_cast<float>(memoryProperties.memoryHeaps[i].size) / (1024.f * 1024.f * 1024.f)) + " GB)" +
-			", Flags: " + GetMemoryHeapFlagsString(memoryProperties.memoryHeaps[i].flags));
+		Logger::Info("  Heap {}: Size {} MB ({} GB), Flags {}", std::to_string(i), 
+			std::to_string(static_cast<float>(memoryProperties.memoryHeaps[i].size) / (1024.f * 1024.f)), 
+			std::to_string(static_cast<float>(memoryProperties.memoryHeaps[i].size) / (1024.f * 1024.f * 1024.f)),
+			GetMemoryHeapFlagsString(memoryProperties.memoryHeaps[i].flags));
 
 	}
 
@@ -302,12 +300,14 @@ int main()
 				device->UpdateDescriptorSetWrite(objectWrite);
 			}
 		}
+
+
 		auto transfersFunction = [&](FrameData& frame, UInt32 uniformOffset) {
 			cameraBuffer.Copy(camera);
 			sceneBuffer.Copy(sceneParameters.gpuSceneData, PadUniformBuffer(sizeof(GPUSceneData), minimumAlignment * (frameNumber % 2)));
 			objectsBuffer.Copy(modelMatrix);
 			auto* drawIndirectCommand = frame.indirectBuffer.Map<VkDrawIndirectCommand>();
-			std::size_t i = 0;
+			UInt32 i = 0;
 			for (const auto& subMesh : mesh.GetSubMeshes())
 			{
 				VkDrawIndirectCommand* drawIndirectCommandPtr = &drawIndirectCommand[i];
@@ -319,17 +319,22 @@ int main()
 			}
 			frame.indirectBuffer.UnMap();
 			i = 0;
+			PipelinePtr lasPipeline;
 			for (const auto& subMesh : vkMesh->subMeshes)
 			{
 				const auto vkMaterial = subMesh->_material;
 				if (vkMaterial == nullptr)
 				{
-					Logger::Error("Could not found the material " + subMesh->GetMaterial()->name);
+					Logger::Error("Could not found the material {}", subMesh->GetMaterial()->name);
 					CONCERTO_ASSERT_FALSE;
 					continue;
 				}
-				frame.commandBuffer.BindPipeline(VK_PIPELINE_BIND_POINT_GRAPHICS, *vkMaterial->pipeline);
-				frame.commandBuffer.BindDescriptorSets(VK_PIPELINE_BIND_POINT_GRAPHICS, *vkMaterial->pipelineLayout->Get(), vkMaterial->descriptorSets);
+				if (!lasPipeline || lasPipeline != vkMaterial->pipeline)
+				{
+					frame.commandBuffer.BindPipeline(VK_PIPELINE_BIND_POINT_GRAPHICS, *vkMaterial->pipeline->Get());
+					lasPipeline = vkMaterial->pipeline;
+				}
+				frame.commandBuffer.BindDescriptorSets(VK_PIPELINE_BIND_POINT_GRAPHICS, *vkMaterial->pipeline->GetPipelineLayout()->Get(), vkMaterial->descriptorSets);
 				frame.commandBuffer.BindVertexBuffers(subMesh->_vertexBuffer);
 				frame.commandBuffer.DrawIndirect(frame.indirectBuffer, sizeof(VkDrawIndirectCommand) * i, drawIndirectCommand[i].instanceCount, sizeof(VkDrawIndirectCommand));
 				++i;
@@ -352,8 +357,13 @@ int main()
 			frame.renderFence.Reset();
 			VkClearValue clearValue;
 			clearValue.color = {
-				{ sceneParameters.clearColor.x, sceneParameters.clearColor.y, sceneParameters.clearColor.z,
-				  1.0f } };
+		{
+					sceneParameters.clearColor.x,
+					sceneParameters.clearColor.y,
+					sceneParameters.clearColor.z,
+					1.0f
+				}
+			};
 			VkClearValue depthClear;
 			depthClear.depthStencil.depth = 1.f;
 			const VkClearValue clearValues[] = { clearValue, depthClear };

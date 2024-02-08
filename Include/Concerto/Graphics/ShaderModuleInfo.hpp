@@ -22,13 +22,21 @@ namespace Concerto::Graphics
 	class CONCERTO_GRAPHICS_API ShaderModuleInfo
 	{
 	public:
+		ShaderModuleInfo() = delete;
 		ShaderModuleInfo(Device& device, std::string_view path);
+		ShaderModuleInfo(const ShaderModuleInfo&) = delete;
+		ShaderModuleInfo(ShaderModuleInfo&&) = default;
+
+		ShaderModuleInfo& operator=(const ShaderModuleInfo&) = delete;
+		ShaderModuleInfo& operator=(ShaderModuleInfo&&) = default;
 	
 		nzsl::Ast::ModulePtr shaderAst;
 		nzsl::Ast::ModulePtr sanitizedModule;
 		std::vector<UInt32> spirv;
 		std::unique_ptr<ShaderModule> shaderModule;
 		std::unordered_map<UInt32 /*binding set*/, std::vector<VkDescriptorSetLayoutBinding>> bindings;
+		std::string entryPointName;
+		VkShaderStageFlagBits stage;
 	private:
 		VkDescriptorType GetBindingType(const nzsl::Ast::ExpressionType* varType);
 	};
