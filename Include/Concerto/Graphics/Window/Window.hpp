@@ -15,7 +15,7 @@
 #include "Concerto/Graphics/Window/Key.hpp"
 #include "Concerto/Graphics/Window/Input.hpp"
 
-class GLFWwindow;
+struct GLFWwindow;
 
 namespace Concerto::Graphics
 {

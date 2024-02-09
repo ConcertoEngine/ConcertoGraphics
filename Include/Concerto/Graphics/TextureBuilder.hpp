@@ -15,7 +15,6 @@ namespace Concerto::Graphics
 {
 	class UploadContext;
 	class Device;
-	class Allocator;
 	class CommandBuffer;
 	class Queue;
 	class Texture;
@@ -23,7 +22,7 @@ namespace Concerto::Graphics
 	class CONCERTO_GRAPHICS_API TextureBuilder
 	{
 	 public:
-		TextureBuilder(Device& device, Allocator& allocator, CommandBuffer& commandBuffer, UploadContext& uploadContext, Queue& queue);
+		TextureBuilder(Device& device, CommandBuffer& commandBuffer, UploadContext& uploadContext, Queue& queue);
 		~TextureBuilder();
 
 		static TextureBuilder* Instance();

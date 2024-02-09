@@ -81,7 +81,7 @@ namespace Concerto::Graphics
 		layoutInfo.pNext = nullptr;
 
 		layoutInfo.pBindings = _bindings.data();
-		layoutInfo.bindingCount = _bindings.size();
+		layoutInfo.bindingCount = static_cast<UInt32>(_bindings.size());
 
 		layout = _cache.GetLayout(layoutInfo);
 

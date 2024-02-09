@@ -30,7 +30,7 @@ namespace Concerto::Graphics
 		pool_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
 		pool_info.flags = 0;
 		pool_info.maxSets = 1000;
-		pool_info.poolSizeCount = sizes.size();
+		pool_info.poolSizeCount = static_cast<UInt32>(sizes.size());
 		pool_info.pPoolSizes = sizes.data();
 		if (vkCreateDescriptorPool(*device.Get(), &pool_info, nullptr, &_handle) != VK_SUCCESS)
 		{
@@ -49,7 +49,7 @@ namespace Concerto::Graphics
 		pool_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
 		pool_info.flags = 0;
 		pool_info.maxSets = 10;
-		pool_info.poolSizeCount = poolSizes.size();
+		pool_info.poolSizeCount = static_cast<UInt32>(poolSizes.size());
 		pool_info.pPoolSizes = poolSizes.data();
 		if (vkCreateDescriptorPool(*device.Get(), &pool_info, nullptr, &_handle) != VK_SUCCESS)
 		{

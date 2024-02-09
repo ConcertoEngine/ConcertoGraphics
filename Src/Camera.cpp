@@ -50,13 +50,13 @@ namespace Concerto::Graphics
 		_eulerAngles.Pitch() += yoffset;
 
 		// make sure that when pitch is out of bounds, screen doesn't get flipped
-//		if (constrainPitch)
-//		{
-//			if (Pitch > 89.0f)
-//				Pitch = 89.0f;
-//			if (Pitch < -89.0f)
-//				Pitch = -89.0f;
-//		}
+		if (constrainPitch)
+		{
+			if (_eulerAngles.Pitch() > 89.0f)
+				_eulerAngles.Pitch() = 89.0f;
+			if (_eulerAngles.Pitch() < -89.0f)
+				_eulerAngles.Pitch() = -89.0f;
+		}
 
 		updateCameraVectors();
 	}

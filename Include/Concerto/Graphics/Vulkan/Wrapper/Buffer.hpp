@@ -76,7 +76,7 @@ namespace Concerto::Graphics
 	private:
 		UInt32 _mapCount = 0;
 		std::size_t _allocatedSize;
-		Allocator& _allocator;
+		Allocator* _allocator;
 		VmaAllocation _allocation{ VK_NULL_HANDLE };
 	};
 

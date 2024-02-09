@@ -3,10 +3,13 @@
 //
 
 #include <Concerto/Core/Math/Algorithm.hpp>
+#include <Concerto/Core/Assert.hpp>
+
 #include <glm/geometric.hpp>
 #include <glm/gtc/constants.hpp>
 
 #include "Concerto/Graphics/Primitives.hpp"
+
 
 namespace Concerto::Graphics
 {
@@ -273,8 +276,9 @@ namespace Concerto::Graphics
 		return vertices;
 	}
 
-	Vertices Primitive::MakePlane(float size)
+	Vertices Primitive::MakePlane(float /*size*/)
 	{
+		CONCERTO_ASSERT_FALSE; // not implemented
 		return {};
 	}
 }

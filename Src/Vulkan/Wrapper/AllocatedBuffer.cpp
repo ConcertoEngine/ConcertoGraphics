@@ -19,11 +19,11 @@ namespace Concerto::Graphics
 				CONCERTO_ASSERT_FALSE; // trying to destroy a buffer that is mapped
 				Logger::Error("Trying to destroy a buffer that is mapped");
 			}
-			_allocator.GetDevice().WaitIdle();
-			vmaDestroyBuffer(*_allocator.Get(), buffer, _allocation);
+			_allocator->GetDevice().WaitIdle();
+			vmaDestroyBuffer(*_allocator->Get(), buffer, _allocation);
 		}),
 		_allocatedSize(allocSize),
-		_allocator(allocator)
+		_allocator(&allocator)
 	{
 		VkBufferCreateInfo bufferInfo = {};
 		bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
@@ -44,17 +44,20 @@ namespace Concerto::Graphics
 	}
 
 	Buffer::Buffer(Buffer&& other) noexcept :
-		Object(other._allocator.GetDevice()),
+		Object(other._allocator->GetDevice()),
 		_allocatedSize(other._allocatedSize),
 		_allocator(other._allocator)
 	{
-		//_allocator = std::exchange(other._allocator, nullptr);
+		_allocator = std::exchange(other._allocator, nullptr);
 		_handle = std::exchange(other._handle, VK_NULL_HANDLE);
 		_allocation = std::exchange(other._allocation, nullptr);
 	}
 
 	Buffer& Buffer::operator=(Buffer&& other) noexcept
 	{
+		_allocator = std::exchange(other._allocator, nullptr);
+		_handle = std::exchange(other._handle, VK_NULL_HANDLE);
+		_allocation = std::exchange(other._allocation, nullptr);
 		return *this;
 	}
 
@@ -73,7 +76,7 @@ namespace Concerto::Graphics
 
 	bool Buffer::Map(Byte** data)
 	{
-		const auto res = vmaMapMemory(*_allocator.Get(), _allocation, reinterpret_cast<void**>(data));
+		const auto res = vmaMapMemory(*_allocator->Get(), _allocation, reinterpret_cast<void**>(data));
 		if (res != VK_SUCCESS)
 		{
 			CONCERTO_ASSERT_FALSE; //Cannot map memory
@@ -88,7 +91,7 @@ namespace Concerto::Graphics
 		if (_mapCount == 0)
 			CONCERTO_ASSERT_FALSE; // trying to unmap a buffer that is not mapped
 		_mapCount--;
-		vmaUnmapMemory(*_allocator.Get(), _allocation);
+		vmaUnmapMemory(*_allocator->Get(), _allocation);
 	}
 
 	VmaAllocation Buffer::GetAllocation() const
@@ -98,7 +101,8 @@ namespace Concerto::Graphics
 
 	Allocator& Buffer::GetAllocator() const
 	{
-		return _allocator;
+		CONCERTO_ASSERT(_allocator);
+		return *_allocator;
 	}
 
 	std::size_t Buffer::GetAllocatedSize() const

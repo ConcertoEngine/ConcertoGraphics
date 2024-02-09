@@ -171,7 +171,7 @@ namespace Concerto::Graphics
 		vkDescriptorSets.reserve(descriptorSets.size());
 		for (const auto& descriptorSet : descriptorSets)
 			vkDescriptorSets.push_back(*descriptorSet.Get());
-		vkCmdBindDescriptorSets(_commandBuffer, pipelineBindPoint, pipelineLayout, 0, vkDescriptorSets.size(),
+		vkCmdBindDescriptorSets(_commandBuffer, pipelineBindPoint, pipelineLayout, 0, static_cast<UInt32>(vkDescriptorSets.size()),
 			vkDescriptorSets.data(), 0, nullptr);
 	}
 

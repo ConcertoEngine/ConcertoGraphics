@@ -42,7 +42,7 @@ namespace Concerto::Graphics
 		return descriptorSet != nullptr;
 	}
 
-	DescriptorPoolPtr DescriptorAllocator::CreatePool(VkDescriptorPoolCreateFlags flags)
+	DescriptorPoolPtr DescriptorAllocator::CreatePool(VkDescriptorPoolCreateFlags)
 	{
 		std::vector<VkDescriptorPoolSize> sizes;
 		sizes.reserve(_poolSizes.sizes.size());

@@ -49,7 +49,7 @@ namespace Concerto::Graphics
 		ImGui_ImplVulkan_Init(&init_info, *_context.renderPass->Get());
 		ImGui_ImplGlfw_InitForVulkan((GLFWwindow*)window.GetRawWindow(), true);
 		_context.commandBuffer->ImmediateSubmit(*_context.fence, *_context.commandPool, *_context.queue,
-				[](CommandBuffer& cb)
+				[](CommandBuffer&)
 				{
 					ImGui_ImplVulkan_CreateFontsTexture();
 				});

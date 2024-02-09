@@ -23,7 +23,7 @@ namespace Concerto::Graphics
 		createInfo.pNext = nullptr;
 		createInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
 		createInfo.pBindings = _bindings.data();
-		createInfo.bindingCount = _bindings.size();
+		createInfo.bindingCount = static_cast<UInt32>(_bindings.size());
 		if (vkCreateDescriptorSetLayout(*_device->Get(), &createInfo, nullptr, &_handle) != VK_SUCCESS)
 		{
 			CONCERTO_ASSERT_FALSE;

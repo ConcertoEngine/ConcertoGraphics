@@ -14,8 +14,7 @@ namespace Concerto::Graphics
 {
 	TextureBuilder* TextureBuilder::_instance = nullptr;
 
-	TextureBuilder::TextureBuilder(Device& device, Allocator& allocator,
-		CommandBuffer& commandBuffer, UploadContext& uploadContext, Queue& queue) :
+	TextureBuilder::TextureBuilder(Device& device, CommandBuffer& commandBuffer, UploadContext& uploadContext, Queue& queue) :
 		_device(device),
 		_commandBuffer(commandBuffer),
 		_uploadContext(uploadContext),

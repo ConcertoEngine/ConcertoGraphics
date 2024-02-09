@@ -71,9 +71,9 @@ namespace Concerto::Graphics
 			DescriptorLayoutInfo layoutInfo;
 			layoutInfo.bindings.reserve(createInfo.bindingCount);
 			bool isSorted = true;
-			int lastBinding = -1;
+			UInt32 lastBinding = -1;
 
-			for (int i = 0; i < createInfo.bindingCount; i++)
+			for (UInt32 i = 0; i < createInfo.bindingCount; i++)
 			{
 				layoutInfo.bindings.push_back(createInfo.pBindings[i]);
 

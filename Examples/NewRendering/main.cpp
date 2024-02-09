@@ -176,7 +176,7 @@ int main()
 		Swapchain swapchain(*device, window);
 		RenderPass* renderPass = swapchain.GetRenderPass();
 		MaterialBuilder materialBuilder(*device);
-		TextureBuilder textureBuilder(*device, allocator, uploadContext._commandBuffer, uploadContext, graphicsQueue);
+		TextureBuilder textureBuilder(*device, uploadContext._commandBuffer, uploadContext, graphicsQueue);
 
 		Mesh mesh("./assets/sponza/sponza.obj");
 

@@ -7,6 +7,10 @@
 
 #include <Concerto/Core/Types.hpp>
 
+#ifdef CONCERTO_COMPILER_MSVC
+#pragma warning(disable: 4251) // Disable warning about DLL interface needed
+#endif
+
 #ifdef CONCERTO_GRAPHICS_BUILD
 	#define CONCERTO_GRAPHICS_API CONCERTO_EXPORT
 #else

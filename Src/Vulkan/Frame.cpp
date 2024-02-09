@@ -9,7 +9,6 @@
 
 namespace Concerto::Graphics
 {
-	using namespace Concerto::Graphics;
 	FrameData::FrameData(Device& device, bool signaled) :
 		presentSemaphore(device),
 		renderSemaphore(device),

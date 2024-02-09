@@ -16,7 +16,7 @@
 namespace Concerto::Graphics
 {
 	Allocator::Allocator(PhysicalDevice& physicalDevice, Device& device, Instance& instance) :
-		Object<VmaAllocator>(device, [](Device &device, VmaAllocator handle)
+		Object<VmaAllocator>(device, [](Device &, VmaAllocator handle)
 			{
 				vmaDestroyAllocator(handle);
 			})
