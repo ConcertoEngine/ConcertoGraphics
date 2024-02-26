@@ -45,14 +45,10 @@ namespace Concerto::Graphics
 				return false;
 			}
 		}
-		if (!reader.Warning().empty())
-		{
-			Logger::Error("TinyObjReader: {}", reader.Warning());
-		}
 
 		if (!err.empty())
 		{
-			std::cerr << err << std::endl;
+			Logger::Error("Error while loading Obj file '{}': {}", fileName, err);
 			return false;
 		}
 

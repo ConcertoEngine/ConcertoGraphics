@@ -1,10 +1,8 @@
 //
 // Created by arthur on 21/03/2023.
 //
-#define GLM_ENABLE_EXPERIMENTAL
+
 #include "Concerto/Graphics/Camera.hpp"
-#include "glm/gtx/quaternion.hpp"
-#include "glm/gtx/string_cast.hpp"
 
 namespace Concerto::Graphics
 {
