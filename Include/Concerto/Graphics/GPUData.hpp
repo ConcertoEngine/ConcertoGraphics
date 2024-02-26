@@ -5,36 +5,36 @@
 #ifndef CONCERTO_GRAPHICS_GPUDATA_HPP
 #define CONCERTO_GRAPHICS_GPUDATA_HPP
 
-#include <glm/vec4.hpp>
-#include <glm/mat4x4.hpp>
+#include <Concerto/Core/Math/Matrix.hpp>
+#include <Concerto/Core/Math/Vector.hpp>
 
 namespace Concerto::Graphics
 {
 	struct GPUCamera
 	{
-		glm::mat4 viewMatrix;
-		glm::mat4 projectionMatrix;
-		glm::mat4 viewProjectionMatrix;
+		Matrix4f viewMatrix;
+		Matrix4f projectionMatrix;
+		Matrix4f viewProjectionMatrix;
 	};
 
 	struct GPUObjectData
 	{
-		glm::mat4 modelMatrix;
+		Matrix4f modelMatrix;
 	};
 
 	struct GPUSceneData
 	{
-		glm::vec4 fogColor; // w is for exponent
-		glm::vec4 fogDistances; //x for min, y for max, zw unused.
-		glm::vec4 ambientColor;
-		glm::vec4 sunlightDirection; //w for sun power
-		glm::vec4 sunlightColor;
+		Vector4f fogColor; // w is for exponent
+		Vector4f fogDistances; //x for min, y for max, zw unused.
+		Vector4f ambientColor;
+		Vector4f sunlightDirection; //w for sun power
+		Vector4f sunlightColor;
 	};
 
 	struct Scene
 	{
 		GPUSceneData gpuSceneData;
-		glm::vec4 clearColor;
+		Vector4f clearColor;
 	};
 }
 #endif //CONCERTO_GRAPHICS_GPUDATA_HPP

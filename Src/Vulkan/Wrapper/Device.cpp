@@ -160,7 +160,7 @@ namespace Concerto::Graphics
 
 	Allocator& Device::GetAllocator()
 	{
-		CONCERTO_ASSERT(_allocator != nullptr)
+		CONCERTO_ASSERT(_allocator != nullptr);
 		return *_allocator;
 	}
 

@@ -46,7 +46,7 @@ namespace Concerto::Graphics
 		init_info.ImageCount = _context.imageCount;
 		init_info.MSAASamples = _context.MSAASamples;
 		init_info.Subpass = _context.subPass;
-		ImGui_ImplVulkan_Init(&init_info, *_context.renderPass->Get());
+		ImGui_ImplVulkan_Init(&init_info);
 		ImGui_ImplGlfw_InitForVulkan((GLFWwindow*)window.GetRawWindow(), true);
 		_context.commandBuffer->ImmediateSubmit(*_context.fence, *_context.commandPool, *_context.queue,
 				[](CommandBuffer&)

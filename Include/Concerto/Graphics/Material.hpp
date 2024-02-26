@@ -8,8 +8,7 @@
 #include <string>
 #include <memory>
 
-#include <glm/vec3.hpp>
-#include <glm/gtx/hash.hpp>
+#include <Concerto/Core/Math/Vector.hpp>
 
 #include "Concerto/Graphics/Vulkan/Texture.hpp"
 
@@ -23,14 +22,8 @@ namespace Concerto::Graphics
 			std::size_t operator()(const MaterialInfo& material) const
 			{
 				std::size_t h1 = std::hash<std::string>{}(material.diffuseTexturePath);
-				std::size_t h2 = std::hash<glm::vec3>{}(material.diffuseColor);
-				std::size_t h3 = std::hash<float>{}(material.metallic);
-				std::size_t h4 = std::hash<glm::vec3>{}(material.specular);
-				std::size_t h5 = std::hash<float>{}(material.roughness);
-				std::size_t h6 = std::hash<float>{}(material.anisotropy);
-				std::size_t h7 = std::hash<glm::vec3>{}(material.emissiveColor);
-				std::size_t h8 = std::hash<std::string>{}(material.normalTexturePath);
-				return h1 ^ (h2 << 1) ^ (h3 << 2) ^ (h4 << 3) ^ (h5 << 4) ^ (h6 << 5) ^ (h7 << 6) ^ (h8 << 7);
+				std::size_t h2 = std::hash<std::string>{}(material.normalTexturePath);
+				return h1 ^ (h2 << 1);
 			}
 		};
 		MaterialInfo() = default;
@@ -44,12 +37,12 @@ namespace Concerto::Graphics
 
 		TexturePtr diffuseTexture;
 		std::string diffuseTexturePath;
-		glm::vec3 diffuseColor;
+		Vector3f diffuseColor;
 		float metallic = 0.0f;
-		glm::vec3 specular;
+		Vector3f specular;
 		float roughness = 0.0f;
 		float anisotropy = 0.0f;
-		glm::vec3 emissiveColor;
+		Vector3f emissiveColor;
 		TexturePtr normalTexture;
 		std::string normalTexturePath;
 		std::string name;

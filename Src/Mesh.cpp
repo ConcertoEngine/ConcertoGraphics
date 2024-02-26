@@ -68,18 +68,18 @@ namespace Concerto::Graphics
 			std::shared_ptr<MaterialInfo> mat = std::make_shared<MaterialInfo>();
 			mat->diffuseTexturePath = material.diffuse_texname.empty() ? "" : (path / material.diffuse_texname).string();
 			mat->normalTexturePath = material.normal_texname.empty() ? "" : (path / material.normal_texname).string();
-			mat->diffuseColor.x = material.diffuse[0];
-			mat->diffuseColor.y = material.diffuse[1];
-			mat->diffuseColor.z = material.diffuse[2];
+			//mat->diffuseColor.x = material.diffuse[0];
+			//mat->diffuseColor.y = material.diffuse[1];
+			//mat->diffuseColor.z = material.diffuse[2];
 			mat->metallic = material.metallic;
-			mat->specular.x = material.specular[0];
-			mat->specular.y = material.specular[1];
-			mat->specular.z = material.specular[2];
+			//mat->specular.x = material.specular[0];
+			//mat->specular.y = material.specular[1];
+			//mat->specular.z = material.specular[2];
 			mat->roughness = material.roughness;
 			mat->anisotropy = material.anisotropy;
-			mat->emissiveColor.x = material.emission[0];
-			mat->emissiveColor.y = material.emission[1];
-			mat->emissiveColor.z = material.emission[2];
+			//mat->emissiveColor.x = material.emission[0];
+			//mat->emissiveColor.y = material.emission[1];
+			//mat->emissiveColor.z = material.emission[2];
 			mat->name = material.name;
 			_materials[material.name] = std::move(mat);
 			++i;
@@ -120,10 +120,10 @@ namespace Concerto::Graphics
 					tinyobj::real_t ux = attrib.texcoords[2 * idx.texcoord_index + 0];
 					tinyobj::real_t uy = attrib.texcoords[2 * idx.texcoord_index + 1];
 
-					currentSubMesh->GetVertices().emplace_back(Vertex{ { vx, vy, vz },
-																	  { nx, ny, nz },
-																	  { nx, ny, nz },
-																	  { ux, 1 - uy } });
+					currentSubMesh->GetVertices().emplace_back(Vertex{ Vector3f{ vx, vy, vz },
+																	  Vector3f{ nx, ny, nz },
+																	  Vector3f{ nx, ny, nz },
+																	  Vector2f{ ux, 1 - uy } });
 				}
 				index_offset += fv;
 			}

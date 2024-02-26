@@ -5,9 +5,11 @@
 #ifndef CONCERTO_GRAPHICS_VERTEX_HPP
 #define CONCERTO_GRAPHICS_VERTEX_HPP
 
-#include <glm/vec2.hpp>
-#include <glm/vec3.hpp>
+#include <vector>
+
 #include <vulkan/vulkan.hpp>
+#include <Concerto/Core/Math/Vector.hpp>
+
 #include "Concerto/Graphics/Defines.hpp"
 
 namespace Concerto::Graphics
@@ -24,10 +26,10 @@ namespace Concerto::Graphics
 
 	struct CONCERTO_GRAPHICS_API Vertex
 	{
-		glm::vec3 position;
-		glm::vec3 normal;
-		glm::vec3 color;
-		glm::vec2 uv;
+		Vector3f position;
+		Vector3f normal;
+		Vector3f color;
+		Vector2f uv;
 
 		static VertexInputDescription GetVertexDescription();
 	};

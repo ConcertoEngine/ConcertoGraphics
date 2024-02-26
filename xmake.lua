@@ -2,7 +2,7 @@ add_rules('mode.debug')
 add_repositories('Concerto-xrepo https://github.com/ConcertoEngine/xmake-repo.git main')
 add_repositories("nazara-repo https://github.com/NazaraEngine/xmake-repo")
 add_requires('imgui', {configs = {glfw_vulkan = true}})
-add_requires('ConcertoCore', 'vulkan-loader', 'vulkan-memory-allocator', 'glm', 'stb', 'glfw', 'nzsl')
+add_requires('ConcertoCore', 'vulkan-loader', 'vulkan-memory-allocator', 'stb', 'glfw', 'nzsl')
 
 if (has_config('examples')) then
     add_requires("glslang", {configs = {binaryonly = true}})
@@ -39,13 +39,11 @@ target('ConcertoGraphics')
     add_packages('ConcertoCore',
                  'vulkan-loader',
                  'vulkan-memory-allocator',
-                 'glm',
                  'stb',
                  'glfw',
                  'imgui',
                  'nzsl',
                  { public = true })
-    add_defines("GLM_ENABLE_EXPERIMENTAL")
 
 includes('Xmake/Rules/*.lua')
 includes('Examples/xmake.lua')

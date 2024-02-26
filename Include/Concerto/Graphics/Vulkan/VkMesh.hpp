@@ -7,7 +7,8 @@
 
 #include <memory>
 #include <vector>
-#include <glm/mat4x4.hpp>
+
+#include <Concerto/Core/Math/Matrix.hpp>
 
 #include "Concerto/Graphics/Vulkan/VkSubMesh.hpp"
 
@@ -17,7 +18,7 @@ namespace Concerto::Graphics
 	{
 	public:
 		std::vector<VkSubMeshPtr> subMeshes;
-		glm::mat4 transformMatrix;
+		Matrix4f transformMatrix;
 	};
 	using VkMeshPtr = std::shared_ptr<VkMesh>;
 }

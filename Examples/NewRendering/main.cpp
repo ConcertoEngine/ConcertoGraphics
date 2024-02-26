@@ -123,8 +123,8 @@ void PrintPhysicalDeviceMemoryProperties(const PhysicalDevice& physicalDevice) {
 	Logger::Info("Memory Heaps: {}", memoryProperties.memoryHeapCount);
 	for (uint32_t i = 0; i < memoryProperties.memoryHeapCount; ++i)
 	{
-		Logger::Info("  Heap {}: Size {} MB ({} GB), Flags {}", std::to_string(i), 
-			std::to_string(static_cast<float>(memoryProperties.memoryHeaps[i].size) / (1024.f * 1024.f)), 
+		Logger::Info("  Heap {}: Size {} MB ({} GB), Flags {}", std::to_string(i),
+			std::to_string(static_cast<float>(memoryProperties.memoryHeaps[i].size) / (1024.f * 1024.f)),
 			std::to_string(static_cast<float>(memoryProperties.memoryHeaps[i].size) / (1024.f * 1024.f * 1024.f)),
 			GetMemoryHeapFlagsString(memoryProperties.memoryHeaps[i].flags));
 
@@ -200,25 +200,25 @@ int main()
 
 		const Vector3f position(0.f, 0.f, 0.f);
 		const EulerAnglesf rotation(0, 0, 0);
-		const Vector3f scale(0.1f, 0.1f, 0.1f);
-		auto modelMatrix = glm::mat4(1.0f);
-		modelMatrix = translate(modelMatrix, glm::vec3(position.X(), position.Y(), position.Z()));
-		modelMatrix = rotate(modelMatrix, glm::radians(rotation.Yaw()), glm::vec3(1.0f, 0.0f, 0.0f));
-		modelMatrix = rotate(modelMatrix, glm::radians(rotation.Pitch()), glm::vec3(0.0f, 1.0f, 0.0f));
-		modelMatrix = rotate(modelMatrix, glm::radians(rotation.Roll()), glm::vec3(0.0f, 0.0f, 1.0f));
-		modelMatrix = glm::scale(modelMatrix, glm::vec3(scale.X(), scale.Y(), scale.Z()));
+		const Vector3f scale(10.f, 10.f, 10.f);
+		auto modelMatrix = Matrix4f::Identity();
+		modelMatrix *= position.ToTranslationMatrix();
+		modelMatrix *= rotation.ToQuaternion().ToRotationMatrix<Matrix4f>();
+		modelMatrix *= scale.ToScalingMatrix();
 
 		float aspect = static_cast<float>(window.GetWidth()) / static_cast<float>(window.GetHeight());
 		float deltaTime = 0.f;
-		Camera camera(90.f, 0.1f, 1000000.f, aspect);
+		Camera camera(ToRadians(90.f), 0.1f, 1000000.f, aspect);
 		bool cursorDisabled = false;
-		float speed = 150.f;
+		float speed = 15000.f;
 		window.SetCursorDisabled(cursorDisabled);
 		window.RegisterResizeCallback([&](Window& window)
 		{
 			aspect = static_cast<float>(window.GetWidth()) / static_cast<float>(window.GetHeight());
-			camera.projectionMatrix = glm::perspective(45.f, aspect, 0.1f, 1000.f);
-			camera.viewProjectionMatrix = camera.projectionMatrix * camera.viewMatrix * glm::mat4(1.f);
+			camera.SetAspectRatio(aspect);
+			camera.SetFov(45.f);
+			camera.SetNear(0.0001f);
+			camera.SetFar(1000.f);
 		});
 		inputManager.Register("MouseMoved", MouseEvent::Type::Moved, [&camera](const MouseEvent& e)
 		{
@@ -227,22 +227,22 @@ int main()
 
 		inputManager.Register("Forward", Key::Z, TriggerType::Held, [&camera, &speed, &deltaTime]()
 		{
-			camera.Move(FreeFlyCameraMovement::Forward, deltaTime * speed);
+			camera.Move(Camera::CameraMovement::Forward, deltaTime * speed);
 		});
 
 		inputManager.Register("Backward", Key::S, TriggerType::Held, [&camera, &speed, &deltaTime]()
 		{
-			camera.Move(FreeFlyCameraMovement::Backward, deltaTime * speed);
+			camera.Move(Camera::CameraMovement::Backward, deltaTime * speed);
 		});
 
 		inputManager.Register("Left", Key::Q, TriggerType::Held, [&camera, &speed, &deltaTime]()
 		{
-			camera.Move(FreeFlyCameraMovement::Left, deltaTime * speed);
+			camera.Move(Camera::CameraMovement::Left, deltaTime * speed);
 		});
 
 		inputManager.Register("Right", Key::D, TriggerType::Held, [&camera, &speed, &deltaTime]()
 		{
-			camera.Move(FreeFlyCameraMovement::Right, deltaTime * speed);
+			camera.Move(Camera::CameraMovement::Right, deltaTime * speed);
 		});
 
 		inputManager.Register("MouseFocused", Key::LeftAlt, TriggerType::Pressed, [&cursorDisabled, &window]()
@@ -253,10 +253,10 @@ int main()
 		std::size_t frameNumber = 0;
 
 		Scene sceneParameters = {};
-		sceneParameters.gpuSceneData.sunlightDirection = { 3.1f, 1.f, -1.f, 0 };
-		sceneParameters.gpuSceneData.ambientColor = { 0.f, 0.f, 0.f, 1.f };
-		sceneParameters.gpuSceneData.sunlightColor = { 255.f, 109.f, 39.f, 1.f };
-		sceneParameters.clearColor = { 0.1f, 0.1f, 0.1f, 1.f };
+		sceneParameters.gpuSceneData.sunlightDirection = Vector4f{ 3.1f, 1.f, -1.f, 0 };
+		sceneParameters.gpuSceneData.ambientColor = Vector4f{ 0.f, 0.f, 0.f, 1.f };
+		sceneParameters.gpuSceneData.sunlightColor = Vector4f{ 255.f, 109.f, 39.f, 1.f };
+		sceneParameters.clearColor = Vector4f{ 0.1f, 0.1f, 0.1f, 1.f };
 
 		Graphics::Buffer cameraBuffer(MakeBuffer<GPUCamera>(allocator, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VMA_MEMORY_USAGE_CPU_TO_GPU));
 		Graphics::Buffer sceneBuffer(MakeBuffer<Scene>(allocator, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VMA_MEMORY_USAGE_CPU_TO_GPU));
@@ -303,7 +303,7 @@ int main()
 
 
 		auto transfersFunction = [&](FrameData& frame, UInt32 uniformOffset) {
-			cameraBuffer.Copy(camera);
+			cameraBuffer.Copy<GPUCamera>(camera);
 			sceneBuffer.Copy(sceneParameters.gpuSceneData, PadUniformBuffer(sizeof(GPUSceneData), minimumAlignment * (frameNumber % 2)));
 			objectsBuffer.Copy(modelMatrix);
 			auto* drawIndirectCommand = frame.indirectBuffer.Map<VkDrawIndirectCommand>();
@@ -339,7 +339,7 @@ int main()
 				frame.commandBuffer.DrawIndirect(frame.indirectBuffer, sizeof(VkDrawIndirectCommand) * i, drawIndirectCommand[i].instanceCount, sizeof(VkDrawIndirectCommand));
 				++i;
 			}
-		};
+			};
 
 		VkViewport viewport{
 			.width = static_cast<float>(info.width),
@@ -352,47 +352,48 @@ int main()
 		dynamicScissor.extent = { info.width, info.height };
 
 		auto presentFunction = [&](FrameData& frame, const UInt32 uniformOffset)
-		{
-			frame.renderFence.Wait(-1);
-			frame.renderFence.Reset();
-			VkClearValue clearValue;
-			clearValue.color = {
-		{
-					sceneParameters.clearColor.x,
-					sceneParameters.clearColor.y,
-					sceneParameters.clearColor.z,
-					1.0f
+			{
+				frame.renderFence.Wait(-1);
+				frame.renderFence.Reset();
+				VkClearValue clearValue;
+				clearValue.color = {
+			{
+						sceneParameters.clearColor.X(),
+						sceneParameters.clearColor.Y(),
+						sceneParameters.clearColor.Z(),
+						1.0f
+					}
+				};
+				VkClearValue depthClear;
+				depthClear.depthStencil.depth = 1.f;
+				const VkClearValue clearValues[] = { clearValue, depthClear };
+				VkRenderPassBeginInfo rpInfo = VulkanInitializer::RenderPassBeginInfo(*renderPass->Get(), { info.width, info.height }, *swapchain.GetCurrentFrameBuffer().Get());
+				rpInfo.clearValueCount = 2;
+				rpInfo.pClearValues = &clearValues[0];
+				frame.commandBuffer.Reset();
+				frame.commandBuffer.Begin();
+				{
+					frame.commandBuffer.SetViewport(viewport);
+					frame.commandBuffer.SetScissor(dynamicScissor);
+					frame.commandBuffer.BeginRenderPass(rpInfo);
+					{
+						transfersFunction(frame, uniformOffset);
+					}
+					frame.commandBuffer.EndRenderPass();
+				}
+				frame.commandBuffer.End();
+
+				graphicsQueue.Submit(frame);
+				if (!graphicsQueue.Present(frame, swapchain, swapchain.GetCurrentImageIndex()))
+				{
+					CONCERTO_ASSERT_FALSE; // need resize
+					return;
 				}
 			};
-			VkClearValue depthClear;
-			depthClear.depthStencil.depth = 1.f;
-			const VkClearValue clearValues[] = { clearValue, depthClear };
-			VkRenderPassBeginInfo rpInfo = VulkanInitializer::RenderPassBeginInfo(*renderPass->Get(), { info.width, info.height }, *swapchain.GetCurrentFrameBuffer().Get());
-			rpInfo.clearValueCount = 2;
-			rpInfo.pClearValues = &clearValues[0];
-			frame.commandBuffer.Reset();
-			frame.commandBuffer.Begin();
-			{
-				frame.commandBuffer.SetViewport(viewport);
-				frame.commandBuffer.SetScissor(dynamicScissor);
-				frame.commandBuffer.BeginRenderPass(rpInfo);
-				{
-					transfersFunction(frame, uniformOffset);
-				}
-				frame.commandBuffer.EndRenderPass();
-			}
-			frame.commandBuffer.End();
-
-			graphicsQueue.Submit(frame);
-			if (!graphicsQueue.Present(frame, swapchain, swapchain.GetCurrentImageIndex()))
-			{
-				CONCERTO_ASSERT_FALSE; // need resize
-				return;
-			}
-		};
 		std::chrono::steady_clock::time_point lastFrameTime = std::chrono::steady_clock::now();
 		while (!window.ShouldClose())
 		{
+			camera.UpdateViewProjectionMatrix();
 			auto beginTime = std::chrono::high_resolution_clock::now();
 			deltaTime = std::chrono::duration<float>(beginTime - lastFrameTime).count();
 			lastFrameTime = beginTime;
