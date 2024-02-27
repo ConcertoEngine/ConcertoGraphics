@@ -15,7 +15,7 @@
 namespace Concerto::Graphics
 {
 	class Device;
-	class VkMesh;
+	class GpuMesh;
 	class MaterialInfo;
 
 	class CONCERTO_GRAPHICS_API Mesh

@@ -33,6 +33,7 @@
 #include <Concerto/Graphics/Camera.hpp>
 #include <Concerto/Graphics/Window/Input.hpp>
 #include "Concerto/Graphics/TextureBuilder.hpp"
+#include <Concerto/Graphics/ImGUI.hpp>
 
 #include <Vulkan.hpp>
 #include <GLFW/glfw3.h>
