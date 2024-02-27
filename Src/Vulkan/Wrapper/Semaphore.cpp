@@ -14,8 +14,7 @@
 namespace Concerto::Graphics
 {
 
-	Semaphore::Semaphore(Device& device) : Object<VkSemaphore>(device, [](Device &device, VkSemaphore handle)
-	{ vkDestroySemaphore(*device.Get(), handle, nullptr); })
+	Semaphore::Semaphore(Device& device) : Object(device)
 	{
 		VkSemaphoreCreateInfo info = {};
 		info.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
@@ -26,5 +25,12 @@ namespace Concerto::Graphics
 			CONCERTO_ASSERT_FALSE;
 			throw std::runtime_error("Failed to create semaphore");
 		}
+	}
+
+	Semaphore::~Semaphore()
+	{
+		if (IsNull())
+			return;
+		vkDestroySemaphore(*_device->Get(), _handle, nullptr);
 	}
 } // namespace Concerto::Graphics

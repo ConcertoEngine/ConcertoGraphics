@@ -33,6 +33,8 @@ namespace Concerto::Graphics
 		*/
 		explicit Fence(Device& device, bool signaled = true);
 
+		~Fence();
+
 		Fence(Fence&&) = default;
 
 		Fence(const Fence&) = delete;

@@ -14,23 +14,12 @@
 namespace Concerto::Graphics
 {
 	template<typename VkType>
-	Object<VkType>::Object(Device& device) : _device(&device)
-	{
-
-	}
-
-	template<typename VkType>
-	Object<VkType>::Object(Device& device, DestroyHelper&& destroyHelper) :
+	Object<VkType>::Object(Device& device) :
+		_handle(VK_NULL_HANDLE),
 		_device(&device),
-		_destroyHelper(std::move(destroyHelper))
+		_lastResult(VK_SUCCESS)
 	{
-	}
 
-	template<typename VkType>
-	Object<VkType>::~Object()
-	{
-		if (!IsNull() && _device != nullptr && _destroyHelper)
-			_destroyHelper(*_device, _handle);
 	}
 
 	template<typename VkType>
@@ -38,8 +27,7 @@ namespace Concerto::Graphics
 	{
 		_handle = std::exchange(other._handle, VK_NULL_HANDLE);
 		_device = std::exchange(other._device, nullptr);
-		if (other._destroyHelper)
-			_destroyHelper = std::exchange(other._destroyHelper, nullptr);
+		_lastResult = std::exchange(other._lastResult, VK_SUCCESS);
 	}
 
 	template<typename VkType>
@@ -47,8 +35,6 @@ namespace Concerto::Graphics
 	{
 		_handle = std::exchange(other._handle, VK_NULL_HANDLE);
 		_device = std::exchange(other._device, nullptr);
-		if (other._destroyHelper)
-			_destroyHelper = std::exchange(other._destroyHelper, nullptr);
 		return *this;
 	}
 

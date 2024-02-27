@@ -29,6 +29,8 @@ namespace Concerto::Graphics
 	public:
 		PipelineLayout(Device& device, std::vector<std::shared_ptr<DescriptorSetLayout>> descriptorSetLayouts);
 
+		~PipelineLayout();
+
 		PipelineLayout(PipelineLayout&&) = default;
 
 		PipelineLayout(const PipelineLayout&) = delete;

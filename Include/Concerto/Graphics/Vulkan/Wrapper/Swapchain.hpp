@@ -41,7 +41,7 @@ namespace Concerto::Graphics
 		 */
 		Swapchain(Device& device, Window& window);
 
-		~Swapchain() = default;
+		~Swapchain();
 
 		Swapchain(Swapchain&&) noexcept = default;
 

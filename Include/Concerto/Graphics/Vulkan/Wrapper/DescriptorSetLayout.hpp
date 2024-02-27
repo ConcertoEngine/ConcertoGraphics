@@ -36,7 +36,7 @@ namespace Concerto::Graphics
 
 		DescriptorSetLayout& operator=(DescriptorSetLayout&&) = default;
 
-		~DescriptorSetLayout() = default;
+		~DescriptorSetLayout();
 
 		[[nodiscard]] const std::vector<VkDescriptorSetLayoutBinding>& GetBindings() const;
 

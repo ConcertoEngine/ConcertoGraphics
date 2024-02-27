@@ -12,8 +12,7 @@ namespace Concerto::Graphics
 {
 
 	PipelineLayout::PipelineLayout(Device& device, std::vector<std::shared_ptr<DescriptorSetLayout>> descriptorSetLayouts) :
-		Object<VkPipelineLayout>(device, [](Device &device, VkPipelineLayout handle)
-			{ vkDestroyPipelineLayout(*device.Get(), handle, nullptr); }),
+		Object(device),
 		_descriptorSetLayouts(std::move(descriptorSetLayouts))
 	{
 		std::vector<VkDescriptorSetLayout> vkDescriptorSetLayouts;
@@ -35,6 +34,13 @@ namespace Concerto::Graphics
 			CONCERTO_ASSERT_FALSE;
 			throw std::runtime_error("failed to create pipeline layout!");
 		}
+	}
+
+	PipelineLayout::~PipelineLayout()
+	{
+		if (IsNull())
+			return;
+		vkDestroyPipelineLayout(*_device->Get(), _handle, nullptr);
 	}
 
 	const std::vector<std::shared_ptr<DescriptorSetLayout>>& PipelineLayout::GetDescriptorSetLayouts() const

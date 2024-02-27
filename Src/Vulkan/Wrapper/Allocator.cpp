@@ -16,10 +16,7 @@
 namespace Concerto::Graphics
 {
 	Allocator::Allocator(PhysicalDevice& physicalDevice, Device& device, Instance& instance) :
-		Object<VmaAllocator>(device, [](Device &, VmaAllocator handle)
-			{
-				vmaDestroyAllocator(handle);
-			})
+		Object<VmaAllocator>(device)
 	{
 		VmaVulkanFunctions vulkanFunctions {
 			.vkGetInstanceProcAddr = vkGetInstanceProcAddr,
@@ -55,9 +52,16 @@ namespace Concerto::Graphics
 		}
 	}
 
+	Allocator::~Allocator()
+	{
+		if (IsNull())
+			return;
+		vmaDestroyAllocator(_handle);
+	}
+
 	Device& Allocator::GetDevice() const
 	{
-		assert(_device != nullptr);
+		CONCERTO_ASSERT(_device != nullptr);
 		return *_device;
 	}
 

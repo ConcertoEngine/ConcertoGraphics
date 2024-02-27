@@ -21,19 +21,10 @@ namespace Concerto::Graphics
 	class Object
 	{
 	public:
-		using DestroyHelper = std::function<void(Device&, vkType)>;
 		/**
 		 * @brief Default constructor.
-		 * @attention If you need to clean up the object by calling a Vulkan function, you mustn't use this constructor.
 		*/
 		explicit Object(Device& device);
-
-		/**
-		 * @brief Constructor.
-		 * @param device The device.
-		 * @param destroyHelper The function that will be called to clean up the object.
-		 */
-		explicit Object(Device& device, DestroyHelper&& destroyHelper);
 
 		Object(const Object&) = delete;
 
@@ -43,7 +34,7 @@ namespace Concerto::Graphics
 
 		Object& operator=(Object&&) noexcept;
 
-		~Object();
+		~Object() = default;
 
 		/**
 		 * @brief Get the handle of the object
@@ -64,11 +55,9 @@ namespace Concerto::Graphics
 		[[nodiscard]] VkResult GetLastResult() const;
 
 	protected:
-		vkType _handle{ VK_NULL_HANDLE };
-		Device* _device{ nullptr };
-		VkResult _lastResult{ VK_SUCCESS };
-	private:
-		DestroyHelper _destroyHelper;
+		vkType _handle;
+		Device* _device;
+		VkResult _lastResult;
 	};
 }
 

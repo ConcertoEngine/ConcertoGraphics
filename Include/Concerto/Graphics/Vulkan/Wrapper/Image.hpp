@@ -58,6 +58,8 @@ namespace Concerto::Graphics
 		*/
 		Image(Device& device, const std::string& file, CommandBuffer& commandBuffer, UploadContext& uploadContext, Queue& queue);
 
+		~Image();
+
 		Image(Image&&) = default;
 
 		Image(const Image&) = delete;

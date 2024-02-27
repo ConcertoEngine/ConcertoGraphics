@@ -12,16 +12,7 @@ namespace Concerto::Graphics
 {
 
 	Buffer::Buffer(Allocator& allocator, std::size_t allocSize, VkBufferUsageFlags usage, VmaMemoryUsage memoryUsage) :
-		Object(allocator.GetDevice(), [&](Device&, VkBuffer buffer)
-		{
-			if (_mapCount != 0)
-			{
-				CONCERTO_ASSERT_FALSE; // trying to destroy a buffer that is mapped
-				Logger::Error("Trying to destroy a buffer that is mapped");
-			}
-			_allocator->GetDevice().WaitIdle();
-			vmaDestroyBuffer(*_allocator->Get(), buffer, _allocation);
-		}),
+		Object(allocator.GetDevice()),
 		_allocatedSize(allocSize),
 		_allocator(&allocator)
 	{
@@ -59,6 +50,19 @@ namespace Concerto::Graphics
 		_handle = std::exchange(other._handle, VK_NULL_HANDLE);
 		_allocation = std::exchange(other._allocation, nullptr);
 		return *this;
+	}
+
+	Buffer::~Buffer()
+	{
+		if (IsNull())
+			return;
+		if (_mapCount != 0)
+		{
+			CONCERTO_ASSERT_FALSE; // trying to destroy a buffer that is mapped
+			Logger::Error("Trying to destroy a buffer that is mapped");
+		}
+		_allocator->GetDevice().WaitIdle();
+		vmaDestroyBuffer(*_allocator->Get(), _handle, _allocation);
 	}
 
 	void Buffer::Copy(void* object, std::size_t size, std::size_t padding)

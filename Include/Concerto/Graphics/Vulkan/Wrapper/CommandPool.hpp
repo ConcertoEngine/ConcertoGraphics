@@ -37,7 +37,7 @@ namespace Concerto::Graphics
 		*/
 		CommandPool(Device& device, UInt32 queueFamily);
 
-		~CommandPool() = default;
+		~CommandPool();
 
 		CommandPool(CommandPool&&) = default;
 

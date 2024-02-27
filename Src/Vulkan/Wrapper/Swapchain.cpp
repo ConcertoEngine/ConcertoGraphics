@@ -18,7 +18,7 @@ namespace Concerto::Graphics
 {
 
 	Swapchain::Swapchain(Device& device, Window& window)
-			: Object<VkSwapchainKHR>(device, [](Device &device, VkSwapchainKHR handle){vkDestroySwapchainKHR(*device.Get(), handle, nullptr);}),
+			: Object(device),
 			  _swapChainImages(),
 			  _swapChainImageViews(),
 			  _windowExtent({window.GetWidth(), window.GetHeight()}),
@@ -58,6 +58,13 @@ namespace Concerto::Graphics
 		}
 		CreateRenderPass();
 		CreateFrameBuffers();
+	}
+
+	Swapchain::~Swapchain()
+	{
+		if (IsNull())
+			return;
+		vkDestroySwapchainKHR(*_device->Get(), _handle, nullptr);
 	}
 
 	std::span<Image> Swapchain::GetImages()

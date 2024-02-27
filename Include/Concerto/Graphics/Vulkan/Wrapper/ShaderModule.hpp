@@ -37,6 +37,8 @@ namespace Concerto::Graphics
 
 		ShaderModule(Device& device, const std::vector<UInt32>& bytes, VkShaderStageFlagBits stageFlags, std::string entryPoint = "main");
 
+		~ShaderModule();
+
 		ShaderModule(ShaderModule&&) = default;
 
 		ShaderModule(const ShaderModule&) = delete;

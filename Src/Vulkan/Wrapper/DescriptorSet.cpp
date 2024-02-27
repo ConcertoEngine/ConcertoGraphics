@@ -17,11 +17,8 @@
 namespace Concerto::Graphics
 {
 	DescriptorSet::DescriptorSet(Device& device, DescriptorPool& pool, const DescriptorSetLayout& descriptorSetLayout) :
-		Object<VkDescriptorSet>(device, [this](Device& device, VkDescriptorSet handle)
-			{
-				if (_pool != nullptr)
-					vkFreeDescriptorSets(*device.Get(), *_pool->Get(), 1, &handle);
-			}), _pool(&pool)
+		Object(device),
+		_pool(&pool)
 	{
 		VkDescriptorSetAllocateInfo allocInfo = {};
 		allocInfo.pNext = nullptr;
@@ -30,6 +27,18 @@ namespace Concerto::Graphics
 		allocInfo.descriptorSetCount = 1;
 		allocInfo.pSetLayouts = descriptorSetLayout.Get();
 		_lastResult = vkAllocateDescriptorSets(*_device->Get(), &allocInfo, &_handle);
+	}
+
+	DescriptorSet::~DescriptorSet()
+	{
+		if (IsNull())
+			return;
+		if (_pool == nullptr)
+		{
+			CONCERTO_ASSERT_FALSE; //Trying to destroy a descriptor set with an invalid pool
+			return;
+		}
+		vkFreeDescriptorSets(*_device->Get(), *_pool->Get(), 1, &_handle);
 	}
 
 	void DescriptorSet::WriteImageSamplerDescriptor(const Sampler& sampler, const ImageView& imageView, VkImageLayout imageLayout) const

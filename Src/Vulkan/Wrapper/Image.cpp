@@ -17,12 +17,7 @@
 namespace Concerto::Graphics
 {
 	Image::Image(Device& device, VkExtent2D extent, VkFormat depthFormat) :
-		Object<VkImage>(device, [this](Device &device, VkImage handle)
-			{
-				if (!_isAllocated)
-					return;
-				vmaDestroyImage(*device.GetAllocator().Get(), handle, _allocation);
-			}),
+		Object(device),
 		_imageFormat(depthFormat),
 		_isAllocated(true)
 	{
@@ -46,13 +41,7 @@ namespace Concerto::Graphics
 	}
 
 	Image::Image(Device& device, const std::string& file, CommandBuffer& commandBuffer, UploadContext& uploadContext, Queue& queue) :
-		Object<VkImage>(device, [this](Device& device, VkImage handle)
-			{
-				if (!_isAllocated)
-					return;
-				if (!IsNull())
-					vmaDestroyImage(*device.GetAllocator().Get(), handle, _allocation);
-			}),
+		Object(device),
 		_imageFormat(VK_FORMAT_R8G8B8A8_SRGB),
 		_isAllocated(true)
 	{
@@ -140,13 +129,17 @@ namespace Concerto::Graphics
 				});
 	}
 
+	Image::~Image()
+	{
+		if (IsNull())
+			return;
+		if (!_isAllocated)
+			return;
+		vmaDestroyImage(*_device->GetAllocator().Get(), _handle, _allocation);
+	}
+
 	Image::Image(Device& device, VkImage image, VkFormat imageFormat) :
-		Object<VkImage>(device, [this](Device &device, VkImage handle)
-			{
-				if (!_isAllocated)
-					return;
-				vmaDestroyImage(*_device->GetAllocator().Get(), handle, _allocation);
-			}),
+		Object(device),
 		_isAllocated(false),
 		_imageFormat(imageFormat)
 	{

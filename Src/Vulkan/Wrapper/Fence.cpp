@@ -13,9 +13,7 @@
 
 namespace Concerto::Graphics
 {
-	Fence::Fence(Device& device, bool signaled) : Object<VkFence>(device, [this](Device &device, VkFence handle){
-		vkDestroyFence(*device.Get(), handle, nullptr);
-	})
+	Fence::Fence(Device& device, bool signaled) : Object(device)
 	{
 		VkFenceCreateInfo info = {};
 		info.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
@@ -26,6 +24,13 @@ namespace Concerto::Graphics
 			CONCERTO_ASSERT_FALSE;
 			throw std::runtime_error("Failed to create fence");
 		}
+	}
+
+	Fence::~Fence()
+	{
+		if (IsNull())
+			return;
+		vkDestroyFence(*_device->Get(), _handle, nullptr);
 	}
 
 	void Fence::Wait(UInt64 timeout)

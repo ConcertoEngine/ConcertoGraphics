@@ -13,17 +13,22 @@
 namespace Concerto::Graphics
 {
 
-	Pipeline::Pipeline(Device& device, PipelineInfo pipeLineInfo) : Object<VkPipeline>(device, [](Device& device, VkPipeline handle)
-	{
-		vkDestroyPipeline(*device.Get(), handle, nullptr);
-	}),
-	_pipelineInfo(std::move(pipeLineInfo)),
-	_createInfo()
+	Pipeline::Pipeline(Device& device, PipelineInfo pipeLineInfo) :
+		Object(device),
+		_pipelineInfo(std::move(pipeLineInfo)),
+		_createInfo()
 	{
 		_createInfo.viewportState = BuildViewportState();
 		_createInfo.colorBlend = BuildColorBlendState();
 		_createInfo.pipelineCreateInfo = {};
 		_createInfo.pipelineCreateInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
+	}
+
+	Pipeline::~Pipeline()
+	{
+		if (IsNull())
+			return;
+		vkDestroyPipeline(*_device->Get(), _handle, nullptr);
 	}
 
 	VkPipeline Pipeline::BuildPipeline(VkRenderPass renderPass)

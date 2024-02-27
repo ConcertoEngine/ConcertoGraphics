@@ -20,6 +20,8 @@ namespace Concerto::Graphics
 	 public:
 		ImageView(Device& device, Image& image, VkImageAspectFlags aspectFlags);
 
+		~ImageView();
+
 		ImageView(const ImageView&) = delete;
 
 		ImageView(ImageView&&) noexcept = default;

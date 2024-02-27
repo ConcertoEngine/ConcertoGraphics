@@ -14,18 +14,15 @@
 
 namespace Concerto::Graphics
 {
-	DescriptorPool::DescriptorPool(Device& device) : Object<VkDescriptorPool>(device, [](Device &device, VkDescriptorPool handle)
-	{
-		vkDestroyDescriptorPool(*device.Get(), handle, nullptr);
-	})
+	DescriptorPool::DescriptorPool(Device& device) : Object(device)
 	{
 		std::vector<VkDescriptorPoolSize> sizes =
-				{
-						{ VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,         1000 },
-						{ VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, 1000 },
-						{ VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,         1000 },
-						{ VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1000 }
-				};
+		{
+				{ VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,         1000 },
+				{ VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, 1000 },
+				{ VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,         1000 },
+				{ VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1000 }
+		};
 		VkDescriptorPoolCreateInfo pool_info = {};
 		pool_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
 		pool_info.flags = 0;
@@ -39,11 +36,7 @@ namespace Concerto::Graphics
 		}
 	}
 
-	DescriptorPool::DescriptorPool(Device& device, std::vector<VkDescriptorPoolSize> poolSizes)
-			: Object<VkDescriptorPool>(device, [](Device &device, VkDescriptorPool handle)
-	{
-		vkDestroyDescriptorPool(*device.Get(), handle, nullptr);
-	})
+	DescriptorPool::DescriptorPool(Device& device, std::vector<VkDescriptorPoolSize> poolSizes) : Object<VkDescriptorPool>(device)
 	{
 		VkDescriptorPoolCreateInfo pool_info = {};
 		pool_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
@@ -58,6 +51,13 @@ namespace Concerto::Graphics
 		}
 	}
 
+
+	DescriptorPool::~DescriptorPool()
+	{
+		if (IsNull())
+			return;
+		vkDestroyDescriptorPool(*_device->Get(), _handle, nullptr);
+	}
 
 	DescriptorSet DescriptorPool::AllocateDescriptorSet(DescriptorSetLayout& setLayout)
 	{

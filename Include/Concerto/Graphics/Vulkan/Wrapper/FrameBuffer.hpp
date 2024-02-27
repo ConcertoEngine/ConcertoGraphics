@@ -39,7 +39,7 @@ namespace Concerto::Graphics
 		*/
 		FrameBuffer(Device& device, RenderPass& renderPass, ImageView& imageView, ImageView& depthImageView, VkExtent2D extent);
 
-		~FrameBuffer() = default;
+		~FrameBuffer();
 
 		FrameBuffer(FrameBuffer&&) noexcept = default;
 

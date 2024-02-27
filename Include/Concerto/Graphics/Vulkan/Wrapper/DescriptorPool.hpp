@@ -43,6 +43,8 @@ namespace Concerto::Graphics
 
 		DescriptorPool& operator=(const DescriptorPool&) = delete;
 
+		~DescriptorPool();
+
 		/*
 		 * @brief Allocate a descriptor set from the descriptor pool.
 		 * @param layout The descriptor set layout used to allocate the descriptor set.

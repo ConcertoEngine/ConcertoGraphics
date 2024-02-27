@@ -33,6 +33,8 @@ namespace Concerto::Graphics
 		 */
 		RenderPass(Device& device, Swapchain& swapchain);
 
+		~RenderPass();
+
 		RenderPass(RenderPass&&) = default;
 
 		RenderPass(const RenderPass&) = delete;

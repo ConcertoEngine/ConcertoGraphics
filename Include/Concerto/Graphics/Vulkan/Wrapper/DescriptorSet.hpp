@@ -41,6 +41,8 @@ namespace Concerto::Graphics
 		*/
 		DescriptorSet(Device& device, DescriptorPool& pool, const DescriptorSetLayout& descriptorSetLayout);
 
+		~DescriptorSet();
+
 		DescriptorSet(DescriptorSet&&) noexcept;
 
 		DescriptorSet(const DescriptorSet&) = delete;

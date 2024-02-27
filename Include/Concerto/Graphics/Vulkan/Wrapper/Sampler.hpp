@@ -30,6 +30,8 @@ namespace Concerto::Graphics
 		 * @param samplerAddressMode The addressing mode to use for the sampler.
 		 */
 		Sampler(Device& device, VkFilter filter, VkSamplerAddressMode samplerAddressMode = VK_SAMPLER_ADDRESS_MODE_REPEAT);
+
+		~Sampler();
 	};
 }
 

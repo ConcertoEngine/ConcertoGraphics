@@ -33,7 +33,7 @@ namespace Concerto::Graphics
 		 */
 		Pipeline(Device& device, PipelineInfo pipeLineInfo);
 
-		~Pipeline() = default;
+		~Pipeline();
 
 		Pipeline(Pipeline&&) = default;
 

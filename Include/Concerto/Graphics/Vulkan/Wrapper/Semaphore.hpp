@@ -25,6 +25,8 @@ namespace Concerto::Graphics
 	public:
 		explicit Semaphore(Device& device);
 
+		~Semaphore();
+
 		Semaphore(Semaphore&&) = default;
 
 		Semaphore(const Semaphore&) = delete;

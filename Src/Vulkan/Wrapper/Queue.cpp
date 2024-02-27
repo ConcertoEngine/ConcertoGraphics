@@ -57,7 +57,7 @@ namespace Concerto::Graphics
 		{
 			return false;
 		}
-		else if (vkResult != VK_SUCCESS)
+		if (vkResult != VK_SUCCESS)
 		{
 			CONCERTO_ASSERT_FALSE;
 			throw std::runtime_error("vkQueuePresentKHR fail");

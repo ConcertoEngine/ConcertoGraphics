@@ -41,7 +41,7 @@ namespace Concerto::Graphics
 
 		Buffer& operator=(const Buffer&) = delete;
 
-		~Buffer() = default;
+		~Buffer();
 
 		template<typename T>
 		void Copy(T& object, std::size_t padding = 0);

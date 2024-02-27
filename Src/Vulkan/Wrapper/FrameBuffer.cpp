@@ -15,11 +15,7 @@
 
 namespace Concerto::Graphics
 {
-	FrameBuffer::FrameBuffer(Device& device, RenderPass& renderPass, ImageView& imageView, ImageView& depthImageView,
-			VkExtent2D extent) : Object<VkFramebuffer>(device, [](Device &device, VkFramebuffer handle)
-	{
-				vkDestroyFramebuffer(*device.Get(), handle, nullptr);
-	})
+	FrameBuffer::FrameBuffer(Device& device, RenderPass& renderPass, ImageView& imageView, ImageView& depthImageView, VkExtent2D extent) : Object(device)
 	{
 		VkFramebufferCreateInfo fb_info = VulkanInitializer::FramebufferCreateInfo(*renderPass.Get(), extent);
 
@@ -35,5 +31,12 @@ namespace Concerto::Graphics
 			throw std::runtime_error("failed to create framebuffer!");
 		}
 
+	}
+
+	FrameBuffer::~FrameBuffer()
+	{
+		if (IsNull())
+			return;
+		vkDestroyFramebuffer(*_device->Get(), _handle, nullptr);
 	}
 } // Concerto::Graphics::Wrapper

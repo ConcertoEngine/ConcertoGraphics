@@ -16,8 +16,7 @@ namespace Concerto::Graphics
 {
 
 	ShaderModule::ShaderModule(Device& device, const std::string& shaderPath, VkShaderStageFlagBits stageFlags, std::string entryPoint /*= "main"*/) :
-		Object<VkShaderModule>(device, [this](Device& device, VkShaderModule handle)
-			{ vkDestroyShaderModule(*device.Get(), handle, nullptr); }),
+		Object(device),
 		_stageFlags(stageFlags),
 		_entryPoint(std::move(entryPoint))
 	{
@@ -26,8 +25,7 @@ namespace Concerto::Graphics
 	}
 
 	ShaderModule::ShaderModule(Device& device, const std::vector<UInt32>& bytes, VkShaderStageFlagBits stageFlags, std::string entryPoint /*= "main"*/) :
-		Object<VkShaderModule>(device, [this](Device& device, VkShaderModule handle)
-														{ vkDestroyShaderModule(*device.Get(), handle, nullptr); }),
+		Object(device),
 		_stageFlags(stageFlags),
 		_entryPoint(std::move(entryPoint))
 	{
@@ -36,6 +34,13 @@ namespace Concerto::Graphics
 		_shaderModuleCreateInfo.codeSize = bytes.size() * sizeof(UInt32);
 		_shaderModuleCreateInfo.pCode = reinterpret_cast<const UInt32*>(bytes.data());
 		CreateShaderModule();
+	}
+
+	ShaderModule::~ShaderModule()
+	{
+		if (IsNull())
+			return;
+		vkDestroyShaderModule(*_device->Get(), _handle, nullptr);
 	}
 
 	VkPipelineShaderStageCreateInfo ShaderModule::GetPipelineShaderStageCreateInfo() const
