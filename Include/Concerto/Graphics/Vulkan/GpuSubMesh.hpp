@@ -17,6 +17,7 @@ namespace Concerto::Graphics
 	class Allocator;
 	class CommandPool;
 	struct VkMaterial;
+	class Fence;
 
 	struct CONCERTO_GRAPHICS_API GpuSubMesh
 	{

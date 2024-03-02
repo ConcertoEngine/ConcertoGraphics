@@ -23,7 +23,7 @@
 #include <Concerto/Graphics/UploadContext.hpp>
 #include <Concerto/Graphics/MaterialBuilder.hpp>
 #include <Concerto/Graphics/Vulkan/Utils.hpp>
-#include <Concerto/Graphics/Vulkan/VkMesh.hpp>
+#include <Concerto/Graphics/Vulkan/GpuMesh.hpp>
 #include <Concerto/Graphics/ShaderReflection.hpp>
 #include <Concerto/Graphics/UploadContext.hpp>
 #include <Concerto/Core/Logger.hpp>
@@ -180,24 +180,11 @@ int main()
 		TextureBuilder textureBuilder(*device, uploadContext._commandBuffer, uploadContext, graphicsQueue);
 
 		Mesh mesh("./assets/sponza/sponza.obj");
-
+		auto gpuMesh = mesh.BuildGpuMesh(materialBuilder, *renderPass, *device, uploadContext);
 		std::vector<FrameData> frames;
 		frames.reserve(swapchain.GetImages().size());
 		for (std::size_t i = 0; i < frames.capacity(); i++)
 			frames.emplace_back(*device);
-
-		auto vkMesh = std::make_shared<VkMesh>();
-		for (auto& subMesh : mesh.GetSubMeshes())
-		{
-			MaterialInfo materialInfo = *subMesh->GetMaterial();
-			materialInfo.vertexShaderPath = "./Shaders/tri_mesh_ssbo.nzsl";
-			materialInfo.fragmentShaderPath = materialInfo.diffuseTexturePath.empty() ? "./Shaders/default_lit.nzsl" : "./Shaders/textured_lit.nzsl";
-			VkMaterialPtr litMaterial = materialBuilder.BuildMaterial(materialInfo, *renderPass);
-			auto vkSubMesh = std::make_shared<VkSubMesh>(subMesh, allocator, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT, VMA_MEMORY_USAGE_GPU_ONLY, litMaterial);
-			vkSubMesh->Upload(uploadContext._commandBuffer, uploadContext._commandPool, uploadContext._uploadFence, graphicsQueue, allocator);
-
-			vkMesh->subMeshes.push_back(vkSubMesh);
-		}
 
 		const Vector3f position(0.f, 0.f, 0.f);
 		const EulerAnglesf rotation(0, 0, 0);
@@ -321,7 +308,7 @@ int main()
 			frame.indirectBuffer.UnMap();
 			i = 0;
 			PipelinePtr lasPipeline;
-			for (const auto& subMesh : vkMesh->subMeshes)
+			for (const auto& subMesh : gpuMesh->subMeshes)
 			{
 				const auto vkMaterial = subMesh->material;
 				if (vkMaterial == nullptr)

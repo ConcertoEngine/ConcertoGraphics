@@ -83,7 +83,7 @@ namespace Concerto::Graphics
 		/**
 		* @brief Update the contents of a descriptor set object
 		*/ 
-		void UpdateDescriptorSetsWrite(std::span<VkWriteDescriptorSet> descriptorWrites);
+		void UpdateDescriptorSetsWrite(std::span<VkWriteDescriptorSet> descriptorWrites) const;
 		
 		/**
 		* @brief Update the contents of a descriptor set object
@@ -92,9 +92,9 @@ namespace Concerto::Graphics
 
 		void SetObjectName(UInt64 object, std::string_view name);
 		
-		PhysicalDevice& GetPhysicalDevice();
+		PhysicalDevice& GetPhysicalDevice() const;
 
-		Allocator& GetAllocator();
+		Allocator& GetAllocator() const;
 		
 	private:
 		void CreateAllocator(Instance& instance);

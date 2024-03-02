@@ -14,18 +14,18 @@
 #include "Concerto/Graphics/Vulkan/Wrapper/Sampler.hpp"
 #include "Concerto/Graphics/Vulkan/DescriptorAllocator.hpp"
 #include "Concerto/Graphics/ShaderModuleInfo.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Pipeline.hpp"
 
 namespace Concerto::Graphics
 {
 	class RenderPass;
-	class Pipeline;
 	class DescriptorLayoutCache;
 	
 	class CONCERTO_GRAPHICS_API MaterialBuilder
 	{
 	 public:
 		explicit MaterialBuilder(Device& device);
-		VkMaterialPtr BuildMaterial(MaterialInfo& material, RenderPass& renderPass);
+		VkMaterialPtr BuildMaterial(MaterialInfo& material, const RenderPass& renderPass);
 
 		[[nodiscard]] std::vector<VkPipelineShaderStageCreateInfo> GetShaderStages() const;
 		[[nodiscard]] std::vector<std::shared_ptr<DescriptorSetLayout>> GetDescriptorSetLayouts() const;
