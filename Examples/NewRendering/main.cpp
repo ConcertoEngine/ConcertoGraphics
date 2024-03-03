@@ -313,8 +313,7 @@ int main()
 				const auto vkMaterial = subMesh->material;
 				if (vkMaterial == nullptr)
 				{
-					Logger::Error("Could not found the material {}", subMesh->GetMaterial()->name);
-					CONCERTO_ASSERT_FALSE;
+					CONCERTO_ASSERT_FALSE("Could not found the material {}", subMesh->GetMaterial()->name);
 					continue;
 				}
 				if (!lasPipeline || lasPipeline != vkMaterial->pipeline)
@@ -374,7 +373,7 @@ int main()
 				graphicsQueue.Submit(frame);
 				if (!graphicsQueue.Present(frame, swapchain, swapchain.GetCurrentImageIndex()))
 				{
-					CONCERTO_ASSERT_FALSE; // need resize
+					CONCERTO_ASSERT_FALSE("ConcertoGraphics: Neeed resize");
 					return;
 				}
 			};

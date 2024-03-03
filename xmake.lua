@@ -15,6 +15,7 @@ target('ConcertoGraphics')
     set_kind('shared')
     set_languages('cxx20')
     set_warnings('allextra')
+    add_cxxflags("cl::/Zc:preprocessor", { public = true })
     if is_mode('debug') then
         set_symbols('debug')
     end
