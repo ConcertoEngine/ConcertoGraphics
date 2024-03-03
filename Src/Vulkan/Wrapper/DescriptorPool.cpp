@@ -23,25 +23,26 @@ namespace Concerto::Graphics
 				{ VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,         1000 },
 				{ VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1000 }
 		};
-		VkDescriptorPoolCreateInfo pool_info = {};
-		pool_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-		pool_info.flags = 0;
-		pool_info.maxSets = 1000;
-		pool_info.poolSizeCount = static_cast<UInt32>(sizes.size());
-		pool_info.pPoolSizes = sizes.data();
-		_lastResult = vkCreateDescriptorPool(*device.Get(), &pool_info, nullptr, &_handle);
-		CONCERTO_ASSERT(_lastResult == VK_SUCCESS, "ConcertoGraphics: Failed to create descriptor pool VkResult={}", static_cast<const int>(_lastResult));
+		VkDescriptorPoolCreateInfo descriptorPoolCreateInfo = {};
+		descriptorPoolCreateInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+		descriptorPoolCreateInfo.flags = 0;
+		descriptorPoolCreateInfo.maxSets = 1000;
+		descriptorPoolCreateInfo.poolSizeCount = static_cast<UInt32>(sizes.size());
+		descriptorPoolCreateInfo.pPoolSizes = sizes.data();
+		descriptorPoolCreateInfo.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
+		_lastResult = vkCreateDescriptorPool(*device.Get(), &descriptorPoolCreateInfo, nullptr, &_handle);
+		CONCERTO_ASSERT(_lastResult == VK_SUCCESS, "ConcertoGraphics: vkCreateDescriptorPool failed VkResult={}", static_cast<const int>(_lastResult));
 	}
 
 	DescriptorPool::DescriptorPool(Device& device, std::vector<VkDescriptorPoolSize> poolSizes) : Object<VkDescriptorPool>(device)
 	{
-		VkDescriptorPoolCreateInfo pool_info = {};
-		pool_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-		pool_info.flags = 0;
-		pool_info.maxSets = 10;
-		pool_info.poolSizeCount = static_cast<UInt32>(poolSizes.size());
-		pool_info.pPoolSizes = poolSizes.data();
-		_lastResult = vkCreateDescriptorPool(*device.Get(), &pool_info, nullptr, &_handle);
+		VkDescriptorPoolCreateInfo descriptorPoolCreateInfo = {};
+		descriptorPoolCreateInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+		descriptorPoolCreateInfo.maxSets = 10;
+		descriptorPoolCreateInfo.poolSizeCount = static_cast<UInt32>(poolSizes.size());
+		descriptorPoolCreateInfo.pPoolSizes = poolSizes.data();
+		descriptorPoolCreateInfo.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
+		_lastResult = vkCreateDescriptorPool(*device.Get(), &descriptorPoolCreateInfo, nullptr, &_handle);
 		CONCERTO_ASSERT(_lastResult == VK_SUCCESS, "ConcertoGraphics: Failed to create descriptor pool VkResult={}", static_cast<const int>(_lastResult));
 	}
 

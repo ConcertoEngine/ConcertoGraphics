@@ -7,10 +7,9 @@
 #include <iostream>
 #include <vector>
 
-#include "Concerto/Graphics/Vulkan/Wrapper/Instance.hpp"
-
 #include <Concerto/Core/Assert.hpp>
 
+#include "Concerto/Graphics/Vulkan/Wrapper/Instance.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/PhysicalDevice.hpp"
 
 namespace Concerto::Graphics
@@ -21,19 +20,19 @@ namespace Concerto::Graphics
 	{
 		if (messageSeverity == VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT)
 		{
-			std::cout << "[Verbose] " << pCallbackData->pMessage << std::endl;
+			//Logger::Info(pCallbackData->pMessage);
 		}
 		else if (messageSeverity == VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT)
 		{
-			std::cout << "[Info] " << pCallbackData->pMessage << std::endl;
+			//Logger::Info(pCallbackData->pMessage);
 		}
 		else if (messageSeverity == VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT)
 		{
-			std::cout << "[Warning] " << pCallbackData->pMessage << std::endl;
+			//Logger::Warning(pCallbackData->pMessage);
 		}
 		else if (messageSeverity == VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT)
 		{
-			std::cerr << "[Error] " << pCallbackData->pMessage << std::endl;
+			//Logger::Warning(pCallbackData->pMessage);
 		}
 		return VK_FALSE;
 	}
@@ -98,7 +97,6 @@ namespace Concerto::Graphics
 		std::vector<PhysicalDevice> physicalDevices;
 		for(VkPhysicalDevice device : devices)
 		{
-
 			physicalDevices.emplace_back(device);
 		}
 		_physicalDevices = std::move(physicalDevices);

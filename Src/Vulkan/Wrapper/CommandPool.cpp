@@ -16,7 +16,7 @@ namespace Concerto::Graphics
 	{
 		VkCommandPoolCreateInfo info{};
 		info.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
-		info.pNext = nullptr;
+		info.pNext = nullptr; 
 		info.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
 		info.queueFamilyIndex = _queueFamily;
 		_lastResult = vkCreateCommandPool(*_device->Get(), &info, nullptr, &_handle);
