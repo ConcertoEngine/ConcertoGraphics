@@ -16,10 +16,11 @@ namespace Concerto::Graphics
 	Sampler::Sampler(Device& device, VkFilter filter, VkSamplerAddressMode samplerAddressMode) : Object(device)
 	{
 		VkSamplerCreateInfo samplerInfo = VulkanInitializer::SamplerCreateInfo(filter, samplerAddressMode);
-		if (vkCreateSampler(*_device->Get(), &samplerInfo, nullptr, &_handle) != VK_SUCCESS)
+		_lastResult = vkCreateSampler(*_device->Get(), &samplerInfo, nullptr, &_handle);
+		if (_lastResult != VK_SUCCESS)
 		{
-			CONCERTO_ASSERT_FALSE;
-			throw std::runtime_error("failed to create texture sampler!");
+			CONCERTO_ASSERT_FALSE("ConcertoGraphics: vkCreateSampler failed VKResult={}", static_cast<int>(_lastResult));
+			return;
 		}
 	}
 

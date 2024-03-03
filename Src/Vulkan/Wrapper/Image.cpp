@@ -32,12 +32,8 @@ namespace Concerto::Graphics
 		dimg_allocinfo.usage = VMA_MEMORY_USAGE_GPU_ONLY;
 		dimg_allocinfo.requiredFlags = VkMemoryPropertyFlags(VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
 
-		if (vmaCreateImage(*device.GetAllocator().Get(), &dimg_info, &dimg_allocinfo, &_handle, &_allocation, nullptr) !=
-			VK_SUCCESS)
-		{
-			CONCERTO_ASSERT_FALSE;
-			throw std::runtime_error("Failed to create image");
-		}
+		_lastResult = vmaCreateImage(*device.GetAllocator().Get(), &dimg_info, &dimg_allocinfo, &_handle, &_allocation, nullptr);
+		CONCERTO_ASSERT(_lastResult == VK_SUCCESS, "ConcertoGraphics: vmaCreateImage failed VkResult={}", static_cast<int>(_lastResult));
 	}
 
 	Image::Image(Device& device, const std::string& file, CommandBuffer& commandBuffer, UploadContext& uploadContext, Queue& queue) :
@@ -49,8 +45,8 @@ namespace Concerto::Graphics
 		stbi_uc* pixels = stbi_load(file.c_str(), &textureWidth, &textureHeight, &textureChannels, STBI_rgb_alpha);
 		if (!pixels)
 		{
-			CONCERTO_ASSERT_FALSE;
-			throw std::runtime_error("Failed to load texture image");
+			CONCERTO_ASSERT_FALSE("ConcertoGraphics: Failed to load texture '{}'", file);
+			return;
 		}
 
 		void* pixelPtr = pixels;
@@ -68,12 +64,9 @@ namespace Concerto::Graphics
 		VmaAllocationCreateInfo dimg_allocinfo = {};
 		dimg_allocinfo.usage = VMA_MEMORY_USAGE_GPU_ONLY;
 
-		if (vmaCreateImage(*device.GetAllocator().Get(), &dimg_info, &dimg_allocinfo, &_handle, &_allocation, nullptr) !=
-			VK_SUCCESS)
-		{
-			CONCERTO_ASSERT_FALSE;
-			throw std::runtime_error("Failed to create image");
-		}
+		const VkResult result = vmaCreateImage(*device.GetAllocator().Get(), &dimg_info, &dimg_allocinfo, &_handle, &_allocation, nullptr);
+		CONCERTO_ASSERT(result == VK_SUCCESS, "ConcertoGraphics: vmaCreateImage failed VKResult={}", static_cast<int>(result));
+
 		commandBuffer.ImmediateSubmit(uploadContext._uploadFence, uploadContext._commandPool, queue,
 				[&](CommandBuffer& cb)
 				{

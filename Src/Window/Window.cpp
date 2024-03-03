@@ -38,14 +38,14 @@ namespace Concerto::Graphics
 		glfwSetErrorCallback(ErrorCallback);
 		if (glfwInit() == GLFW_FALSE)
 		{
-			CONCERTO_ASSERT_FALSE;
+			CONCERTO_ASSERT_FALSE("ConcertoGraphics: Glfw initialization failed");
 			throw std::runtime_error("GLFW3 initialization failed");
 		}
 		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 		_window = glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);;
 		if (!_window)
 		{
-			CONCERTO_ASSERT_FALSE;
+			CONCERTO_ASSERT_FALSE("ConcertoGraphics: Window creation failed");
 			throw std::runtime_error("GLFW3 Window creation failed");
 		}
 		RegisterInputCallbacks();
@@ -64,18 +64,18 @@ namespace Concerto::Graphics
 
 	void Window::SetTitle(const std::string& title)
 	{
-		CONCERTO_ASSERT(_window);
+		CONCERTO_ASSERT(_window, "ConcertoGraphics: invalid window pointer");
 		glfwSetWindowTitle(_window, title.c_str());
 	}
 
 	void Window::SetIcon(const std::string& path)
 	{
-		CONCERTO_ASSERT(_window);
+		CONCERTO_ASSERT(_window, "ConcertoGraphics: invalid window pointer");
 	}
 
 	void Window::SetCursorVisible(bool visible)
 	{
-		CONCERTO_ASSERT(_window);
+		CONCERTO_ASSERT(_window, "ConcertoGraphics: invalid window pointer");
 		if (visible)
 			glfwSetInputMode(_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 		else glfwSetInputMode(_window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
@@ -83,18 +83,18 @@ namespace Concerto::Graphics
 
 	void Window::SetCursorPosition(int x, int y)
 	{
-		CONCERTO_ASSERT(_window);
+		CONCERTO_ASSERT(_window, "ConcertoGraphics: invalid window pointer");
 		glfwSetCursorPos(_window, x, y);
 	}
 
 	void Window::SetCursorIcon(const std::string& path)
 	{
-		CONCERTO_ASSERT(_window);
+		CONCERTO_ASSERT(_window, "ConcertoGraphics: invalid window pointer");
 	}
 
 	void Window::SetCursorDisabled(bool disabled)
 	{
-		CONCERTO_ASSERT(_window);
+		CONCERTO_ASSERT(_window, "ConcertoGraphics: invalid window pointer");
 		if (disabled)
 			glfwSetInputMode(_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 		else glfwSetInputMode(_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
@@ -102,7 +102,7 @@ namespace Concerto::Graphics
 
 	UInt32 Window::GetHeight()
 	{
-		CONCERTO_ASSERT(_window);
+		CONCERTO_ASSERT(_window, "ConcertoGraphics: invalid window pointer");
 		int w, h;
 		glfwGetWindowSize(_window, &w, &h);
 		return h;
@@ -110,7 +110,7 @@ namespace Concerto::Graphics
 
 	UInt32 Window::GetWidth()
 	{
-		CONCERTO_ASSERT(_window);
+		CONCERTO_ASSERT(_window, "ConcertoGraphics: invalid window pointer");
 		int w, h;
 		glfwGetWindowSize(_window, &w, &h);
 		return w;
@@ -129,7 +129,7 @@ namespace Concerto::Graphics
 
 	void* Window::GetRawWindow()
 	{
-		CONCERTO_ASSERT(_window);
+		CONCERTO_ASSERT(_window, "ConcertoGraphics: invalid window pointer");
 		return _window;
 	}
 
@@ -141,13 +141,13 @@ namespace Concerto::Graphics
 
 	bool Window::ShouldClose()
 	{
-		CONCERTO_ASSERT(_window);
+		CONCERTO_ASSERT(_window, "ConcertoGraphics: invalid window pointer");
 		return glfwWindowShouldClose(_window);
 	}
 
 	void Window::RegisterResizeCallback(std::function<void(Window& window)> callback)
 	{
-		CONCERTO_ASSERT(_window);
+		CONCERTO_ASSERT(_window, "ConcertoGraphics: invalid window pointer");
 		_resizeCallback = callback;
 		glfwSetWindowUserPointer(_window, this);
 		glfwSetWindowSizeCallback(_window, [](GLFWwindow* window, int width, int height)
@@ -161,7 +161,7 @@ namespace Concerto::Graphics
 
 	void Window::RegisterKeyCallback(std::function<void(Window&, Key, int, int, int)> callback)
 	{
-		CONCERTO_ASSERT(_window);
+		CONCERTO_ASSERT(_window, "ConcertoGraphics: invalid window pointer");
 		_keyCallback = callback;
 		glfwSetWindowUserPointer(_window, this);
 		glfwSetKeyCallback(_window, [](GLFWwindow* window, int key, int scancode, int action, int mods)
@@ -174,7 +174,7 @@ namespace Concerto::Graphics
 
 	void Window::RegisterMouseButtonCallback(std::function<void(Window& window, int button, int action, int mods)> callback)
 	{
-		CONCERTO_ASSERT(_window);
+		CONCERTO_ASSERT(_window, "ConcertoGraphics: invalid window pointer");
 		_mouseButtonCallback = callback;
 		glfwSetWindowUserPointer(_window, this);
 		glfwSetMouseButtonCallback(_window, [](GLFWwindow* window, int button, int action, int mods)
@@ -186,7 +186,7 @@ namespace Concerto::Graphics
 
 	void Window::RegisterCursorPosCallback(std::function<void(Window& window, double xpos, double ypos)> callback)
 	{
-		CONCERTO_ASSERT(_window);
+		CONCERTO_ASSERT(_window, "ConcertoGraphics: invalid window pointer");
 		_cursorPosCallback = callback;
 		glfwSetWindowUserPointer(_window, this);
 		glfwSetCursorPosCallback(_window, [](GLFWwindow* window, double xpos, double ypos)

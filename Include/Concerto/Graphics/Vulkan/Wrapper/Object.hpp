@@ -57,7 +57,7 @@ namespace Concerto::Graphics
 	protected:
 		vkType _handle;
 		Device* _device;
-		VkResult _lastResult;
+		mutable VkResult _lastResult;
 	};
 }
 

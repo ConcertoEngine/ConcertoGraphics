@@ -25,13 +25,8 @@ namespace Concerto::Graphics
 
 		VmaAllocationCreateInfo vmaAllocInfo = {};
 		vmaAllocInfo.usage = memoryUsage;
-
-		if (vmaCreateBuffer(*allocator.Get(), &bufferInfo, &vmaAllocInfo, &_handle, &_allocation, nullptr) !=
-			VK_SUCCESS)
-		{
-			CONCERTO_ASSERT_FALSE; // Failed to allocate buffer
-			throw std::runtime_error("Failed to allocate buffer");
-		}
+		_lastResult = vmaCreateBuffer(*allocator.Get(), &bufferInfo, &vmaAllocInfo, &_handle, &_allocation, nullptr);
+		CONCERTO_ASSERT(_lastResult == VK_SUCCESS, "ConcertoGraphics: vmaCreateBuffer failed VkResult={}", static_cast<int>(_lastResult));
 	}
 
 	Buffer::Buffer(Buffer&& other) noexcept :
@@ -58,8 +53,8 @@ namespace Concerto::Graphics
 			return;
 		if (_mapCount != 0)
 		{
-			CONCERTO_ASSERT_FALSE; // trying to destroy a buffer that is mapped
-			Logger::Error("Trying to destroy a buffer that is mapped");
+			CONCERTO_ASSERT_FALSE("ConcertoGraphics: Trying to destroy a buffer that is mapped");
+			return;
 		}
 		_allocator->GetDevice().WaitIdle();
 		vmaDestroyBuffer(*_allocator->Get(), _handle, _allocation);
@@ -69,10 +64,7 @@ namespace Concerto::Graphics
 	{
 		Byte* data = nullptr;
 		if (Map(&data) == false)
-		{
-			CONCERTO_ASSERT_FALSE;
 			return;
-		}
 		data += padding;
 		std::memcpy(data, object, size);
 		UnMap();
@@ -83,7 +75,7 @@ namespace Concerto::Graphics
 		const auto res = vmaMapMemory(*_allocator->Get(), _allocation, reinterpret_cast<void**>(data));
 		if (res != VK_SUCCESS)
 		{
-			CONCERTO_ASSERT_FALSE; //Cannot map memory
+			CONCERTO_ASSERT_FALSE("ConcertoGraphics: Cannot map buffer");
 			return false;
 		}
 		_mapCount++;
@@ -93,7 +85,10 @@ namespace Concerto::Graphics
 	void Buffer::UnMap()
 	{
 		if (_mapCount == 0)
-			CONCERTO_ASSERT_FALSE; // trying to unmap a buffer that is not mapped
+		{
+			CONCERTO_ASSERT_FALSE("ConcertoGraphics: Trying to destroy a buffer that is mapped");
+			return;
+		}
 		_mapCount--;
 		vmaUnmapMemory(*_allocator->Get(), _allocation);
 	}
@@ -105,7 +100,7 @@ namespace Concerto::Graphics
 
 	Allocator& Buffer::GetAllocator() const
 	{
-		CONCERTO_ASSERT(_allocator);
+		CONCERTO_ASSERT(_allocator, "ConcertoGraphics: allocator is null");
 		return *_allocator;
 	}
 

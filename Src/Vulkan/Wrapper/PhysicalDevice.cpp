@@ -105,7 +105,7 @@ namespace Concerto::Graphics
 
 	VkPhysicalDevice* PhysicalDevice::Get()
 	{
-		CONCERTO_ASSERT(_physicalDevice != VK_NULL_HANDLE);
+		CONCERTO_ASSERT(_physicalDevice != VK_NULL_HANDLE, "ConcertoGraphics: physical device handle is null");
 		return &_physicalDevice;
 	}
 
@@ -132,11 +132,8 @@ namespace Concerto::Graphics
 		if (_capabilities)
 			return _capabilities.value();
 		VkSurfaceCapabilitiesKHR capabilities;
-		if (vkGetPhysicalDeviceSurfaceCapabilitiesKHR(_physicalDevice, _surface, &capabilities) != VK_SUCCESS)
-		{
-			CONCERTO_ASSERT_FALSE;
-			throw std::runtime_error("vkGetPhysicalDeviceSurfaceCapabilitiesKHR fail");
-		}
+		const VkResult result = vkGetPhysicalDeviceSurfaceCapabilitiesKHR(_physicalDevice, _surface, &capabilities);
+		CONCERTO_ASSERT(result == VK_SUCCESS, "ConcertoGraphics: vkGetPhysicalDeviceSurfaceCapabilitiesKHR failed VKResult={}", static_cast<int>(result));
 		_capabilities = capabilities;
 		return _capabilities.value();
 	}

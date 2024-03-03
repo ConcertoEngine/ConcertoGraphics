@@ -87,11 +87,8 @@ namespace Concerto::Graphics
 		render_pass_info.dependencyCount = 1;
 		render_pass_info.pDependencies = &depth_dependency;
 
-		if (vkCreateRenderPass(*_device->Get(), &render_pass_info, nullptr, &_handle) != VK_SUCCESS)
-		{
-			CONCERTO_ASSERT_FALSE;
-			throw std::runtime_error("failed to create render pass!");
-		}
+		const VkResult result = vkCreateRenderPass(*_device->Get(), &render_pass_info, nullptr, &_handle);
+		CONCERTO_ASSERT(result == VK_SUCCESS, "ConcertoGraphics: vkCreateRenderPass failed VKResult={}", static_cast<int>(result));
 	}
 
 	RenderPass::~RenderPass()

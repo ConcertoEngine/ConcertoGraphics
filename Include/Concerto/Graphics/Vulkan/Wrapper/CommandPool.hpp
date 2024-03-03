@@ -51,7 +51,7 @@ namespace Concerto::Graphics
 	    * @brief Resetting a command pool recycles all of the resources from all of the command buffers allocated from
 	    * 		 the command pool back to the command pool.
 	    */
-		void Reset();
+		void Reset() const;
 
 	private:
 		UInt32 _queueFamily;

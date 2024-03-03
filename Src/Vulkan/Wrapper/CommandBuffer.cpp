@@ -30,11 +30,8 @@ namespace Concerto::Graphics
 		info.commandBufferCount = 1;
 		info.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
 
-		if (vkAllocateCommandBuffers(*_device->Get(), &info, &_commandBuffer) != VK_SUCCESS)
-		{
-			CONCERTO_ASSERT_FALSE;
-			throw std::runtime_error("Failed to allocate command buffer");
-		}
+		const VkResult result = vkAllocateCommandBuffers(*_device->Get(), &info, &_commandBuffer);
+		CONCERTO_ASSERT(result == VK_SUCCESS, "ConcertoGraphics: vkAllocateCommandBuffers failed VkResult={}", static_cast<int>(result));
 	}
 
 	CommandBuffer::~CommandBuffer()
@@ -62,17 +59,14 @@ namespace Concerto::Graphics
 
 	VkCommandBuffer CommandBuffer::Get() const
 	{
-		CONCERTO_ASSERT(_commandBuffer != VK_NULL_HANDLE);
+		CONCERTO_ASSERT(_commandBuffer != VK_NULL_HANDLE, "ConcertoGraphics: command buffer handle is null");
 		return _commandBuffer;
 	}
 
 	void CommandBuffer::Reset() const
 	{
-		if (vkResetCommandBuffer(_commandBuffer, 0) != VK_SUCCESS)
-		{
-			CONCERTO_ASSERT_FALSE;
-			throw std::runtime_error("vkResetCommandBuffer fail");
-		}
+		const VkResult result = vkResetCommandBuffer(_commandBuffer, 0);
+		CONCERTO_ASSERT(result == VK_SUCCESS, "ConcertoGraphics: vkResetCommandBuffer VKResult={}", static_cast<int>(result));
 	}
 
 	void CommandBuffer::Begin() const
@@ -84,20 +78,14 @@ namespace Concerto::Graphics
 		cmdBeginInfo.pInheritanceInfo = nullptr;
 		cmdBeginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
 
-		if (vkBeginCommandBuffer(_commandBuffer, &cmdBeginInfo) != VK_SUCCESS)
-		{
-			CONCERTO_ASSERT_FALSE;
-			throw std::runtime_error("vkBeginCommandBuffer fail");
-		}
+		const VkResult result = vkBeginCommandBuffer(_commandBuffer, &cmdBeginInfo);
+		CONCERTO_ASSERT(result == VK_SUCCESS, "ConcertoGraphics: vkBeginCommandBuffer failed VKResult={}", static_cast<int>(result));
 	}
 
 	void CommandBuffer::End() const
 	{
-		if (vkEndCommandBuffer(_commandBuffer) != VK_SUCCESS)
-		{
-			CONCERTO_ASSERT_FALSE;
-			throw std::runtime_error("vkEndCommandBuffer fail");
-		}
+		const VkResult result = vkEndCommandBuffer(_commandBuffer);
+		CONCERTO_ASSERT(result == VK_SUCCESS, "ConcertoGraphics: vkEndCommandBuffer failed VKResult={}", static_cast<int>(result));
 	}
 
 	void CommandBuffer::BeginRenderPass(const VkRenderPassBeginInfo& info) const
@@ -196,11 +184,9 @@ namespace Concerto::Graphics
 		}
 		End();
 
-		if (vkQueueSubmit(*queue.Get(), 1, &submitInfo, *fence.Get()) != VK_SUCCESS)
-		{
-			CONCERTO_ASSERT_FALSE;
-			throw std::runtime_error("vkQueueSubmit fail");
-		}
+		const VkResult result = vkQueueSubmit(*queue.Get(), 1, &submitInfo, *fence.Get());
+		CONCERTO_ASSERT(result == VK_SUCCESS, "ConcertoGraphics: vkQueueSubmit failed VKResult={}", static_cast<int>(result));
+
 		fence.Wait(9999999999);
 		fence.Reset();
 		commandPool.Reset();

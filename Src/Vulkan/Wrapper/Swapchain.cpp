@@ -51,10 +51,11 @@ namespace Concerto::Graphics
 		swapChainCreateInfo.presentMode = VK_PRESENT_MODE_IMMEDIATE_KHR;
 		swapChainCreateInfo.clipped = VK_TRUE;
 		swapChainCreateInfo.oldSwapchain = VK_NULL_HANDLE;
-		if (vkCreateSwapchainKHR(*_device->Get(), &swapChainCreateInfo, nullptr, &_handle) != VK_SUCCESS)
+		_lastResult = vkCreateSwapchainKHR(*_device->Get(), &swapChainCreateInfo, nullptr, &_handle);
+		if (_lastResult != VK_SUCCESS)
 		{
-			CONCERTO_ASSERT_FALSE;
-			throw std::runtime_error("failed to create swap chain!");
+			CONCERTO_ASSERT_FALSE("ConcertoGraphics: vkCreateSwapchainKHR failed VKResult={}", static_cast<int>(_lastResult));
+			return;
 		}
 		CreateRenderPass();
 		CreateFrameBuffers();
@@ -131,7 +132,7 @@ namespace Concerto::Graphics
 
 	FrameBuffer& Swapchain::GetFrameBuffer(UInt32 index)
 	{
-		CONCERTO_ASSERT(index < _frameBuffers.size());
+		CONCERTO_ASSERT(index < _frameBuffers.size(), "ConcertoGraphics: Bad frame buffer index");
 		return _frameBuffers[index];
 	}
 
@@ -147,11 +148,11 @@ namespace Concerto::Graphics
 
 	UInt32 Swapchain::AcquireNextImage(Semaphore& semaphore, Fence& fence, std::uint64_t timeout)
 	{
-		if (vkAcquireNextImageKHR(*_device->Get(), _handle, timeout, *semaphore.Get(), VK_NULL_HANDLE, &_currentImageIndex) !=
-			VK_SUCCESS)
+		_lastResult = vkAcquireNextImageKHR(*_device->Get(), _handle, timeout, *semaphore.Get(), VK_NULL_HANDLE, &_currentImageIndex);
+		if (_lastResult != VK_SUCCESS)
 		{
-			CONCERTO_ASSERT_FALSE;
-			throw std::runtime_error("vkAcquireNextImageKHR fail");
+			CONCERTO_ASSERT_FALSE("ConcertoGraphics: vkCreateSemaphore failed VKResult={}", static_cast<int>(_lastResult));
+			return -1;
 		}
 		return _currentImageIndex;
 	}
@@ -163,7 +164,7 @@ namespace Concerto::Graphics
 
 	void Swapchain::CreateFrameBuffers()
 	{
-		CONCERTO_ASSERT(_renderpass != nullptr);
+		CONCERTO_ASSERT(_renderpass != nullptr, "ConcertoGraphics: Invalid render pass");
 		auto imagesViews = GetImageViews();
 		_frameBuffers.reserve(imagesViews.size());
 		for (auto& imageView : imagesViews)

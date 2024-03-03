@@ -57,11 +57,8 @@ namespace Concerto::Graphics
 		createInfo.pNext = &shader_draw_parameters_features;
 		createInfo.enabledExtensionCount = static_cast<UInt32>(deviceExtensions.size());
 		createInfo.ppEnabledExtensionNames = deviceExtensions.data();
-		if (vkCreateDevice(*_physicalDevice.Get(), &createInfo, nullptr, &_device) != VK_SUCCESS)
-		{
-			CONCERTO_ASSERT_FALSE;
-			throw std::runtime_error("failed to create logical device!");
-		}
+		const VkResult result = vkCreateDevice(*_physicalDevice.Get(), &createInfo, nullptr, &_device);
+		CONCERTO_ASSERT(result == VK_SUCCESS, "Error cannot create logical device: VkResult={}", static_cast<int>(result));
 		CreateAllocator(instance);
 	}
 
@@ -79,8 +76,8 @@ namespace Concerto::Graphics
 				return i;
 			i++;
 		}
-		CONCERTO_ASSERT_FALSE;
-		throw std::runtime_error("No queue family found");
+		CONCERTO_ASSERT_FALSE("No queue family found");
+		return -1;
 	}
 
 	UInt32 Device::GetQueueFamilyIndex(UInt32 flag) const
@@ -97,8 +94,8 @@ namespace Concerto::Graphics
 				return i;
 			++i;
 		}
-		CONCERTO_ASSERT_FALSE;
-		throw std::runtime_error("No queue family found");
+		CONCERTO_ASSERT_FALSE("No queue family found");;
+		return -1;
 	}
 
 	Queue& Device::GetQueue(Queue::Type queueType)
@@ -112,21 +109,17 @@ namespace Concerto::Graphics
 
 	VkDevice* Device::Get()
 	{
-		CONCERTO_ASSERT(_device != VK_NULL_HANDLE);
+		CONCERTO_ASSERT(_device != VK_NULL_HANDLE, "ConcertoGraphics: device handle is null");
 		return &_device;
 	}
 
 	void Device::WaitIdle() const
 	{
-		auto res = vkDeviceWaitIdle(_device);
-		if (res != VK_SUCCESS)
-		{
-			CONCERTO_ASSERT_FALSE;
-			throw std::runtime_error("Failed to Wait for device idle" + std::to_string(res));
-		}
+		const VkResult result = vkDeviceWaitIdle(_device);
+		CONCERTO_ASSERT(result == VK_SUCCESS, "ConcertoGraphics: Failed to Wait for device idle VkResult={}", static_cast<int>(result));
 	}
 
-	void Device::UpdateDescriptorSetsWrite(std::span<VkWriteDescriptorSet> descriptorWrites)
+	void Device::UpdateDescriptorSetsWrite(std::span<VkWriteDescriptorSet> descriptorWrites) const
 	{
 		vkUpdateDescriptorSets(_device, static_cast<UInt32>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
 	}
@@ -153,21 +146,21 @@ namespace Concerto::Graphics
 			pfnDebugMarkerSetObjectName(_device, &nameInfo);
 	}
 
-	PhysicalDevice& Device::GetPhysicalDevice()
+	PhysicalDevice& Device::GetPhysicalDevice() const
 	{
 		return _physicalDevice;
 	}
 
-	Allocator& Device::GetAllocator()
+	Allocator& Device::GetAllocator() const
 	{
-		CONCERTO_ASSERT(_allocator != nullptr);
+		CONCERTO_ASSERT(_allocator != nullptr, "ConcertoGraphics: Allocator handle is null");
 		return *_allocator;
 	}
 
 	void Device::CreateAllocator(Instance& instance)
 	{
 		_allocator = std::make_unique<Allocator>(_physicalDevice, *this, instance);
-		CONCERTO_ASSERT(_allocator != nullptr);
+		CONCERTO_ASSERT(_allocator != nullptr, "ConcertoGraphics: Cannot create allocator");
 	}
 
 } // Concerto::Graphics::Wrapper

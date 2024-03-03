@@ -44,12 +44,9 @@ namespace Concerto::Graphics
 		allocatorInfo.device = *device.Get();
 		allocatorInfo.instance = *instance.Get();
 		allocatorInfo.pVulkanFunctions = &vulkanFunctions;
-		
-		if (vmaCreateAllocator(&allocatorInfo, &_handle) != VK_SUCCESS)
-		{
-			CONCERTO_ASSERT_FALSE;
-			throw std::runtime_error("VMA : Unable to create allocator");
-		}
+
+		_lastResult = vmaCreateAllocator(&allocatorInfo, &_handle);
+		CONCERTO_ASSERT(_lastResult == VK_SUCCESS, "ConcertoGraphics: Unable to create vma allocator VkResult={}", static_cast<int>(_lastResult));
 	}
 
 	Allocator::~Allocator()
@@ -61,7 +58,7 @@ namespace Concerto::Graphics
 
 	Device& Allocator::GetDevice() const
 	{
-		CONCERTO_ASSERT(_device != nullptr);
+		CONCERTO_ASSERT(_device != nullptr, "ConcertoGraphics: device is null");
 		return *_device;
 	}
 

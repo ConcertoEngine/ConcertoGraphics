@@ -19,11 +19,8 @@ namespace Concerto::Graphics
 		info.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
 		info.pNext = nullptr;
 		info.flags = signaled ? VK_FENCE_CREATE_SIGNALED_BIT : 0;
-		if (vkCreateFence(*_device->Get(), &info, nullptr, &_handle) != VK_SUCCESS)
-		{
-			CONCERTO_ASSERT_FALSE;
-			throw std::runtime_error("Failed to create fence");
-		}
+		_lastResult = vkCreateFence(*_device->Get(), &info, nullptr, &_handle);
+		CONCERTO_ASSERT(_lastResult == VK_SUCCESS, "ConcertoGraphics: vkCreateFence failed VkResult={}", static_cast<int>(_lastResult));
 	}
 
 	Fence::~Fence()
@@ -33,22 +30,15 @@ namespace Concerto::Graphics
 		vkDestroyFence(*_device->Get(), _handle, nullptr);
 	}
 
-	void Fence::Wait(UInt64 timeout)
+	void Fence::Wait(UInt64 timeout) const
 	{
-		auto result = vkWaitForFences(*_device->Get(), 1, &_handle, true, timeout);
-		if ( result != VK_SUCCESS)
-		{
-			CONCERTO_ASSERT_FALSE;
-			throw std::runtime_error("vkWaitForFences fail error code : " + std::to_string(int(result)));
-		}
+		const VkResult result = vkWaitForFences(*_device->Get(), 1, &_handle, true, timeout);
+		CONCERTO_ASSERT(result == VK_SUCCESS, "ConcertoGraphics: vkWaitForFences failed VKResult={}", static_cast<int>(result));
 	}
 
-	void Fence::Reset()
+	void Fence::Reset() const
 	{
-		if (vkResetFences(*_device->Get(), 1, &_handle) != VK_SUCCESS)
-		{
-			CONCERTO_ASSERT_FALSE;
-			throw std::runtime_error("vkResetFences fail");
-		}
+		const VkResult result = vkResetFences(*_device->Get(), 1, &_handle);
+		CONCERTO_ASSERT(result == VK_SUCCESS, "ConcertoGraphics: vkResetFences failed VKResult={}", static_cast<int>(result));
 	}
 } // namespace Concerto::Graphics

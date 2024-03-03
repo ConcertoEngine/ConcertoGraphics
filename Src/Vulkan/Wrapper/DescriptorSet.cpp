@@ -2,10 +2,6 @@
 // Created by arthur on 16/06/22.
 //
 
-#include <cassert>
-#include <stdexcept>
-#include <iostream>
-
 #include "Concerto/Graphics/Vulkan/Wrapper/DescriptorSet.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/DescriptorSetLayout.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/DescriptorPool.hpp"
@@ -27,6 +23,8 @@ namespace Concerto::Graphics
 		allocInfo.descriptorSetCount = 1;
 		allocInfo.pSetLayouts = descriptorSetLayout.Get();
 		_lastResult = vkAllocateDescriptorSets(*_device->Get(), &allocInfo, &_handle);
+		// commented because the error are handled after
+		//CONCERTO_ASSERT(_lastResult == VK_SUCCESS, "ConcertoGraphics: vkAllocateDescriptorSets failed VkResult={}", static_cast<int>(_lastResult));
 	}
 
 	DescriptorSet::~DescriptorSet()
@@ -35,7 +33,7 @@ namespace Concerto::Graphics
 			return;
 		if (_pool == nullptr)
 		{
-			CONCERTO_ASSERT_FALSE; //Trying to destroy a descriptor set with an invalid pool
+			CONCERTO_ASSERT_FALSE("ConcertoGraphics: Trying to destroy a descriptor set with an invalid pool");
 			return;
 		}
 		vkFreeDescriptorSets(*_device->Get(), *_pool->Get(), 1, &_handle);

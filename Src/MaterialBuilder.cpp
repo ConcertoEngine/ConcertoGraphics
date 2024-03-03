@@ -28,7 +28,7 @@ namespace Concerto::Graphics
 
 	}
 
-	VkMaterialPtr MaterialBuilder::BuildMaterial(MaterialInfo& material, RenderPass& renderPass)
+	VkMaterialPtr MaterialBuilder::BuildMaterial(MaterialInfo& material, const RenderPass& renderPass)
 	{
 		ShaderModuleInfo* vertexShaderModuleInfo = nullptr;
 		ShaderModuleInfo* fragShaderModuleInfo = nullptr;
@@ -71,7 +71,10 @@ namespace Concerto::Graphics
 					texture = MakeDescriptorSetLayout(_device, setBindings);
 					descriptorSetLayouts.push_back(texture);
 				}
-				else CONCERTO_ASSERT_FALSE;
+				else
+				{
+					CONCERTO_ASSERT_FALSE("ConcertoGraphics: Multiple textures are not supported yet");
+				}
 				continue;
 			}
 			descriptorSetLayouts.push_back(GeDescriptorSetLayout(setBindings));
@@ -117,13 +120,17 @@ namespace Concerto::Graphics
 			if (needNewDescriptor)
 			{
 				if (!_allocator.AllocateWithoutCache(descriptorSet, *descriptorSetLayout))
-					CONCERTO_ASSERT_FALSE;
+				{
+					CONCERTO_ASSERT_FALSE("ConcertoGraphics: Cannot allocate descriptor set");
+				}
 				textureDescriptorSet = descriptorSet;
 			}
 			else
 			{
 				if (!_allocator.Allocate(descriptorSet, *descriptorSetLayout))
-					CONCERTO_ASSERT_FALSE;
+				{
+					CONCERTO_ASSERT_FALSE("ConcertoGraphics: Cannot allocate descriptor set");
+				}
 			}
 		}
 

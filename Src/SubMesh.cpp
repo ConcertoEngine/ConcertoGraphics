@@ -4,6 +4,7 @@
 
 #include "Concerto/Graphics/SubMesh.hpp"
 #include "Concerto/Graphics/Mesh.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/ShaderModule.hpp"
 
 namespace Concerto::Graphics
 {

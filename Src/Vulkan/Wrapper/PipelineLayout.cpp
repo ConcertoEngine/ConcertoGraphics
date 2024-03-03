@@ -29,11 +29,8 @@ namespace Concerto::Graphics
 		pipelineLayoutCreateInfo.pSetLayouts = vkDescriptorSetLayouts.data();
 		pipelineLayoutCreateInfo.pushConstantRangeCount = 0;
 		pipelineLayoutCreateInfo.pPushConstantRanges = nullptr;
-		if (vkCreatePipelineLayout(*_device->Get(), &pipelineLayoutCreateInfo, nullptr, &_handle) != VK_SUCCESS)
-		{
-			CONCERTO_ASSERT_FALSE;
-			throw std::runtime_error("failed to create pipeline layout!");
-		}
+		const VkResult result = vkCreatePipelineLayout(*_device->Get(), &pipelineLayoutCreateInfo, nullptr, &_handle);
+		CONCERTO_ASSERT(result == VK_SUCCESS, "ConcertoGraphics: vkCreatePipelineLayout failed VKResult={}", static_cast<int>(result));
 	}
 
 	PipelineLayout::~PipelineLayout()

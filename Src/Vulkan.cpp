@@ -35,13 +35,13 @@ namespace Concerto::Graphics
                     { 1, 0, 0 }, extensions, layers),
         _physicalDevices(_vkInstance.EnumeratePhysicalDevices())
     {
-		CONCERTO_ASSERT(_instance == nullptr); // Only one renderer can be created
+		CONCERTO_ASSERT(_instance == nullptr, "Only one renderer can be created");
 		_instance = this;
     }
 
-    Vulkan* Concerto::Graphics::Vulkan::GetInstance()
+    Vulkan* Vulkan::GetInstance()
     {
-        CONCERTO_ASSERT(_instance != nullptr); // Vulkan must be created before calling Instance()
+        CONCERTO_ASSERT(_instance != nullptr, "You must call the constructor of class 'Vulkan', before calling 'GetInstance'");
         return _instance;
     }
 

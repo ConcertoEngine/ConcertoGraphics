@@ -20,10 +20,11 @@ namespace Concerto::Graphics
 		info.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
 		info.pNext = nullptr;
 		info.flags = 0;
-		if (vkCreateSemaphore(*_device->Get(), &info, nullptr, &_handle) != VK_SUCCESS)
+		_lastResult = vkCreateSemaphore(*_device->Get(), &info, nullptr, &_handle);
+		if (_lastResult != VK_SUCCESS)
 		{
-			CONCERTO_ASSERT_FALSE;
-			throw std::runtime_error("Failed to create semaphore");
+			CONCERTO_ASSERT_FALSE("ConcertoGraphics: vkCreateSemaphore failed VKResult={}", static_cast<int>(_lastResult));
+			return;
 		}
 	}
 

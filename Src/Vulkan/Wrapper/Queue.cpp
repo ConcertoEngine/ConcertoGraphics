@@ -35,11 +35,8 @@ namespace Concerto::Graphics
 		submit.pSignalSemaphores = frame.renderSemaphore.Get();
 		submit.commandBufferCount = 1;
 		submit.pCommandBuffers = &vkCommandBuffer;
-		if (vkQueueSubmit(_handle, 1, &submit, *frame.renderFence.Get()) != VK_SUCCESS)
-		{
-			CONCERTO_ASSERT_FALSE;
-			throw std::runtime_error("vkQueueSubmit fail");
-		}
+		_lastResult = vkQueueSubmit(_handle, 1, &submit, *frame.renderFence.Get());
+		CONCERTO_ASSERT(_lastResult == VK_SUCCESS, "ConcertoGraphics: vkQueueSubmit failed VKResult={}", static_cast<int>(_lastResult));
 	}
 
 	bool Queue::Present(const FrameData& frame, Swapchain& swapchain, UInt32 swapchainImageIndex)
@@ -52,15 +49,15 @@ namespace Concerto::Graphics
 		present.pWaitSemaphores = frame.renderSemaphore.Get();
 		present.waitSemaphoreCount = 1;
 		present.pImageIndices = &swapchainImageIndex;
-		auto vkResult = vkQueuePresentKHR(_handle, &present);
-		if (vkResult == VK_ERROR_OUT_OF_DATE_KHR || vkResult == VK_SUBOPTIMAL_KHR)
+		_lastResult = vkQueuePresentKHR(_handle, &present);
+		if (_lastResult == VK_ERROR_OUT_OF_DATE_KHR || _lastResult == VK_SUBOPTIMAL_KHR)
 		{
 			return false;
 		}
-		if (vkResult != VK_SUCCESS)
+		if (_lastResult != VK_SUCCESS)
 		{
-			CONCERTO_ASSERT_FALSE;
-			throw std::runtime_error("vkQueuePresentKHR fail");
+			CONCERTO_ASSERT_FALSE("ConcertoGraphics: vkQueuePresentKHR failed VKResult={}", static_cast<int>(_lastResult));
+			return false;
 		}
 		return true;
 	}

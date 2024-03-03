@@ -102,7 +102,7 @@ namespace Concerto::Graphics
 
 	Device& DescriptorAllocator::GetDevice() const
 	{
-		CONCERTO_ASSERT(_device != nullptr);
+		CONCERTO_ASSERT(_device != nullptr, "Vulkan device is null");
 		return *_device;
 	}
 

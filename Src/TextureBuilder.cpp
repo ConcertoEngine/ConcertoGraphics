@@ -22,7 +22,7 @@ namespace Concerto::Graphics
 	{
 		if (_instance != nullptr)
 		{
-			CONCERTO_ASSERT_FALSE;
+			CONCERTO_ASSERT_FALSE("ConcertoGraphics: Texture builder instance is null");
 			return;
 		}
 		_instance = this;
@@ -35,7 +35,7 @@ namespace Concerto::Graphics
 
 	TextureBuilder* TextureBuilder::Instance()
 	{
-		CONCERTO_ASSERT(_instance);
+		CONCERTO_ASSERT(_instance, "ConcertoGraphics: TextureBuilder instance is null");
 		return _instance;
 	}
 

@@ -17,11 +17,8 @@ namespace Concerto::Graphics
 	ImageView::ImageView(Device& device, Image& image, VkImageAspectFlags aspectFlags) : Object(device)
 	{
 		auto imageInfo = VulkanInitializer::ImageViewCreateInfo(image.GetFormat(), *image.Get(), aspectFlags);
-		if (vkCreateImageView(*_device->Get(), &imageInfo, nullptr, &_handle) != VK_SUCCESS)
-		{
-			CONCERTO_ASSERT_FALSE;
-			throw std::runtime_error("failed to create image view");
-		}
+		_lastResult = vkCreateImageView(*_device->Get(), &imageInfo, nullptr, &_handle);
+		CONCERTO_ASSERT(_lastResult == VK_SUCCESS, "ConcertoGraphics: vkCreateImageView failed VkResult={}", static_cast<int>(_lastResult));
 	}
 
 	ImageView::~ImageView()

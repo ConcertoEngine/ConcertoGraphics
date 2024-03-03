@@ -74,7 +74,7 @@ namespace Concerto::Graphics
 			return VK_DESCRIPTOR_TYPE_STORAGE_IMAGE;
 		if (IsUniformType(*varType))
 			return VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-		CONCERTO_ASSERT_FALSE;
+		CONCERTO_ASSERT_FALSE("ConcertoGraphics: Unexpeted type {}", ToString(varType));
 		throw std::runtime_error("unexpected type " + nzsl::Ast::ToString(varType));
 
 	}

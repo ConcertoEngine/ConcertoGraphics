@@ -249,7 +249,7 @@ namespace Concerto::Graphics
 
 	Vertices Primitive::MakePlane(float /*size*/)
 	{
-		CONCERTO_ASSERT_FALSE; // not implemented
+		CONCERTO_ASSERT_FALSE("Not implemented");
 		return {};
 	}
 }

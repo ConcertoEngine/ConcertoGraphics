@@ -5,6 +5,8 @@
 #ifndef CONCERTO_GRAPHICS_BUFFER_INL
 #define CONCERTO_GRAPHICS_BUFFER_INL
 
+#include <Concerto/Core/Assert.hpp>
+
 #include "Concerto/Graphics/Vulkan/Wrapper/Buffer.hpp"
 
 namespace Concerto::Graphics
@@ -15,7 +17,7 @@ namespace Concerto::Graphics
 		Byte* data = nullptr;
 		if(Map(&data) == false)
 		{
-			CONCERTO_ASSERT_FALSE;
+			CONCERTO_ASSERT_FALSE("ConcertoGraphics: Cannot map buffer");
 			return;
 		}
 		data += padding;
@@ -29,7 +31,7 @@ namespace Concerto::Graphics
 		Byte* data = nullptr;
 		if (Map(&data) == false)
 		{
-			CONCERTO_ASSERT_FALSE;
+			CONCERTO_ASSERT_FALSE("ConcertoGraphics: Cannot map buffer");
 			return;
 		}
 		data += padding;
@@ -46,7 +48,7 @@ namespace Concerto::Graphics
 	{
 		Byte* data = nullptr;
 		if (Map(&data) == false)
-			CONCERTO_ASSERT_FALSE;
+			CONCERTO_ASSERT_FALSE("ConcertoGraphics: Cannot map buffer");
 		return reinterpret_cast<T*>(data);
 	}
 } // Concerto::Graphics::Wrapper

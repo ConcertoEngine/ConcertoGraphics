@@ -41,7 +41,7 @@ namespace Concerto::Graphics
 	template<typename VkType>
 	VkType* Object<VkType>::Get() const
 	{
-		CONCERTO_ASSERT(!IsNull());
+		CONCERTO_ASSERT(!IsNull(), "The vulkan object handle is null");
 		return const_cast<VkType*>(&_handle);
 	}
 

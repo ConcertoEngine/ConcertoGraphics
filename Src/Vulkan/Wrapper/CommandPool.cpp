@@ -2,14 +2,12 @@
 // Created by arthur on 14/06/22.
 //
 
-#include <cassert>
 #include <stdexcept>
 #include <iostream>
 
-#include "Concerto/Graphics/Vulkan/Wrapper/CommandPool.hpp"
-
 #include <Concerto/Core/Assert.hpp>
 
+#include "Concerto/Graphics/Vulkan/Wrapper/CommandPool.hpp"
 #include "Concerto/Graphics/Vulkan/Wrapper/Device.hpp"
 
 namespace Concerto::Graphics
@@ -21,13 +19,8 @@ namespace Concerto::Graphics
 		info.pNext = nullptr;
 		info.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
 		info.queueFamilyIndex = _queueFamily;
-
-		VkResult result = vkCreateCommandPool(*_device->Get(), &info, nullptr, &_handle);
-		if (result != VK_SUCCESS)
-		{
-			CONCERTO_ASSERT_FALSE;
-			throw std::runtime_error("Failed to create command pool");
-		}
+		_lastResult = vkCreateCommandPool(*_device->Get(), &info, nullptr, &_handle);
+		CONCERTO_ASSERT(_lastResult == VK_SUCCESS, "Error cannot create command pool: VkResult={}", static_cast<int>(_lastResult));
 	}
 
 	CommandPool::~CommandPool()
@@ -37,13 +30,9 @@ namespace Concerto::Graphics
 		vkDestroyCommandPool(*_device->Get(), _handle, nullptr);
 	}
 
-	void CommandPool::Reset()
+	void CommandPool::Reset() const
 	{
-		if (vkResetCommandPool(*_device->Get(), _handle, 0) != VK_SUCCESS)
-		{
-			CONCERTO_ASSERT_FALSE;
-			throw std::runtime_error("vkResetCommandPool fail");
-		}
+		_lastResult = vkResetCommandPool(*_device->Get(), _handle, 0);
+		CONCERTO_ASSERT(_lastResult == VK_SUCCESS, "ConcertoGraphics: Error cannot reset command pool: VkResult={}", static_cast<int>(_lastResult));
 	}
-
 }

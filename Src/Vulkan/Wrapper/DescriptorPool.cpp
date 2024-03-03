@@ -29,11 +29,8 @@ namespace Concerto::Graphics
 		pool_info.maxSets = 1000;
 		pool_info.poolSizeCount = static_cast<UInt32>(sizes.size());
 		pool_info.pPoolSizes = sizes.data();
-		if (vkCreateDescriptorPool(*device.Get(), &pool_info, nullptr, &_handle) != VK_SUCCESS)
-		{
-			CONCERTO_ASSERT_FALSE;
-			throw std::runtime_error("Failed to create descriptor pool");
-		}
+		_lastResult = vkCreateDescriptorPool(*device.Get(), &pool_info, nullptr, &_handle);
+		CONCERTO_ASSERT(_lastResult == VK_SUCCESS, "ConcertoGraphics: Failed to create descriptor pool VkResult={}", static_cast<const int>(_lastResult));
 	}
 
 	DescriptorPool::DescriptorPool(Device& device, std::vector<VkDescriptorPoolSize> poolSizes) : Object<VkDescriptorPool>(device)
@@ -44,13 +41,9 @@ namespace Concerto::Graphics
 		pool_info.maxSets = 10;
 		pool_info.poolSizeCount = static_cast<UInt32>(poolSizes.size());
 		pool_info.pPoolSizes = poolSizes.data();
-		if (vkCreateDescriptorPool(*device.Get(), &pool_info, nullptr, &_handle) != VK_SUCCESS)
-		{
-			CONCERTO_ASSERT_FALSE;
-			throw std::runtime_error("Failed to create descriptor pool");
-		}
+		_lastResult = vkCreateDescriptorPool(*device.Get(), &pool_info, nullptr, &_handle);
+		CONCERTO_ASSERT(_lastResult == VK_SUCCESS, "ConcertoGraphics: Failed to create descriptor pool VkResult={}", static_cast<const int>(_lastResult));
 	}
-
 
 	DescriptorPool::~DescriptorPool()
 	{

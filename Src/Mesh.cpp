@@ -4,13 +4,17 @@
 
 #define TINYOBJLOADER_IMPLEMENTATION
 
-#include <iostream>
 #include <filesystem>
 
 #include <Concerto/Core/Logger.hpp>
 #include <Concerto/Graphics/thirdParty/tiny_obj_loader.h>
 
 #include "Concerto/Graphics/Mesh.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Device.hpp"
+#include "Concerto/Graphics/Vulkan/GpuMesh.hpp"
+#include "Concerto/Graphics/UploadContext.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/ShaderModule.hpp"
+#include "Concerto/Graphics/Vulkan/Wrapper/Fence.hpp"
 
 namespace Concerto::Graphics
 {
@@ -125,6 +129,23 @@ namespace Concerto::Graphics
 			}
 		}
 		return true;
+	}
+
+	std::shared_ptr<GpuMesh> Mesh::BuildGpuMesh(MaterialBuilder& materialBuilder, const RenderPass& renderPass, Device& device, UploadContext& uploadContext)
+	{
+		auto gpuMesh = std::make_shared<GpuMesh>();
+		for (auto& subMesh : GetSubMeshes())
+		{
+			MaterialInfo materialInfo = *subMesh->GetMaterial();
+			materialInfo.vertexShaderPath = "./Shaders/tri_mesh_ssbo.nzsl";
+			materialInfo.fragmentShaderPath = materialInfo.diffuseTexturePath.empty() ? "./Shaders/default_lit.nzsl" : "./Shaders/textured_lit.nzsl";
+			VkMaterialPtr litMaterial = materialBuilder.BuildMaterial(materialInfo, renderPass);
+			auto vkSubMesh = std::make_shared<GpuSubMesh>(subMesh, device.GetAllocator(), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT, VMA_MEMORY_USAGE_GPU_ONLY, litMaterial);
+			vkSubMesh->Upload(uploadContext._commandBuffer, uploadContext._commandPool, uploadContext._uploadFence, device.GetQueue(Queue::Type::Graphics), device.GetAllocator());
+
+			gpuMesh->subMeshes.push_back(vkSubMesh);
+		}
+		return gpuMesh;
 	}
 
 	const std::string& Mesh::GetPath() const

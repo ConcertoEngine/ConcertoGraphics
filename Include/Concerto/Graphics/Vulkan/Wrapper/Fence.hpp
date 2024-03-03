@@ -48,12 +48,12 @@ namespace Concerto::Graphics
 		*
 		* @param timeout The maximum time, in nanoseconds, to wait for the fence to be signaled.
 		*/
-		void Wait(UInt64 timeout);
+		void Wait(UInt64 timeout) const;
 
 		/**
 		* @brief Resets the fence to an unsignaled state.
 		*/
-		void Reset();
+		void Reset() const;
 	};
 } // namespace Concerto::Graphics
 

@@ -61,8 +61,8 @@ namespace Concerto::Graphics
 		std::ifstream file(shaderPath, std::ios::ate | std::ios::binary);
 		if (!file.is_open())
 		{
-			CONCERTO_ASSERT_FALSE;
-			throw std::runtime_error("Failed to open the file " + shaderPath);
+			CONCERTO_ASSERT_FALSE("ConcertoGraphics: Failed to open shader module '{}'", shaderPath);
+			return;
 		}
 		std::streamsize fileSize = file.tellg();
 		_buffer.resize(fileSize / sizeof(UInt32));
@@ -77,10 +77,7 @@ namespace Concerto::Graphics
 
 	void ShaderModule::CreateShaderModule()
 	{
-		if (vkCreateShaderModule(*_device->Get(), &_shaderModuleCreateInfo, nullptr, &_handle) != VK_SUCCESS)
-		{
-			CONCERTO_ASSERT_FALSE;
-			throw std::runtime_error("Failed to create shader module");
-		}
+		_lastResult = vkCreateShaderModule(*_device->Get(), &_shaderModuleCreateInfo, nullptr, &_handle);
+		CONCERTO_ASSERT(_lastResult == VK_SUCCESS, "ConcertoGraphics: vkCreateShaderModule failed VKResult={}", static_cast<int>(_lastResult));
 	}
 }

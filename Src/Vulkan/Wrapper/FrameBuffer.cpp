@@ -17,20 +17,16 @@ namespace Concerto::Graphics
 {
 	FrameBuffer::FrameBuffer(Device& device, RenderPass& renderPass, ImageView& imageView, ImageView& depthImageView, VkExtent2D extent) : Object(device)
 	{
-		VkFramebufferCreateInfo fb_info = VulkanInitializer::FramebufferCreateInfo(*renderPass.Get(), extent);
+		VkFramebufferCreateInfo framebufferCreateInfo = VulkanInitializer::FramebufferCreateInfo(*renderPass.Get(), extent);
 
 		VkImageView attachments[2];
 		attachments[0] = *imageView.Get();
 		attachments[1] = *depthImageView.Get();
 
-		fb_info.pAttachments = attachments;
-		fb_info.attachmentCount = 2;
-		if (vkCreateFramebuffer(*_device->Get(), &fb_info, nullptr, &_handle) != VK_SUCCESS)
-		{
-			CONCERTO_ASSERT_FALSE;
-			throw std::runtime_error("failed to create framebuffer!");
-		}
-
+		framebufferCreateInfo.pAttachments = attachments;
+		framebufferCreateInfo.attachmentCount = 2;
+		_lastResult = vkCreateFramebuffer(*_device->Get(), &framebufferCreateInfo, nullptr, &_handle);
+		CONCERTO_ASSERT(_lastResult == VK_SUCCESS, "ConcertoGraphics: vkCreateFramebuffer failed VkResult={}", static_cast<int>(_lastResult));
 	}
 
 	FrameBuffer::~FrameBuffer()
