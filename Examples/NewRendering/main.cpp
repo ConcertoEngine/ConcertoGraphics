@@ -154,11 +154,11 @@ int main()
 		PrintPhysicalDeviceMemoryProperties(device->GetPhysicalDevice());
 		auto memoryProperties = device->GetPhysicalDevice().GetMemoryProperties();
 
-		Allocator& allocator = device->GetAllocator();
+	  Allocator& allocator = device->GetAllocator();
 		Queue& graphicsQueue = device->GetQueue(Queue::Type::Graphics);
 		UploadContext uploadContext(*device, device->GetQueueFamilyIndex(Queue::Type::Graphics));
 
-		auto minimumAlignment = device->GetPhysicalDevice().GetProperties().limits.minUniformBufferOffsetAlignment;
+	  auto minimumAlignment = device->GetPhysicalDevice().GetProperties().limits.minUniformBufferOffsetAlignment;
 		allocator.SetDevice(device);
 		VkSurfaceKHR surface = {};
 		Input input;
@@ -188,7 +188,7 @@ int main()
 
 		const Vector3f position(0.f, 0.f, 0.f);
 		const EulerAnglesf rotation(0, 0, 0);
-		const Vector3f scale(10.f, 10.f, 10.f);
+		const Vector3f scale(1.f, 1.f, 1.f);
 		auto modelMatrix = Matrix4f::Identity();
 		modelMatrix *= position.ToTranslationMatrix();
 		modelMatrix *= rotation.ToQuaternion().ToRotationMatrix<Matrix4f>();
@@ -245,6 +245,22 @@ int main()
 		sceneParameters.gpuSceneData.ambientColor = Vector4f{ 0.f, 0.f, 0.f, 1.f };
 		sceneParameters.gpuSceneData.sunlightColor = Vector4f{ 255.f, 109.f, 39.f, 1.f };
 		sceneParameters.clearColor = Vector4f{ 0.1f, 0.1f, 0.1f, 1.f };
+
+		RenderingContext ctx;
+		ctx.instance = &vkInstance;
+		ctx.physicalDevice = &device->GetPhysicalDevice();
+		ctx.device = device;
+		ctx.queueFamilyIndex = graphicsQueue.GetFamilyIndex();
+		ctx.queue = &graphicsQueue;
+		ctx.minImageCount = 3;
+		ctx.imageCount = 3;
+		ctx.MSAASamples = VK_SAMPLE_COUNT_1_BIT;
+		ctx.commandBuffer = &uploadContext._commandBuffer;
+		ctx.fence = &uploadContext._uploadFence;
+		ctx.commandPool = &uploadContext._commandPool;
+		ctx.renderPass = renderPass;
+
+		ImGUI imgui(ctx, window);
 
 		Graphics::Buffer cameraBuffer(MakeBuffer<GPUCamera>(allocator, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VMA_MEMORY_USAGE_CPU_TO_GPU));
 		Graphics::Buffer sceneBuffer(MakeBuffer<Scene>(allocator, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VMA_MEMORY_USAGE_CPU_TO_GPU));
@@ -365,6 +381,7 @@ int main()
 					frame.commandBuffer.BeginRenderPass(rpInfo);
 					{
 						transfersFunction(frame, uniformOffset);
+						imgui.RenderDrawData(frame.commandBuffer);
 					}
 					frame.commandBuffer.EndRenderPass();
 				}
@@ -377,9 +394,24 @@ int main()
 					return;
 				}
 			};
+
 		std::chrono::steady_clock::time_point lastFrameTime = std::chrono::steady_clock::now();
+		ImGui::SetCurrentContext(imgui.GetContext());
 		while (!window.ShouldClose())
 		{
+			imgui.NewFrame();
+
+			ImGui::Begin("Camera");
+			ImGui::Text("Position : %f %f %f",
+				camera.GetPosition().X(),
+				camera.GetPosition().Y(),
+				camera.GetPosition().Z());
+			ImGui::Text("Rotation : %f %f %f",
+				camera.GetRotation().Pitch(),
+				camera.GetRotation().Yaw(),
+				camera.GetRotation().Roll());
+			ImGui::End();
+
 			camera.UpdateViewProjectionMatrix();
 			auto beginTime = std::chrono::high_resolution_clock::now();
 			deltaTime = std::chrono::duration<float>(beginTime - lastFrameTime).count();
@@ -390,6 +422,7 @@ int main()
 			UInt32 uniformOffset = PadUniformBuffer(sizeof(GPUSceneData), minimumAlignment) * frameNumber;
 			FrameData& currentFrame = frames[frameNumber % frames.size()];
 			swapchain.AcquireNextImage(currentFrame.presentSemaphore, currentFrame.renderFence, 999999999);
+			imgui.Draw();
 			presentFunction(currentFrame, uniformOffset);
 			frameNumber++;
 		}

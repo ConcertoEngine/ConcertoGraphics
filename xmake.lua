@@ -1,7 +1,7 @@
 add_rules('mode.debug')
 add_repositories('Concerto-xrepo https://github.com/ConcertoEngine/xmake-repo.git main')
 add_repositories("nazara-repo https://github.com/NazaraEngine/xmake-repo")
-add_requires('imgui', {configs = {glfw_vulkan = true}})
+add_requires('imgui', {configs = {glfw_vulkan = true, debug = is_mode("debug"), with_symbols = true}})
 add_requires('ConcertoCore', 'vulkan-loader', 'vulkan-memory-allocator', 'stb', 'glfw', 'nzsl')
 
 if (has_config('examples')) then

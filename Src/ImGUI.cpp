@@ -45,13 +45,23 @@ namespace Concerto::Graphics
 		init_info.MinImageCount = _context.minImageCount;
 		init_info.ImageCount = _context.imageCount;
 		init_info.MSAASamples = _context.MSAASamples;
-		init_info.Subpass = _context.subPass;
+		init_info.RenderPass = *_context.renderPass->Get();
+
 		ImGui_ImplVulkan_Init(&init_info);
-		ImGui_ImplGlfw_InitForVulkan((GLFWwindow*)window.GetRawWindow(), true);
+		const bool res = ImGui_ImplGlfw_InitForVulkan((GLFWwindow*)window.GetRawWindow(), true);
+		if (res == false)
+		{
+			CONCERTO_ASSERT_FALSE("ConcertoGraphics: error ImGui_ImplGlfw_InitForVulkan");
+			return;
+		}
 		_context.commandBuffer->ImmediateSubmit(*_context.fence, *_context.commandPool, *_context.queue,
 				[](CommandBuffer&)
 				{
-					ImGui_ImplVulkan_CreateFontsTexture();
+					const bool res = ImGui_ImplVulkan_CreateFontsTexture();
+					if (res == false)
+					{
+						CONCERTO_ASSERT_FALSE("ConcertoGraphics: error ImGui_ImplVulkan_CreateFontsTexture");
+					}
 				});
 	}
 
