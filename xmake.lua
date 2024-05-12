@@ -2,7 +2,8 @@ add_rules('mode.debug')
 add_repositories('Concerto-xrepo https://github.com/ConcertoEngine/xmake-repo.git main')
 add_repositories("nazara-repo https://github.com/NazaraEngine/xmake-repo")
 add_requires('imgui', {configs = {glfw_vulkan = true}})
-add_requires('ConcertoCore', 'vulkan-loader', 'vulkan-memory-allocator', 'stb', 'glfw', 'nzsl')
+add_requires('concerto-core', 'vulkan-loader', 'vulkan-memory-allocator', 'stb', 'glfw', 'nzsl')
+add_requires('vulkan-loader', {configs = { debug = is_mode("debug"), with_symbols = true}})
 
 if (has_config('examples')) then
     add_requires("glslang", {configs = {binaryonly = true}})
@@ -37,7 +38,7 @@ target('ConcertoGraphics')
                     'Include/(Concerto/Graphics/Vulkan/Wrapper/*.hpp)',
                     'Include/(Concerto/Graphics/Vulkan/Wrapper/*.inl)')
 
-    add_packages('ConcertoCore',
+    add_packages('concertocore',
                  'vulkan-loader',
                  'vulkan-memory-allocator',
                  'stb',
