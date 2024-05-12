@@ -151,14 +151,15 @@ int main()
 		auto& vkInstance = vulkan.GetVkInstance();
 		Device* device = vulkan.CreateDevice(DeviceType::Dedicated);
 		PrintPhysicalDeviceProperties(device->GetPhysicalDevice());
+		CONCERTO_ASSERT(device, "Invalid device pointer");
 		PrintPhysicalDeviceMemoryProperties(device->GetPhysicalDevice());
 		auto memoryProperties = device->GetPhysicalDevice().GetMemoryProperties();
 
-	  Allocator& allocator = device->GetAllocator();
+		Allocator& allocator = device->GetAllocator();
 		Queue& graphicsQueue = device->GetQueue(Queue::Type::Graphics);
 		UploadContext uploadContext(*device, device->GetQueueFamilyIndex(Queue::Type::Graphics));
 
-	  auto minimumAlignment = device->GetPhysicalDevice().GetProperties().limits.minUniformBufferOffsetAlignment;
+		auto minimumAlignment = device->GetPhysicalDevice().GetProperties().limits.minUniformBufferOffsetAlignment;
 		allocator.SetDevice(device);
 		VkSurfaceKHR surface = {};
 		Input input;
@@ -421,8 +422,8 @@ int main()
 			window.PopEvent();
 			UInt32 uniformOffset = PadUniformBuffer(sizeof(GPUSceneData), minimumAlignment) * frameNumber;
 			FrameData& currentFrame = frames[frameNumber % frames.size()];
-			swapchain.AcquireNextImage(currentFrame.presentSemaphore, currentFrame.renderFence, 999999999);
 			imgui.Draw();
+			swapchain.AcquireNextImage(currentFrame.presentSemaphore, currentFrame.renderFence, 999999999);
 			presentFunction(currentFrame, uniformOffset);
 			frameNumber++;
 		}
