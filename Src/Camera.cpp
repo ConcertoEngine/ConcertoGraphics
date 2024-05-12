@@ -34,7 +34,7 @@ namespace Concerto::Graphics
 
 	Vector3f Camera::GetPosition() const
 	{
-		return _velocity;
+		return _position;
 	}
 
 	float Camera::GetFov() const

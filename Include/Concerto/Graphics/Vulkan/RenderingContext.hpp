@@ -21,6 +21,7 @@ namespace Concerto::Graphics
 	class CommandBuffer;
 	class Fence;
 	class CommandPool;
+	class RenderPass;
 
 	struct RenderingContext
 	{
@@ -29,15 +30,13 @@ namespace Concerto::Graphics
 		Device* device;
 		UInt32 queueFamilyIndex;
 		Queue* queue;
-		Pipeline* pipeline;
-		RenderPass* renderPass;
-		UInt32 subPass;
 		UInt32 minImageCount;
 		UInt32 imageCount;
 		VkSampleCountFlagBits MSAASamples;
 		CommandBuffer* commandBuffer;
 		Fence* fence;
 		CommandPool* commandPool;
+		RenderPass* renderPass;
 	};
 } // Concerto::Graphics
 #endif //CONCERTO_GRAPHICS_RENDERINGCONTEXT_HPP
