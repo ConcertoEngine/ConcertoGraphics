@@ -28,6 +28,7 @@ target('ConcertoGraphics')
                     'Include/Concerto/Graphics/Backend/Vulkan/Wrapper',
                     'Include/Concerto/Graphics/Backend/Vulkan',
                     'Include/Concerto/Graphics/RHI',
+                    'Include/Concerto/Graphics/RHI/Vulkan',
                     'Include/Concerto/Graphics/thirdParty',
                     'Include/Concerto/Graphics/Window',
                     { public = true })
@@ -39,6 +40,8 @@ target('ConcertoGraphics')
                     'Include/(Concerto/Graphics/Backend/*.inl)',
                     'Include/(Concerto/Graphics/RHI/*.hpp)',
                     'Include/(Concerto/Graphics/RHI/*.inl)',
+                    'Include/(Concerto/Graphics/RHI/Vulkan/*.hpp)',
+                    'Include/(Concerto/Graphics/RHI/Vulkan/*.inl)',
                     'Include/(Concerto/Graphics/Backend/Vulkan/*.hpp)',
                     'Include/(Concerto/Graphics/Backend/Vulkan/Wrapper/*.hpp)',
                     'Include/(Concerto/Graphics/Backend/Vulkan/Wrapper/*.inl)')

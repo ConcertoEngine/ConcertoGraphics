@@ -102,4 +102,9 @@ namespace Concerto::Graphics::Vk
 		_physicalDevices = std::move(physicalDevices);
 		return _physicalDevices.value();
 	}
+
+	VkResult Instance::GetLastError() const
+	{
+		return _lastResult;
+	}
 } // namespace Concerto::Graphics::Vk

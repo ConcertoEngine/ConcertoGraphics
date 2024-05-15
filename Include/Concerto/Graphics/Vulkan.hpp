@@ -9,9 +9,8 @@
 #include <string>
 #include <map>
 
-#include "Concerto/Graphics/RHI/Instance.hpp"
 #include "Concerto/Graphics/Defines.hpp"
-
+#include "Concerto/Graphics/RHI/Enums.hpp"
 #include "Concerto/Graphics/Version.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Instance.hpp"
 
@@ -28,7 +27,6 @@ namespace Concerto::Graphics::Vk
 		UInt32 width;
 		UInt32 height;
 	};
-
 	
 	class CONCERTO_GRAPHICS_API Vulkan
 	{

@@ -6,30 +6,18 @@
 #define CONCERTO_GRAPHICS_RHI_INSTANCE_HPP
 
 #include <span>
+#include <memory>
 
-#include "Concerto/Graphics/RHI/RHIDevice.hpp"
+#include "Concerto/Graphics/Defines.hpp"
+#include "Concerto/Graphics/RHI/Enums.hpp"
+#include "Concerto/Graphics/RHI/Device.hpp"
 
 namespace Concerto::Graphics::RHI
 {
 	class Device;
+	class APIImpl;
 
-	enum class DeviceType
-	{
-		Other,      //Unknown device type
-		Integrated, //GPU integrated to the CPU
-		Dedicated,  //GPU dedicated to the graphics
-		Virtual,    //Virtual GPU provided by a virtualization system
-		Software    //CPU software renderer
-	};
-
-	struct DeviceInfo
-	{
-		std::string name;
-		std::string vendor;
-		DeviceType type;
-	};
-
-	class Instance
+	class CONCERTO_GRAPHICS_API Instance
 	{
 	public:
 		enum class Backend
@@ -43,19 +31,13 @@ namespace Concerto::Graphics::RHI
 			OpenGLES, // WebGPU OpenGLES backend
 		};
 
-		enum class ValidationLevel
-		{
-			None = 0,
-			Info = 1,
-			Warning = 2,
-			Error = 3,
-			All = 4
-		};
+		Instance(Backend backend = Backend::ConcertoVulkan, ValidationLevel validationLevel = ValidationLevel::All);
 
-		Instance(Backend backend = Backend::ConcertoVulkan) {}
-
-		const std::span<DeviceInfo>& EnumarateDevices() const {}
-		std::unique_ptr<Device> CreateDevice(std::size_t index) {}
+		std::span<const DeviceInfo> EnumerateDevices() const;
+		std::unique_ptr<Device> CreateDevice(std::size_t index);
+		inline APIImpl* GetImpl();
+	private:
+		std::unique_ptr<APIImpl> _apiImpl;
 	};
 }
 

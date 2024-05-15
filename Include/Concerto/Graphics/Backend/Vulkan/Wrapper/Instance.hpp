@@ -11,6 +11,7 @@
 #include <vector>
 
 #include <vulkan/vulkan.h>
+#include <Concerto/Core/Types.hpp>
 
 #include "Concerto/Graphics/Defines.hpp"
 #include "Concerto/Graphics/Version.hpp"
@@ -46,11 +47,11 @@ namespace Concerto::Graphics::Vk
 
 		Instance(const Instance&) = delete;
 
-		Instance(Instance&&) = delete;
+		Instance(Instance&&) = default;
 
 		Instance& operator=(const Instance&) = delete;
 
-		Instance& operator=(Instance&&) = delete;
+		Instance& operator=(Instance&&) = default;
 
 		virtual ~Instance() = default;
 
@@ -76,6 +77,8 @@ namespace Concerto::Graphics::Vk
 	   * @see PhysicalDevice
 	   */
 		[[nodiscard]] std::span<PhysicalDevice> EnumeratePhysicalDevices() const;
+
+		[[nodiscard]] inline VkResult GetLastError() const;
 
 	private:
 		VkInstance _instance;
