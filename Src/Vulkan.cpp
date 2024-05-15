@@ -7,10 +7,10 @@
 #include <Concerto/Core/Assert.hpp>
 
 #include "Concerto/Graphics/Vulkan.hpp"
-#include "Concerto/Graphics/Vulkan/Wrapper/PhysicalDevice.hpp"
-#include "Concerto/Graphics/Vulkan/Wrapper/Device.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/PhysicalDevice.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/Device.hpp"
 
-namespace Concerto::Graphics
+namespace Concerto::Graphics::Vk
 {
     namespace
     {
@@ -45,7 +45,7 @@ namespace Concerto::Graphics
         return _instance;
     }
 
-    Device* Vulkan::CreateDevice(DeviceType type)
+    Device* Vulkan::CreateDevice(RHI::DeviceType type)
     {
 		auto it = _devices.find(type);
         if (it != _devices.end())
@@ -53,7 +53,7 @@ namespace Concerto::Graphics
         for (auto& physicalDevice : _physicalDevices)
         {
             auto properties = physicalDevice.GetProperties();
-            DeviceType deviceType = static_cast<DeviceType>(properties.deviceType);
+            RHI::DeviceType deviceType = static_cast<RHI::DeviceType>(properties.deviceType);
             if (deviceType != type)
                 continue;
             it =_devices.emplace(deviceType, Device(physicalDevice, _vkInstance));

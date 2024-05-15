@@ -10,7 +10,7 @@
 
 #include <Concerto/Core/Math/Vector.hpp>
 
-#include "Concerto/Graphics/Vulkan/Texture.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Texture.hpp"
 
 namespace Concerto::Graphics
 {
@@ -35,7 +35,7 @@ namespace Concerto::Graphics
 				&& normalTexture == other.normalTexture;
 		}
 
-		TexturePtr diffuseTexture;
+		Vk::TexturePtr diffuseTexture;
 		std::string diffuseTexturePath;
 		Vector3f diffuseColor;
 		float metallic = 0.0f;
@@ -43,7 +43,7 @@ namespace Concerto::Graphics
 		float roughness = 0.0f;
 		float anisotropy = 0.0f;
 		Vector3f emissiveColor;
-		TexturePtr normalTexture;
+		Vk::TexturePtr normalTexture;
 		std::string normalTexturePath;
 		std::string name;
 		std::string vertexShaderPath;

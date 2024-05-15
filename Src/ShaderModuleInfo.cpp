@@ -7,11 +7,11 @@
 #include <fstream>
 
 #include "Concerto/Graphics/ShaderReflection.hpp"
-#include "Concerto/Graphics/Vulkan/Wrapper/Device.hpp"
-#include "Concerto/Graphics/Vulkan/Wrapper/ShaderModule.hpp"
-#include "Concerto/Graphics/Vulkan/Wrapper/VulkanInitializer.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/Device.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/ShaderModule.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/VulkanInitializer.hpp"
 
-namespace Concerto::Graphics
+namespace Concerto::Graphics::Vk
 {
 	ShaderModuleInfo::ShaderModuleInfo(Device& device, std::string_view path) : 
 		shaderAst(nzsl::ParseFromFile(path)),
@@ -61,7 +61,7 @@ namespace Concerto::Graphics
 		};
 		spirvWriter.SetEnv(env);
 		spirv = spirvWriter.Generate(*sanitizedModule);
-		shaderModule = std::make_unique<ShaderModule>(device, spirv, static_cast<VkShaderStageFlagBits>(shaderStageFlag), std::move(entryPointName));
+		shaderModule = std::make_unique<Vk::ShaderModule>(device, spirv, static_cast<VkShaderStageFlagBits>(shaderStageFlag), std::move(entryPointName));
 	}
 
 	VkDescriptorType ShaderModuleInfo::GetBindingType(const nzsl::Ast::ExpressionType* varType)

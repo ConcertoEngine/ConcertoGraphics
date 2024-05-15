@@ -8,7 +8,7 @@
 #include <memory>
 
 #include "Concerto/Graphics/Defines.hpp"
-#include "Concerto/Graphics/Vulkan/Vertex.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Vertex.hpp"
 #include "Concerto/Graphics/Material.hpp"
 
 namespace Concerto::Graphics
@@ -20,12 +20,12 @@ namespace Concerto::Graphics
 	{
 	 public:
 		explicit SubMesh(Mesh* parent);
-		SubMesh(const Vertices& vertices, std::shared_ptr<MaterialInfo>& material, Mesh* parent);
-		[[nodiscard]] Vertices& GetVertices();
+		SubMesh(const Vk::Vertices& vertices, std::shared_ptr<MaterialInfo>& material, Mesh* parent);
+		[[nodiscard]] Vk::Vertices& GetVertices();
 		[[nodiscard]] std::shared_ptr<MaterialInfo>& GetMaterial();
 		[[nodiscard]] Mesh* GetParent();
 	 private:
-		Vertices _vertices;
+		Vk::Vertices _vertices;
 		std::shared_ptr<MaterialInfo> _material;
 		Mesh* _parent;
 	};

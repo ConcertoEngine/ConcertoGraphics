@@ -11,7 +11,7 @@
 
 #include "Concerto/Graphics/Defines.hpp"
 
-namespace Concerto::Graphics
+namespace Concerto::Graphics::Vk
 {
 	class UploadContext;
 	class Device;

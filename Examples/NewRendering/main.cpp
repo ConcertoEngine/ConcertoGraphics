@@ -5,25 +5,25 @@
 #define GLFW_INCLUDE_VULKAN
 #include <Concerto/Graphics/Window/Window.hpp>
 #include <Concerto/Graphics/Frame.hpp>
-#include <Concerto/Graphics/Vulkan/Wrapper/Allocator.hpp>
-#include <Concerto/Graphics/Vulkan/Wrapper/Device.hpp>
-#include <Concerto/Graphics/Vulkan/Wrapper/RenderPass.hpp>
-#include <Concerto/Graphics/Vulkan/Wrapper/ShaderModule.hpp>
-#include <Concerto/Graphics/Vulkan/Wrapper/PipelineLayout.hpp>
-#include <Concerto/Graphics/Vulkan/Wrapper/Sampler.hpp>
-#include <Concerto/Graphics/Vulkan/Wrapper/Swapchain.hpp>
-#include <Concerto/Graphics/Vulkan/Wrapper/Pipeline.hpp>
-#include <Concerto/Graphics/Vulkan/Wrapper/VulkanInitializer.hpp>
-#include <Concerto/Graphics/Vulkan/Wrapper/Queue.hpp>
-#include <Concerto/Graphics/Vulkan/DescriptorBuilder.hpp>
-#include <Concerto/Graphics/Vulkan/DescriptorAllocator.hpp>
-#include <Concerto/Graphics/Vulkan/DescriptorLayoutCache.hpp>
+#include <Concerto/Graphics/Backend/Vulkan/Wrapper/Allocator.hpp>
+#include <Concerto/Graphics/Backend/Vulkan/Wrapper/Device.hpp>
+#include <Concerto/Graphics/Backend/Vulkan/Wrapper/RenderPass.hpp>
+#include <Concerto/Graphics/Backend/Vulkan/Wrapper/ShaderModule.hpp>
+#include <Concerto/Graphics/Backend/Vulkan/Wrapper/PipelineLayout.hpp>
+#include <Concerto/Graphics/Backend/Vulkan/Wrapper/Sampler.hpp>
+#include <Concerto/Graphics/Backend/Vulkan/Wrapper/Swapchain.hpp>
+#include <Concerto/Graphics/Backend/Vulkan/Wrapper/Pipeline.hpp>
+#include <Concerto/Graphics/Backend/Vulkan/Wrapper/VulkanInitializer.hpp>
+#include <Concerto/Graphics/Backend/Vulkan/Wrapper/Queue.hpp>
+#include <Concerto/Graphics/Backend/Vulkan/DescriptorBuilder.hpp>
+#include <Concerto/Graphics/Backend/Vulkan/DescriptorAllocator.hpp>
+#include <Concerto/Graphics/Backend/Vulkan/DescriptorLayoutCache.hpp>
 #include <Concerto/Graphics/Mesh.hpp>
 #include <Concerto/Graphics/Primitives.hpp>
 #include <Concerto/Graphics/UploadContext.hpp>
 #include <Concerto/Graphics/MaterialBuilder.hpp>
-#include <Concerto/Graphics/Vulkan/Utils.hpp>
-#include <Concerto/Graphics/Vulkan/GpuMesh.hpp>
+#include <Concerto/Graphics/Backend/Vulkan/Utils.hpp>
+#include <Concerto/Graphics/Backend/Vulkan/GpuMesh.hpp>
 #include <Concerto/Graphics/ShaderReflection.hpp>
 #include <Concerto/Graphics/UploadContext.hpp>
 #include <Concerto/Core/Logger.hpp>
@@ -42,7 +42,7 @@
 using namespace Concerto;
 using namespace Concerto::Graphics;
 
-void PrintPhysicalDeviceProperties(const PhysicalDevice& physicalDevice)
+void PrintPhysicalDeviceProperties(const Vk::PhysicalDevice& physicalDevice)
 {
 	VkPhysicalDeviceProperties deviceProperties = physicalDevice.GetProperties();
 
@@ -112,7 +112,7 @@ const char* GetMemoryHeapFlagsString(UInt32 heapFlags) {
 	return "Unknown";
 }
 
-void PrintPhysicalDeviceMemoryProperties(const PhysicalDevice& physicalDevice) {
+void PrintPhysicalDeviceMemoryProperties(const Vk::PhysicalDevice& physicalDevice) {
 	VkPhysicalDeviceMemoryProperties memoryProperties = physicalDevice.GetMemoryProperties();
 
 	Logger::Info("Physical Device Memory Properties:");
@@ -139,7 +139,7 @@ int main()
 {
 	try
 	{
-		RendererInfo info = {
+		Vk::RendererInfo info = {
 			.applicationName = "Test",
 			.applicationVersion = { 1, 0, 0 },
 			.width = 1280,
@@ -147,17 +147,17 @@ int main()
 		};
 		Window window("Concerto Graphics", 1280, 720);
 		Input& inputManager = window.GetInputManager();
-		Vulkan vulkan(info);
+		Vk::Vulkan vulkan(info);
 		auto& vkInstance = vulkan.GetVkInstance();
-		Device* device = vulkan.CreateDevice(DeviceType::Dedicated);
+		Vk::Device* device = vulkan.CreateDevice(RHI::DeviceType::Dedicated);
 		PrintPhysicalDeviceProperties(device->GetPhysicalDevice());
 		CONCERTO_ASSERT(device, "Invalid device pointer");
 		PrintPhysicalDeviceMemoryProperties(device->GetPhysicalDevice());
 		auto memoryProperties = device->GetPhysicalDevice().GetMemoryProperties();
 
-		Allocator& allocator = device->GetAllocator();
-		Queue& graphicsQueue = device->GetQueue(Queue::Type::Graphics);
-		UploadContext uploadContext(*device, device->GetQueueFamilyIndex(Queue::Type::Graphics));
+		Vk::Allocator& allocator = device->GetAllocator();
+		Vk::Queue& graphicsQueue = device->GetQueue(Vk::Queue::Type::Graphics);
+		Vk::UploadContext uploadContext(*device, device->GetQueueFamilyIndex(Vk::Queue::Type::Graphics));
 
 		auto minimumAlignment = device->GetPhysicalDevice().GetProperties().limits.minUniformBufferOffsetAlignment;
 		allocator.SetDevice(device);
@@ -175,14 +175,14 @@ int main()
 		}
 
 		device->GetPhysicalDevice().SetSurface(surface);
-		Swapchain swapchain(*device, window);
-		RenderPass* renderPass = swapchain.GetRenderPass();
-		MaterialBuilder materialBuilder(*device);
-		TextureBuilder textureBuilder(*device, uploadContext._commandBuffer, uploadContext, graphicsQueue);
+		Vk::Swapchain swapchain(*device, window);
+		Vk::RenderPass* renderPass = swapchain.GetRenderPass();
+		Vk::MaterialBuilder materialBuilder(*device);
+		Vk::TextureBuilder textureBuilder(*device, uploadContext._commandBuffer, uploadContext, graphicsQueue);
 
 		Mesh mesh("./assets/sponza/sponza.obj");
 		auto gpuMesh = mesh.BuildGpuMesh(materialBuilder, *renderPass, *device, uploadContext);
-		std::vector<FrameData> frames;
+		std::vector<Vk::FrameData> frames;
 		frames.reserve(swapchain.GetImages().size());
 		for (std::size_t i = 0; i < frames.capacity(); i++)
 			frames.emplace_back(*device);
@@ -247,7 +247,7 @@ int main()
 		sceneParameters.gpuSceneData.sunlightColor = Vector4f{ 255.f, 109.f, 39.f, 1.f };
 		sceneParameters.clearColor = Vector4f{ 0.1f, 0.1f, 0.1f, 1.f };
 
-		RenderingContext ctx;
+		Vk::RenderingContext ctx;
 		ctx.instance = &vkInstance;
 		ctx.physicalDevice = &device->GetPhysicalDevice();
 		ctx.device = device;
@@ -261,11 +261,11 @@ int main()
 		ctx.commandPool = &uploadContext._commandPool;
 		ctx.renderPass = renderPass;
 
-		ImGUI imgui(ctx, window);
+		Vk::ImGUI imgui(ctx, window);
 
-		Graphics::Buffer cameraBuffer(MakeBuffer<GPUCamera>(allocator, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VMA_MEMORY_USAGE_CPU_TO_GPU));
-		Graphics::Buffer sceneBuffer(MakeBuffer<Scene>(allocator, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VMA_MEMORY_USAGE_CPU_TO_GPU));
-		Graphics::Buffer objectsBuffer(MakeBuffer<GPUObjectData>(allocator, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, VMA_MEMORY_USAGE_CPU_TO_GPU));
+		Vk::Buffer cameraBuffer(MakeBuffer<GPUCamera>(allocator, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VMA_MEMORY_USAGE_CPU_TO_GPU));
+		Vk::Buffer sceneBuffer(MakeBuffer<Scene>(allocator, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VMA_MEMORY_USAGE_CPU_TO_GPU));
+		Vk::Buffer objectsBuffer(MakeBuffer<GPUObjectData>(allocator, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, VMA_MEMORY_USAGE_CPU_TO_GPU));
 		auto materials = materialBuilder.GetMaterials();
 		for (auto& material : materials)
 		{
@@ -307,9 +307,9 @@ int main()
 		}
 
 
-		auto transfersFunction = [&](FrameData& frame, UInt32 uniformOffset) {
+		auto transfersFunction = [&](Vk::FrameData& frame, UInt32 uniformOffset) {
 			cameraBuffer.Copy<GPUCamera>(camera);
-			sceneBuffer.Copy(sceneParameters.gpuSceneData, PadUniformBuffer(sizeof(GPUSceneData), minimumAlignment * (frameNumber % 2)));
+			sceneBuffer.Copy(sceneParameters.gpuSceneData, Vk::PadUniformBuffer(sizeof(GPUSceneData), minimumAlignment * (frameNumber % 2)));
 			objectsBuffer.Copy(modelMatrix);
 			auto* drawIndirectCommand = frame.indirectBuffer.Map<VkDrawIndirectCommand>();
 			UInt32 i = 0;
@@ -324,7 +324,7 @@ int main()
 			}
 			frame.indirectBuffer.UnMap();
 			i = 0;
-			PipelinePtr lasPipeline;
+			Vk::PipelinePtr lasPipeline;
 			for (const auto& subMesh : gpuMesh->subMeshes)
 			{
 				const auto vkMaterial = subMesh->material;
@@ -355,7 +355,7 @@ int main()
 		dynamicScissor.offset = { 0, 0 };
 		dynamicScissor.extent = { info.width, info.height };
 
-		auto presentFunction = [&](FrameData& frame, const UInt32 uniformOffset)
+		auto presentFunction = [&](Vk::FrameData& frame, const UInt32 uniformOffset)
 			{
 				frame.renderFence.Wait(-1);
 				frame.renderFence.Reset();
@@ -420,8 +420,8 @@ int main()
 			int fps = 1.f / deltaTime;
 			window.SetTitle(info.applicationName + " - " + std::to_string(fps) + " fps - " + std::to_string(frameNumber) + " frames");
 			window.PopEvent();
-			UInt32 uniformOffset = PadUniformBuffer(sizeof(GPUSceneData), minimumAlignment) * frameNumber;
-			FrameData& currentFrame = frames[frameNumber % frames.size()];
+			UInt32 uniformOffset = Vk::PadUniformBuffer(sizeof(GPUSceneData), minimumAlignment) * frameNumber;
+			Vk::FrameData& currentFrame = frames[frameNumber % frames.size()];
 			imgui.Draw();
 			swapchain.AcquireNextImage(currentFrame.presentSemaphore, currentFrame.renderFence, 999999999);
 			presentFunction(currentFrame, uniformOffset);

@@ -4,7 +4,7 @@
 
 #include "Concerto/Graphics/SubMesh.hpp"
 #include "Concerto/Graphics/Mesh.hpp"
-#include "Concerto/Graphics/Vulkan/Wrapper/ShaderModule.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/ShaderModule.hpp"
 
 namespace Concerto::Graphics
 {
@@ -16,7 +16,7 @@ namespace Concerto::Graphics
 
 	}
 
-	SubMesh::SubMesh(const Vertices& vertices, std::shared_ptr<MaterialInfo>& material, Mesh* parent) :
+	SubMesh::SubMesh(const Vk::Vertices& vertices, std::shared_ptr<MaterialInfo>& material, Mesh* parent) :
 		_vertices(vertices),
 		_material(material),
 		_parent(parent)
@@ -24,7 +24,7 @@ namespace Concerto::Graphics
 
 	}
 
-	Vertices& SubMesh::GetVertices()
+	Vk::Vertices& SubMesh::GetVertices()
 	{
 		return _vertices;
 	}

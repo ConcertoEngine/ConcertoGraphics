@@ -3,9 +3,9 @@
 //
 
 #include "Concerto/Graphics/UploadContext.hpp"
-#include "Concerto/Graphics/Vulkan/Wrapper/Device.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/Device.hpp"
 
-namespace Concerto::Graphics
+namespace Concerto::Graphics::Vk
 {
 	UploadContext::UploadContext(Device& device, UInt32 queueFamily) :
 		_uploadFence(device, false),

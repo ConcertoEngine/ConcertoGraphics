@@ -4,13 +4,13 @@
 
 #include "Concerto/Graphics/TextureBuilder.hpp"
 
-#include "Concerto/Graphics/Vulkan/Wrapper/Device.hpp"
-#include "Concerto/Graphics/Vulkan/Wrapper/CommandBuffer.hpp"
-#include "Concerto/Graphics/Vulkan/Wrapper/Queue.hpp"
-#include "Concerto/Graphics/Vulkan/Texture.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/Device.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/CommandBuffer.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/Queue.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Texture.hpp"
 #include "Concerto/Graphics/UploadContext.hpp"
 
-namespace Concerto::Graphics
+namespace Concerto::Graphics::Vk
 {
 	TextureBuilder* TextureBuilder::_instance = nullptr;
 

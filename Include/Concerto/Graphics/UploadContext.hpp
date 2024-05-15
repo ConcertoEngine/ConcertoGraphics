@@ -5,11 +5,11 @@
 #ifndef CONCERTO_GRAPHICS_UPLOADCONTEXT_HPP
 #define CONCERTO_GRAPHICS_UPLOADCONTEXT_HPP
 
-#include "Concerto/Graphics/Vulkan/Wrapper/CommandPool.hpp"
-#include "Concerto/Graphics/Vulkan/Wrapper/CommandBuffer.hpp"
-#include "Concerto/Graphics/Vulkan/Wrapper/Fence.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/CommandPool.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/CommandBuffer.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/Fence.hpp"
 
-namespace Concerto::Graphics
+namespace Concerto::Graphics::Vk
 {
 	class CONCERTO_GRAPHICS_API UploadContext
 	{

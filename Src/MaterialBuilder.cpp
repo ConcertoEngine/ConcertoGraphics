@@ -6,17 +6,17 @@
 
 #include <ranges>
 
-#include "Concerto/Graphics/Vulkan/Wrapper/DescriptorSetLayout.hpp"
-#include "Concerto/Graphics/Vulkan/Wrapper/Pipeline.hpp"
-#include "Concerto/Graphics/Vulkan/Wrapper/PipelineInfo.hpp"
-#include "Concerto/Graphics/Vulkan/Wrapper/VulkanInitializer.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/DescriptorSetLayout.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/Pipeline.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/PipelineInfo.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/VulkanInitializer.hpp"
 #include "Concerto/Graphics/TextureBuilder.hpp"
-#include "Concerto/Graphics/Vulkan/Wrapper/Device.hpp"
-#include "Concerto/Graphics/Vulkan/Wrapper/Sampler.hpp"
-#include "Concerto/Graphics/Vulkan/Wrapper/ShaderModule.hpp"
-#include "Concerto/Graphics/Vulkan/Wrapper/RenderPass.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/Device.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/Sampler.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/ShaderModule.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/RenderPass.hpp"
 
-namespace Concerto::Graphics
+namespace Concerto::Graphics::Vk
 {
 	MaterialBuilder::MaterialBuilder(Device& device) :
 		_allocator(device),

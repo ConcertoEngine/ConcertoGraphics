@@ -10,13 +10,13 @@
 #include <unordered_map>
 
 #include "Concerto/Graphics/Material.hpp"
-#include "Concerto/Graphics/Vulkan/VkMaterial.hpp"
-#include "Concerto/Graphics/Vulkan/Wrapper/Sampler.hpp"
-#include "Concerto/Graphics/Vulkan/DescriptorAllocator.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/VkMaterial.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/Sampler.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/DescriptorAllocator.hpp"
 #include "Concerto/Graphics/ShaderModuleInfo.hpp"
-#include "Concerto/Graphics/Vulkan/Wrapper/Pipeline.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/Pipeline.hpp"
 
-namespace Concerto::Graphics
+namespace Concerto::Graphics::Vk
 {
 	class RenderPass;
 	class DescriptorLayoutCache;

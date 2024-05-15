@@ -13,10 +13,14 @@
 #include "Concerto/Graphics/Material.hpp"
 #include "Concerto/Graphics/SubMesh.hpp"
 
+namespace Concerto::Graphics::Vk
+{
+	class GpuMesh;
+}
+
 namespace Concerto::Graphics
 {
 	class Device;
-	class GpuMesh;
 	class MaterialInfo;
 
 	class CONCERTO_GRAPHICS_API Mesh
@@ -24,7 +28,7 @@ namespace Concerto::Graphics
 	public:
 		explicit Mesh(std::string filePath);
 		
-		explicit Mesh(Vertices vertices);
+		explicit Mesh(Vk::Vertices vertices);
 
 		[[nodiscard]] const std::string& GetPath() const;
 
@@ -33,7 +37,7 @@ namespace Concerto::Graphics
 		std::unordered_map<std::string, std::shared_ptr<MaterialInfo>>& GetMaterials();
 
 		bool LoadFromFile(const std::string& fileName);
-		std::shared_ptr<GpuMesh> BuildGpuMesh(MaterialBuilder& materialBuilder, const RenderPass& renderPass, Device& device, UploadContext& uploadContext);
+		std::shared_ptr<Vk::GpuMesh> BuildGpuMesh(Vk::MaterialBuilder& materialBuilder, const Vk::RenderPass& renderPass, Vk::Device& device, Vk::UploadContext& uploadContext);
 
 	private:
 		std::string _path;

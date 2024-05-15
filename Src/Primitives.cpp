@@ -11,10 +11,9 @@
 
 namespace Concerto::Graphics
 {
-
-	Vertices Primitive::MakeCone(float radius, float height, UInt32 slices)
+	Vk::Vertices Primitive::MakeCone(float radius, float height, UInt32 slices)
 	{
-		Vertices vertices;
+		Vk::Vertices vertices;
 		const float angleStep = 2.0f * Concerto::Pi<float> / static_cast<float>(slices);
 		const Vector3f baseCenter(0.0f, -0.5f * height, 0.0f);
 		for (UInt32 i = 0; i < slices; ++i)
@@ -53,9 +52,9 @@ namespace Concerto::Graphics
 		return vertices;
 	}
 
-	Vertices Primitive::MakeCube(float size)
+	Vk::Vertices Primitive::MakeCube(float size)
 	{
-		Vertices vertices;
+		Vk::Vertices vertices;
 		const float halfSize = 0.5f * size;
 		const Vector3f positions[8] =
 		{
@@ -103,9 +102,9 @@ namespace Concerto::Graphics
 		return vertices;
 	}
 
-	Vertices Primitive::MakeSphere(float radius, UInt32 slices, UInt32 stacks)
+	Vk::Vertices Primitive::MakeSphere(float radius, UInt32 slices, UInt32 stacks)
 	{
-		Vertices vertices;
+		Vk::Vertices vertices;
 
 		const Vector3f top(0.0f, radius, 0.0f);
 		const Vector3f bottom(0.0f, -radius, 0.0f);
@@ -186,11 +185,11 @@ namespace Concerto::Graphics
 		return vertices;
 	}
 
-	Vertices Primitive::MakeCylinder(float radius, float height, UInt32 slices)
+	Vk::Vertices Primitive::MakeCylinder(float radius, float height, UInt32 slices)
 	{
 		const float step = 2 * Concerto::Pi<float> / slices;
 
-		Vertices vertices;
+		Vk::Vertices vertices;
 
 		const Vector3f top_center(0.0f, height / 2.0f, 0.0f);
 		const Vector3f bottom_center(0.0f, -height / 2.0f, 0.0f);
@@ -247,7 +246,7 @@ namespace Concerto::Graphics
 		return vertices;
 	}
 
-	Vertices Primitive::MakePlane(float /*size*/)
+	Vk::Vertices Primitive::MakePlane(float /*size*/)
 	{
 		CONCERTO_ASSERT_FALSE("Not implemented");
 		return {};

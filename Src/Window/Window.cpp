@@ -8,7 +8,7 @@
 #include <Concerto/Core/Assert.hpp>
 
 #include "Concerto/Graphics/Window/Window.hpp"
-#include "Concerto/Graphics/Vulkan/Wrapper/Instance.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/Instance.hpp"
 #include "Concerto/Graphics/Window/Event.hpp"
 
 #if __linux__
@@ -116,7 +116,7 @@ namespace Concerto::Graphics
 		return w;
 	}
 
-	bool Window::CreateVulkanSurface(Instance& instance, VkSurfaceKHR* surface) const
+	bool Window::CreateVulkanSurface(Vk::Instance& instance, VkSurfaceKHR* surface) const
 	{
 		const auto res = glfwCreateWindowSurface(*instance.Get(), _window, nullptr, surface);
 		if (res != VK_SUCCESS)

@@ -9,12 +9,13 @@
 #include <string>
 #include <map>
 
+#include "Concerto/Graphics/RHI/Instance.hpp"
 #include "Concerto/Graphics/Defines.hpp"
 
 #include "Concerto/Graphics/Version.hpp"
-#include "Concerto/Graphics/Vulkan/Wrapper/Instance.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/Instance.hpp"
 
-namespace Concerto::Graphics
+namespace Concerto::Graphics::Vk
 {
 	class Device;
 	class PhysicalDevice;
@@ -28,14 +29,6 @@ namespace Concerto::Graphics
 		UInt32 height;
 	};
 
-	enum class DeviceType
-	{
-		Other, //Unknown device type
-		Integrated, //GPU integrated to the CPU
-		Dedicated, //GPU dedicated to the graphics
-		Virtual, //Virtual GPU provided by a virtualization system
-		Software //CPU software renderer
-	};
 	
 	class CONCERTO_GRAPHICS_API Vulkan
 	{
@@ -45,7 +38,7 @@ namespace Concerto::Graphics
 		
 		static Vulkan* GetInstance();
 		
-		Device* CreateDevice(DeviceType type = DeviceType::Dedicated);
+		Device* CreateDevice(RHI::DeviceType type = RHI::DeviceType::Dedicated);
 		
 		Instance& GetVkInstance();
 
@@ -54,7 +47,7 @@ namespace Concerto::Graphics
 		RendererInfo _info;
 		Instance _vkInstance;
 		std::span<PhysicalDevice> _physicalDevices;
-		std::multimap<DeviceType, Device> _devices;
+		std::multimap<RHI::DeviceType, Device> _devices;
 	};
 }
 

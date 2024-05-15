@@ -24,18 +24,24 @@ target('ConcertoGraphics')
     add_includedirs('Include/',
                     'Include/Concerto/',
                     'Include/Concerto/Graphics',
+                    'Include/Concerto/Graphics/Backend',
+                    'Include/Concerto/Graphics/Backend/Vulkan/Wrapper',
+                    'Include/Concerto/Graphics/Backend/Vulkan',
+                    'Include/Concerto/Graphics/RHI',
                     'Include/Concerto/Graphics/thirdParty',
                     'Include/Concerto/Graphics/Window',
-                    'Include/Concerto/Graphics/Vulkan/Wrapper',
-                    'Include/Concerto/Graphics/Vulkan',
                     { public = true })
 
     add_headerfiles('Include/(Concerto/Graphics/*.hpp)',
                     'Include/(Concerto/Graphics/thirdParty/*.h)',
                     'Include/(Concerto/Graphics/Window/*.hpp)',
-                    'Include/(Concerto/Graphics/Vulkan/*.hpp)',
-                    'Include/(Concerto/Graphics/Vulkan/Wrapper/*.hpp)',
-                    'Include/(Concerto/Graphics/Vulkan/Wrapper/*.inl)')
+                    'Include/(Concerto/Graphics/Backend/*.hpp)',
+                    'Include/(Concerto/Graphics/Backend/*.inl)',
+                    'Include/(Concerto/Graphics/RHI/*.hpp)',
+                    'Include/(Concerto/Graphics/RHI/*.inl)',
+                    'Include/(Concerto/Graphics/Backend/Vulkan/*.hpp)',
+                    'Include/(Concerto/Graphics/Backend/Vulkan/Wrapper/*.hpp)',
+                    'Include/(Concerto/Graphics/Backend/Vulkan/Wrapper/*.inl)')
 
     add_packages('concerto-core',
                  'vulkan-loader',

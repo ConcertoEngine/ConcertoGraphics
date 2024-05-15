@@ -10,11 +10,11 @@
 #include <Concerto/Graphics/thirdParty/tiny_obj_loader.h>
 
 #include "Concerto/Graphics/Mesh.hpp"
-#include "Concerto/Graphics/Vulkan/Wrapper/Device.hpp"
-#include "Concerto/Graphics/Vulkan/GpuMesh.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/Device.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/GpuMesh.hpp"
 #include "Concerto/Graphics/UploadContext.hpp"
-#include "Concerto/Graphics/Vulkan/Wrapper/ShaderModule.hpp"
-#include "Concerto/Graphics/Vulkan/Wrapper/Fence.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/ShaderModule.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/Fence.hpp"
 
 namespace Concerto::Graphics
 {
@@ -23,7 +23,7 @@ namespace Concerto::Graphics
 		LoadFromFile(_path);
 	}
 
-	Mesh::Mesh(Vertices vertices)
+	Mesh::Mesh(Vk::Vertices vertices)
 	{
 		SubMeshPtr subMesh = std::make_shared<SubMesh>(this);
 		subMesh->GetVertices() = std::move(vertices);
@@ -120,7 +120,7 @@ namespace Concerto::Graphics
 					tinyobj::real_t ux = attrib.texcoords[2 * idx.texcoord_index + 0];
 					tinyobj::real_t uy = attrib.texcoords[2 * idx.texcoord_index + 1];
 
-					currentSubMesh->GetVertices().emplace_back(Vertex{ Vector3f{ vx, vy, vz },
+					currentSubMesh->GetVertices().emplace_back(Vk::Vertex{ Vector3f{ vx, vy, vz },
 																	  Vector3f{ nx, ny, nz },
 																	  Vector3f{ nx, ny, nz },
 																	  Vector2f{ ux, 1 - uy } });
@@ -131,17 +131,17 @@ namespace Concerto::Graphics
 		return true;
 	}
 
-	std::shared_ptr<GpuMesh> Mesh::BuildGpuMesh(MaterialBuilder& materialBuilder, const RenderPass& renderPass, Device& device, UploadContext& uploadContext)
+	std::shared_ptr<Vk::GpuMesh> Mesh::BuildGpuMesh(Vk::MaterialBuilder& materialBuilder, const Vk::RenderPass& renderPass, Vk::Device& device, Vk::UploadContext& uploadContext)
 	{
-		auto gpuMesh = std::make_shared<GpuMesh>();
+		auto gpuMesh = std::make_shared<Vk::GpuMesh>();
 		for (auto& subMesh : GetSubMeshes())
 		{
 			MaterialInfo materialInfo = *subMesh->GetMaterial();
 			materialInfo.vertexShaderPath = "./Shaders/tri_mesh_ssbo.nzsl";
 			materialInfo.fragmentShaderPath = materialInfo.diffuseTexturePath.empty() ? "./Shaders/default_lit.nzsl" : "./Shaders/textured_lit.nzsl";
-			VkMaterialPtr litMaterial = materialBuilder.BuildMaterial(materialInfo, renderPass);
-			auto vkSubMesh = std::make_shared<GpuSubMesh>(subMesh, device.GetAllocator(), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT, VMA_MEMORY_USAGE_GPU_ONLY, litMaterial);
-			vkSubMesh->Upload(uploadContext._commandBuffer, uploadContext._commandPool, uploadContext._uploadFence, device.GetQueue(Queue::Type::Graphics), device.GetAllocator());
+			Vk::VkMaterialPtr litMaterial = materialBuilder.BuildMaterial(materialInfo, renderPass);
+			auto vkSubMesh = std::make_shared<Vk::GpuSubMesh>(subMesh, device.GetAllocator(), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT, VMA_MEMORY_USAGE_GPU_ONLY, litMaterial);
+			vkSubMesh->Upload(uploadContext._commandBuffer, uploadContext._commandPool, uploadContext._uploadFence, device.GetQueue(Vk::Queue::Type::Graphics), device.GetAllocator());
 
 			gpuMesh->subMeshes.push_back(vkSubMesh);
 		}

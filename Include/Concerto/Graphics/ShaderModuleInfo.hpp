@@ -12,7 +12,7 @@
 
 #include "Concerto/Graphics/Defines.hpp"
 
-namespace Concerto::Graphics
+namespace Concerto::Graphics::Vk
 {
 	class Device;
 	class ShaderModule;
@@ -31,7 +31,7 @@ namespace Concerto::Graphics
 		nzsl::Ast::ModulePtr shaderAst;
 		nzsl::Ast::ModulePtr sanitizedModule;
 		std::vector<UInt32> spirv;
-		std::unique_ptr<ShaderModule> shaderModule;
+		std::unique_ptr<Vk::ShaderModule> shaderModule;
 		std::unordered_map<UInt32 /*binding set*/, std::vector<VkDescriptorSetLayoutBinding>> bindings;
 		std::string entryPointName;
 		VkShaderStageFlagBits stage;
