@@ -16,17 +16,15 @@
 
 namespace Concerto::Graphics::Vk
 {
-	Swapchain::Swapchain(Device& device, Window& window) : Object(device),
+	Swapchain::Swapchain(Device& device, Window& window, VkFormat colorFormat, VkFormat depthFormat) : Object(device),
 		  _swapChainImages(),
 		  _swapChainImageViews(),
 		  _windowExtent({window.GetWidth(), window.GetHeight()}),
-		  _swapChainImageFormat(VK_FORMAT_B8G8R8A8_SRGB),
-		  _depthImage(device, _windowExtent, VK_FORMAT_D32_SFLOAT),
+		  _swapChainImageFormat(colorFormat),
+		  _depthImage(device, _windowExtent, depthFormat),
 		  _depthImageView(device, _depthImage, VK_IMAGE_ASPECT_DEPTH_BIT),
 		  _physicalDevice(device.GetPhysicalDevice()),
-		  _window(window),
-		  _renderpass(),
-		  _frameBuffers()
+		  _window(window)
 	{
 		PhysicalDevice::SurfaceSupportDetails surfaceSupportDetails = _physicalDevice.GetSurfaceSupportDetails();
 		VkSwapchainCreateInfoKHR swapChainCreateInfo{};
@@ -55,8 +53,6 @@ namespace Concerto::Graphics::Vk
 			CONCERTO_ASSERT_FALSE("ConcertoGraphics: vkCreateSwapchainKHR failed VKResult={}", static_cast<int>(_lastResult));
 			return;
 		}
-		CreateRenderPass();
-		CreateFrameBuffers();
 	}
 
 	Swapchain::~Swapchain()
@@ -121,27 +117,9 @@ namespace Concerto::Graphics::Vk
 		return _depthImage.GetFormat();
 	}
 
-	RenderPass* Swapchain::GetRenderPass()
-	{
-		if (_renderpass != nullptr)
-			return _renderpass.get();
-		return nullptr;
-	}
-
-	FrameBuffer& Swapchain::GetFrameBuffer(UInt32 index)
-	{
-		CONCERTO_ASSERT(index < _frameBuffers.size(), "ConcertoGraphics: Bad frame buffer index");
-		return _frameBuffers[index];
-	}
-
 	UInt32 Swapchain::GetCurrentImageIndex() const
 	{
 		return _currentImageIndex;
-	}
-
-	FrameBuffer& Swapchain::GetCurrentFrameBuffer()
-	{
-		return GetFrameBuffer(_currentImageIndex);
 	}
 
 	UInt32 Swapchain::AcquireNextImage(Semaphore& semaphore, Fence& fence, std::uint64_t timeout)
@@ -150,22 +128,8 @@ namespace Concerto::Graphics::Vk
 		if (_lastResult != VK_SUCCESS)
 		{
 			CONCERTO_ASSERT_FALSE("ConcertoGraphics: vkCreateSemaphore failed VKResult={}", static_cast<int>(_lastResult));
-			return -1;
+			return -1u;
 		}
 		return _currentImageIndex;
-	}
-
-	void Swapchain::CreateRenderPass()
-	{
-		_renderpass = std::make_unique<RenderPass>(*_device, *this);
-	}
-
-	void Swapchain::CreateFrameBuffers()
-	{
-		CONCERTO_ASSERT(_renderpass != nullptr, "ConcertoGraphics: Invalid render pass");
-		auto imagesViews = GetImageViews();
-		_frameBuffers.reserve(imagesViews.size());
-		for (auto& imageView : imagesViews)
-			_frameBuffers.emplace_back(*_device, *_renderpass, imageView, _depthImageView, _windowExtent);
 	}
 }

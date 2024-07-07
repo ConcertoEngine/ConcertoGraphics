@@ -100,9 +100,10 @@ namespace Concerto::Graphics::Vk
 					VulkanInitializer::PipelineShaderStageCreateInfo(VK_SHADER_STAGE_FRAGMENT_BIT, *fragShaderModuleInfo->shaderModule->Get())
 				};
 				auto pl = std::make_shared<PipelineLayout>(_device, descriptorSetLayouts);
-				PipelineInfo pipelineInfo(std::move(shaderStages), renderPass.GetWindowExtent(), pl);
-				pipeline = std::make_shared<Pipeline>(_device, std::move(pipelineInfo));
-				pipeline->BuildPipeline(*renderPass.Get());
+				CONCERTO_ASSERT_FALSE("FIXEME");
+				//PipelineInfo pipelineInfo(std::move(shaderStages), renderPass.GetWindowExtent(), pl);
+				//pipeline = std::make_shared<Pipeline>(_device, std::move(pipelineInfo));
+				//pipeline->BuildPipeline(*renderPass.Get());
 				_pipelinesCache.emplace(hash, pipeline);
 			}
 		}

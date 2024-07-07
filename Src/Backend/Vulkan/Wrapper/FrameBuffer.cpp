@@ -2,8 +2,6 @@
 // Created by arthur on 12/06/22.
 //
 
-#include <cassert>
-
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Device.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/FrameBuffer.hpp"
 
@@ -15,17 +13,13 @@
 
 namespace Concerto::Graphics::Vk
 {
-	FrameBuffer::FrameBuffer(Device& device, RenderPass& renderPass, ImageView& imageView, ImageView& depthImageView, VkExtent2D extent) : Object(device)
+	FrameBuffer::FrameBuffer(Device& device, const RenderPass& renderPass, const std::vector<VkImageView>& attachments, VkExtent2D extent) : Object(device)
 	{
-		VkFramebufferCreateInfo framebufferCreateInfo = VulkanInitializer::FramebufferCreateInfo(*renderPass.Get(), extent);
+		VkFramebufferCreateInfo frameBufferCreateInfo = VulkanInitializer::FramebufferCreateInfo(*renderPass.Get(), extent);
 
-		VkImageView attachments[2];
-		attachments[0] = *imageView.Get();
-		attachments[1] = *depthImageView.Get();
-
-		framebufferCreateInfo.pAttachments = attachments;
-		framebufferCreateInfo.attachmentCount = 2;
-		_lastResult = vkCreateFramebuffer(*_device->Get(), &framebufferCreateInfo, nullptr, &_handle);
+		frameBufferCreateInfo.pAttachments = attachments.data();
+		frameBufferCreateInfo.attachmentCount = static_cast<UInt32>(attachments.size());
+		_lastResult = vkCreateFramebuffer(*_device->Get(), &frameBufferCreateInfo, nullptr, &_handle);
 		CONCERTO_ASSERT(_lastResult == VK_SUCCESS, "ConcertoGraphics: vkCreateFramebuffer failed VkResult={}", static_cast<int>(_lastResult));
 	}
 

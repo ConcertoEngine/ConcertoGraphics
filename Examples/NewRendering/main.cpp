@@ -137,300 +137,300 @@ void PrintPhysicalDeviceMemoryProperties(const Vk::PhysicalDevice& physicalDevic
 
 int main()
 {
-	try
-	{
-		Vk::RendererInfo info = {
-			.applicationName = "Test",
-			.applicationVersion = { 1, 0, 0 },
-			.width = 1280,
-			.height = 720,
-		};
-		Window window("Concerto Graphics", 1280, 720);
-		Input& inputManager = window.GetInputManager();
-		Vk::Vulkan vulkan(info);
-		auto& vkInstance = vulkan.GetVkInstance();
-		Vk::Device* device = vulkan.CreateDevice(RHI::DeviceType::Dedicated);
-		PrintPhysicalDeviceProperties(device->GetPhysicalDevice());
-		CONCERTO_ASSERT(device, "Invalid device pointer");
-		PrintPhysicalDeviceMemoryProperties(device->GetPhysicalDevice());
-		auto memoryProperties = device->GetPhysicalDevice().GetMemoryProperties();
+	//try
+	//{
+	//	Vk::RendererInfo info = {
+	//		.applicationName = "Test",
+	//		.applicationVersion = { 1, 0, 0 },
+	//		.width = 1280,
+	//		.height = 720,
+	//	};
+	//	Window window("Concerto Graphics", 1280, 720);
+	//	Input& inputManager = window.GetInputManager();
+	//	Vk::Vulkan vulkan(info);
+	//	auto& vkInstance = vulkan.GetVkInstance();
+	//	Vk::Device* device = vulkan.CreateDevice(RHI::DeviceType::Dedicated);
+	//	PrintPhysicalDeviceProperties(device->GetPhysicalDevice());
+	//	CONCERTO_ASSERT(device, "Invalid device pointer");
+	//	PrintPhysicalDeviceMemoryProperties(device->GetPhysicalDevice());
+	//	auto memoryProperties = device->GetPhysicalDevice().GetMemoryProperties();
 
-		Vk::Allocator& allocator = device->GetAllocator();
-		Vk::Queue& graphicsQueue = device->GetQueue(Vk::Queue::Type::Graphics);
-		Vk::UploadContext uploadContext(*device, device->GetQueueFamilyIndex(Vk::Queue::Type::Graphics));
+	//	Vk::Allocator& allocator = device->GetAllocator();
+	//	Vk::Queue& graphicsQueue = device->GetQueue(Vk::Queue::Type::Graphics);
+	//	Vk::UploadContext uploadContext(*device, device->GetQueueFamilyIndex(Vk::Queue::Type::Graphics));
 
-		auto minimumAlignment = device->GetPhysicalDevice().GetProperties().limits.minUniformBufferOffsetAlignment;
-		allocator.SetDevice(device);
-		VkSurfaceKHR surface = {};
-		Input input;
-		if (!window.IsVulkanSupported())
-		{
-			Logger::Error("Vulkan is not supported");
-			return 1;
-		}
-		if (!window.CreateVulkanSurface(vkInstance, &surface))
-		{
-			Logger::Error("Cannot create vulkan surface");
-			return 1;
-		}
+	//	auto minimumAlignment = device->GetPhysicalDevice().GetProperties().limits.minUniformBufferOffsetAlignment;
+	//	allocator.SetDevice(device);
+	//	VkSurfaceKHR surface = {};
+	//	Input input;
+	//	if (!window.IsVulkanSupported())
+	//	{
+	//		Logger::Error("Vulkan is not supported");
+	//		return 1;
+	//	}
+	//	if (!window.CreateVulkanSurface(vkInstance, &surface))
+	//	{
+	//		Logger::Error("Cannot create vulkan surface");
+	//		return 1;
+	//	}
 
-		device->GetPhysicalDevice().SetSurface(surface);
-		Vk::Swapchain swapchain(*device, window);
-		Vk::RenderPass* renderPass = swapchain.GetRenderPass();
-		Vk::MaterialBuilder materialBuilder(*device);
-		Vk::TextureBuilder textureBuilder(*device, uploadContext._commandBuffer, uploadContext, graphicsQueue);
+	//	device->GetPhysicalDevice().SetSurface(surface);
+	//	Vk::Swapchain swapchain(*device, window);
+	//	Vk::RenderPass* renderPass = swapchain.GetRenderPass();
+	//	Vk::MaterialBuilder materialBuilder(*device);
+	//	Vk::TextureBuilder textureBuilder(*device, uploadContext._commandBuffer, uploadContext, graphicsQueue);
 
-		Mesh mesh("./assets/sponza/sponza.obj");
-		auto gpuMesh = mesh.BuildGpuMesh(materialBuilder, *renderPass, *device, uploadContext);
-		std::vector<Vk::FrameData> frames;
-		frames.reserve(swapchain.GetImages().size());
-		for (std::size_t i = 0; i < frames.capacity(); i++)
-			frames.emplace_back(*device);
+	//	Mesh mesh("./assets/sponza/sponza.obj");
+	//	auto gpuMesh = mesh.BuildGpuMesh(materialBuilder, *renderPass, *device, uploadContext);
+	//	std::vector<Vk::FrameData> frames;
+	//	frames.reserve(swapchain.GetImages().size());
+	//	for (std::size_t i = 0; i < frames.capacity(); i++)
+	//		frames.emplace_back(*device);
 
-		const Vector3f position(0.f, 0.f, 0.f);
-		const EulerAnglesf rotation(0, 0, 0);
-		const Vector3f scale(1.f, 1.f, 1.f);
-		auto modelMatrix = Matrix4f::Identity();
-		modelMatrix *= position.ToTranslationMatrix();
-		modelMatrix *= rotation.ToQuaternion().ToRotationMatrix<Matrix4f>();
-		modelMatrix *= scale.ToScalingMatrix();
+	//	const Vector3f position(0.f, 0.f, 0.f);
+	//	const EulerAnglesf rotation(0, 0, 0);
+	//	const Vector3f scale(1.f, 1.f, 1.f);
+	//	auto modelMatrix = Matrix4f::Identity();
+	//	modelMatrix *= position.ToTranslationMatrix();
+	//	modelMatrix *= rotation.ToQuaternion().ToRotationMatrix<Matrix4f>();
+	//	modelMatrix *= scale.ToScalingMatrix();
 
-		float aspect = static_cast<float>(window.GetWidth()) / static_cast<float>(window.GetHeight());
-		float deltaTime = 0.f;
-		Camera camera(ToRadians(90.f), 0.1f, 1000000.f, aspect);
-		bool cursorDisabled = false;
-		float speed = 15000.f;
-		window.SetCursorDisabled(cursorDisabled);
-		window.RegisterResizeCallback([&](Window& window)
-		{
-			aspect = static_cast<float>(window.GetWidth()) / static_cast<float>(window.GetHeight());
-			camera.SetAspectRatio(aspect);
-			camera.SetFov(45.f);
-			camera.SetNear(0.0001f);
-			camera.SetFar(1000.f);
-		});
-		inputManager.Register("MouseMoved", MouseEvent::Type::Moved, [&camera](const MouseEvent& e)
-		{
-			camera.Rotate(e.mouseMove.deltaX, -e.mouseMove.deltaY);
-		});
+	//	float aspect = static_cast<float>(window.GetWidth()) / static_cast<float>(window.GetHeight());
+	//	float deltaTime = 0.f;
+	//	Camera camera(ToRadians(90.f), 0.1f, 1000000.f, aspect);
+	//	bool cursorDisabled = false;
+	//	float speed = 15000.f;
+	//	window.SetCursorDisabled(cursorDisabled);
+	//	window.RegisterResizeCallback([&](Window& window)
+	//	{
+	//		aspect = static_cast<float>(window.GetWidth()) / static_cast<float>(window.GetHeight());
+	//		camera.SetAspectRatio(aspect);
+	//		camera.SetFov(45.f);
+	//		camera.SetNear(0.0001f);
+	//		camera.SetFar(1000.f);
+	//	});
+	//	inputManager.Register("MouseMoved", MouseEvent::Type::Moved, [&camera](const MouseEvent& e)
+	//	{
+	//		camera.Rotate(e.mouseMove.deltaX, -e.mouseMove.deltaY);
+	//	});
 
-		inputManager.Register("Forward", Key::Z, TriggerType::Held, [&camera, &speed, &deltaTime]()
-		{
-			camera.Move(Camera::CameraMovement::Forward, deltaTime * speed);
-		});
+	//	inputManager.Register("Forward", Key::Z, TriggerType::Held, [&camera, &speed, &deltaTime]()
+	//	{
+	//		camera.Move(Camera::CameraMovement::Forward, deltaTime * speed);
+	//	});
 
-		inputManager.Register("Backward", Key::S, TriggerType::Held, [&camera, &speed, &deltaTime]()
-		{
-			camera.Move(Camera::CameraMovement::Backward, deltaTime * speed);
-		});
+	//	inputManager.Register("Backward", Key::S, TriggerType::Held, [&camera, &speed, &deltaTime]()
+	//	{
+	//		camera.Move(Camera::CameraMovement::Backward, deltaTime * speed);
+	//	});
 
-		inputManager.Register("Left", Key::Q, TriggerType::Held, [&camera, &speed, &deltaTime]()
-		{
-			camera.Move(Camera::CameraMovement::Left, deltaTime * speed);
-		});
+	//	inputManager.Register("Left", Key::Q, TriggerType::Held, [&camera, &speed, &deltaTime]()
+	//	{
+	//		camera.Move(Camera::CameraMovement::Left, deltaTime * speed);
+	//	});
 
-		inputManager.Register("Right", Key::D, TriggerType::Held, [&camera, &speed, &deltaTime]()
-		{
-			camera.Move(Camera::CameraMovement::Right, deltaTime * speed);
-		});
+	//	inputManager.Register("Right", Key::D, TriggerType::Held, [&camera, &speed, &deltaTime]()
+	//	{
+	//		camera.Move(Camera::CameraMovement::Right, deltaTime * speed);
+	//	});
 
-		inputManager.Register("MouseFocused", Key::LeftAlt, TriggerType::Pressed, [&cursorDisabled, &window]()
-		{
-			cursorDisabled = !cursorDisabled;
-			window.SetCursorDisabled(cursorDisabled);
-		});
-		std::size_t frameNumber = 0;
+	//	inputManager.Register("MouseFocused", Key::LeftAlt, TriggerType::Pressed, [&cursorDisabled, &window]()
+	//	{
+	//		cursorDisabled = !cursorDisabled;
+	//		window.SetCursorDisabled(cursorDisabled);
+	//	});
+	//	std::size_t frameNumber = 0;
 
-		Scene sceneParameters = {};
-		sceneParameters.gpuSceneData.sunlightDirection = Vector4f{ 3.1f, 1.f, -1.f, 0 };
-		sceneParameters.gpuSceneData.ambientColor = Vector4f{ 0.f, 0.f, 0.f, 1.f };
-		sceneParameters.gpuSceneData.sunlightColor = Vector4f{ 255.f, 109.f, 39.f, 1.f };
-		sceneParameters.clearColor = Vector4f{ 0.1f, 0.1f, 0.1f, 1.f };
+	//	Scene sceneParameters = {};
+	//	sceneParameters.gpuSceneData.sunlightDirection = Vector4f{ 3.1f, 1.f, -1.f, 0 };
+	//	sceneParameters.gpuSceneData.ambientColor = Vector4f{ 0.f, 0.f, 0.f, 1.f };
+	//	sceneParameters.gpuSceneData.sunlightColor = Vector4f{ 255.f, 109.f, 39.f, 1.f };
+	//	sceneParameters.clearColor = Vector4f{ 0.1f, 0.1f, 0.1f, 1.f };
 
-		Vk::RenderingContext ctx;
-		ctx.instance = &vkInstance;
-		ctx.physicalDevice = &device->GetPhysicalDevice();
-		ctx.device = device;
-		ctx.queueFamilyIndex = graphicsQueue.GetFamilyIndex();
-		ctx.queue = &graphicsQueue;
-		ctx.minImageCount = 3;
-		ctx.imageCount = 3;
-		ctx.MSAASamples = VK_SAMPLE_COUNT_1_BIT;
-		ctx.commandBuffer = &uploadContext._commandBuffer;
-		ctx.fence = &uploadContext._uploadFence;
-		ctx.commandPool = &uploadContext._commandPool;
-		ctx.renderPass = renderPass;
+	//	Vk::RenderingContext ctx;
+	//	ctx.instance = &vkInstance;
+	//	ctx.physicalDevice = &device->GetPhysicalDevice();
+	//	ctx.device = device;
+	//	ctx.queueFamilyIndex = graphicsQueue.GetFamilyIndex();
+	//	ctx.queue = &graphicsQueue;
+	//	ctx.minImageCount = 3;
+	//	ctx.imageCount = 3;
+	//	ctx.MSAASamples = VK_SAMPLE_COUNT_1_BIT;
+	//	ctx.commandBuffer = &uploadContext._commandBuffer;
+	//	ctx.fence = &uploadContext._uploadFence;
+	//	ctx.commandPool = &uploadContext._commandPool;
+	//	ctx.renderPass = renderPass;
 
-		Vk::ImGUI imgui(ctx, window);
+	//	Vk::ImGUI imgui(ctx, window);
 
-		Vk::Buffer cameraBuffer(MakeBuffer<GPUCamera>(allocator, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VMA_MEMORY_USAGE_CPU_TO_GPU));
-		Vk::Buffer sceneBuffer(MakeBuffer<Scene>(allocator, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VMA_MEMORY_USAGE_CPU_TO_GPU));
-		Vk::Buffer objectsBuffer(MakeBuffer<GPUObjectData>(allocator, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, VMA_MEMORY_USAGE_CPU_TO_GPU));
-		auto materials = materialBuilder.GetMaterials();
-		for (auto& material : materials)
-		{
-			{
-				VkDescriptorBufferInfo bufferInfo;
-				bufferInfo.buffer = *cameraBuffer.Get();
-				bufferInfo.offset = 0;
-				bufferInfo.range = cameraBuffer.GetAllocatedSize();
+	//	Vk::Buffer cameraBuffer(MakeBuffer<GPUCamera>(allocator, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VMA_MEMORY_USAGE_CPU_TO_GPU));
+	//	Vk::Buffer sceneBuffer(MakeBuffer<Scene>(allocator, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VMA_MEMORY_USAGE_CPU_TO_GPU));
+	//	Vk::Buffer objectsBuffer(MakeBuffer<GPUObjectData>(allocator, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, VMA_MEMORY_USAGE_CPU_TO_GPU));
+	//	auto materials = materialBuilder.GetMaterials();
+	//	for (auto& material : materials)
+	//	{
+	//		{
+	//			VkDescriptorBufferInfo bufferInfo;
+	//			bufferInfo.buffer = *cameraBuffer.Get();
+	//			bufferInfo.offset = 0;
+	//			bufferInfo.range = cameraBuffer.GetAllocatedSize();
 
-				VkWriteDescriptorSet cameraWrite = VulkanInitializer::WriteDescriptorBuffer(
-					VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-					*material->descriptorSets[0]->Get(), &bufferInfo, 0);
-				device->UpdateDescriptorSetWrite(cameraWrite);
-			}
-			{
-				VkDescriptorBufferInfo bufferInfo;
-				bufferInfo.buffer = *sceneBuffer.Get();
-				bufferInfo.offset = 0;
-				bufferInfo.range = sceneBuffer.GetAllocatedSize();
+	//			VkWriteDescriptorSet cameraWrite = VulkanInitializer::WriteDescriptorBuffer(
+	//				VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+	//				*material->descriptorSets[0]->Get(), &bufferInfo, 0);
+	//			device->UpdateDescriptorSetWrite(cameraWrite);
+	//		}
+	//		{
+	//			VkDescriptorBufferInfo bufferInfo;
+	//			bufferInfo.buffer = *sceneBuffer.Get();
+	//			bufferInfo.offset = 0;
+	//			bufferInfo.range = sceneBuffer.GetAllocatedSize();
 
-				VkWriteDescriptorSet sceneWrite = VulkanInitializer::WriteDescriptorBuffer(
-					VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-					*material->descriptorSets[0]->Get(), &bufferInfo, 1);
+	//			VkWriteDescriptorSet sceneWrite = VulkanInitializer::WriteDescriptorBuffer(
+	//				VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+	//				*material->descriptorSets[0]->Get(), &bufferInfo, 1);
 
-				device->UpdateDescriptorSetWrite(sceneWrite);
-			}
-			{
-				VkDescriptorBufferInfo bufferInfo;
-				bufferInfo.buffer = *objectsBuffer.Get();
-				bufferInfo.offset = 0;
-				bufferInfo.range = objectsBuffer.GetAllocatedSize();
+	//			device->UpdateDescriptorSetWrite(sceneWrite);
+	//		}
+	//		{
+	//			VkDescriptorBufferInfo bufferInfo;
+	//			bufferInfo.buffer = *objectsBuffer.Get();
+	//			bufferInfo.offset = 0;
+	//			bufferInfo.range = objectsBuffer.GetAllocatedSize();
 
-				VkWriteDescriptorSet objectWrite = VulkanInitializer::WriteDescriptorBuffer(
-					VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
-					*material->descriptorSets[1]->Get(), &bufferInfo, 0);
+	//			VkWriteDescriptorSet objectWrite = VulkanInitializer::WriteDescriptorBuffer(
+	//				VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
+	//				*material->descriptorSets[1]->Get(), &bufferInfo, 0);
 
-				device->UpdateDescriptorSetWrite(objectWrite);
-			}
-		}
+	//			device->UpdateDescriptorSetWrite(objectWrite);
+	//		}
+	//	}
 
 
-		auto transfersFunction = [&](Vk::FrameData& frame, UInt32 uniformOffset) {
-			cameraBuffer.Copy<GPUCamera>(camera);
-			sceneBuffer.Copy(sceneParameters.gpuSceneData, Vk::PadUniformBuffer(sizeof(GPUSceneData), minimumAlignment * (frameNumber % 2)));
-			objectsBuffer.Copy(modelMatrix);
-			auto* drawIndirectCommand = frame.indirectBuffer.Map<VkDrawIndirectCommand>();
-			UInt32 i = 0;
-			for (const auto& subMesh : mesh.GetSubMeshes())
-			{
-				VkDrawIndirectCommand* drawIndirectCommandPtr = &drawIndirectCommand[i];
-				drawIndirectCommandPtr->vertexCount = subMesh->GetVertices().size();
-				drawIndirectCommandPtr->instanceCount = 1;
-				drawIndirectCommandPtr->firstVertex = 0;
-				drawIndirectCommandPtr->firstInstance = 0;
-				++i;
-			}
-			frame.indirectBuffer.UnMap();
-			i = 0;
-			Vk::PipelinePtr lasPipeline;
-			for (const auto& subMesh : gpuMesh->subMeshes)
-			{
-				const auto vkMaterial = subMesh->material;
-				if (vkMaterial == nullptr)
-				{
-					CONCERTO_ASSERT_FALSE("Could not found the material {}", subMesh->GetMaterial()->name);
-					continue;
-				}
-				if (!lasPipeline || lasPipeline != vkMaterial->pipeline)
-				{
-					frame.commandBuffer.BindPipeline(VK_PIPELINE_BIND_POINT_GRAPHICS, *vkMaterial->pipeline->Get());
-					lasPipeline = vkMaterial->pipeline;
-				}
-				frame.commandBuffer.BindDescriptorSets(VK_PIPELINE_BIND_POINT_GRAPHICS, *vkMaterial->pipeline->GetPipelineLayout()->Get(), vkMaterial->descriptorSets);
-				frame.commandBuffer.BindVertexBuffers(subMesh->vertexBuffer);
-				frame.commandBuffer.DrawIndirect(frame.indirectBuffer, sizeof(VkDrawIndirectCommand) * i, drawIndirectCommand[i].instanceCount, sizeof(VkDrawIndirectCommand));
-				++i;
-			}
-			};
+	//	auto transfersFunction = [&](Vk::FrameData& frame, UInt32 uniformOffset) {
+	//		cameraBuffer.Copy<GPUCamera>(camera);
+	//		sceneBuffer.Copy(sceneParameters.gpuSceneData, Vk::PadUniformBuffer(sizeof(GPUSceneData), minimumAlignment * (frameNumber % 2)));
+	//		objectsBuffer.Copy(modelMatrix);
+	//		auto* drawIndirectCommand = frame.indirectBuffer.Map<VkDrawIndirectCommand>();
+	//		UInt32 i = 0;
+	//		for (const auto& subMesh : mesh.GetSubMeshes())
+	//		{
+	//			VkDrawIndirectCommand* drawIndirectCommandPtr = &drawIndirectCommand[i];
+	//			drawIndirectCommandPtr->vertexCount = subMesh->GetVertices().size();
+	//			drawIndirectCommandPtr->instanceCount = 1;
+	//			drawIndirectCommandPtr->firstVertex = 0;
+	//			drawIndirectCommandPtr->firstInstance = 0;
+	//			++i;
+	//		}
+	//		frame.indirectBuffer.UnMap();
+	//		i = 0;
+	//		Vk::PipelinePtr lasPipeline;
+	//		for (const auto& subMesh : gpuMesh->subMeshes)
+	//		{
+	//			const auto vkMaterial = subMesh->material;
+	//			if (vkMaterial == nullptr)
+	//			{
+	//				CONCERTO_ASSERT_FALSE("Could not found the material {}", subMesh->GetMaterial()->name);
+	//				continue;
+	//			}
+	//			if (!lasPipeline || lasPipeline != vkMaterial->pipeline)
+	//			{
+	//				frame.commandBuffer.BindPipeline(VK_PIPELINE_BIND_POINT_GRAPHICS, *vkMaterial->pipeline->Get());
+	//				lasPipeline = vkMaterial->pipeline;
+	//			}
+	//			frame.commandBuffer.BindDescriptorSets(VK_PIPELINE_BIND_POINT_GRAPHICS, *vkMaterial->pipeline->GetPipelineLayout()->Get(), vkMaterial->descriptorSets);
+	//			frame.commandBuffer.BindVertexBuffers(subMesh->vertexBuffer);
+	//			frame.commandBuffer.DrawIndirect(frame.indirectBuffer, sizeof(VkDrawIndirectCommand) * i, drawIndirectCommand[i].instanceCount, sizeof(VkDrawIndirectCommand));
+	//			++i;
+	//		}
+	//		};
 
-		VkViewport viewport{
-			.width = static_cast<float>(info.width),
-			.height = static_cast<float>(info.height),
-			.minDepth = 0.0f,
-			.maxDepth = 1.0f,
-		};
-		VkRect2D dynamicScissor = {};
-		dynamicScissor.offset = { 0, 0 };
-		dynamicScissor.extent = { info.width, info.height };
+	//	VkViewport viewport{
+	//		.width = static_cast<float>(info.width),
+	//		.height = static_cast<float>(info.height),
+	//		.minDepth = 0.0f,
+	//		.maxDepth = 1.0f,
+	//	};
+	//	VkRect2D dynamicScissor = {};
+	//	dynamicScissor.offset = { 0, 0 };
+	//	dynamicScissor.extent = { info.width, info.height };
 
-		auto presentFunction = [&](Vk::FrameData& frame, const UInt32 uniformOffset)
-			{
-				frame.renderFence.Wait(-1);
-				frame.renderFence.Reset();
-				VkClearValue clearValue;
-				clearValue.color = {
-			{
-						sceneParameters.clearColor.X(),
-						sceneParameters.clearColor.Y(),
-						sceneParameters.clearColor.Z(),
-						1.0f
-					}
-				};
-				VkClearValue depthClear;
-				depthClear.depthStencil.depth = 1.f;
-				const VkClearValue clearValues[] = { clearValue, depthClear };
-				VkRenderPassBeginInfo rpInfo = VulkanInitializer::RenderPassBeginInfo(*renderPass->Get(), { info.width, info.height }, *swapchain.GetCurrentFrameBuffer().Get());
-				rpInfo.clearValueCount = 2;
-				rpInfo.pClearValues = &clearValues[0];
-				frame.commandBuffer.Reset();
-				frame.commandBuffer.Begin();
-				{
-					frame.commandBuffer.SetViewport(viewport);
-					frame.commandBuffer.SetScissor(dynamicScissor);
-					frame.commandBuffer.BeginRenderPass(rpInfo);
-					{
-						transfersFunction(frame, uniformOffset);
-						imgui.RenderDrawData(frame.commandBuffer);
-					}
-					frame.commandBuffer.EndRenderPass();
-				}
-				frame.commandBuffer.End();
+	//	auto presentFunction = [&](Vk::FrameData& frame, const UInt32 uniformOffset)
+	//		{
+	//			frame.renderFence.Wait(-1);
+	//			frame.renderFence.Reset();
+	//			VkClearValue clearValue;
+	//			clearValue.color = {
+	//		{
+	//					sceneParameters.clearColor.X(),
+	//					sceneParameters.clearColor.Y(),
+	//					sceneParameters.clearColor.Z(),
+	//					1.0f
+	//				}
+	//			};
+	//			VkClearValue depthClear;
+	//			depthClear.depthStencil.depth = 1.f;
+	//			const VkClearValue clearValues[] = { clearValue, depthClear };
+	//			VkRenderPassBeginInfo rpInfo = VulkanInitializer::RenderPassBeginInfo(*renderPass->Get(), { info.width, info.height }, *swapchain.GetCurrentFrameBuffer().Get());
+	//			rpInfo.clearValueCount = 2;
+	//			rpInfo.pClearValues = &clearValues[0];
+	//			frame.commandBuffer.Reset();
+	//			frame.commandBuffer.Begin();
+	//			{
+	//				frame.commandBuffer.SetViewport(viewport);
+	//				frame.commandBuffer.SetScissor(dynamicScissor);
+	//				frame.commandBuffer.BeginRenderPass(rpInfo);
+	//				{
+	//					transfersFunction(frame, uniformOffset);
+	//					imgui.RenderDrawData(frame.commandBuffer);
+	//				}
+	//				frame.commandBuffer.EndRenderPass();
+	//			}
+	//			frame.commandBuffer.End();
 
-				graphicsQueue.Submit(frame);
-				if (!graphicsQueue.Present(frame, swapchain, swapchain.GetCurrentImageIndex()))
-				{
-					CONCERTO_ASSERT_FALSE("ConcertoGraphics: Neeed resize");
-					return;
-				}
-			};
+	//			graphicsQueue.Submit(frame);
+	//			if (!graphicsQueue.Present(frame, swapchain, swapchain.GetCurrentImageIndex()))
+	//			{
+	//				CONCERTO_ASSERT_FALSE("ConcertoGraphics: Neeed resize");
+	//				return;
+	//			}
+	//		};
 
-		std::chrono::steady_clock::time_point lastFrameTime = std::chrono::steady_clock::now();
-		ImGui::SetCurrentContext(imgui.GetContext());
-		while (!window.ShouldClose())
-		{
-			imgui.NewFrame();
+	//	std::chrono::steady_clock::time_point lastFrameTime = std::chrono::steady_clock::now();
+	//	ImGui::SetCurrentContext(imgui.GetContext());
+	//	while (!window.ShouldClose())
+	//	{
+	//		imgui.NewFrame();
 
-			ImGui::Begin("Camera");
-			ImGui::Text("Position : %f %f %f",
-				camera.GetPosition().X(),
-				camera.GetPosition().Y(),
-				camera.GetPosition().Z());
-			ImGui::Text("Rotation : %f %f %f",
-				camera.GetRotation().Pitch(),
-				camera.GetRotation().Yaw(),
-				camera.GetRotation().Roll());
-			ImGui::End();
+	//		ImGui::Begin("Camera");
+	//		ImGui::Text("Position : %f %f %f",
+	//			camera.GetPosition().X(),
+	//			camera.GetPosition().Y(),
+	//			camera.GetPosition().Z());
+	//		ImGui::Text("Rotation : %f %f %f",
+	//			camera.GetRotation().Pitch(),
+	//			camera.GetRotation().Yaw(),
+	//			camera.GetRotation().Roll());
+	//		ImGui::End();
 
-			camera.UpdateViewProjectionMatrix();
-			auto beginTime = std::chrono::high_resolution_clock::now();
-			deltaTime = std::chrono::duration<float>(beginTime - lastFrameTime).count();
-			lastFrameTime = beginTime;
-			int fps = 1.f / deltaTime;
-			window.SetTitle(info.applicationName + " - " + std::to_string(fps) + " fps - " + std::to_string(frameNumber) + " frames");
-			window.PopEvent();
-			UInt32 uniformOffset = Vk::PadUniformBuffer(sizeof(GPUSceneData), minimumAlignment) * frameNumber;
-			Vk::FrameData& currentFrame = frames[frameNumber % frames.size()];
-			imgui.Draw();
-			swapchain.AcquireNextImage(currentFrame.presentSemaphore, currentFrame.renderFence, 999999999);
-			presentFunction(currentFrame, uniformOffset);
-			frameNumber++;
-		}
-	}
-	catch (const std::exception& e)
-	{
-		std::cout << e.what() << std::endl;
-	}
+	//		camera.UpdateViewProjectionMatrix();
+	//		auto beginTime = std::chrono::high_resolution_clock::now();
+	//		deltaTime = std::chrono::duration<float>(beginTime - lastFrameTime).count();
+	//		lastFrameTime = beginTime;
+	//		int fps = 1.f / deltaTime;
+	//		window.SetTitle(info.applicationName + " - " + std::to_string(fps) + " fps - " + std::to_string(frameNumber) + " frames");
+	//		window.PopEvent();
+	//		UInt32 uniformOffset = Vk::PadUniformBuffer(sizeof(GPUSceneData), minimumAlignment) * frameNumber;
+	//		Vk::FrameData& currentFrame = frames[frameNumber % frames.size()];
+	//		imgui.Draw();
+	//		swapchain.AcquireNextImage(currentFrame.presentSemaphore, currentFrame.renderFence, 999999999);
+	//		presentFunction(currentFrame, uniformOffset);
+	//		frameNumber++;
+	//	}
+	//}
+	//catch (const std::exception& e)
+	//{
+	//	std::cout << e.what() << std::endl;
+	//}
 	return 0;
 }

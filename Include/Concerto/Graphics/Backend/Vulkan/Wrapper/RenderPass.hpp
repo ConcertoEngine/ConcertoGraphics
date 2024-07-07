@@ -6,7 +6,7 @@
 #define CONCERTO_GRAPHICS_RENDERPASS_HPP
 
 #include <vector>
-
+#include <span>
 #include <vulkan/vulkan.h>
 
 #include "Concerto/Graphics/Defines.hpp"
@@ -14,7 +14,6 @@
 
 namespace Concerto::Graphics::Vk
 {
-	class Swapchain;
 	class Device;
 
 	/**
@@ -31,7 +30,7 @@ namespace Concerto::Graphics::Vk
 		 * @param device The Device object associated with the render pass.
 		 * @param swapchain The Swapchain object associated with the render pass.
 		 */
-		RenderPass(Device& device, Swapchain& swapchain);
+		RenderPass(Device& device, std::span<VkAttachmentDescription> attachmentDescriptions, std::span<VkSubpassDescription> subPassDescriptions, std::span<VkSubpassDependency> subPassDependencies);
 
 		~RenderPass();
 
@@ -43,13 +42,10 @@ namespace Concerto::Graphics::Vk
 
 		RenderPass& operator=(const RenderPass&) = delete;
 
-		[[nodiscard]] VkExtent2D GetWindowExtent() const;
-
 	private:
 		std::vector<VkAttachmentDescription> _attachments;
 		std::vector<VkSubpassDescription> _subpasses;
 		std::vector<VkSubpassDependency> _dependencies;
-		Swapchain& _swapchain;
 	};
 
 } // Concerto

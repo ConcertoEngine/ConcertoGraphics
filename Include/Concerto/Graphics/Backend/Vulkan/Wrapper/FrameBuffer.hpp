@@ -5,6 +5,7 @@
 #ifndef CONCERTO_GRAPHICS_FRAMEBUFFER_HPP
 #define CONCERTO_GRAPHICS_FRAMEBUFFER_HPP
 
+#include <vector>
 
 #include "Concerto/Graphics/Defines.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Object.hpp"
@@ -33,11 +34,10 @@ namespace Concerto::Graphics::Vk
 		*
 		* @param device The device to create the frame buffer on.
 		* @param renderPass The render pass the frame buffer will be used with.
-		* @param imageView The color image view for the frame buffer.
-		* @param depthImageView The depth image view for the frame buffer.
+		* @param attachments 
 		* @param extent The dimensions of the frame buffer.
 		*/
-		FrameBuffer(Device& device, RenderPass& renderPass, ImageView& imageView, ImageView& depthImageView, VkExtent2D extent);
+		FrameBuffer(Device& device, const RenderPass& renderPass, const std::vector<VkImageView>& attachments, VkExtent2D extent);
 
 		~FrameBuffer();
 

@@ -43,7 +43,7 @@ namespace Concerto::Graphics::Vk
 		 * @param device A reference to the logical device.
 		 * @param window A reference to the window.
 		 */
-		Swapchain(Device& device, Window& window);
+		Swapchain(Device& device, Window& window, VkFormat colorFormat = VK_FORMAT_B8G8R8A8_SRGB, VkFormat depthFormat = VK_FORMAT_D32_SFLOAT);
 
 		~Swapchain();
 
@@ -73,13 +73,10 @@ namespace Concerto::Graphics::Vk
 
 		[[nodiscard]] VkFormat GetDepthFormat() const;
 
-		[[nodiscard]] RenderPass* GetRenderPass();
-
 		[[nodiscard]] FrameBuffer& GetFrameBuffer(UInt32 index);
 
 		[[nodiscard]] UInt32 GetCurrentImageIndex() const;
 
-		[[nodiscard]] FrameBuffer& GetCurrentFrameBuffer();
 		/**
 		 * @brief Acquire the next image in the swapchain.
 		 * @param semaphore A reference to the semaphore.
@@ -90,7 +87,6 @@ namespace Concerto::Graphics::Vk
 		UInt32 AcquireNextImage(Semaphore& semaphore, Fence& fence, std::uint64_t timeout);
 
 	private:
-		void CreateRenderPass();
 		void CreateFrameBuffers();
 
 		mutable std::optional<std::vector<Image>> _swapChainImages;
@@ -101,8 +97,6 @@ namespace Concerto::Graphics::Vk
 		ImageView _depthImageView;
 		PhysicalDevice& _physicalDevice;
 		Window& _window;
-		std::unique_ptr<RenderPass> _renderpass;
-		std::vector<FrameBuffer> _frameBuffers;
 		UInt32 _currentImageIndex;
 	};
 } // Concerto::Graphics::Vk

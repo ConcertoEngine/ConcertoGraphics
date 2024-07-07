@@ -5,17 +5,27 @@
 #ifndef CONCERTO_GRAPHICS_RHI_SWAPCHAIN_HPP
 #define CONCERTO_GRAPHICS_RHI_SWAPCHAIN_HPP
 
+#include "RenderPass.hpp"
 #include "Concerto/Graphics/Defines.hpp"
+#include "Concerto/Graphics/RHI/Enums.hpp"
 
 namespace Concerto::Graphics::RHI
 {
 	class CONCERTO_GRAPHICS_API SwapChain
 	{
 	public:
-		SwapChain() = default;
+		inline SwapChain(PixelFormat pixelFormat, PixelFormat depthPixelFormat);
 		virtual ~SwapChain() = default;
 		virtual void Present() = 0;
+		inline PixelFormat GetPixelFormat() const;
+		inline PixelFormat GetDepthPixelFormat() const;
+
+	private:
+		PixelFormat _pixelFormat;
+		PixelFormat _depthPixelFormat;
 	};
 }
+
+#include "Concerto/Graphics/RHI/Vulkan/VkRHISwapChain.inl"
 
 #endif //CONCERTO_GRAPHICS_RHI_SWAPCHAIN_HPP
