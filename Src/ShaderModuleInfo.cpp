@@ -13,7 +13,7 @@
 
 namespace Concerto::Graphics::Vk
 {
-	ShaderModuleInfo::ShaderModuleInfo(Device& device, std::string_view path) : 
+	ShaderModuleInfo::ShaderModuleInfo(Device& device, std::string_view path) :
 		shaderAst(nzsl::ParseFromFile(path)),
 		sanitizedModule(nzsl::Ast::Sanitize(*shaderAst))
 	{

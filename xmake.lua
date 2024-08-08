@@ -21,17 +21,7 @@ target('ConcertoGraphics')
     end
     add_defines('CONCERTO_GRAPHICS_BUILD')
     add_files('Src/**.cpp')
-    add_includedirs('Include/',
-                    'Include/Concerto/',
-                    'Include/Concerto/Graphics',
-                    'Include/Concerto/Graphics/Backend',
-                    'Include/Concerto/Graphics/Backend/Vulkan/Wrapper',
-                    'Include/Concerto/Graphics/Backend/Vulkan',
-                    'Include/Concerto/Graphics/RHI',
-                    'Include/Concerto/Graphics/RHI/Vulkan',
-                    'Include/Concerto/Graphics/thirdParty',
-                    'Include/Concerto/Graphics/Window',
-                    { public = true })
+    add_includedirs('Include/', { public = true })
 
     add_headerfiles('Include/(Concerto/Graphics/*.hpp)',
                     'Include/(Concerto/Graphics/thirdParty/*.h)',

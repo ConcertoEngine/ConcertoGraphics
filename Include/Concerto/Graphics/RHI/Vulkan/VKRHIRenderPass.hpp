@@ -14,7 +14,8 @@
 namespace Concerto::Graphics::RHI
 {
 	class VkRHIDevice;
-	class CONCERTO_GRAPHICS_API VkRHIRenderPass final : public RenderPass, public Vk::RenderPass
+
+	class CONCERTO_GRAPHICS_API VkRHIRenderPass final : public RHI::RenderPass, public Vk::RenderPass
 	{
 	public:
 		VkRHIRenderPass(VkRHIDevice& device, std::span<VkAttachmentDescription> attachmentDescriptions, std::span<VkSubpassDescription> subPassDescriptions, std::span<VkSubpassDependency> subPassDependencies);

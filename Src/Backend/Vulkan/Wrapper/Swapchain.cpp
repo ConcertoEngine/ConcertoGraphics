@@ -7,7 +7,7 @@
 
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Swapchain.hpp"
 
-#include "Fence.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/Fence.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/PhysicalDevice.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Device.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/RenderPass.hpp"

@@ -8,13 +8,15 @@
 #include <memory>
 #include <vector>
 
+#include "Concerto/Graphics/RHI/Material.hpp"
+#include "Concerto/Graphics/RHI/Texture.hpp"
+
 namespace Concerto::Graphics::Vk
 {
 	class DescriptorSet;
 	class Pipeline;
-	class Texture;
 
-	struct CONCERTO_GRAPHICS_API VkMaterial
+	struct CONCERTO_GRAPHICS_API VkMaterial : public RHI::MaterialInfo
 	{
 		VkMaterial() = default;
 		VkMaterial(VkMaterial&&other) = default;
@@ -24,7 +26,7 @@ namespace Concerto::Graphics::Vk
 
 		std::shared_ptr<Pipeline> pipeline;
 		std::vector<std::shared_ptr<DescriptorSet>> descriptorSets;
-		std::shared_ptr<Texture> diffuseTexture;
+		std::shared_ptr<RHI::Texture> diffuseTexture;
 	};
 	using VkMaterialPtr = std::shared_ptr<VkMaterial>;
 }

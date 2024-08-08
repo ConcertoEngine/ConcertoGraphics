@@ -1,139 +1,139 @@
 //
 // Created by arthur on 12/07/2022.
 //
-#include <vulkan/vulkan.h>
-#define GLFW_INCLUDE_VULKAN
-#include <Concerto/Graphics/Window/Window.hpp>
-#include <Concerto/Graphics/Frame.hpp>
-#include <Concerto/Graphics/Backend/Vulkan/Wrapper/Allocator.hpp>
-#include <Concerto/Graphics/Backend/Vulkan/Wrapper/Device.hpp>
-#include <Concerto/Graphics/Backend/Vulkan/Wrapper/RenderPass.hpp>
-#include <Concerto/Graphics/Backend/Vulkan/Wrapper/ShaderModule.hpp>
-#include <Concerto/Graphics/Backend/Vulkan/Wrapper/PipelineLayout.hpp>
-#include <Concerto/Graphics/Backend/Vulkan/Wrapper/Sampler.hpp>
-#include <Concerto/Graphics/Backend/Vulkan/Wrapper/Swapchain.hpp>
-#include <Concerto/Graphics/Backend/Vulkan/Wrapper/Pipeline.hpp>
-#include <Concerto/Graphics/Backend/Vulkan/Wrapper/VulkanInitializer.hpp>
-#include <Concerto/Graphics/Backend/Vulkan/Wrapper/Queue.hpp>
-#include <Concerto/Graphics/Backend/Vulkan/DescriptorBuilder.hpp>
-#include <Concerto/Graphics/Backend/Vulkan/DescriptorAllocator.hpp>
-#include <Concerto/Graphics/Backend/Vulkan/DescriptorLayoutCache.hpp>
-#include <Concerto/Graphics/Mesh.hpp>
-#include <Concerto/Graphics/Primitives.hpp>
-#include <Concerto/Graphics/UploadContext.hpp>
-#include <Concerto/Graphics/MaterialBuilder.hpp>
-#include <Concerto/Graphics/Backend/Vulkan/Utils.hpp>
-#include <Concerto/Graphics/Backend/Vulkan/GpuMesh.hpp>
-#include <Concerto/Graphics/ShaderReflection.hpp>
-#include <Concerto/Graphics/UploadContext.hpp>
-#include <Concerto/Core/Logger.hpp>
-#include <Concerto/Core/Math/Quaternion.hpp>
-#include <Concerto/Core/Math/Vector.hpp>
-#include <Concerto/Core/Math/EulerAngles.hpp>
-#include <Concerto/Graphics/Camera.hpp>
-#include <Concerto/Graphics/Window/Input.hpp>
-#include "Concerto/Graphics/TextureBuilder.hpp"
-#include <Concerto/Graphics/ImGUI.hpp>
-
-#include <Vulkan.hpp>
-#include <GLFW/glfw3.h>
-
-
-using namespace Concerto;
-using namespace Concerto::Graphics;
-
-void PrintPhysicalDeviceProperties(const Vk::PhysicalDevice& physicalDevice)
-{
-	VkPhysicalDeviceProperties deviceProperties = physicalDevice.GetProperties();
-
-	Logger::Info("Physical Device Properties:");
-	Logger::Info("--------------------------------");
-	Logger::Info("Device Name: {}", deviceProperties.deviceName);
-	Logger::Info("API Version: {}.{}.{}", VK_VERSION_MAJOR(deviceProperties.apiVersion), VK_VERSION_MINOR(deviceProperties.apiVersion), VK_VERSION_PATCH(deviceProperties.apiVersion));
-	Logger::Info("Driver Version: {}", deviceProperties.driverVersion);
-	Logger::Info("Vendor ID: ", deviceProperties.vendorID);
-	Logger::Info("Device ID: ", deviceProperties.deviceID);
-	std::string type("Device Type: ");
-	switch (deviceProperties.deviceType) {
-	case VK_PHYSICAL_DEVICE_TYPE_OTHER:
-		type += "Other";
-		break;
-	case VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU:
-		type += "Integrated GPU";
-		break;
-	case VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU:
-		type += "Discrete GPU";
-		break;
-	case VK_PHYSICAL_DEVICE_TYPE_VIRTUAL_GPU:
-		type += "Virtual GPU";
-		break;
-	case VK_PHYSICAL_DEVICE_TYPE_CPU:
-		type += "CPU";
-		break;
-	default:
-		type += "Unknown";
-		break;
-	}
-	Logger::Info("{}", type);
-
-	Logger::Info("--------------------------------");
-}
-
-const char* GetMemoryTypeString(UInt32 memoryType) {
-	switch (memoryType) {
-	case VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT:
-		return "Device Local";
-	case VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT:
-		return "Host Visible";
-	case VK_MEMORY_PROPERTY_HOST_COHERENT_BIT:
-		return "Host Coherent";
-	case VK_MEMORY_PROPERTY_HOST_CACHED_BIT:
-		return "Host Cached";
-	case VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT:
-		return "Lazy Allocated";
-	case VK_MEMORY_PROPERTY_PROTECTED_BIT:
-		return "Protected";
-	case VK_MEMORY_PROPERTY_DEVICE_COHERENT_BIT_AMD:
-		return "Device Coherent";
-	case VK_MEMORY_PROPERTY_DEVICE_UNCACHED_BIT_AMD:
-		return "Device Uncached";
-	case VK_MEMORY_PROPERTY_RDMA_CAPABLE_BIT_NV:
-		return "RDMA Capable";
-	default:
-		return "Unknown";
-	}
-}
-
-const char* GetMemoryHeapFlagsString(UInt32 heapFlags) {
-	if (heapFlags & VK_MEMORY_HEAP_DEVICE_LOCAL_BIT)
-		return "Device Local";
-	if (heapFlags & VK_MEMORY_HEAP_MULTI_INSTANCE_BIT)
-		return "Multi-Instance";
-	return "Unknown";
-}
-
-void PrintPhysicalDeviceMemoryProperties(const Vk::PhysicalDevice& physicalDevice) {
-	VkPhysicalDeviceMemoryProperties memoryProperties = physicalDevice.GetMemoryProperties();
-
-	Logger::Info("Physical Device Memory Properties:");
-	Logger::Info("--------------------------------");
-	Logger::Info("Memory Types: {}", memoryProperties.memoryTypeCount);
-	for (UInt32 i = 0; i < memoryProperties.memoryTypeCount; ++i)
-		Logger::Info("  Type {}: Heap Index {}", GetMemoryTypeString(i), memoryProperties.memoryTypes[i].heapIndex);
-
-	Logger::Info("Memory Heaps: {}", memoryProperties.memoryHeapCount);
-	for (uint32_t i = 0; i < memoryProperties.memoryHeapCount; ++i)
-	{
-		Logger::Info("  Heap {}: Size {} MB ({} GB), Flags {}", std::to_string(i),
-			std::to_string(static_cast<float>(memoryProperties.memoryHeaps[i].size) / (1024.f * 1024.f)),
-			std::to_string(static_cast<float>(memoryProperties.memoryHeaps[i].size) / (1024.f * 1024.f * 1024.f)),
-			GetMemoryHeapFlagsString(memoryProperties.memoryHeaps[i].flags));
-
-	}
-
-	Logger::Info("--------------------------------");
-}
-
+//#include <vulkan/vulkan.h>
+//#define GLFW_INCLUDE_VULKAN
+//#include <Concerto/Graphics/Window/Window.hpp>
+//#include <Concerto/Graphics/Frame.hpp>
+//#include <Concerto/Graphics/Backend/Vulkan/Wrapper/Allocator.hpp>
+//#include <Concerto/Graphics/Backend/Vulkan/Wrapper/Device.hpp>
+//#include <Concerto/Graphics/Backend/Vulkan/Wrapper/RenderPass.hpp>
+//#include <Concerto/Graphics/Backend/Vulkan/Wrapper/ShaderModule.hpp>
+//#include <Concerto/Graphics/Backend/Vulkan/Wrapper/PipelineLayout.hpp>
+//#include <Concerto/Graphics/Backend/Vulkan/Wrapper/Sampler.hpp>
+//#include <Concerto/Graphics/Backend/Vulkan/Wrapper/Swapchain.hpp>
+//#include <Concerto/Graphics/Backend/Vulkan/Wrapper/Pipeline.hpp>
+//#include <Concerto/Graphics/Backend/Vulkan/Wrapper/VulkanInitializer.hpp>
+//#include <Concerto/Graphics/Backend/Vulkan/Wrapper/Queue.hpp>
+//#include <Concerto/Graphics/Backend/Vulkan/DescriptorBuilder.hpp>
+//#include <Concerto/Graphics/Backend/Vulkan/DescriptorAllocator.hpp>
+//#include <Concerto/Graphics/Backend/Vulkan/DescriptorLayoutCache.hpp>
+//#include <Concerto/Graphics/Mesh.hpp>
+//#include <Concerto/Graphics/Primitives.hpp>
+//#include <Concerto/Graphics/UploadContext.hpp>
+//#include <Concerto/Graphics/MaterialBuilder.hpp>
+//#include <Concerto/Graphics/Backend/Vulkan/Utils.hpp>
+//#include <Concerto/Graphics/Backend/Vulkan/GpuMesh.hpp>
+//#include <Concerto/Graphics/ShaderReflection.hpp>
+//#include <Concerto/Graphics/UploadContext.hpp>
+//#include <Concerto/Core/Logger.hpp>
+//#include <Concerto/Core/Math/Quaternion.hpp>
+//#include <Concerto/Core/Math/Vector.hpp>
+//#include <Concerto/Core/Math/EulerAngles.hpp>
+//#include <Concerto/Graphics/Camera.hpp>
+//#include <Concerto/Graphics/Window/Input.hpp>
+//#include "Concerto/Graphics/TextureBuilder.hpp"
+//#include <Concerto/Graphics/ImGUI.hpp>
+//
+//#include <Vulkan.hpp>
+//#include <GLFW/glfw3.h>
+//
+//
+//using namespace Concerto;
+//using namespace Concerto::Graphics;
+//
+//void PrintPhysicalDeviceProperties(const Vk::PhysicalDevice& physicalDevice)
+//{
+//	VkPhysicalDeviceProperties deviceProperties = physicalDevice.GetProperties();
+//
+//	Logger::Info("Physical Device Properties:");
+//	Logger::Info("--------------------------------");
+//	Logger::Info("Device Name: {}", deviceProperties.deviceName);
+//	Logger::Info("API Version: {}.{}.{}", VK_VERSION_MAJOR(deviceProperties.apiVersion), VK_VERSION_MINOR(deviceProperties.apiVersion), VK_VERSION_PATCH(deviceProperties.apiVersion));
+//	Logger::Info("Driver Version: {}", deviceProperties.driverVersion);
+//	Logger::Info("Vendor ID: ", deviceProperties.vendorID);
+//	Logger::Info("Device ID: ", deviceProperties.deviceID);
+//	std::string type("Device Type: ");
+//	switch (deviceProperties.deviceType) {
+//	case VK_PHYSICAL_DEVICE_TYPE_OTHER:
+//		type += "Other";
+//		break;
+//	case VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU:
+//		type += "Integrated GPU";
+//		break;
+//	case VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU:
+//		type += "Discrete GPU";
+//		break;
+//	case VK_PHYSICAL_DEVICE_TYPE_VIRTUAL_GPU:
+//		type += "Virtual GPU";
+//		break;
+//	case VK_PHYSICAL_DEVICE_TYPE_CPU:
+//		type += "CPU";
+//		break;
+//	default:
+//		type += "Unknown";
+//		break;
+//	}
+//	Logger::Info("{}", type);
+//
+//	Logger::Info("--------------------------------");
+//}
+//
+//const char* GetMemoryTypeString(UInt32 memoryType) {
+//	switch (memoryType) {
+//	case VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT:
+//		return "Device Local";
+//	case VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT:
+//		return "Host Visible";
+//	case VK_MEMORY_PROPERTY_HOST_COHERENT_BIT:
+//		return "Host Coherent";
+//	case VK_MEMORY_PROPERTY_HOST_CACHED_BIT:
+//		return "Host Cached";
+//	case VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT:
+//		return "Lazy Allocated";
+//	case VK_MEMORY_PROPERTY_PROTECTED_BIT:
+//		return "Protected";
+//	case VK_MEMORY_PROPERTY_DEVICE_COHERENT_BIT_AMD:
+//		return "Device Coherent";
+//	case VK_MEMORY_PROPERTY_DEVICE_UNCACHED_BIT_AMD:
+//		return "Device Uncached";
+//	case VK_MEMORY_PROPERTY_RDMA_CAPABLE_BIT_NV:
+//		return "RDMA Capable";
+//	default:
+//		return "Unknown";
+//	}
+//}
+//
+//const char* GetMemoryHeapFlagsString(UInt32 heapFlags) {
+//	if (heapFlags & VK_MEMORY_HEAP_DEVICE_LOCAL_BIT)
+//		return "Device Local";
+//	if (heapFlags & VK_MEMORY_HEAP_MULTI_INSTANCE_BIT)
+//		return "Multi-Instance";
+//	return "Unknown";
+//}
+//
+//void PrintPhysicalDeviceMemoryProperties(const Vk::PhysicalDevice& physicalDevice) {
+//	VkPhysicalDeviceMemoryProperties memoryProperties = physicalDevice.GetMemoryProperties();
+//
+//	Logger::Info("Physical Device Memory Properties:");
+//	Logger::Info("--------------------------------");
+//	Logger::Info("Memory Types: {}", memoryProperties.memoryTypeCount);
+//	for (UInt32 i = 0; i < memoryProperties.memoryTypeCount; ++i)
+//		Logger::Info("  Type {}: Heap Index {}", GetMemoryTypeString(i), memoryProperties.memoryTypes[i].heapIndex);
+//
+//	Logger::Info("Memory Heaps: {}", memoryProperties.memoryHeapCount);
+//	for (uint32_t i = 0; i < memoryProperties.memoryHeapCount; ++i)
+//	{
+//		Logger::Info("  Heap {}: Size {} MB ({} GB), Flags {}", std::to_string(i),
+//			std::to_string(static_cast<float>(memoryProperties.memoryHeaps[i].size) / (1024.f * 1024.f)),
+//			std::to_string(static_cast<float>(memoryProperties.memoryHeaps[i].size) / (1024.f * 1024.f * 1024.f)),
+//			GetMemoryHeapFlagsString(memoryProperties.memoryHeaps[i].flags));
+//
+//	}
+//
+//	Logger::Info("--------------------------------");
+//}
+//
 
 int main()
 {

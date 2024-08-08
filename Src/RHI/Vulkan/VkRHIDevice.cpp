@@ -2,20 +2,25 @@
 // Created by arthur on 15/05/2024.
 //
 
+#include <Concerto/Core/Cast.hpp>
+
 #include "Concerto/Graphics/RHI/Vulkan/VkRHIDevice.hpp"
 
-#include "PhysicalDevice.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/PhysicalDevice.hpp"
 #include "Concerto/Graphics/RHI/SwapChain.hpp"
 #include "Concerto/Graphics/Window/Window.hpp"
 #include "Concerto/Graphics/RHI/Vulkan/VkRHISwapChain.hpp"
 #include "Concerto/Graphics/RHI/Vulkan/VKRHIRenderPass.hpp"
 #include "Concerto/Graphics/RHI/Vulkan/VKRHIFrameBuffer.hpp"
 #include "Concerto/Graphics/RHI/Vulkan/Utils.hpp"
+#include "Concerto/Graphics/RHI/Vulkan/VkRHIMaterialBuilder.hpp"
+#include "Concerto/Graphics/RHI/Vulkan/VkRHITextureBuilder.hpp"
 
 namespace Concerto::Graphics::RHI
 {
 	VkRHIDevice::VkRHIDevice(Vk::PhysicalDevice& physicalDevice, Vk::Instance& instance) :
 		Vk::Device(physicalDevice, instance),
+		_surface(nullptr),
 		_vkInstance(&instance)
 	{
 	}
@@ -38,7 +43,7 @@ namespace Concerto::Graphics::RHI
 		return swapChain;
 	}
 
-	std::unique_ptr<RenderPass> VkRHIDevice::CreateRenderPass(std::span<RenderPass::Attachment> attachments, std::span<RenderPass::SubPassDescription> subPassDescriptions, std::span<RenderPass::SubPassDependency> subPassDependencies)
+	std::unique_ptr<RenderPass> VkRHIDevice::CreateRenderPass(std::span<RHI::RenderPass::Attachment> attachments, std::span<RHI::RenderPass::SubPassDescription> subPassDescriptions, std::span<RHI::RenderPass::SubPassDependency> subPassDependencies)
 	{
 		std::vector<VkAttachmentDescription> vkAttachmentDescriptions;
 		std::vector<VkSubpassDescription> vkSubPassDescriptions;
@@ -110,8 +115,26 @@ namespace Concerto::Graphics::RHI
 		return std::make_unique<VkRHIRenderPass>(*this, vkAttachmentDescriptions, vkSubPassDescriptions, vkSubPassDependencies);
 	}
 
-	std::unique_ptr<FrameBuffer> VkRHIDevice::CreateFrameBuffer(UInt32 width, UInt32 height, const RenderPass& renderPass, const std::vector<Texture>& attachments)
+	std::unique_ptr<FrameBuffer> VkRHIDevice::CreateFrameBuffer(UInt32 width, UInt32 height, const RHI::RenderPass& renderPass, const std::vector<RHI::Texture>& attachments)
 	{
-		return std::make_unique<VkRHIFrameBuffer>(*this, width, height, static_cast<const VkRHIRenderPass&>(renderPass), attachments);
+		return std::make_unique<VkRHIFrameBuffer>(*this, width, height, Cast<const VkRHIRenderPass&>(renderPass), attachments);
+	}
+
+	std::unique_ptr<MaterialBuilder> VkRHIDevice::CreateMaterialBuilder(const Vector2u& windowExtent)
+	{
+		return std::make_unique<VkRHIMaterialBuilder>(*this, VkExtent2D{ windowExtent.X(), windowExtent.Y() });
+	}
+
+	std::unique_ptr<TextureBuilder> VkRHIDevice::CreateTextureBuilder()
+	{
+		auto& uploadContext = GetUploadContext();
+		return std::make_unique<VkRHITextureBuilder>(*this, uploadContext, GetQueue(Vk::Queue::Type::Graphics));
+	}
+
+	Vk::UploadContext& VkRHIDevice::GetUploadContext()
+	{
+		if (_uploadContext.has_value() == false)
+			_uploadContext.emplace(*this, GetQueueFamilyIndex(Vk::Queue::Type::Graphics));
+		return _uploadContext.value();
 	}
 } //Concerto::Graphics::RHI

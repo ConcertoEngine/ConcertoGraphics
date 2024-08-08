@@ -17,7 +17,7 @@ namespace Concerto::Graphics::RHI
 	class CONCERTO_GRAPHICS_API VkRHIFrameBuffer final : public FrameBuffer, public Vk::FrameBuffer
 	{
 	public:
-		VkRHIFrameBuffer(VkRHIDevice& device, UInt32 width, UInt32 height, const VkRHIRenderPass& renderPass, const std::vector<Texture>& attachments);
+		VkRHIFrameBuffer(VkRHIDevice& device, UInt32 width, UInt32 height, const VkRHIRenderPass& renderPass, const std::vector<RHI::Texture>& attachments);
 	};
 }
 

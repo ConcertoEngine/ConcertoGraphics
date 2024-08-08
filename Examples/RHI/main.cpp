@@ -10,6 +10,10 @@
 #include <Concerto/Graphics/RHI/RenderPass.hpp>
 #include <Concerto/Graphics/RHI/FrameBuffer.hpp>
 #include <Concerto/Graphics/RHI/Texture.hpp>
+#include <Concerto/Graphics/RHI/MaterialBuilder.hpp>
+
+#include "Concerto/Graphics/RHI/Mesh.hpp"
+#include "Concerto/Graphics/RHI/Vulkan/VkRHIMesh.hpp"
 
 using namespace Concerto;
 using namespace Concerto::Graphics;
@@ -34,55 +38,13 @@ int main()
 			}
 			++deviceIndex;
 		}
-		auto swapChain = device->CreateSwapChain(window);
+		std::unique_ptr<RHI::SwapChain> swapChain = device->CreateSwapChain(window);
+		RHI::RenderPass& renderPass = swapChain->GetRenderPass();
 
-		std::vector<RHI::RenderPass::Attachment> attachment;
-		auto& colorAttachment = attachment.emplace_back();
-		colorAttachment.pixelFormat = swapChain->GetPixelFormat();
-		colorAttachment.loadOp = RHI::AttachmentLoadOp::Clear;
-		colorAttachment.storeOp = RHI::AttachmentStoreOp::Store;
-		colorAttachment.stencilLoadOp = RHI::AttachmentLoadOp::DontCare;
-		colorAttachment.stencilStoreOp = RHI::AttachmentStoreOp::DontCare;
-		colorAttachment.initialLayout = RHI::ImageLayout::Undefined;
-		colorAttachment.finalLayout = RHI::ImageLayout::PresentSrcKhr;
-
-		auto& depthAttachment = attachment.emplace_back();
-		depthAttachment.pixelFormat = swapChain->GetDepthPixelFormat();
-		depthAttachment.loadOp = RHI::AttachmentLoadOp::Clear;
-		depthAttachment.storeOp = RHI::AttachmentStoreOp::Store;
-		depthAttachment.stencilLoadOp = RHI::AttachmentLoadOp::Clear;
-		depthAttachment.stencilStoreOp = RHI::AttachmentStoreOp::DontCare;
-		depthAttachment.initialLayout = RHI::ImageLayout::Undefined;
-		depthAttachment.finalLayout = RHI::ImageLayout::DepthStencilAttachmentOptimal;
-
-		std::vector<RHI::RenderPass::SubPassDescription> subPassDescriptions;
-
-		auto& subPass = subPassDescriptions.emplace_back();
-		subPass.colorAttachments.push_back({0, RHI::ImageLayout::ColorAttachmentOptimal});
-		subPass.depthStencilAttachment = {1, RHI::ImageLayout::DepthStencilAttachmentOptimal};
-
-
-		std::vector<RHI::RenderPass::SubPassDependency> subPassDependencies;
-		auto& colorDependency = subPassDependencies.emplace_back();
-		colorDependency.srcSubPassIndex = RHI::RenderPass::SubPassDependency::ExternalSubPass;
-		colorDependency.dstSubPassIndex = 0u;
-		colorDependency.srcStageMask = static_cast<RHI::PipelineStageFlags>(RHI::PipelineStage::ColorAttachmentOutput);
-		colorDependency.srcAccessFlags = 0u;
-		colorDependency.dstStageMask = static_cast<RHI::PipelineStageFlags>(RHI::PipelineStage::ColorAttachmentOutput);
-		colorDependency.dstAccessFlags = static_cast<RHI::MemoryAccessFlags>(RHI::MemoryAccess::ColorAttachmentWrite);
-
-		auto& depthDependency = subPassDependencies.emplace_back();
-		depthDependency.srcSubPassIndex = RHI::RenderPass::SubPassDependency::ExternalSubPass;
-		depthDependency.dstSubPassIndex = 0u;
-		depthDependency.srcStageMask = static_cast<RHI::PipelineStageFlags>(RHI::PipelineStage::EarlyFragmentTests) | static_cast<RHI::PipelineStageFlags>(RHI::PipelineStage::LateFragmentTests);
-		depthDependency.srcAccessFlags = 0u;
-		depthDependency.dstStageMask = static_cast<RHI::PipelineStageFlags>(RHI::PipelineStage::EarlyFragmentTests) | static_cast<RHI::PipelineStageFlags>(RHI::PipelineStage::LateFragmentTests);
-		depthDependency.dstAccessFlags = static_cast<RHI::MemoryAccessFlags>(RHI::MemoryAccess::DepthStencilAttachmentWrite);
-
-		auto renderPass = device->CreateRenderPass(attachment, subPassDescriptions, subPassDependencies);
-
-		std::vector<RHI::Texture> attachments;
-		auto frameBuffer = device->CreateFrameBuffer(window.GetWidth(), window.GetHeight(), *renderPass, attachments);
+		std::unique_ptr<RHI::MaterialBuilder> materialBuilder = device->CreateMaterialBuilder(swapChain->GetExtent());
+		std::unique_ptr<RHI::TextureBuilder> textureBuilder = device->CreateTextureBuilder();
+		RHI::VkRHIMesh mesh("./assets/sponza/sponza.obj"); //fixme
+		auto gpuMesh = mesh.BuildGpuMesh(*materialBuilder, renderPass, *device);
 
 		while (!window.ShouldClose())
 		{

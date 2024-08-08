@@ -11,6 +11,7 @@
 #include <NZSL/Ast/ReflectVisitor.hpp>
 
 #include "Concerto/Graphics/Defines.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/ShaderModule.hpp"
 
 namespace Concerto::Graphics::Vk
 {
@@ -27,7 +28,7 @@ namespace Concerto::Graphics::Vk
 
 		ShaderModuleInfo& operator=(const ShaderModuleInfo&) = delete;
 		ShaderModuleInfo& operator=(ShaderModuleInfo&&) = default;
-	
+
 		nzsl::Ast::ModulePtr shaderAst;
 		nzsl::Ast::ModulePtr sanitizedModule;
 		std::vector<UInt32> spirv;

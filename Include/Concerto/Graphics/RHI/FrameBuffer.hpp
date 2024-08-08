@@ -13,6 +13,7 @@ namespace Concerto::Graphics::RHI
 	class Texture;
 	class RenderPass;
 	class Device;
+
 	class CONCERTO_GRAPHICS_API FrameBuffer
 	{
 	public:

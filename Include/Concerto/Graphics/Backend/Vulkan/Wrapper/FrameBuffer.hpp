@@ -34,7 +34,7 @@ namespace Concerto::Graphics::Vk
 		*
 		* @param device The device to create the frame buffer on.
 		* @param renderPass The render pass the frame buffer will be used with.
-		* @param attachments 
+		* @param attachments
 		* @param extent The dimensions of the frame buffer.
 		*/
 		FrameBuffer(Device& device, const RenderPass& renderPass, const std::vector<VkImageView>& attachments, VkExtent2D extent);

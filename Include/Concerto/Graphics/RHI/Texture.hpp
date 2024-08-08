@@ -13,7 +13,7 @@ namespace Concerto::Graphics::RHI
 	class CONCERTO_GRAPHICS_API Texture
 	{
 	public:
-		inline Texture();
+		Texture() = default;
 		virtual ~Texture() = default;
 	};
 }

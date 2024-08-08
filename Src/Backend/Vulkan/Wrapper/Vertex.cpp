@@ -3,10 +3,11 @@
 //
 
 #include "Concerto/Graphics/Backend/Vulkan/Vertex.hpp"
+#include "Concerto/Graphics/Vertex.hpp"
 
 namespace Concerto::Graphics::Vk
 {
-	VertexInputDescription Vertex::GetVertexDescription()
+	VertexInputDescription Concerto::Graphics::Vk::GetVertexDescription()
 	{
 		VertexInputDescription description {};
 

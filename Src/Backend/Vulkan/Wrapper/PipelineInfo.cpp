@@ -4,14 +4,14 @@
 
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/PipelineInfo.hpp"
 
-#include "Vertex.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Vertex.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/VulkanInitializer.hpp"
 
 namespace Concerto::Graphics::Vk
 {
 	PipelineInfo::PipelineInfo(std::vector<VkPipelineShaderStageCreateInfo> shaderStages, VkExtent2D windowExtent, std::shared_ptr<PipelineLayout>& pipelineLayout)
 	{
-		static VertexInputDescription vertexDescription = Vertex::GetVertexDescription(); //TODO Remove static
+		static VertexInputDescription vertexDescription = GetVertexDescription(); //TODO Remove static
 		_shaderStages = std::move(shaderStages);
 		_vertexInputInfo = VulkanInitializer::VertexInputStateCreateInfo();
 		_vertexInputInfo.pVertexAttributeDescriptions = vertexDescription.attributes.data();

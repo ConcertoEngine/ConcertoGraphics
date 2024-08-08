@@ -3,8 +3,8 @@
 //
 
 #include <vector>
-#include <span>
 
+#include <Concerto/Core/Cast.hpp>
 #include "Concerto/Graphics/RHI/Vulkan/VkRHIFrameBuffer.hpp"
 
 #include "Concerto/Graphics/RHI/Vulkan/VKRHITexture.hpp"
@@ -20,12 +20,12 @@ namespace Concerto::Graphics::RHI
 		{
 			std::vector<VkImageView> imageViews(textures.size());
 			for (auto& texture : textures)
-				imageViews.emplace_back(*static_cast<const VkRHITexture&>(texture).Get());
+				imageViews.emplace_back(*Cast<const VkRHITexture&>(texture).GetImageView().Get());
 			return imageViews;
 		}
 	}
 
-    VkRHIFrameBuffer::VkRHIFrameBuffer(VkRHIDevice& device, UInt32 width, UInt32 height, const VkRHIRenderPass& renderPass, const std::vector<Texture>& attachments) :
+    VkRHIFrameBuffer::VkRHIFrameBuffer(VkRHIDevice& device, UInt32 width, UInt32 height, const VkRHIRenderPass& renderPass, const std::vector<RHI::Texture>& attachments) :
       RHI::FrameBuffer(),
       Vk::FrameBuffer(device, renderPass, ToImageView(attachments), {width, height})
     {

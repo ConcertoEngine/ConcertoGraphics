@@ -2,8 +2,8 @@
 // Created by arthur on 12/05/2024.
 //
 
-#ifndef CONCERTO_GRAPHICS_RHI_RENDERPAS_HPP
-#define CONCERTO_GRAPHICS_RHI_RENDERPAS_HPP
+#ifndef CONCERTO_GRAPHICS_RHI_RENDERPASS_HPP
+#define CONCERTO_GRAPHICS_RHI_RENDERPASS_HPP
 
 #include <optional>
 #include <vector>
@@ -50,4 +50,4 @@ namespace Concerto::Graphics::RHI
 	};
 }
 
-#endif //CONCERTO_GRAPHICS_RHI_RENDERPAS_HPP
+#endif //CONCERTO_GRAPHICS_RHI_RENDERPASS_HPP
