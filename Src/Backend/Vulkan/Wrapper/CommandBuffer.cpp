@@ -20,8 +20,9 @@
 
 namespace Concerto::Graphics::Vk
 {
-	CommandBuffer::CommandBuffer(Device& device, const VkCommandPool commandPool) : _device(&device),
-	                                                                                _commandPool(commandPool)
+	CommandBuffer::CommandBuffer(Device& device, const VkCommandPool commandPool) :
+		_device(&device),
+		_commandPool(commandPool)
 	{
 		VkCommandBufferAllocateInfo info = {};
 		info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;

@@ -30,7 +30,7 @@ namespace Concerto::Graphics::RHI
 
 		for (auto& subMesh : meshes)
 		{
-			auto materialInfo = *subMesh->GetMaterial();
+			auto& materialInfo = *subMesh->GetMaterial();
 			materialInfo.vertexShaderPath = "./Shaders/tri_mesh_ssbo.nzsl";
 			materialInfo.fragmentShaderPath = materialInfo.diffuseTexturePath.empty() ? "./Shaders/default_lit.nzsl" : "./Shaders/textured_lit.nzsl";
 

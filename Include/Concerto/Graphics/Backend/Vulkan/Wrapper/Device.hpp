@@ -82,23 +82,23 @@ namespace Concerto::Graphics::Vk
 
 		/**
 		* @brief Update the contents of a descriptor set object
-		*/ 
+		*/
 		void UpdateDescriptorSetsWrite(std::span<VkWriteDescriptorSet> descriptorWrites) const;
-		
+
 		/**
 		* @brief Update the contents of a descriptor set object
 		*/
 		void UpdateDescriptorSetWrite(VkWriteDescriptorSet descriptorWrite);
 
 		void SetObjectName(UInt64 object, std::string_view name);
-		
+
 		PhysicalDevice& GetPhysicalDevice() const;
 
 		Allocator& GetAllocator() const;
-		
+
 	private:
 		void CreateAllocator(Instance& instance);
-	
+
 		PhysicalDevice& _physicalDevice;
 		VkDevice _device;
 		std::unique_ptr<Allocator> _allocator;

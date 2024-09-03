@@ -36,7 +36,7 @@ namespace Concerto::Graphics::Vk
 
 		FrameData& operator=(FrameData&&) = default;
 		FrameData& operator=(FrameData&) = delete;
-		
+
 		Semaphore presentSemaphore, renderSemaphore;
 		Fence renderFence;
 

@@ -77,7 +77,7 @@ namespace Concerto::Graphics::Vk
 			i++;
 		}
 		CONCERTO_ASSERT_FALSE("No queue family found");
-		return -1;
+		return std::numeric_limits<UInt32>::max();
 	}
 
 	UInt32 Device::GetQueueFamilyIndex(UInt32 flag) const
@@ -95,7 +95,7 @@ namespace Concerto::Graphics::Vk
 			++i;
 		}
 		CONCERTO_ASSERT_FALSE("No queue family found");;
-		return -1;
+		return std::numeric_limits<UInt32>::max();
 	}
 
 	Queue& Device::GetQueue(Queue::Type queueType)
@@ -136,7 +136,7 @@ namespace Concerto::Graphics::Vk
 		//auto pfnCmdDebugMarkerBegin = (PFN_vkCmdDebugMarkerBeginEXT)vkGetDeviceProcAddr(_device, "vkCmdDebugMarkerBeginEXT");
 		//auto pfnCmdDebugMarkerEnd = (PFN_vkCmdDebugMarkerEndEXT)vkGetDeviceProcAddr(_device, "vkCmdDebugMarkerEndEXT");
 		//auto pfnCmdDebugMarkerInsert = (PFN_vkCmdDebugMarkerInsertEXT)vkGetDeviceProcAddr(_device, "vkCmdDebugMarkerInsertEXT");
-		
+
 		VkDebugMarkerObjectNameInfoEXT nameInfo = {};
 		nameInfo.sType = VK_STRUCTURE_TYPE_DEBUG_MARKER_OBJECT_NAME_INFO_EXT;
 		nameInfo.objectType = VK_DEBUG_REPORT_OBJECT_TYPE_UNKNOWN_EXT;

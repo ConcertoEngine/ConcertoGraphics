@@ -14,7 +14,7 @@
 
 namespace Concerto::Graphics::RHI
 {
-	class CONCERTO_GRAPHICS_API VkRHIDevice final : public Device, public Vk::Device
+	class CONCERTO_GRAPHICS_API VkRHIDevice final : public RHI::Device, public Vk::Device
 	{
 	public:
 		VkRHIDevice(Vk::PhysicalDevice& physicalDevice, Vk::Instance& instance);
@@ -25,6 +25,7 @@ namespace Concerto::Graphics::RHI
 		std::unique_ptr<FrameBuffer> CreateFrameBuffer(UInt32 width, UInt32 height, const RHI::RenderPass& renderPass, const std::vector<RHI::Texture>& attachments) override;
 		std::unique_ptr<MaterialBuilder> CreateMaterialBuilder(const Vector2u& windowExtent) override;
 		std::unique_ptr<TextureBuilder> CreateTextureBuilder() override;
+		std::unique_ptr<CommandPool> CreateCommandPool(RHI::QueueFamily family) override;
 
 		Vk::UploadContext& GetUploadContext();
 

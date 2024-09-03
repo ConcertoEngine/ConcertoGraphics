@@ -189,6 +189,12 @@ namespace Concerto::Graphics::RHI
 		ImageLayout imageLayout;
 	};
 
+	enum class QueueFamily
+	{
+		Compute,  /**< Compute queue for parallel computation. */
+		Graphics, /**< Graphics queue for rendering operations. */
+		Transfer  /**< Transfer queue for memory operations. */
+	};
 }
 
 #endif //CONCERTO_GRAPHICS_RHI_ENUMS_HPP
