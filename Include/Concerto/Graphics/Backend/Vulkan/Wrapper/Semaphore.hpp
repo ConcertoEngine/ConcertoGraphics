@@ -7,7 +7,7 @@
 
 #include <vulkan/vulkan.hpp>
 
-#include "Concerto/Graphics/Defines.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Defines.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Object.hpp"
 
 namespace Concerto::Graphics::Vk
@@ -20,7 +20,7 @@ namespace Concerto::Graphics::Vk
 	 *
 	 * A semaphore is a synchronization object that can be used to insert a dependency between command buffers submitted to a queue.
 	 */
-	class CONCERTO_GRAPHICS_API Semaphore : public Object<VkSemaphore>
+	class CONCERTO_GRAPHICS_VULKAN_BACKEND_API Semaphore : public Object<VkSemaphore>
 	{
 	public:
 		explicit Semaphore(Device& device);

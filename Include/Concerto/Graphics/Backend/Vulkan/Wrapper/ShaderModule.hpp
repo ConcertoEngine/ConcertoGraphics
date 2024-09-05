@@ -10,7 +10,7 @@
 
 #include <vulkan/vulkan.h>
 
-#include "Concerto/Graphics/Defines.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Defines.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Object.hpp"
 
 namespace Concerto::Graphics::Vk
@@ -23,7 +23,7 @@ namespace Concerto::Graphics::Vk
 	 *
 	 * A ShaderModule is a class that encapsulate the creation, loading and handling of a VkShaderModule object.
 	 */
-	class CONCERTO_GRAPHICS_API ShaderModule : public Object<VkShaderModule>
+	class CONCERTO_GRAPHICS_VULKAN_BACKEND_API ShaderModule : public Object<VkShaderModule>
 	{
 	public:
 		/**

@@ -17,7 +17,7 @@ namespace Concerto::Graphics::Vk
 
 namespace Concerto::Graphics::RHI
 {
-	class CONCERTO_GRAPHICS_API VkRHIGpuSubMesh : public RHI::GpuSubMesh
+	class CONCERTO_GRAPHICS_VKRHI_API VkRHIGpuSubMesh : public RHI::GpuSubMesh
 	{
 	public:
 		VkRHIGpuSubMesh(RHI::SubMeshPtr meshPtr, RHI::MaterialPtr material, Vk::Allocator& allocator, VkBufferUsageFlags usage, VmaMemoryUsage memoryUsage);

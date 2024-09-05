@@ -5,7 +5,7 @@
 #ifndef CONCERTO_GRAPHICS_RHI_FRAMEBUFFER_HPP
 #define CONCERTO_GRAPHICS_RHI_FRAMEBUFFER_HPP
 
-#include "Concerto/Graphics/Defines.hpp"
+#include "Concerto/Graphics/RHI/Defines.hpp"
 #include "Concerto/Graphics/RHI/Enums.hpp"
 
 namespace Concerto::Graphics::RHI
@@ -14,7 +14,7 @@ namespace Concerto::Graphics::RHI
 	class RenderPass;
 	class Device;
 
-	class CONCERTO_GRAPHICS_API FrameBuffer
+	class CONCERTO_GRAPHICS_RHI_BASE_API FrameBuffer
 	{
 	public:
 		virtual ~FrameBuffer() = default;

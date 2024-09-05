@@ -7,7 +7,7 @@
 
 #include <vulkan/vulkan.hpp>
 
-#include "Concerto/Graphics/Defines.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Defines.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Object.hpp"
 
 namespace Concerto::Graphics::Vk
@@ -22,7 +22,7 @@ namespace Concerto::Graphics::Vk
 	*
 	* @note This class is not copyable, but it is movable.
 	*/
-	class CONCERTO_GRAPHICS_API Fence : public Object<VkFence>
+	class CONCERTO_GRAPHICS_VULKAN_BACKEND_API Fence : public Object<VkFence>
 	{
 	public:
 		/**

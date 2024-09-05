@@ -13,7 +13,7 @@
 #include "Concerto/Graphics/RHI/TextureBuilder.hpp"
 #include "Concerto/Graphics/RHI/FrameBuffer.hpp"
 #include "Concerto/Graphics/RHI/Texture.hpp"
-#include "Concerto/Graphics/Defines.hpp"
+#include "Concerto/Graphics/RHI/Defines.hpp"
 #include "Concerto/Graphics/RHI/Enums.hpp"
 #include "Concerto/Graphics/RHI/RenderPass.hpp"
 #include "Concerto/Graphics/RHI/MaterialBuilder.hpp"
@@ -35,7 +35,7 @@ namespace Concerto::Graphics::RHI
 		DeviceType type;
 	};
 
-	class CONCERTO_GRAPHICS_API Device
+	class CONCERTO_GRAPHICS_RHI_BASE_API Device
 	{
 	public:
 		Device() = default;

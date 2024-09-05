@@ -7,13 +7,13 @@
 
 #include <memory>
 
-#include "Concerto/Graphics/Defines.hpp"
+#include "Concerto/Graphics/RHI/Defines.hpp"
 #include "Concerto/Graphics/RHI/SubMesh.hpp"
 #include "Concerto/Graphics/RHI/Material.hpp"
 
 namespace Concerto::Graphics::RHI
 {
-	class CONCERTO_GRAPHICS_API GpuSubMesh
+	class CONCERTO_GRAPHICS_RHI_BASE_API GpuSubMesh
 	{
 	public:
 		GpuSubMesh(RHI::SubMeshPtr meshPtr, RHI::MaterialPtr material);

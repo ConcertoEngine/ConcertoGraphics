@@ -12,7 +12,7 @@
 #include <vulkan/vulkan.h>
 
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Object.hpp"
-#include "Concerto/Graphics/Defines.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Defines.hpp"
 
 namespace Concerto::Graphics::Vk
 {
@@ -33,7 +33,7 @@ namespace Concerto::Graphics::Vk
 	 * This class is used to record and submit commands to the GPU for execution, such as rendering commands,
 	 * memory management commands, and compute commands.
 	 */
-	class CONCERTO_GRAPHICS_API CommandBuffer : public Object<VkCommandBuffer>
+	class CONCERTO_GRAPHICS_VULKAN_BACKEND_API CommandBuffer : public Object<VkCommandBuffer>
 	{
 	public:
 		/**
@@ -53,7 +53,7 @@ namespace Concerto::Graphics::Vk
 		CommandBuffer& operator=(CommandBuffer&&) noexcept;
 
 		CommandBuffer& operator=(const CommandBuffer&) = delete;
-		
+
 		/**
 		 * @brief Resets the command buffer.
 		 */

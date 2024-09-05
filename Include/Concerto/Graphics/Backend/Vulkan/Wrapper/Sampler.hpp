@@ -7,7 +7,7 @@
 
 #include <vulkan/vulkan.h>
 
-#include "Concerto/Graphics/Defines.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Defines.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Object.hpp"
 
 namespace Concerto::Graphics::Vk
@@ -20,7 +20,7 @@ namespace Concerto::Graphics::Vk
 	 *
 	 * A sampler is an object that describes how sampled images should be read in a shader. This class will create the VkSampler object, and it's default move and copy constructors and assignment operators are provided.
 	 */
-	class CONCERTO_GRAPHICS_API Sampler : public Object<VkSampler>
+	class CONCERTO_GRAPHICS_VULKAN_BACKEND_API Sampler : public Object<VkSampler>
 	{
 	public:
 		/**

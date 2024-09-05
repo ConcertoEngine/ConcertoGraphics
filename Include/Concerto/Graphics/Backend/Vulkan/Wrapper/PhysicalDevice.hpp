@@ -11,7 +11,7 @@
 
 #include <vulkan/vulkan.h>
 
-#include "Concerto/Graphics/Defines.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Defines.hpp"
 
 namespace Concerto::Graphics::Vk
 {
@@ -25,7 +25,7 @@ namespace Concerto::Graphics::Vk
 	* The PhysicalDevice class represents a physical device, such as a GPU, in a Vulkan instance.
 	* It is responsible for providing information about the device and its capabilities, such as its queue families, properties, features, and memory properties.
 	*/
-	class CONCERTO_GRAPHICS_API PhysicalDevice
+	class CONCERTO_GRAPHICS_VULKAN_BACKEND_API PhysicalDevice
 	{
 	public:
 		struct SurfaceSupportDetails

@@ -16,7 +16,7 @@ namespace Concerto::Graphics::RHI
 		Secondary
 	};
 
-	class CONCERTO_GRAPHICS_API CommandPool
+	class CONCERTO_GRAPHICS_RHI_BASE_API CommandPool
 	{
 	public:
 		CommandPool() = default;

@@ -11,14 +11,14 @@
 #include <vector>
 
 #include <Concerto/Core/SparseVector.hpp>
-#include "Concerto/Graphics/Defines.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Defines.hpp" //fixme
 
 #include "Concerto/Graphics/Window/Event.hpp"
 #include "Concerto/Graphics/Window/Key.hpp"
 
 namespace Concerto
 {
-	class CONCERTO_GRAPHICS_API Input
+	class CONCERTO_GRAPHICS_VULKAN_BACKEND_API Input
 	{
 	public:
 		using KeyCallbacks = std::vector<std::function<void()>>;

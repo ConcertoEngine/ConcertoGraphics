@@ -9,11 +9,11 @@
 #include <vector>
 
 #include "Concerto/Graphics/RHI/Enums.hpp"
-#include "Concerto/Graphics/Defines.hpp"
+#include "Concerto/Graphics/RHI/Defines.hpp"
 
 namespace Concerto::Graphics::RHI
 {
-	class CONCERTO_GRAPHICS_API RenderPass
+	class CONCERTO_GRAPHICS_RHI_BASE_API RenderPass
 	{
 	public:
 		struct Attachment

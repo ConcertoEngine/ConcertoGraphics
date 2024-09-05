@@ -5,12 +5,12 @@
 #ifndef CONCERTO_GRAPHICS_RHI_TEXTURE_HPP
 #define CONCERTO_GRAPHICS_RHI_TEXTURE_HPP
 
-#include "Concerto/Graphics/Defines.hpp"
+#include "Concerto/Graphics/RHI/Defines.hpp"
 #include "Concerto/Graphics/RHI/Enums.hpp"
 
 namespace Concerto::Graphics::RHI
 {
-	class CONCERTO_GRAPHICS_API Texture
+	class CONCERTO_GRAPHICS_RHI_BASE_API Texture
 	{
 	public:
 		Texture() = default;

@@ -7,7 +7,7 @@
 
 #include <memory>
 
-#include "Concerto/Graphics/Defines.hpp"
+#include "Concerto/Graphics/RHI/Defines.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Vertex.hpp"
 #include "Concerto/Graphics/RHI/Material.hpp"
 #include "Concerto/Graphics/Vertex.hpp"
@@ -15,7 +15,7 @@
 
 namespace Concerto::Graphics::RHI
 {
-	class CONCERTO_GRAPHICS_API SubMesh
+	class CONCERTO_GRAPHICS_RHI_BASE_API SubMesh
 	{
 	 public:
 		explicit SubMesh(Mesh* parent);

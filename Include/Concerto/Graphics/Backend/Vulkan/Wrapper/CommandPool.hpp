@@ -7,7 +7,7 @@
 
 #include <vulkan/vulkan.h>
 
-#include "Concerto/Graphics/Defines.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Defines.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Object.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/CommandBuffer.hpp"
 
@@ -27,7 +27,7 @@ namespace Concerto::Graphics::Vk
 	 *
 	 * @author [Your name]
 	 */
-	class CONCERTO_GRAPHICS_API CommandPool : public Object<VkCommandPool>
+	class CONCERTO_GRAPHICS_VULKAN_BACKEND_API CommandPool : public Object<VkCommandPool>
 	{
 	public:
 		/**

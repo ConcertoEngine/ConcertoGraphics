@@ -7,14 +7,14 @@
 
 #include <optional>
 
-#include "Concerto/Graphics/Defines.hpp"
+#include "Concerto/Graphics/RHI/Vulkan/Defines.hpp"
 #include "Concerto/Graphics/RHI/Device.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Device.hpp"
-#include "Concerto/Graphics/UploadContext.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/UploadContext.hpp"
 
 namespace Concerto::Graphics::RHI
 {
-	class CONCERTO_GRAPHICS_API VkRHIDevice final : public RHI::Device, public Vk::Device
+	class CONCERTO_GRAPHICS_VKRHI_API VkRHIDevice final : public RHI::Device, public Vk::Device
 	{
 	public:
 		VkRHIDevice(Vk::PhysicalDevice& physicalDevice, Vk::Instance& instance);

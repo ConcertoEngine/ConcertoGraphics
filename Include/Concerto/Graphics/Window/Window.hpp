@@ -11,7 +11,7 @@
 
 #include <vulkan/vulkan.h>
 
-#include "Concerto/Graphics/Defines.hpp"
+#include "Concerto/Graphics/Defines.hpp" //fixme
 #include "Concerto/Graphics/Window/Key.hpp"
 #include "Concerto/Graphics/Window/Input.hpp"
 
@@ -25,7 +25,7 @@ namespace Concerto::Graphics::Vk
 namespace Concerto::Graphics
 {
 
-	class CONCERTO_GRAPHICS_API Window
+	class CONCERTO_GRAPHICS_VULKAN_BACKEND_API Window
 	{
 	public:
 		Window(const std::string& title, int width, int height);

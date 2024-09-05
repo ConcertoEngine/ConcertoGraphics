@@ -9,7 +9,7 @@
 #include <memory>
 
 #include <vulkan/vulkan.h>
-#include "Concerto/Graphics/Defines.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Defines.hpp"
 
 namespace Concerto::Graphics::Vk
 {
@@ -18,7 +18,7 @@ namespace Concerto::Graphics::Vk
 	class DescriptorLayoutCache;
 	class DescriptorAllocator;
 
-	class CONCERTO_GRAPHICS_API DescriptorBuilder
+	class CONCERTO_GRAPHICS_VULKAN_BACKEND_API DescriptorBuilder
 	{
 	 public:
 		DescriptorBuilder(DescriptorLayoutCache& layoutCache, DescriptorAllocator& allocator);

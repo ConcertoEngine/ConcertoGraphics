@@ -11,7 +11,7 @@
 namespace Concerto::Graphics::RHI
 {
 	class GpuSubMesh;
-	class CONCERTO_GRAPHICS_API GpuMesh
+	class CONCERTO_GRAPHICS_RHI_BASE_API GpuMesh
 	{
 	public:
 		virtual ~GpuMesh() = default;

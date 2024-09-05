@@ -12,7 +12,7 @@
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/CommandBuffer.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Queue.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/VulkanInitializer.hpp"
-#include "Concerto/Graphics/UploadContext.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/UploadContext.hpp"
 
 namespace Concerto::Graphics::Vk
 {

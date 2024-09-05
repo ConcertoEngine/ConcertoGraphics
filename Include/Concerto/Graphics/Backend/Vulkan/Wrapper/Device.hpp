@@ -11,7 +11,7 @@
 #include <memory>
 
 #include <vulkan/vulkan.h>
-#include "Concerto/Graphics/Defines.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Defines.hpp"
 
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Queue.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Allocator.hpp"
@@ -28,7 +28,7 @@ namespace Concerto::Graphics::Vk
 	* A device is a virtual representation of a physical device,
 	* such as a GPU, and provides access to the resources of that physical device.
 	*/
-	class CONCERTO_GRAPHICS_API Device
+	class CONCERTO_GRAPHICS_VULKAN_BACKEND_API Device
 	{
 	public:
 		Device() = delete;

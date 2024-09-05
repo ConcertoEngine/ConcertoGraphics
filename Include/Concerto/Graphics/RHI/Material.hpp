@@ -14,10 +14,10 @@
 
 namespace Concerto::Graphics::RHI
 {
-	class CONCERTO_GRAPHICS_API MaterialInfo
+	class CONCERTO_GRAPHICS_RHI_BASE_API MaterialInfo
 	{
 	 public:
-		struct CONCERTO_GRAPHICS_API Hash
+		struct CONCERTO_GRAPHICS_RHI_BASE_API Hash
 		{
 			std::size_t operator()(const MaterialInfo& material) const
 			{

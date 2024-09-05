@@ -8,7 +8,7 @@
 #include <vector>
 #include <vulkan/vulkan.hpp>
 
-#include "Concerto/Graphics/Defines.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Defines.hpp"
 
 namespace Concerto::Graphics::Vk
 {
@@ -21,7 +21,7 @@ namespace Concerto::Graphics::Vk
 		VkPipelineVertexInputStateCreateFlags flags = 0;
 	};
 
-	VertexInputDescription CONCERTO_GRAPHICS_API GetVertexDescription();
+	VertexInputDescription CONCERTO_GRAPHICS_VULKAN_BACKEND_API GetVertexDescription();
 
 } // Concerto
 

@@ -16,7 +16,7 @@ namespace Concerto::Graphics::Vk
 	class DescriptorSet;
 	class Pipeline;
 
-	struct CONCERTO_GRAPHICS_API VkMaterial : public RHI::MaterialInfo
+	struct CONCERTO_GRAPHICS_VULKAN_BACKEND_API VkMaterial : public RHI::MaterialInfo
 	{
 		VkMaterial() = default;
 		VkMaterial(VkMaterial&&other) = default;

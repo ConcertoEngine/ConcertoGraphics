@@ -8,7 +8,7 @@
 #include <span>
 #include <memory>
 
-#include "Concerto/Graphics/Defines.hpp"
+#include "Concerto/Graphics/RHI/Defines.hpp"
 #include "Concerto/Graphics/RHI/Enums.hpp"
 #include "Concerto/Graphics/RHI/Device.hpp"
 
@@ -17,7 +17,7 @@ namespace Concerto::Graphics::RHI
 	class Device;
 	class APIImpl;
 
-	class CONCERTO_GRAPHICS_API Instance
+	class CONCERTO_GRAPHICS_RHI_BASE_API Instance
 	{
 	public:
 		enum class Backend

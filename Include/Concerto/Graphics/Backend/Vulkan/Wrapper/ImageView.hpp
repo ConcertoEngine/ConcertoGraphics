@@ -7,7 +7,7 @@
 
 #include <vulkan/vulkan.h>
 
-#include "Concerto/Graphics/Defines.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Defines.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Object.hpp"
 
 namespace Concerto::Graphics::Vk
@@ -15,7 +15,7 @@ namespace Concerto::Graphics::Vk
 	class Device;
 	class Image;
 
-	class CONCERTO_GRAPHICS_API ImageView : public Object<VkImageView>
+	class CONCERTO_GRAPHICS_VULKAN_BACKEND_API ImageView : public Object<VkImageView>
 	{
 	 public:
 		ImageView(Device& device, Image& image, VkImageAspectFlags aspectFlags);

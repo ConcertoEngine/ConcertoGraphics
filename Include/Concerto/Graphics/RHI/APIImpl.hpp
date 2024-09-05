@@ -6,12 +6,12 @@
 #define CONCERTO_GRAPHICS_RHI_APIIMPL_HPP
 
 #include <span>
-#include "Concerto/Graphics/Defines.hpp"
+#include "Concerto/Graphics/RHI/Defines.hpp"
 #include "Concerto/Graphics/RHI/Device.hpp"
 
 namespace Concerto::Graphics::RHI
 {
-	class CONCERTO_GRAPHICS_API APIImpl
+	class CONCERTO_GRAPHICS_RHI_BASE_API APIImpl
 	{
 	public:
 		APIImpl() = default;

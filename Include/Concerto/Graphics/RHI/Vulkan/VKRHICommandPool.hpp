@@ -11,7 +11,7 @@
 
 namespace Concerto::Graphics::RHI
 {
-	class CONCERTO_GRAPHICS_API VkRHICommandPool final: public CommandPool, public Vk::CommandPool
+	class CONCERTO_GRAPHICS_VKRHI_API VkRHICommandPool final: public CommandPool, public Vk::CommandPool
 	{
 	public:
 		VkRHICommandPool(VkRHIDevice& device, RHI::QueueFamily family);

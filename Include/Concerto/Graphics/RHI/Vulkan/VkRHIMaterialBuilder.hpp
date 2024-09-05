@@ -25,7 +25,7 @@ namespace Concerto::Graphics::Vk
 
 namespace Concerto::Graphics::RHI
 {
-	class CONCERTO_GRAPHICS_API VkRHIMaterialBuilder : public RHI::MaterialBuilder
+	class CONCERTO_GRAPHICS_VKRHI_API VkRHIMaterialBuilder : public RHI::MaterialBuilder
 	{
 	 public:
 		explicit VkRHIMaterialBuilder(Vk::Device& device, VkExtent2D windowExtent);

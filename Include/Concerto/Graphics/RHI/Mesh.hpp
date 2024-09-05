@@ -12,7 +12,7 @@
 
 #include <Concerto/Core/Math/Matrix.hpp>
 
-#include "Concerto/Graphics/Defines.hpp"
+#include "Concerto/Graphics/RHI/Defines.hpp"
 #include "Concerto/Graphics/Vertex.hpp"
 #include "Concerto/Graphics/RHI/Material.hpp"
 
@@ -24,7 +24,7 @@ namespace Concerto::Graphics::RHI
 	class SubMesh;
 	class GpuMesh;
 
-	class CONCERTO_GRAPHICS_API Mesh
+	class CONCERTO_GRAPHICS_RHI_BASE_API Mesh
 	{
 	public:
 		explicit Mesh(std::string filePath);

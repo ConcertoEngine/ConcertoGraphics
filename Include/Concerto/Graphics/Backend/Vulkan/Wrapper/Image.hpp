@@ -10,7 +10,7 @@
 #include <vulkan/vulkan.h>
 #include <vk_mem_alloc.h>
 
-#include "Concerto/Graphics/Defines.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Defines.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Object.hpp"
 
 namespace Concerto::Graphics::Vk
@@ -26,7 +26,7 @@ namespace Concerto::Graphics::Vk
 	* An image is a two-dimensional array of pixels that can be used as a source or destination for rendering.
 	*
 	*/
-	class CONCERTO_GRAPHICS_API Image : public Object<VkImage>
+	class CONCERTO_GRAPHICS_VULKAN_BACKEND_API Image : public Object<VkImage>
 	{
 	public:
 		/**

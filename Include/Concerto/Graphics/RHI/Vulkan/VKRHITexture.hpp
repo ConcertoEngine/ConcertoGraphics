@@ -5,7 +5,7 @@
 #ifndef CONCERTO_GRAPHICS_RHI_VULKAN_VKRHITEXTURE_HPP
 #define CONCERTO_GRAPHICS_RHI_VULKAN_VKRHITEXTURE_HPP
 
-#include "Concerto/Graphics/Defines.hpp"
+#include "Concerto/Graphics/RHI/Vulkan/Defines.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Image.hpp"
 #include "Concerto/Graphics/RHI/Texture.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/ImageView.hpp"
@@ -20,7 +20,7 @@ namespace Concerto::Graphics::Vk
 
 namespace Concerto::Graphics::RHI
 {
-	class VkRHITexture : public RHI::Texture
+	class CONCERTO_GRAPHICS_VKRHI_API VkRHITexture : public RHI::Texture
 	{
 	public:
 		VkRHITexture(Vk::Device& device,

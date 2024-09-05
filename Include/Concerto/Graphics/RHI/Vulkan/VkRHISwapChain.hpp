@@ -22,7 +22,7 @@ namespace Concerto::Graphics::Vk
 
 namespace Concerto::Graphics::RHI
 {
-	class CONCERTO_GRAPHICS_API VkRHISwapChain final : public RHI::SwapChain, public Vk::SwapChain
+	class CONCERTO_GRAPHICS_VKRHI_API VkRHISwapChain final : public RHI::SwapChain, public Vk::SwapChain
 	{
 	public:
 		VkRHISwapChain(Vk::Device& device, Window& window, PixelFormat pixelFormat, PixelFormat depthPixelFormat);

@@ -15,7 +15,7 @@
 namespace Concerto::Graphics::Vk
 {
 
-	class CONCERTO_GRAPHICS_API PipelineInfo
+	class CONCERTO_GRAPHICS_VULKAN_BACKEND_API PipelineInfo
 	{
 	public:
 		PipelineInfo(std::vector<VkPipelineShaderStageCreateInfo> shaderStages, VkExtent2D windowExtent, std::shared_ptr<PipelineLayout>& pipelineLayout);

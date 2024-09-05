@@ -10,7 +10,7 @@
 
 #include <vulkan/vulkan.h>
 
-#include "Concerto/Graphics/Defines.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Defines.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Object.hpp"
 
 namespace Concerto::Graphics::Vk
@@ -24,7 +24,7 @@ namespace Concerto::Graphics::Vk
 	 * @brief A Wrapper class for creating and managing VkPipelineLayout.
 	 * The pipeline layout represents a sequence of descriptor sets with each having a specific layout. This sequence of layouts is used to determine the interface between shader stages and shader resources
 	 */
-	class CONCERTO_GRAPHICS_API PipelineLayout : public Object<VkPipelineLayout>
+	class CONCERTO_GRAPHICS_VULKAN_BACKEND_API PipelineLayout : public Object<VkPipelineLayout>
 	{
 	public:
 		PipelineLayout(Device& device, std::vector<std::shared_ptr<DescriptorSetLayout>> descriptorSetLayouts);

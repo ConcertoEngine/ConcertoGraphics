@@ -9,14 +9,14 @@
 
 #include "Concerto/Graphics/RHI/Frame.hpp"
 #include "Concerto/Graphics/RHI/RenderPass.hpp"
-#include "Concerto/Graphics/Defines.hpp"
+#include "Concerto/Graphics/RHI/Defines.hpp"
 #include "Concerto/Graphics/RHI/Enums.hpp"
 
 namespace Concerto::Graphics::RHI
 {
 	class RenderPass;
 	
-	class CONCERTO_GRAPHICS_API SwapChain
+	class CONCERTO_GRAPHICS_RHI_BASE_API SwapChain
 	{
 	public:
 		inline SwapChain(PixelFormat pixelFormat, PixelFormat depthPixelFormat);

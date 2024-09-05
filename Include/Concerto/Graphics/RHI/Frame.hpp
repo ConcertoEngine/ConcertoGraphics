@@ -7,7 +7,7 @@
 
 namespace Concerto::Graphics::RHI
 {
-	class CONCERTO_GRAPHICS_API Frame
+	class CONCERTO_GRAPHICS_RHI_BASE_API Frame
 	{
 	public:
 		virtual ~Frame() = default;

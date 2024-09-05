@@ -4,7 +4,7 @@
 
 #include "Concerto/Graphics/RHI/Vulkan/VKRHITexture.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Device.hpp"
-#include "Concerto/Graphics/UploadContext.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/UploadContext.hpp"
 
 namespace Concerto::Graphics::RHI
 {

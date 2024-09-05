@@ -10,7 +10,7 @@
 #include <span>
 
 #include <vulkan/vulkan.h>
-#include "Concerto/Graphics/Defines.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Defines.hpp"
 
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Object.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Image.hpp"
@@ -35,7 +35,7 @@ namespace Concerto::Graphics::Vk
 	 * @brief Represents a SwapChain in the vulkan API.
 	 * A SwapChain is a collection of images that are used for rendering and displaying.
 	 */
-	class CONCERTO_GRAPHICS_API SwapChain : public Object<VkSwapchainKHR>
+	class CONCERTO_GRAPHICS_VULKAN_BACKEND_API SwapChain : public Object<VkSwapchainKHR>
 	{
 	public:
 		SwapChain(Device& device, Window& window, VkFormat colorFormat = VK_FORMAT_B8G8R8A8_SRGB, VkFormat depthFormat = VK_FORMAT_D32_SFLOAT);

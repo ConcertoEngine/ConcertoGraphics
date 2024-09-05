@@ -11,7 +11,7 @@
 #include <vulkan/vulkan.h>
 #include <Concerto/Core/Assert.hpp>
 
-#include "Concerto/Graphics/Defines.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Defines.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Object.hpp"
 
 namespace Concerto::Graphics::Vk
@@ -25,7 +25,7 @@ namespace Concerto::Graphics::Vk
 	*
 	* @note This class is not copyable, but it is movable.
 	*/
-	class CONCERTO_GRAPHICS_API DescriptorSetLayout : public Object<VkDescriptorSetLayout>
+	class CONCERTO_GRAPHICS_VULKAN_BACKEND_API DescriptorSetLayout : public Object<VkDescriptorSetLayout>
 	{
 	public:
 		DescriptorSetLayout(Device& device, std::vector<VkDescriptorSetLayoutBinding> bindings);

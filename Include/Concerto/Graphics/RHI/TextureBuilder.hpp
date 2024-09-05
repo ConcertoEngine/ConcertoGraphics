@@ -7,12 +7,12 @@
 
 #include <memory>
 
-#include "Concerto/Graphics/Defines.hpp"
+#include "Concerto/Graphics/RHI/Defines.hpp"
 #include "Concerto/Graphics/RHI/Texture.hpp"
 
 namespace Concerto::Graphics::RHI
 {
-	class CONCERTO_GRAPHICS_API TextureBuilder
+	class CONCERTO_GRAPHICS_RHI_BASE_API TextureBuilder
 	{
 	public:
 		virtual ~TextureBuilder() = default;

@@ -7,7 +7,7 @@
 
 namespace Concerto::Graphics::RHI
 {
-	class CONCERTO_GRAPHICS_API CommandBuffer
+	class CONCERTO_GRAPHICS_RHI_BASE_API CommandBuffer
 	{
 	public:
 		CommandBuffer() = default;

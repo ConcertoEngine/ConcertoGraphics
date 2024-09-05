@@ -11,7 +11,7 @@
 
 namespace Concerto::Graphics::RHI
 {
-	class CONCERTO_GRAPHICS_API Converters
+	class CONCERTO_GRAPHICS_VKRHI_API Converters
 	{
 	public:
 		static constexpr inline VkFormat ToVulkan(PixelFormat pixelFormat);

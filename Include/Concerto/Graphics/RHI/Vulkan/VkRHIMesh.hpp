@@ -8,7 +8,7 @@
 #include <unordered_map>
 #include <memory>
 
-#include "Concerto/Graphics/UploadContext.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/UploadContext.hpp"
 #include "Concerto/Graphics/RHI/MaterialBuilder.hpp"
 #include "Concerto/Graphics/Defines.hpp"
 #include "Concerto/Graphics/RHI/Material.hpp"
@@ -22,7 +22,7 @@ namespace Concerto::Graphics::Vk
 
 namespace Concerto::Graphics::RHI
 {
-	class CONCERTO_GRAPHICS_API VkRHIMesh : public RHI::Mesh
+	class CONCERTO_GRAPHICS_VKRHI_API VkRHIMesh : public RHI::Mesh
 	{
 	public:
 		explicit VkRHIMesh(std::string filePath);

@@ -20,7 +20,7 @@ namespace Concerto::Graphics::Vk
 	 *
 	 * Buffer class is a Wrapper for VkBuffer, it encapsulate the VkBuffer object and its corresponding allocation
 	 */
-	class CONCERTO_GRAPHICS_API Buffer : public Object<VkBuffer>
+	class CONCERTO_GRAPHICS_VULKAN_BACKEND_API Buffer : public Object<VkBuffer>
 	{
 	 public:
 		/**

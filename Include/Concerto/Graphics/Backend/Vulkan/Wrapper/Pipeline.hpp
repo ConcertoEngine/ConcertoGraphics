@@ -9,7 +9,7 @@
 #include <memory>
 
 #include <vulkan/vulkan.h>
-#include "Concerto/Graphics/Defines.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Defines.hpp"
 
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Object.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/PipelineInfo.hpp"
@@ -23,7 +23,7 @@ namespace Concerto::Graphics::Vk
 	 * @class Pipeline
 	 * @brief Class representing a pipeline in the Vulkan API
 	 */
-	class CONCERTO_GRAPHICS_API Pipeline : public Object<VkPipeline>
+	class CONCERTO_GRAPHICS_VULKAN_BACKEND_API Pipeline : public Object<VkPipeline>
 	{
 	public:
 		/**
