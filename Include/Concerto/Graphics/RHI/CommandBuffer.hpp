@@ -12,6 +12,11 @@ namespace Concerto::Graphics::RHI
 	public:
 		CommandBuffer() = default;
 		virtual ~CommandBuffer() = default;
+
+		virtual void Begin() = 0;
+		virtual void End() = 0;
+		virtual void Submit() = 0;
+		virtual void Reset() = 0;
 	};
 }
 

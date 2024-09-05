@@ -37,4 +37,18 @@ namespace Concerto::Graphics::Vk
 		_lastResult = vkResetCommandPool(*_device->Get(), _handle, 0);
 		CONCERTO_ASSERT(_lastResult == VK_SUCCESS, "ConcertoGraphics: Error cannot reset command pool: VkResult={}", static_cast<int>(_lastResult));
 	}
+
+	Vk::CommandBuffer CommandPool::AllocateCommandBuffer()
+	{
+		VkCommandBufferAllocateInfo info = {};
+		info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+		info.pNext = nullptr;
+		info.commandPool = *Get();
+		info.commandBufferCount = 1;
+		info.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+		VkCommandBuffer commandBuffer;
+		const VkResult result = vkAllocateCommandBuffers(*_device->Get(), &info, &commandBuffer);
+		CONCERTO_ASSERT(result == VK_SUCCESS, "ConcertoGraphics: vkAllocateCommandBuffers failed VkResult={}", static_cast<int>(result));
+		return Vk::CommandBuffer(*_device, *this, commandBuffer);
+	}
 }

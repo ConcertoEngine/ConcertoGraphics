@@ -31,32 +31,22 @@ namespace Concerto::Graphics::Vk
 	class Semaphore;
 
 	/**
-	 * @class Swapchain
-	 * @brief Represents a swapchain in the vulkan API.
-	 * A swapchain is a collection of images that are used for rendering and displaying.
+	 * @class SwapChain
+	 * @brief Represents a SwapChain in the vulkan API.
+	 * A SwapChain is a collection of images that are used for rendering and displaying.
 	 */
-	class CONCERTO_GRAPHICS_API Swapchain : public Object<VkSwapchainKHR>
+	class CONCERTO_GRAPHICS_API SwapChain : public Object<VkSwapchainKHR>
 	{
 	public:
-		/**
-		 * @brief Construct a new Swapchain object
-		 * @param device A reference to the logical device.
-		 * @param window A reference to the window.
-		 */
-		Swapchain(Device& device, Window& window, VkFormat colorFormat = VK_FORMAT_B8G8R8A8_SRGB, VkFormat depthFormat = VK_FORMAT_D32_SFLOAT);
-
-		~Swapchain();
-
-		Swapchain(Swapchain&&) noexcept = default;
-
-		Swapchain(const Swapchain&) = delete;
-
-		Swapchain& operator=(Swapchain&&) noexcept = default;
-
-		Swapchain& operator=(const Swapchain&) = delete;
+		SwapChain(Device& device, Window& window, VkFormat colorFormat = VK_FORMAT_B8G8R8A8_SRGB, VkFormat depthFormat = VK_FORMAT_D32_SFLOAT);
+		~SwapChain();
+		SwapChain(SwapChain&&) noexcept = default;
+		SwapChain(const SwapChain&) = delete;
+		SwapChain& operator=(SwapChain&&) noexcept = delete;
+		SwapChain& operator=(const SwapChain&) = delete;
 
 		/**
-		 * @brief Get the images in the swapchain.
+		 * @brief Get the images in the swapChain.
 		 * @return A span of Image objects.
 		 */
 		[[nodiscard]] std::span<Image> GetImages();
@@ -85,6 +75,8 @@ namespace Concerto::Graphics::Vk
 		 * @return The index of the acquired image.
 		 */
 		UInt32 AcquireNextImage(Semaphore& semaphore, Fence& fence, std::uint64_t timeout);
+
+		bool ReCreate(VkFormat colorFormat = VK_FORMAT_B8G8R8A8_SRGB, VkFormat depthFormat = VK_FORMAT_D32_SFLOAT);
 
 	private:
 		void CreateFrameBuffers();

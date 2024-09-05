@@ -20,53 +20,38 @@
 
 namespace Concerto::Graphics::Vk
 {
-	CommandBuffer::CommandBuffer(Device& device, const VkCommandPool commandPool) :
-		_device(&device),
-		_commandPool(commandPool)
+	CommandBuffer::CommandBuffer(Device& device, Vk::CommandPool& owner, VkCommandBuffer commandBuffer) :
+		Object(device),
+		_commandPool(&owner)		
 	{
-		VkCommandBufferAllocateInfo info = {};
-		info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-		info.pNext = nullptr;
-		info.commandPool = _commandPool;
-		info.commandBufferCount = 1;
-		info.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-
-		const VkResult result = vkAllocateCommandBuffers(*_device->Get(), &info, &_commandBuffer);
-		CONCERTO_ASSERT(result == VK_SUCCESS, "ConcertoGraphics: vkAllocateCommandBuffers failed VkResult={}", static_cast<int>(result));
+		_handle = commandBuffer;
 	}
 
 	CommandBuffer::~CommandBuffer()
 	{
-		if(_commandBuffer == VK_NULL_HANDLE)
+		if(_handle == VK_NULL_HANDLE)
 			return;
 		_device->WaitIdle();
-		vkFreeCommandBuffers(*_device->Get(), _commandPool, 1, &_commandBuffer);
+		vkFreeCommandBuffers(*_device->Get(), *_commandPool->Get(), 1, &_handle);
 	}
 
-	CommandBuffer::CommandBuffer(CommandBuffer&& other) noexcept
+	CommandBuffer::CommandBuffer(CommandBuffer&& other) noexcept :
+		Object(*std::exchange(other._device, VK_NULL_HANDLE))
 	{
-		_device = std::exchange(other._device, nullptr);
 		_commandPool = std::exchange(other._commandPool, VK_NULL_HANDLE);
-		_commandBuffer = std::exchange(other._commandBuffer, nullptr);
 	}
 
 	CommandBuffer& CommandBuffer::operator=(CommandBuffer&& other) noexcept
 	{
 		_device = std::exchange(other._device, nullptr);
 		_commandPool = std::exchange(other._commandPool, VK_NULL_HANDLE);
-		_commandBuffer = std::exchange(other._commandBuffer, nullptr);
+		_handle = std::exchange(other._handle, nullptr);
 		return *this;
-	}
-
-	VkCommandBuffer CommandBuffer::Get() const
-	{
-		CONCERTO_ASSERT(_commandBuffer != VK_NULL_HANDLE, "ConcertoGraphics: command buffer handle is null");
-		return _commandBuffer;
 	}
 
 	void CommandBuffer::Reset() const
 	{
-		const VkResult result = vkResetCommandBuffer(_commandBuffer, 0);
+		const VkResult result = vkResetCommandBuffer(_handle, 0);
 		CONCERTO_ASSERT(result == VK_SUCCESS, "ConcertoGraphics: vkResetCommandBuffer VKResult={}", static_cast<int>(result));
 	}
 
@@ -79,62 +64,62 @@ namespace Concerto::Graphics::Vk
 		cmdBeginInfo.pInheritanceInfo = nullptr;
 		cmdBeginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
 
-		const VkResult result = vkBeginCommandBuffer(_commandBuffer, &cmdBeginInfo);
+		const VkResult result = vkBeginCommandBuffer(_handle, &cmdBeginInfo);
 		CONCERTO_ASSERT(result == VK_SUCCESS, "ConcertoGraphics: vkBeginCommandBuffer failed VKResult={}", static_cast<int>(result));
 	}
 
 	void CommandBuffer::End() const
 	{
-		const VkResult result = vkEndCommandBuffer(_commandBuffer);
+		const VkResult result = vkEndCommandBuffer(_handle);
 		CONCERTO_ASSERT(result == VK_SUCCESS, "ConcertoGraphics: vkEndCommandBuffer failed VKResult={}", static_cast<int>(result));
 	}
 
 	void CommandBuffer::BeginRenderPass(const VkRenderPassBeginInfo& info) const
 	{
-		vkCmdBeginRenderPass(_commandBuffer, &info, VK_SUBPASS_CONTENTS_INLINE);
+		vkCmdBeginRenderPass(_handle, &info, VK_SUBPASS_CONTENTS_INLINE);
 	}
 
 	void CommandBuffer::EndRenderPass() const
 	{
-		vkCmdEndRenderPass(_commandBuffer);
+		vkCmdEndRenderPass(_handle);
 	}
 
 	void CommandBuffer::BindPipeline(const VkPipelineBindPoint pipelineBindPoint, const Pipeline& pipeline) const
 	{
-		vkCmdBindPipeline(_commandBuffer, pipelineBindPoint, *pipeline.Get());
+		vkCmdBindPipeline(_handle, pipelineBindPoint, *pipeline.Get());
 	}
 
 	void CommandBuffer::BindPipeline(const VkPipelineBindPoint pipelineBindPoint, const VkPipeline pipeline) const
 	{
-		vkCmdBindPipeline(_commandBuffer, pipelineBindPoint, pipeline);
+		vkCmdBindPipeline(_handle, pipelineBindPoint, pipeline);
 	}
 
 	void CommandBuffer::Draw(const UInt32 vertexCount, const UInt32 instanceCount, const UInt32 firstVertex,
 	                         const UInt32 firstInstance) const
 	{
-		vkCmdDraw(_commandBuffer, vertexCount, instanceCount, firstVertex, firstInstance);
+		vkCmdDraw(_handle, vertexCount, instanceCount, firstVertex, firstInstance);
 	}
 
 	void CommandBuffer::DrawIndirect(const Buffer& buffer, const UInt32 offset, const UInt32 drawCount, const UInt32 stride) const
 	{
-		vkCmdDrawIndirect(_commandBuffer, *buffer.Get(), offset, drawCount, stride);
+		vkCmdDrawIndirect(_handle, *buffer.Get(), offset, drawCount, stride);
 	}
 
 	void CommandBuffer::BindVertexBuffers(const Buffer& buffer) const
 	{
 		VkDeviceSize offset = 0;
-		vkCmdBindVertexBuffers(_commandBuffer, 0, 1,  buffer.Get(), &offset);
+		vkCmdBindVertexBuffers(_handle, 0, 1,  buffer.Get(), &offset);
 	}
 
 	void CommandBuffer::UpdatePushConstants(const PipelineLayout& pipelineLayout, const MeshPushConstants& meshPushConstants) const
 	{
-		vkCmdPushConstants(_commandBuffer, *pipelineLayout.Get(), VK_SHADER_STAGE_VERTEX_BIT, 0,
+		vkCmdPushConstants(_handle, *pipelineLayout.Get(), VK_SHADER_STAGE_VERTEX_BIT, 0,
 				sizeof(MeshPushConstants), &meshPushConstants);
 	}
 
 	void CommandBuffer::UpdatePushConstants(const VkPipelineLayout pipelineLayout, const MeshPushConstants& meshPushConstants) const
 	{
-		vkCmdPushConstants(_commandBuffer, pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(MeshPushConstants),
+		vkCmdPushConstants(_handle, pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(MeshPushConstants),
 				&meshPushConstants);
 	}
 
@@ -142,14 +127,14 @@ namespace Concerto::Graphics::Vk
 	                                       const UInt32 firstSet, const UInt32 descriptorSetCount, const DescriptorSet& descriptorSet,
 	                                       const UInt32 dynamicOffsets) const
 	{
-		vkCmdBindDescriptorSets(_commandBuffer, pipelineBindPoint, pipelineLayout, firstSet, descriptorSetCount,
+		vkCmdBindDescriptorSets(_handle, pipelineBindPoint, pipelineLayout, firstSet, descriptorSetCount,
 				descriptorSet.Get(), 1, &dynamicOffsets);
 	}
 
 	void CommandBuffer::BindDescriptorSets(const VkPipelineBindPoint pipelineBindPoint, const VkPipelineLayout pipelineLayout,
 	                                       const UInt32 firstSet, const UInt32 descriptorSetCount, const DescriptorSet& descriptorSet) const
 	{
-		vkCmdBindDescriptorSets(_commandBuffer, pipelineBindPoint, pipelineLayout, firstSet, descriptorSetCount,
+		vkCmdBindDescriptorSets(_handle, pipelineBindPoint, pipelineLayout, firstSet, descriptorSetCount,
 				descriptorSet.Get(), 0, nullptr);
 	}
 
@@ -160,7 +145,7 @@ namespace Concerto::Graphics::Vk
 		vkDescriptorSets.reserve(descriptorSets.size());
 		for (const auto& descriptorSet : descriptorSets)
 			vkDescriptorSets.push_back(*descriptorSet.Get());
-		vkCmdBindDescriptorSets(_commandBuffer, pipelineBindPoint, pipelineLayout, 0, static_cast<UInt32>(vkDescriptorSets.size()),
+		vkCmdBindDescriptorSets(_handle, pipelineBindPoint, pipelineLayout, 0, static_cast<UInt32>(vkDescriptorSets.size()),
 			vkDescriptorSets.data(), 0, nullptr);
 	}
 
@@ -171,14 +156,14 @@ namespace Concerto::Graphics::Vk
 		vkDescriptorSets.reserve(descriptorSets.size());
 		for (const auto& descriptorSet : descriptorSets)
 			vkDescriptorSets.push_back(*descriptorSet->Get());
-		vkCmdBindDescriptorSets(_commandBuffer, pipelineBindPoint, pipelineLayout, 0, vkDescriptorSets.size(),
+		vkCmdBindDescriptorSets(_handle, pipelineBindPoint, pipelineLayout, 0, vkDescriptorSets.size(),
 			vkDescriptorSets.data(), 0, nullptr);
 	}
 
 	void CommandBuffer::ImmediateSubmit(Fence& fence, CommandPool& commandPool, const Queue& queue,
 	                                    std::function<void(CommandBuffer&)>&& function)
 	{
-		const VkSubmitInfo submitInfo = VulkanInitializer::SubmitInfo(&_commandBuffer);
+		const VkSubmitInfo submitInfo = VulkanInitializer::SubmitInfo(&_handle);
 		Begin();
 		{
 			function(*this);
@@ -200,16 +185,16 @@ namespace Concerto::Graphics::Vk
 			.dstOffset = 0,
 			.size = size
 		};
-		vkCmdCopyBuffer(_commandBuffer, *src.Get(), *dest.Get(), 1, &copyRegion);
+		vkCmdCopyBuffer(_handle, *src.Get(), *dest.Get(), 1, &copyRegion);
 	}
 
 	void CommandBuffer::SetViewport(const VkViewport& viewport) const
 	{
-		vkCmdSetViewport(_commandBuffer, 0, 1, &viewport);
+		vkCmdSetViewport(_handle, 0, 1, &viewport);
 	}
 
 	void CommandBuffer::SetScissor(const VkRect2D scissor) const
 	{
-		vkCmdSetScissor(_commandBuffer, 0, 1, &scissor);
+		vkCmdSetScissor(_handle, 0, 1, &scissor);
 	}
 }

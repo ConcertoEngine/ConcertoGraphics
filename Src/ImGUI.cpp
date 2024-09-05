@@ -86,7 +86,7 @@ namespace Concerto::Graphics::Vk
 
 	void ImGUI::RenderDrawData(CommandBuffer& commandBuffer)
 	{
-		ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), commandBuffer.Get());
+		ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), *commandBuffer.Get());
 	}
 
 	ImGuiContext* ImGUI::GetContext() const

@@ -4,19 +4,19 @@
 
 #include <Concerto/Core/Cast.hpp>
 
-#include "Concerto/Graphics/RHI/Vulkan/VKRHICommandPool.hpp"
-#include "Concerto/Graphics/RHI/Vulkan/VKRHICommandBuffer.hpp"
+#include "Concerto/Graphics/RHI/Vulkan/VkRHICommandPool.hpp"
+#include "Concerto/Graphics/RHI/Vulkan/VkRHICommandBuffer.hpp"
 
 namespace Concerto::Graphics::RHI
 {
-	VKRHICommandPool::VKRHICommandPool(VkRHIDevice& device, QueueFamily family) :
+	VkRHICommandPool::VkRHICommandPool(VkRHIDevice& device, QueueFamily family) :
 		Vk::CommandPool(device, device.GetQueueFamilyIndex(static_cast<Vk::Queue::Type>(family))), //fixme?
 		_device(device)
 	{
 	}
 
-	std::unique_ptr<CommandBuffer> VKRHICommandPool::AllocateCommandBuffer(CommandBufferUasge usage)
+	std::unique_ptr<CommandBuffer> VkRHICommandPool::AllocateCommandBuffer(CommandBufferUasge usage)
 	{
-		return std::make_unique<VKRHICommandBuffer>(_device, *this->Get());
+		return std::make_unique<VkRHICommandBuffer>(_device, *this);
 	}
 }

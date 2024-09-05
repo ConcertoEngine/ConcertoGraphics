@@ -13,11 +13,13 @@
 #include <Concerto/Graphics/RHI/MaterialBuilder.hpp>
 #include <Concerto/Graphics/RHI/CommandBuffer.hpp>
 
-#include "Concerto/Graphics/RHI/Mesh.hpp"
-#include "Concerto/Graphics/RHI/Vulkan/VkRHIMesh.hpp"
+#include <Concerto/Graphics/RHI/Frame.hpp>
+#include <Concerto/Graphics/RHI/Mesh.hpp>
+#include <Concerto/Graphics/RHI/Vulkan/VkRHIMesh.hpp>
 
 using namespace Concerto;
 using namespace Concerto::Graphics;
+
 
 int main()
 {
@@ -46,14 +48,14 @@ int main()
 		std::unique_ptr<RHI::TextureBuilder> textureBuilder = device->CreateTextureBuilder();
 		RHI::VkRHIMesh mesh("./assets/sponza/sponza.obj"); //fixme
 		std::shared_ptr<RHI::GpuMesh> gpuMesh = mesh.BuildGpuMesh(*materialBuilder, renderPass, *device);
-
 		std::unique_ptr<RHI::CommandPool> commandPool = device->CreateCommandPool(RHI::QueueFamily::Graphics);
-		std::unique_ptr<RHI::CommandBuffer> commandBuffer =  commandPool->AllocateCommandBuffer(RHI::CommandBufferUasge::Primary);
-
 
 
 		while (!window.ShouldClose())
 		{
+			RHI::Frame& currentFrame = swapChain->AcquireFrame();
+			//do stuff
+			currentFrame.Present();
 		}
 	}
 	catch (const std::exception& e)

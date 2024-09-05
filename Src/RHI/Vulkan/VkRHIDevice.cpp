@@ -134,7 +134,7 @@ namespace Concerto::Graphics::RHI
 
 	std::unique_ptr<CommandPool> VkRHIDevice::CreateCommandPool(RHI::QueueFamily family)
 	{
-		return std::make_unique<VKRHICommandPool>(*this, family);
+		return std::make_unique<VkRHICommandPool>(*this, family);
 	}
 
 	Vk::UploadContext& VkRHIDevice::GetUploadContext()

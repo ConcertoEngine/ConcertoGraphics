@@ -38,8 +38,8 @@ namespace Concerto::Graphics::Vk
 
 	Image::Image(Device& device, const std::string& file, CommandBuffer& commandBuffer, UploadContext& uploadContext, Queue& queue) :
 		Object(device),
-		_imageFormat(VK_FORMAT_R8G8B8A8_SRGB),
-		_isAllocated(true)
+		_isAllocated(true),
+		_imageFormat(VK_FORMAT_R8G8B8A8_SRGB)
 	{
 		int textureWidth, textureHeight, textureChannels;
 		stbi_uc* pixels = stbi_load(file.c_str(), &textureWidth, &textureHeight, &textureChannels, STBI_rgb_alpha);
@@ -89,7 +89,7 @@ namespace Concerto::Graphics::Vk
 					imageBarrier_toTransfer.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
 
 					//barrier the image into the Transfer-receive layout
-					vkCmdPipelineBarrier(cb.Get(), VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT, 0,
+					vkCmdPipelineBarrier(*cb.Get(), VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT, 0,
 							0, nullptr, 0, nullptr, 1, &imageBarrier_toTransfer);
 
 					VkBufferImageCopy copyRegion = {};
@@ -104,7 +104,7 @@ namespace Concerto::Graphics::Vk
 					copyRegion.imageExtent = imageExtent;
 
 					//copy the buffer into the image
-					vkCmdCopyBufferToImage(cb.Get(), *stagingBuffer.Get(), _handle,
+					vkCmdCopyBufferToImage(*cb.Get(), *stagingBuffer.Get(), _handle,
 							VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &copyRegion);
 
 					VkImageMemoryBarrier imageBarrier_toReadable = imageBarrier_toTransfer;
@@ -116,7 +116,7 @@ namespace Concerto::Graphics::Vk
 					imageBarrier_toReadable.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
 
 					//barrier the image into the shader readable layout
-					vkCmdPipelineBarrier(cb.Get(), VK_PIPELINE_STAGE_TRANSFER_BIT,
+					vkCmdPipelineBarrier(*cb.Get(), VK_PIPELINE_STAGE_TRANSFER_BIT,
 							VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, 0, 0, nullptr, 0, nullptr, 1,
 							&imageBarrier_toReadable);
 				});

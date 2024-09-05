@@ -9,6 +9,7 @@
 
 #include "Concerto/Graphics/Defines.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Object.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/CommandBuffer.hpp"
 
 namespace Concerto::Graphics::Vk
 {
@@ -52,6 +53,8 @@ namespace Concerto::Graphics::Vk
 	    * 		 the command pool back to the command pool.
 	    */
 		void Reset() const;
+
+		Vk::CommandBuffer AllocateCommandBuffer();
 
 	private:
 		UInt32 _queueFamily;

@@ -11,10 +11,10 @@
 
 namespace Concerto::Graphics::RHI
 {
-	class CONCERTO_GRAPHICS_API VKRHICommandPool final: public CommandPool, public Vk::CommandPool
+	class CONCERTO_GRAPHICS_API VkRHICommandPool final: public CommandPool, public Vk::CommandPool
 	{
 	public:
-		VKRHICommandPool(VkRHIDevice& device, RHI::QueueFamily family);
+		VkRHICommandPool(VkRHIDevice& device, RHI::QueueFamily family);
 
 		std::unique_ptr<CommandBuffer> AllocateCommandBuffer(CommandBufferUasge usage) override;
 	private:

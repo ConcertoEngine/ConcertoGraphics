@@ -14,18 +14,18 @@
 namespace Concerto::Graphics::RHI
 {
 	VkRHISwapChain::VkRHISwapChain(Vk::Device& device, Window& window, PixelFormat pixelFormat, PixelFormat depthPixelFormat) :
-		SwapChain(pixelFormat, depthPixelFormat),
-		Vk::Swapchain(device, window, Converters::ToVulkan(pixelFormat), Converters::ToVulkan(depthPixelFormat))
+		RHI::SwapChain(pixelFormat, depthPixelFormat),
+		Vk::SwapChain(device, window, Converters::ToVulkan(pixelFormat), Converters::ToVulkan(depthPixelFormat)),
+		_pixelFormat(pixelFormat),
+		_depthPixelFormat(depthPixelFormat)
 	{
 		CreateRenderPass();
 		CreateFrameBuffers();
+		_commandPool = std::make_unique<Vk::CommandPool>(device, device.GetQueueFamilyIndex(Vk::Queue::Type::Graphics));
+		_presentQueue = std::make_unique<Vk::Queue>(device, device.GetQueueFamilyIndex(Vk::Queue::Type::Graphics));
+		CreateFrames();
 	}
-
-	void VkRHISwapChain::Present()
-	{
-		CONCERTO_ASSERT_FALSE("Not Implemented");
-	}
-
+	
 	RHI::RenderPass& VkRHISwapChain::GetRenderPass()
 	{
 		CONCERTO_ASSERT(_renderPass, "ConcertoGraphics: Invalid renderpass");
@@ -34,12 +34,70 @@ namespace Concerto::Graphics::RHI
 
 	Vector2u VkRHISwapChain::GetExtent()
 	{
-		return Vector2u{ Vk::Swapchain::GetExtent().width, Vk::Swapchain::GetExtent().height };
+		return Vector2u{ Vk::SwapChain::GetExtent().width, Vk::SwapChain::GetExtent().height };
+	}
+
+	UInt32 VkRHISwapChain::GetImageCount()
+	{
+		return static_cast<UInt32>(Vk::SwapChain::GetImages().size());
+	}
+
+	Frame& VkRHISwapChain::AcquireFrame()
+	{
+		SwapChainFrame& frame = _frames[_currentFrameIndex];
+		frame.Wait();
+		if (_needResize)
+		{
+			Vk::SwapChain::ReCreate(Converters::ToVulkan(_pixelFormat), Converters::ToVulkan(_depthPixelFormat));
+		}
+		const UInt32 nextImageIndex = Vk::SwapChain::AcquireNextImage(frame.GetPresentSemaphore(), frame.GetRenderFence(), -1);
+		frame.SetNextImageIndex(nextImageIndex);
+		return frame;
+	}
+
+	Vk::CommandPool& VkRHISwapChain::GetCommandPool() const
+	{
+		CONCERTO_ASSERT(_commandPool, "ConcertoGraphics: Invalid command pool");
+		return *_commandPool;
+	}
+
+	Vk::Device& VkRHISwapChain::GetDevice() const
+	{
+		CONCERTO_ASSERT(Vk::SwapChain::GetDevice(), "ConcertoGraphics: Invalid device");
+		return *Vk::SwapChain::GetDevice();
+	}
+
+	Vk::Queue& VkRHISwapChain::GetPresentQueue() const
+	{
+		CONCERTO_ASSERT(_presentQueue, "ConcertoGraphics: Invalid present queue");
+		return *_presentQueue;
+	}
+
+	void VkRHISwapChain::Present(UInt32 imageIndex)
+	{
+		_currentFrameIndex = (_currentFrameIndex + 1) % GetImageCount();
+		SwapChainFrame& currentFrame = _frames[imageIndex];
+		if (!_presentQueue->Present(currentFrame.GetRenderSemaphore(), *this, imageIndex))
+		{
+			switch (_presentQueue->GetLastResult())
+			{
+			case VK_ERROR_OUT_OF_DATE_KHR:
+			case VK_SUBOPTIMAL_KHR:
+			{
+				_needResize = true;
+				break;
+			}
+			default:
+				{
+					CONCERTO_ASSERT_FALSE("ConcertoGraphics: Present failed VKResult={}", static_cast<int>(_presentQueue->GetLastResult()));
+				}
+			}
+		}
 	}
 
 	void VkRHISwapChain::CreateFrameBuffers()
 	{
-		const std::span<Vk::ImageView> imagesViews = Vk::Swapchain::GetImageViews();
+		const std::span<Vk::ImageView> imagesViews = Vk::SwapChain::GetImageViews();
 		std::vector<VkImageView> vkImageViews;
 		vkImageViews.reserve(imagesViews.size());
 		for (auto& image: imagesViews)
@@ -51,7 +109,7 @@ namespace Concerto::Graphics::RHI
 			std::vector attachments = {imageView, *GetDepthImageView().Get()};
 			CONCERTO_ASSERT(attachments[0] != VK_NULL_HANDLE && attachments[1] != VK_NULL_HANDLE, "ConcertoGraphics: iInvalid attachment");
 
-			Vk::FrameBuffer frameBuffer(*_device, static_cast<VkRHIRenderPass&>(*_renderPass), attachments, Vk::Swapchain::GetExtent());
+			Vk::FrameBuffer frameBuffer(*_device, static_cast<VkRHIRenderPass&>(*_renderPass), attachments, Vk::SwapChain::GetExtent());
 			CONCERTO_ASSERT(frameBuffer.GetLastResult() == VK_SUCCESS, "ConcertoGraphics: Could not create framebuffer");
 
 			_frameBuffers.emplace_back(std::move(frameBuffer));
@@ -105,5 +163,63 @@ namespace Concerto::Graphics::RHI
 
 		_renderPass = Cast<VkRHIDevice&>(*_device).CreateRenderPass(attachment, subPassDescriptions, subPassDependencies);
 		CONCERTO_ASSERT(_renderPass && Cast<VkRHIRenderPass&>(*_renderPass).GetLastResult() == VK_SUCCESS, "ConcertoGraphics: Could not create render pass");
+	}
+
+	void VkRHISwapChain::CreateFrames()
+	{
+		const UInt32 imageCount = GetImageCount();
+		if (_frames.size() != imageCount)
+		{
+			_frames.clear();
+			_frames.reserve(imageCount);
+			for (Int32 i = 0; i < imageCount; ++i)
+			{
+				_frames.emplace_back(*this);
+			}
+		}
+	}
+
+	VkRHISwapChain::SwapChainFrame::SwapChainFrame(VkRHISwapChain& owner) :
+		_commandBuffer(owner.GetCommandPool().AllocateCommandBuffer()),
+		_renderFence(owner.GetDevice()),
+		_presentSemaphore(owner.GetDevice()),
+		_renderSemaphore(owner.GetDevice()),
+		_owner(&owner),
+		_imageIndex(0)
+	{
+	}
+
+	void VkRHISwapChain::SwapChainFrame::Present()
+	{
+		const Vk::Queue& presentQueue = _owner->GetPresentQueue();
+
+		presentQueue.Submit(_commandBuffer, _presentSemaphore, _renderSemaphore, _renderFence);
+		_owner->Present(_imageIndex);
+	}
+
+	void VkRHISwapChain::SwapChainFrame::SetNextImageIndex(UInt32 imageIndex)
+	{
+		_imageIndex = imageIndex;
+	}
+
+	void VkRHISwapChain::SwapChainFrame::Wait()
+	{
+		_renderFence.Wait(-1);
+		_renderFence.Reset();
+	}
+
+	Vk::Semaphore& VkRHISwapChain::SwapChainFrame::GetPresentSemaphore()
+	{
+		return _presentSemaphore;
+	}
+
+	Vk::Semaphore& VkRHISwapChain::SwapChainFrame::GetRenderSemaphore()
+	{
+		return _renderSemaphore;
+	}
+
+	Vk::Fence& VkRHISwapChain::SwapChainFrame::GetRenderFence()
+	{
+		return _renderFence;
 	}
 }

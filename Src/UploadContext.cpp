@@ -10,7 +10,7 @@ namespace Concerto::Graphics::Vk
 	UploadContext::UploadContext(Device& device, UInt32 queueFamily) :
 		_uploadFence(device, false),
 		_commandPool(device, queueFamily),
-		_commandBuffer(device, *_commandPool.Get())
+		_commandBuffer(_commandPool.AllocateCommandBuffer())
 	{
 	}
 }

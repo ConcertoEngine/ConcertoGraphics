@@ -6,6 +6,8 @@
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/RenderPass.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Swapchain.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/CommandBuffer.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/Semaphore.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/Fence.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Device.hpp"
 #include "Concerto/Graphics/Frame.hpp"
 
@@ -21,32 +23,31 @@ namespace Concerto::Graphics::Vk
 		return _queueFamilyIndex;
 	}
 
-	void Queue::Submit(const FrameData& frame)
+	void Queue::Submit(const CommandBuffer& commandBuffer, const Semaphore& presentSemaphore, const Semaphore& renderSemaphore, const Fence& renderFence) const
 	{
-		VkCommandBuffer vkCommandBuffer = frame.commandBuffer.Get();
-		VkPipelineStageFlags waitStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+		const VkPipelineStageFlags waitStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
 		VkSubmitInfo submit = {};
 		submit.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 		submit.pNext = nullptr;
 		submit.pWaitDstStageMask = &waitStage;
 		submit.waitSemaphoreCount = 1;
-		submit.pWaitSemaphores = frame.presentSemaphore.Get();
+		submit.pWaitSemaphores = presentSemaphore.Get();
 		submit.signalSemaphoreCount = 1;
-		submit.pSignalSemaphores = frame.renderSemaphore.Get();
+		submit.pSignalSemaphores = renderSemaphore.Get();
 		submit.commandBufferCount = 1;
-		submit.pCommandBuffers = &vkCommandBuffer;
-		_lastResult = vkQueueSubmit(_handle, 1, &submit, *frame.renderFence.Get());
+		submit.pCommandBuffers = commandBuffer.Get();
+		_lastResult = vkQueueSubmit(_handle, 1, &submit, *renderFence.Get());
 		CONCERTO_ASSERT(_lastResult == VK_SUCCESS, "ConcertoGraphics: vkQueueSubmit failed VKResult={}", static_cast<int>(_lastResult));
 	}
 
-	bool Queue::Present(const FrameData& frame, Swapchain& swapchain, UInt32 swapchainImageIndex)
+	bool Queue::Present(const Semaphore& renderSemaphore, SwapChain& swapchain, UInt32 swapchainImageIndex) const
 	{
 		VkPresentInfoKHR present = {};
 		present.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
 		present.pNext = nullptr;
 		present.pSwapchains = swapchain.Get();
 		present.swapchainCount = 1;
-		present.pWaitSemaphores = frame.renderSemaphore.Get();
+		present.pWaitSemaphores = renderSemaphore.Get();
 		present.waitSemaphoreCount = 1;
 		present.pImageIndices = &swapchainImageIndex;
 		_lastResult = vkQueuePresentKHR(_handle, &present);

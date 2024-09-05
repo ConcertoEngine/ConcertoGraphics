@@ -10,6 +10,8 @@
 #include <memory>
 
 #include <vulkan/vulkan.h>
+
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/Object.hpp"
 #include "Concerto/Graphics/Defines.hpp"
 
 namespace Concerto::Graphics::Vk
@@ -31,7 +33,7 @@ namespace Concerto::Graphics::Vk
 	 * This class is used to record and submit commands to the GPU for execution, such as rendering commands,
 	 * memory management commands, and compute commands.
 	 */
-	class CONCERTO_GRAPHICS_API CommandBuffer
+	class CONCERTO_GRAPHICS_API CommandBuffer : public Object<VkCommandBuffer>
 	{
 	public:
 		/**
@@ -40,7 +42,7 @@ namespace Concerto::Graphics::Vk
 		 * @param device The Device object to associate with this command buffer.
 		 * @param commandPool The VkCommandPool to associate with this command buffer.
 		 */
-		explicit CommandBuffer(Device& device, VkCommandPool commandPool);
+		explicit CommandBuffer(Device& device, Vk::CommandPool& owner, VkCommandBuffer commandBuffer);
 
 		~CommandBuffer();
 
@@ -51,13 +53,7 @@ namespace Concerto::Graphics::Vk
 		CommandBuffer& operator=(CommandBuffer&&) noexcept;
 
 		CommandBuffer& operator=(const CommandBuffer&) = delete;
-
-		/**
-		 * @brief Returns the VkCommandBuffer associated with this object.
-		 * @return The VkCommandBuffer associated with this object.
-		 */
-		[[nodiscard]] VkCommandBuffer Get() const;
-
+		
 		/**
 		 * @brief Resets the command buffer.
 		 */
@@ -209,9 +205,7 @@ namespace Concerto::Graphics::Vk
 		void SetScissor(VkRect2D scissor) const;
 
 	private:
-		Device* _device;
-		VkCommandPool _commandPool;
-		VkCommandBuffer _commandBuffer;
+		Vk::CommandPool* _commandPool;
 	};
 } // namespace Concerto::Graphics::Vk
 

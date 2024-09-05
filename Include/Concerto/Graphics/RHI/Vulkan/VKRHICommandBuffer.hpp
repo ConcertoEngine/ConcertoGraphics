@@ -11,10 +11,15 @@
 
 namespace Concerto::Graphics::RHI
 {
-	class CONCERTO_GRAPHICS_API VKRHICommandBuffer final: public RHI::CommandBuffer, public Vk::CommandBuffer
+	class CONCERTO_GRAPHICS_API VkRHICommandBuffer final: public RHI::CommandBuffer, public Vk::CommandBuffer
 	{
 	public:
-		VKRHICommandBuffer(VkRHIDevice& device, VkCommandPool commandPool);
+		VkRHICommandBuffer(VkRHIDevice& device, Vk::CommandPool& commandPool);
+
+		void Begin() override;
+		void End() override;
+		void Submit() override;
+		void Reset() override;
 	};
 }
 
