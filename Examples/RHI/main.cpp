@@ -48,13 +48,17 @@ int main()
 		std::unique_ptr<RHI::TextureBuilder> textureBuilder = device->CreateTextureBuilder();
 		RHI::VkRHIMesh mesh("./assets/sponza/sponza.obj"); //fixme
 		std::shared_ptr<RHI::GpuMesh> gpuMesh = mesh.BuildGpuMesh(*materialBuilder, renderPass, *device);
-		std::unique_ptr<RHI::CommandPool> commandPool = device->CreateCommandPool(RHI::QueueFamily::Graphics);
-
 
 		while (!window.ShouldClose())
 		{
 			RHI::Frame& currentFrame = swapChain->AcquireFrame();
-			//do stuff
+			RHI::CommandBuffer& commandBuffer = currentFrame.GetCommandBuffer();
+			commandBuffer.Reset();
+			commandBuffer.Begin();
+			{
+				
+			}
+			commandBuffer.End();
 			currentFrame.Present();
 		}
 	}

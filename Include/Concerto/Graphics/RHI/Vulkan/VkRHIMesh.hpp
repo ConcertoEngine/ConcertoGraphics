@@ -22,7 +22,7 @@ namespace Concerto::Graphics::Vk
 
 namespace Concerto::Graphics::RHI
 {
-	class CONCERTO_GRAPHICS_VKRHI_API VkRHIMesh : public RHI::Mesh
+	class CONCERTO_GRAPHICS_RHI_BASE_API VkRHIMesh : public RHI::Mesh
 	{
 	public:
 		explicit VkRHIMesh(std::string filePath);

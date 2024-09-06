@@ -5,6 +5,8 @@
 #ifndef CONCERTO_GRAPHICS_RHI_COMMANDBUFFER_HPP
 #define CONCERTO_GRAPHICS_RHI_COMMANDBUFFER_HPP
 
+#include "Concerto/Graphics/RHI/Defines.hpp"
+
 namespace Concerto::Graphics::RHI
 {
 	class CONCERTO_GRAPHICS_RHI_BASE_API CommandBuffer

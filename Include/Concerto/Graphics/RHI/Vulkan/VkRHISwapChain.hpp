@@ -5,14 +5,17 @@
 #ifndef CONCERTO_GRAPHICS_BACKEND_RHI_VULKAN_SWAPCHAIN_HPP
 #define CONCERTO_GRAPHICS_BACKEND_RHI_VULKAN_SWAPCHAIN_HPP
 
-#include "Concerto/Graphics/Defines.hpp"
+#include "Concerto/Graphics/RHI/Defines.hpp"
+
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/CommandBuffer.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Fence.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/RenderPass.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Semaphore.hpp"
-#include "Concerto/Graphics/RHI/SwapChain.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/SwapChain.hpp"
-#include "Concerto/Graphics/RHI/FrameBuffer.hpp"
+
+#include "Concerto/Graphics/RHI/SwapChain.hpp"
+#include "Concerto/Graphics/RHI/Vulkan/VkRHIDevice.hpp"
+#include "Concerto/Graphics/RHI/Vulkan/VKRHICommandPool.hpp"
 
 namespace Concerto::Graphics::Vk
 {
@@ -22,17 +25,17 @@ namespace Concerto::Graphics::Vk
 
 namespace Concerto::Graphics::RHI
 {
-	class CONCERTO_GRAPHICS_VKRHI_API VkRHISwapChain final : public RHI::SwapChain, public Vk::SwapChain
+	class CONCERTO_GRAPHICS_RHI_BASE_API VkRHISwapChain final : public RHI::SwapChain, public Vk::SwapChain
 	{
 	public:
-		VkRHISwapChain(Vk::Device& device, Window& window, PixelFormat pixelFormat, PixelFormat depthPixelFormat);
+		VkRHISwapChain(RHI::VkRHIDevice& device, Window& window, PixelFormat pixelFormat, PixelFormat depthPixelFormat);
 		RHI::RenderPass& GetRenderPass() override;
 		Vector2u GetExtent() override;
 		UInt32 GetImageCount() override;
 		Frame& AcquireFrame() override;
 
-		inline Vk::CommandPool& GetCommandPool() const;
-		inline Vk::Device& GetDevice() const;
+		inline VkRHICommandPool& GetCommandPool() const;
+		inline VkRHIDevice& GetRHIDevice() const;
 		inline Vk::Queue& GetPresentQueue() const;
 
 		void Present(UInt32 imageIndex);
@@ -46,6 +49,8 @@ namespace Concerto::Graphics::RHI
 		public:
 			SwapChainFrame(VkRHISwapChain& owner);
 			void Present() override;
+			RHI::CommandBuffer& GetCommandBuffer() override;
+			
 			void SetNextImageIndex(UInt32 imageIndex);
 			void Wait();
 			
@@ -53,7 +58,7 @@ namespace Concerto::Graphics::RHI
 			Vk::Semaphore& GetRenderSemaphore();
 			Vk::Fence& GetRenderFence();
 		private:
-			Vk::CommandBuffer _commandBuffer;
+			std::unique_ptr<RHI::CommandBuffer> _commandBuffer;
 			Vk::Fence _renderFence;
 			Vk::Semaphore _presentSemaphore;
 			Vk::Semaphore _renderSemaphore;
@@ -67,7 +72,7 @@ namespace Concerto::Graphics::RHI
 		std::vector<SwapChainFrame> _frames;
 		std::vector<Vk::FrameBuffer> _frameBuffers;
 		std::unique_ptr<RHI::RenderPass> _renderPass;
-		std::unique_ptr<Vk::CommandPool> _commandPool;
+		std::unique_ptr<RHI::CommandPool> _commandPool;
 		std::unique_ptr<Vk::Queue> _presentQueue;
 		
 		UInt32 _currentFrameIndex = 0;

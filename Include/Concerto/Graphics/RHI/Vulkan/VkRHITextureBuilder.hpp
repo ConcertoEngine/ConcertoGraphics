@@ -23,7 +23,7 @@ namespace Concerto::Graphics::RHI
 {
 	class Device;
 
-	class CONCERTO_GRAPHICS_VKRHI_API VkRHITextureBuilder : public RHI::TextureBuilder
+	class CONCERTO_GRAPHICS_RHI_BASE_API VkRHITextureBuilder : public RHI::TextureBuilder
 	{
 	 public:
 		VkRHITextureBuilder(RHI::Device& device, Vk::UploadContext& uploadContext, Vk::Queue& queue);

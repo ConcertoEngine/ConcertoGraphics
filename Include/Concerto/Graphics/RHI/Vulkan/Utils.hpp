@@ -6,12 +6,12 @@
 #define CONCERTO_GRAPHICS_BACKEND_RHI_VULKAN_UTILS_HPP
 
 #include <vulkan/vulkan_core.h>
-#include "Concerto/Graphics/Defines.hpp"
+#include "Concerto/Graphics/RHI/Defines.hpp"
 #include "Concerto/Graphics/RHI/Enums.hpp"
 
 namespace Concerto::Graphics::RHI
 {
-	class CONCERTO_GRAPHICS_VKRHI_API Converters
+	class CONCERTO_GRAPHICS_RHI_BASE_API Converters
 	{
 	public:
 		static constexpr inline VkFormat ToVulkan(PixelFormat pixelFormat);

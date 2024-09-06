@@ -49,7 +49,7 @@ namespace Concerto::Graphics::Vk
 	};
 	using DescriptorSetLayoutPtr = std::shared_ptr<DescriptorSetLayout>;
 
-	DescriptorSetLayoutPtr MakeDescriptorSetLayout(Device& device, const std::vector<VkDescriptorSetLayoutBinding>& bindings);
+	DescriptorSetLayoutPtr CONCERTO_GRAPHICS_VULKAN_BACKEND_API MakeDescriptorSetLayout(Device& device, const std::vector<VkDescriptorSetLayoutBinding>& bindings);
 }
 
 #endif //CONCERTO_GRAPHICS_DESCRIPTORSETLAYOUT_HPP

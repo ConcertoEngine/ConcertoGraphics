@@ -117,9 +117,9 @@ namespace Concerto::Graphics
 		return w;
 	}
 
-	bool Window::CreateVulkanSurface(Vk::Instance& instance, VkSurfaceKHR* surface) const
+	bool Window::CreateVulkanSurface(VkInstance instance, VkSurfaceKHR& surface) const
 	{
-		const auto res = glfwCreateWindowSurface(*instance.Get(), _window, nullptr, surface);
+		const auto res = glfwCreateWindowSurface(instance, _window, nullptr, &surface);
 		if (res != VK_SUCCESS)
 		{
 			Logger::Warning("Unable to create vulkan surface error code: {}",  std::to_string(res));

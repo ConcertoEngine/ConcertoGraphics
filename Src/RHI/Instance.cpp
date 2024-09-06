@@ -5,7 +5,7 @@
 #include <Concerto/Core/Assert.hpp>
 #include "Concerto/Graphics/RHI/Instance.hpp"
 #include "Concerto/Graphics/RHI/APIImpl.hpp"
-#include "Concerto/Graphics/Backend/Vulkan/VkRHI.hpp"
+#include "Concerto/Graphics/RHI/Vulkan/VkRHI.hpp"
 
 namespace Concerto::Graphics::RHI
 {

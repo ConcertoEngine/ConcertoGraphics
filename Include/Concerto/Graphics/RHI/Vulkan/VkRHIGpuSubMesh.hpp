@@ -6,6 +6,7 @@
 #define CONCERTO_GRAPHICS_RHI_VULKAN_VKRHIGPUSUBMESH_HPP
 
 #include <vk_mem_alloc.h>
+#include "Concerto/Graphics/RHI/Defines.hpp"
 #include "Concerto/Graphics/RHI/GpuSubMesh.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Buffer.hpp"
 
@@ -17,7 +18,7 @@ namespace Concerto::Graphics::Vk
 
 namespace Concerto::Graphics::RHI
 {
-	class CONCERTO_GRAPHICS_VKRHI_API VkRHIGpuSubMesh : public RHI::GpuSubMesh
+	class CONCERTO_GRAPHICS_RHI_BASE_API VkRHIGpuSubMesh : public RHI::GpuSubMesh
 	{
 	public:
 		VkRHIGpuSubMesh(RHI::SubMeshPtr meshPtr, RHI::MaterialPtr material, Vk::Allocator& allocator, VkBufferUsageFlags usage, VmaMemoryUsage memoryUsage);

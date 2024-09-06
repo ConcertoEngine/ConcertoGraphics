@@ -8,7 +8,6 @@
 #include <memory>
 
 #include "Concerto/Graphics/RHI/Defines.hpp"
-#include "Concerto/Graphics/Backend/Vulkan/Vertex.hpp"
 #include "Concerto/Graphics/RHI/Material.hpp"
 #include "Concerto/Graphics/Vertex.hpp"
 #include "Concerto/Graphics/RHI/Mesh.hpp"

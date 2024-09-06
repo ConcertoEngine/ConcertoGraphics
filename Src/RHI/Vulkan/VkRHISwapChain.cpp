@@ -9,11 +9,14 @@
 
 #include "Concerto/Graphics/RHI/Vulkan/VkRHIDevice.hpp"
 #include "Concerto/Graphics/RHI/Vulkan/Utils.hpp"
-#include "Concerto/Graphics/RHI/Vulkan/VKRHIRenderPass.hpp"
+#include "Concerto/Graphics/RHI/Vulkan/VkRHIRenderPass.hpp"
+#include "Concerto/Graphics/RHI/Vulkan/VkRHIDevice.hpp"
+#include "Concerto/Graphics/RHI/Vulkan/VkRHICommandBuffer.hpp"
+#include "Concerto/Graphics/RHI/Vulkan/VkRHICommandPool.hpp"
 
 namespace Concerto::Graphics::RHI
 {
-	VkRHISwapChain::VkRHISwapChain(Vk::Device& device, Window& window, PixelFormat pixelFormat, PixelFormat depthPixelFormat) :
+	VkRHISwapChain::VkRHISwapChain(RHI::VkRHIDevice& device, Window& window, PixelFormat pixelFormat, PixelFormat depthPixelFormat) :
 		RHI::SwapChain(pixelFormat, depthPixelFormat),
 		Vk::SwapChain(device, window, Converters::ToVulkan(pixelFormat), Converters::ToVulkan(depthPixelFormat)),
 		_pixelFormat(pixelFormat),
@@ -21,7 +24,7 @@ namespace Concerto::Graphics::RHI
 	{
 		CreateRenderPass();
 		CreateFrameBuffers();
-		_commandPool = std::make_unique<Vk::CommandPool>(device, device.GetQueueFamilyIndex(Vk::Queue::Type::Graphics));
+		_commandPool = device.CreateCommandPool(QueueFamily::Graphics);
 		_presentQueue = std::make_unique<Vk::Queue>(device, device.GetQueueFamilyIndex(Vk::Queue::Type::Graphics));
 		CreateFrames();
 	}
@@ -55,16 +58,16 @@ namespace Concerto::Graphics::RHI
 		return frame;
 	}
 
-	Vk::CommandPool& VkRHISwapChain::GetCommandPool() const
+	VkRHICommandPool& VkRHISwapChain::GetCommandPool() const
 	{
 		CONCERTO_ASSERT(_commandPool, "ConcertoGraphics: Invalid command pool");
-		return *_commandPool;
+		return Cast<VkRHICommandPool&>(*_commandPool);
 	}
 
-	Vk::Device& VkRHISwapChain::GetDevice() const
+	VkRHIDevice& VkRHISwapChain::GetRHIDevice() const
 	{
 		CONCERTO_ASSERT(Vk::SwapChain::GetDevice(), "ConcertoGraphics: Invalid device");
-		return *Vk::SwapChain::GetDevice();
+		return Cast<VkRHIDevice&>(*Vk::SwapChain::GetDevice());
 	}
 
 	Vk::Queue& VkRHISwapChain::GetPresentQueue() const
@@ -180,10 +183,10 @@ namespace Concerto::Graphics::RHI
 	}
 
 	VkRHISwapChain::SwapChainFrame::SwapChainFrame(VkRHISwapChain& owner) :
-		_commandBuffer(owner.GetCommandPool().AllocateCommandBuffer()),
-		_renderFence(owner.GetDevice()),
-		_presentSemaphore(owner.GetDevice()),
-		_renderSemaphore(owner.GetDevice()),
+		_commandBuffer(owner.GetCommandPool().AllocateCommandBuffer(CommandBufferUasge::Primary)),
+		_renderFence(*owner.GetDevice()),
+		_presentSemaphore(*owner.GetDevice()),
+		_renderSemaphore(*owner.GetDevice()),
 		_owner(&owner),
 		_imageIndex(0)
 	{
@@ -193,8 +196,13 @@ namespace Concerto::Graphics::RHI
 	{
 		const Vk::Queue& presentQueue = _owner->GetPresentQueue();
 
-		presentQueue.Submit(_commandBuffer, _presentSemaphore, _renderSemaphore, _renderFence);
+		presentQueue.Submit(Cast<VkRHICommandBuffer&>(*_commandBuffer), _presentSemaphore, _renderSemaphore, _renderFence);
 		_owner->Present(_imageIndex);
+	}
+
+	RHI::CommandBuffer& VkRHISwapChain::SwapChainFrame::GetCommandBuffer()
+	{
+		return *_commandBuffer;
 	}
 
 	void VkRHISwapChain::SwapChainFrame::SetNextImageIndex(UInt32 imageIndex)

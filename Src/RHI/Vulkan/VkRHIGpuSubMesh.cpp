@@ -4,7 +4,7 @@
 
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/CommandBuffer.hpp"
 #include "Concerto/Graphics/RHI/Vulkan/VkRHIGpuSubMesh.hpp"
-#include "Concerto/Graphics/Backend/Vulkan/VkMaterial.hpp"
+#include "Concerto/Graphics/RHI/Vulkan/VkMaterial.hpp"
 
 namespace Concerto::Graphics::RHI
 {

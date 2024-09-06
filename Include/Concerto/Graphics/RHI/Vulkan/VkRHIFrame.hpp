@@ -11,7 +11,7 @@
 
 namespace Concerto::Graphics::RHI
 {
-	class CONCERTO_GRAPHICS_VKRHI_API VkRHIFrame final: public RHI::Frame
+	class CONCERTO_GRAPHICS_RHI_BASE_API VkRHIFrame final: public RHI::Frame
 	{
 	public:
 		VkRHIFrame();

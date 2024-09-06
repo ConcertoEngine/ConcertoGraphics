@@ -7,14 +7,16 @@
 #include <ranges>
 
 #include "Concerto/Core/Cast.hpp"
+
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/DescriptorSetLayout.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Pipeline.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/PipelineInfo.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/VulkanInitializer.hpp"
-#include "Concerto/Graphics/RHI/Vulkan/VkRHITextureBuilder.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Device.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Sampler.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/ShaderModule.hpp"
+
+#include "Concerto/Graphics/RHI/Vulkan/VkRHITextureBuilder.hpp"
 #include "Concerto/Graphics/RHI/Vulkan/VKRHIRenderPass.hpp"
 #include "Concerto/Graphics/RHI/Vulkan/VKRHITexture.hpp"
 

@@ -6,9 +6,10 @@
 #define CONCERTO_GRAPHICS_RHI_COMMANDPOOL_HPP
 #include <memory>
 
+#include "Concerto/Graphics/RHI/CommandBuffer.hpp"
+
 namespace Concerto::Graphics::RHI
 {
-	class CommandBuffer;
 
 	enum class CommandBufferUasge
 	{
@@ -19,7 +20,6 @@ namespace Concerto::Graphics::RHI
 	class CONCERTO_GRAPHICS_RHI_BASE_API CommandPool
 	{
 	public:
-		CommandPool() = default;
 		virtual ~CommandPool() = default;
 		virtual std::unique_ptr<CommandBuffer> AllocateCommandBuffer(CommandBufferUasge usage) = 0;
 	};

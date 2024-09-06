@@ -6,7 +6,6 @@
 #define CONCERTO_GRAPHICS_RHI_FRAMEBUFFER_HPP
 
 #include "Concerto/Graphics/RHI/Defines.hpp"
-#include "Concerto/Graphics/RHI/Enums.hpp"
 
 namespace Concerto::Graphics::RHI
 {

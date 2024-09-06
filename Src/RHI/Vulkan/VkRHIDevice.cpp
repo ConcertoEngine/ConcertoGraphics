@@ -6,6 +6,7 @@
 
 #include "Concerto/Graphics/RHI/Vulkan/VkRHIDevice.hpp"
 
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/Instance.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/PhysicalDevice.hpp"
 #include "Concerto/Graphics/RHI/SwapChain.hpp"
 #include "Concerto/Graphics/Window/Window.hpp"
@@ -32,7 +33,7 @@ namespace Concerto::Graphics::RHI
 		if (GetPhysicalDevice().GetSurface() == nullptr)
 		{
 			VkSurfaceKHR surface;
-			window.CreateVulkanSurface(*_vkInstance, &surface);
+			window.CreateVulkanSurface(*_vkInstance->Get(), surface);
 			GetPhysicalDevice().SetSurface(surface);
 		}
 		auto swapChain = std::make_unique<VkRHISwapChain>(*this, window, pixelFormat, depthPixelFormat);

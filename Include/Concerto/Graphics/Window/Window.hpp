@@ -11,21 +11,16 @@
 
 #include <vulkan/vulkan.h>
 
-#include "Concerto/Graphics/Defines.hpp" //fixme
+#include "Concerto/Graphics/Defines.hpp"
 #include "Concerto/Graphics/Window/Key.hpp"
 #include "Concerto/Graphics/Window/Input.hpp"
 
 struct GLFWwindow;
 
-namespace Concerto::Graphics::Vk
-{
-	class Instance;
-}
-
 namespace Concerto::Graphics
 {
 
-	class CONCERTO_GRAPHICS_VULKAN_BACKEND_API Window
+	class CONCERTO_GRAPHICS_API Window
 	{
 	public:
 		Window(const std::string& title, int width, int height);
@@ -54,7 +49,7 @@ namespace Concerto::Graphics
 		 * @param surface The surface to draw on
 		 * @return True if the surface is successfully created, false otherwise
 		 */
-		bool CreateVulkanSurface(Vk::Instance& instance, VkSurfaceKHR* surface) const;
+		bool CreateVulkanSurface(VkInstance instance, VkSurfaceKHR& surface) const;
 
 		/**
 		* @brief Get the raw Window

@@ -9,12 +9,13 @@
 #include <string>
 #include <unordered_map>
 
+#include "Concerto/Graphics/RHI/Defines.hpp"
 #include "Concerto/Graphics/RHI/MaterialBuilder.hpp"
 #include "Concerto/Graphics/RHI/Material.hpp"
-#include "Concerto/Graphics/Backend/Vulkan/VkMaterial.hpp"
+#include "Concerto/Graphics/RHI/Vulkan/VkMaterial.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Sampler.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/DescriptorAllocator.hpp"
-#include "Concerto/Graphics/ShaderModuleInfo.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/ShaderModuleInfo.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Pipeline.hpp"
 
 namespace Concerto::Graphics::Vk
@@ -25,7 +26,7 @@ namespace Concerto::Graphics::Vk
 
 namespace Concerto::Graphics::RHI
 {
-	class CONCERTO_GRAPHICS_VKRHI_API VkRHIMaterialBuilder : public RHI::MaterialBuilder
+	class CONCERTO_GRAPHICS_RHI_BASE_API VkRHIMaterialBuilder : public RHI::MaterialBuilder
 	{
 	 public:
 		explicit VkRHIMaterialBuilder(Vk::Device& device, VkExtent2D windowExtent);

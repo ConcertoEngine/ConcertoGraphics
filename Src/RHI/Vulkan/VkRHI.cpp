@@ -5,7 +5,7 @@
 
 #include <Concerto/Core/Assert.hpp>
 
-#include "Concerto/Graphics/Backend/Vulkan/VkRHI.hpp"
+#include "Concerto/Graphics/RHI/Vulkan/VkRHI.hpp"
 #include "Concerto/Graphics/RHI/Vulkan/VkRHIDevice.hpp"
 #ifdef CONCERTO_PLATFORM_WINDOWS
 #include <Windows.h>
