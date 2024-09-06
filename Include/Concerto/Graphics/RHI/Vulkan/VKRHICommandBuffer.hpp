@@ -20,6 +20,10 @@ namespace Concerto::Graphics::RHI
 		void End() override;
 		void Submit() override;
 		void Reset() override;
+		void SetViewport(const Viewport& viewport) override;
+		void SetScissor(const Rect2D& scissor) override;
+		void BeginRenderPass(const RHI::RenderPass& renderPass, const RHI::SwapChain& swapChain, const Vector3f& clearColor) override;
+		void EndRenderPass() override;
 	};
 }
 

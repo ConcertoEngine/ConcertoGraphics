@@ -23,8 +23,8 @@ namespace Concerto::Graphics::RHI
 		virtual ~SwapChain() = default;
 
 		virtual RenderPass& GetRenderPass() = 0;
-		virtual Vector2u GetExtent() = 0;
-		virtual UInt32 GetImageCount() = 0;
+		virtual Vector2u GetExtent() const = 0;
+		virtual UInt32 GetImageCount() const = 0;
 		virtual RHI::Frame& AcquireFrame() = 0;
 		
 		[[nodiscard]] inline PixelFormat GetPixelFormat() const;

@@ -37,7 +37,7 @@ namespace Concerto::Graphics::Vk
 		vkDestroySwapchainKHR(*_device->Get(), _handle, nullptr);
 	}
 
-	std::span<Image> SwapChain::GetImages()
+	std::span<Image> SwapChain::GetImages() const
 	{
 		if (_swapChainImages.has_value())
 			return _swapChainImages.value();

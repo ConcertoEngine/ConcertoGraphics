@@ -17,6 +17,8 @@
 #include <Concerto/Graphics/RHI/Mesh.hpp>
 #include <Concerto/Graphics/RHI/Vulkan/VkRHIMesh.hpp>
 
+#include "Concerto/Graphics/GPUData.hpp"
+
 using namespace Concerto;
 using namespace Concerto::Graphics;
 
@@ -49,6 +51,10 @@ int main()
 		RHI::VkRHIMesh mesh("./assets/sponza/sponza.obj"); //fixme
 		std::shared_ptr<RHI::GpuMesh> gpuMesh = mesh.BuildGpuMesh(*materialBuilder, renderPass, *device);
 
+		std::unique_ptr<RHI::Buffer> cameraBuffer = device->CreateBuffer(RHI::BufferUsage::Uniform, sizeof(GPUCamera), true);
+		std::unique_ptr<RHI::Buffer> sceneBuffer = device->CreateBuffer(RHI::BufferUsage::Uniform, sizeof(Scene), true);
+		std::unique_ptr<RHI::Buffer> objectsBuffer = device->CreateBuffer(RHI::BufferUsage::Storage, sizeof(GPUObjectData), true);
+
 		while (!window.ShouldClose())
 		{
 			RHI::Frame& currentFrame = swapChain->AcquireFrame();
@@ -56,7 +62,22 @@ int main()
 			commandBuffer.Reset();
 			commandBuffer.Begin();
 			{
-				
+				commandBuffer.BeginRenderPass(renderPass, *swapChain, Vector3f{1.f, 0.f, 0.f});
+				{
+					for (const auto& subMesh : mesh.GetSubMeshes())
+					{
+						const auto& material = subMesh->GetMaterial();
+						if (material == nullptr)
+						{
+							CONCERTO_ASSERT_FALSE("");
+							continue;
+						}
+						//commandBuffer.BindMaterial(*material);
+						//commandBuffer.BindVertexBuffer(subMesh->GetVertices());
+						//commandBuffer.DrawIndirect();
+					}
+				}
+				commandBuffer.EndRenderPass();
 			}
 			commandBuffer.End();
 			currentFrame.Present();

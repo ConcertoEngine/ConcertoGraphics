@@ -49,7 +49,7 @@ namespace Concerto::Graphics::Vk
 		 * @brief Get the images in the swapChain.
 		 * @return A span of Image objects.
 		 */
-		[[nodiscard]] std::span<Image> GetImages();
+		[[nodiscard]] std::span<Image> GetImages() const;
 
 		[[nodiscard]] std::span<ImageView> GetImageViews();
 

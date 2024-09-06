@@ -19,7 +19,6 @@ namespace Concerto::Graphics::RHI
 	{
 	public:
 		VkRHIRenderPass(VkRHIDevice& device, std::span<VkAttachmentDescription> attachmentDescriptions, std::span<VkSubpassDescription> subPassDescriptions, std::span<VkSubpassDependency> subPassDependencies);
-	private:
 	};
 }
 

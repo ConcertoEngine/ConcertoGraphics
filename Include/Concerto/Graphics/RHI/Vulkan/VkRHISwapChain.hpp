@@ -30,13 +30,15 @@ namespace Concerto::Graphics::RHI
 	public:
 		VkRHISwapChain(RHI::VkRHIDevice& device, Window& window, PixelFormat pixelFormat, PixelFormat depthPixelFormat);
 		RHI::RenderPass& GetRenderPass() override;
-		Vector2u GetExtent() override;
-		UInt32 GetImageCount() override;
+		Vector2u GetExtent() const override;
+		UInt32 GetImageCount() const override;
 		Frame& AcquireFrame() override;
 
 		inline VkRHICommandPool& GetCommandPool() const;
 		inline VkRHIDevice& GetRHIDevice() const;
 		inline Vk::Queue& GetPresentQueue() const;
+		inline Vk::FrameBuffer& GetCurrentFrameBuffer();
+		inline const Vk::FrameBuffer& GetCurrentFrameBuffer() const;
 
 		void Present(UInt32 imageIndex);
 	private:

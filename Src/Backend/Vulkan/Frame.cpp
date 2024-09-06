@@ -15,7 +15,7 @@ namespace Concerto::Graphics::Vk
 		renderFence(device, signaled),
 		commandPool(device, device.GetQueueFamilyIndex(Queue::Type::Graphics)),
 		commandBuffer(commandPool.AllocateCommandBuffer()),
-		indirectBuffer(MakeBuffer<VkDrawIndirectCommand>(device.GetAllocator(), MAX_OBJECTS, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT |  VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT, VMA_MEMORY_USAGE_CPU_TO_GPU)),
+		indirectBuffer(MakeBuffer<VkDrawIndirectCommand>(device.GetAllocator(), MAX_OBJECTS, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT |  VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT, VMA_MEMORY_USAGE_CPU_TO_GPU, true)),
 		isResized(false)
 	{
 	}

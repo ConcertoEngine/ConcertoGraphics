@@ -14,6 +14,7 @@
 #include "Concerto/Graphics/RHI/Vulkan/VKRHIRenderPass.hpp"
 #include "Concerto/Graphics/RHI/Vulkan/VKRHIFrameBuffer.hpp"
 #include "Concerto/Graphics/RHI/Vulkan/Utils.hpp"
+#include "Concerto/Graphics/RHI/Vulkan/VkRHIBuffer.hpp"
 #include "Concerto/Graphics/RHI/Vulkan/VKRHICommandPool.hpp"
 #include "Concerto/Graphics/RHI/Vulkan/VkRHIMaterialBuilder.hpp"
 #include "Concerto/Graphics/RHI/Vulkan/VkRHITextureBuilder.hpp"
@@ -136,6 +137,11 @@ namespace Concerto::Graphics::RHI
 	std::unique_ptr<CommandPool> VkRHIDevice::CreateCommandPool(RHI::QueueFamily family)
 	{
 		return std::make_unique<VkRHICommandPool>(*this, family);
+	}
+
+	std::unique_ptr<RHI::Buffer> VkRHIDevice::CreateBuffer(RHI::BufferUsage usage, UInt32 allocationSize, bool allowBufferMapping)
+	{
+		return std::make_unique<VkRHIBuffer>(*this, usage, allocationSize, allowBufferMapping);
 	}
 
 	Vk::UploadContext& VkRHIDevice::GetUploadContext()

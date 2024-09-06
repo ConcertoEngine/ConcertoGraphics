@@ -30,8 +30,9 @@ namespace Concerto::Graphics::Vk
 		* @param allocSize The size of the allocation.
 		* @param usage The usage flags for the buffer.
 		* @param memoryUsage The memory usage for the allocation.
+		* @param allowBufferMapping Used to map the memory
 		*/
-		Buffer(Allocator& allocator, std::size_t allocSize, VkBufferUsageFlags usage, VmaMemoryUsage memoryUsage);
+		Buffer(Allocator& allocator, std::size_t allocSize, VkBufferUsageFlags usage, VmaMemoryUsage memoryUsage, bool allowBufferMapping);
 
 		Buffer(Buffer&&) noexcept;
 
@@ -105,11 +106,12 @@ namespace Concerto::Graphics::Vk
 	*/
 	template<typename T>
 	Buffer MakeBuffer(Allocator& allocator,
-		std::size_t objNumber,
+		UInt32 objNumber,
 		VkBufferUsageFlags usage,
-		VmaMemoryUsage memoryUsage)
+		VmaMemoryUsage memoryUsage,
+		bool allowBufferMapping)
 	{
-		return { allocator, sizeof(T) * objNumber, usage, memoryUsage };
+		return { allocator, sizeof(T) * objNumber, usage, memoryUsage, allowBufferMapping };
 	}
 } // Concerto::Graphics::Vk
 

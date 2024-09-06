@@ -195,6 +195,15 @@ namespace Concerto::Graphics::RHI
 		Graphics, /**< Graphics queue for rendering operations. */
 		Transfer  /**< Transfer queue for memory operations. */
 	};
+
+	enum class BufferUsage
+	{
+		Uniform,
+		Storage,
+		TransferSrc,
+		TransferDst,
+		Indirect
+	};
 }
 
 #endif //CONCERTO_GRAPHICS_RHI_ENUMS_HPP

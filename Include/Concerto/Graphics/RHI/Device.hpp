@@ -10,14 +10,15 @@
 #include <span>
 #include <vector>
 
+#include "Concerto/Graphics/RHI/Defines.hpp"
 #include "Concerto/Graphics/RHI/TextureBuilder.hpp"
 #include "Concerto/Graphics/RHI/FrameBuffer.hpp"
 #include "Concerto/Graphics/RHI/Texture.hpp"
-#include "Concerto/Graphics/RHI/Defines.hpp"
 #include "Concerto/Graphics/RHI/Enums.hpp"
 #include "Concerto/Graphics/RHI/RenderPass.hpp"
 #include "Concerto/Graphics/RHI/MaterialBuilder.hpp"
 #include "Concerto/Graphics/RHI/CommandPool.hpp"
+#include "Concerto/Graphics/RHI/Buffer.hpp"
 
 namespace Concerto::Graphics
 {
@@ -46,6 +47,7 @@ namespace Concerto::Graphics::RHI
 		virtual std::unique_ptr<MaterialBuilder> CreateMaterialBuilder(const Vector2u& windowExtent) = 0;
 		virtual std::unique_ptr<TextureBuilder> CreateTextureBuilder() = 0;
 		virtual std::unique_ptr<CommandPool> CreateCommandPool(RHI::QueueFamily family) = 0;
+		virtual std::unique_ptr<Buffer> CreateBuffer(RHI::BufferUsage usage, UInt32 allocationSize, bool allowBufferMapping) = 0;
 	};
 }
 

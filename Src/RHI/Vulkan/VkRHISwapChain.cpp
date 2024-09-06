@@ -35,12 +35,12 @@ namespace Concerto::Graphics::RHI
 		return *_renderPass;
 	}
 
-	Vector2u VkRHISwapChain::GetExtent()
+	Vector2u VkRHISwapChain::GetExtent() const
 	{
 		return Vector2u{ Vk::SwapChain::GetExtent().width, Vk::SwapChain::GetExtent().height };
 	}
 
-	UInt32 VkRHISwapChain::GetImageCount()
+	UInt32 VkRHISwapChain::GetImageCount() const
 	{
 		return static_cast<UInt32>(Vk::SwapChain::GetImages().size());
 	}
@@ -74,6 +74,16 @@ namespace Concerto::Graphics::RHI
 	{
 		CONCERTO_ASSERT(_presentQueue, "ConcertoGraphics: Invalid present queue");
 		return *_presentQueue;
+	}
+
+	Vk::FrameBuffer& VkRHISwapChain::GetCurrentFrameBuffer()
+	{
+		return _frameBuffers[_currentFrameIndex];
+	}
+
+	const Vk::FrameBuffer& VkRHISwapChain::GetCurrentFrameBuffer() const
+	{
+		return _frameBuffers[_currentFrameIndex];
 	}
 
 	void VkRHISwapChain::Present(UInt32 imageIndex)

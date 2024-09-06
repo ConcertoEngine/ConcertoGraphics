@@ -11,7 +11,7 @@
 namespace Concerto::Graphics::Vk
 {
 
-	Buffer::Buffer(Allocator& allocator, std::size_t allocSize, VkBufferUsageFlags usage, VmaMemoryUsage memoryUsage) :
+	Buffer::Buffer(Allocator& allocator, std::size_t allocSize, VkBufferUsageFlags usage, VmaMemoryUsage memoryUsage, bool allowBufferMapping) :
 		Object(allocator.GetDevice()),
 		_allocatedSize(allocSize),
 		_allocator(&allocator)
@@ -25,6 +25,7 @@ namespace Concerto::Graphics::Vk
 
 		VmaAllocationCreateInfo vmaAllocInfo = {};
 		vmaAllocInfo.usage = memoryUsage;
+		vmaAllocInfo.flags = allowBufferMapping ? VMA_ALLOCATION_CREATE_HOST_ACCESS_SEQUENTIAL_WRITE_BIT | VMA_ALLOCATION_CREATE_MAPPED_BIT : 0;
 		_lastResult = vmaCreateBuffer(*allocator.Get(), &bufferInfo, &vmaAllocInfo, &_handle, &_allocation, nullptr);
 		CONCERTO_ASSERT(_lastResult == VK_SUCCESS, "ConcertoGraphics: vmaCreateBuffer failed VkResult={}", static_cast<int>(_lastResult));
 	}
