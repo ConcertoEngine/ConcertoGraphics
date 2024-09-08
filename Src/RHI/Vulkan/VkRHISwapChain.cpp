@@ -28,7 +28,7 @@ namespace Concerto::Graphics::RHI
 		_presentQueue = std::make_unique<Vk::Queue>(device, device.GetQueueFamilyIndex(Vk::Queue::Type::Graphics));
 		CreateFrames();
 	}
-	
+
 	RHI::RenderPass& VkRHISwapChain::GetRenderPass()
 	{
 		CONCERTO_ASSERT(_renderPass, "ConcertoGraphics: Invalid renderpass");
@@ -213,6 +213,11 @@ namespace Concerto::Graphics::RHI
 	RHI::CommandBuffer& VkRHISwapChain::SwapChainFrame::GetCommandBuffer()
 	{
 		return *_commandBuffer;
+	}
+
+	std::size_t VkRHISwapChain::SwapChainFrame::GetCurrentFrameIndex()
+	{
+		return _imageIndex;
 	}
 
 	void VkRHISwapChain::SwapChainFrame::SetNextImageIndex(UInt32 imageIndex)

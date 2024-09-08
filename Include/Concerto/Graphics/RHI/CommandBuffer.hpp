@@ -10,11 +10,13 @@
 #include "Concerto/Graphics/Utils.hpp"
 
 #include "Concerto/Graphics/RHI/Defines.hpp"
+#include "Concerto/Graphics/RHI/Vulkan/VkRHIMesh.hpp"
 
 namespace Concerto::Graphics::RHI
 {
 	class RenderPass;
 	class SwapChain;
+	class Buffer;
 
 	class CONCERTO_GRAPHICS_RHI_BASE_API CommandBuffer
 	{
@@ -29,6 +31,9 @@ namespace Concerto::Graphics::RHI
 		virtual void SetScissor(const Rect2D& scissor) = 0;
 		virtual void BeginRenderPass(const RHI::RenderPass& renderPass, const RHI::SwapChain& swapChain, const Vector3f& clearColor) = 0;
 		virtual void EndRenderPass() = 0;
+		virtual void BindMaterial(const MaterialInfo& material) = 0;
+		virtual void BindVertexBuffer(const RHI::Buffer& buffer) = 0;
+		virtual void Draw(UInt32 vertexCount, UInt32 instanceCount, UInt32 firstVertex, UInt32 firstInstance) = 0;;
 	};
 }
 

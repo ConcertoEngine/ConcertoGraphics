@@ -26,7 +26,8 @@ namespace Concerto::Graphics::RHI
 		std::unique_ptr<MaterialBuilder> CreateMaterialBuilder(const Vector2u& windowExtent) override;
 		std::unique_ptr<TextureBuilder> CreateTextureBuilder() override;
 		std::unique_ptr<CommandPool> CreateCommandPool(RHI::QueueFamily family) override;
-		std::unique_ptr<RHI::Buffer> CreateBuffer(RHI::BufferUsage usage, UInt32 allocationSize, bool allowBufferMapping) override;
+		std::unique_ptr<RHI::Buffer> CreateBuffer(RHI::BufferUsageFlags usage, UInt32 allocationSize, bool allowBufferMapping) override;
+		std::size_t GetMinimumUniformBufferOffsetAlignment() const override;
 
 		Vk::UploadContext& GetUploadContext();
 

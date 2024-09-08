@@ -38,8 +38,8 @@ namespace Concerto::Graphics::RHI
 			RHI::VkRHIDevice& rhiDevice = Cast<RHI::VkRHIDevice&>(device);
 			Vk::UploadContext& uploadContext = rhiDevice.GetUploadContext();
 
-			auto vkSubMesh = std::make_shared<VkRHIGpuSubMesh>(subMesh, litMaterial, rhiDevice.GetAllocator(), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT, VMA_MEMORY_USAGE_GPU_ONLY);
-			vkSubMesh->Upload(uploadContext._commandBuffer, uploadContext._commandPool, uploadContext._uploadFence, rhiDevice.GetQueue(Vk::Queue::Type::Graphics), static_cast<RHI::VkRHIDevice&>(device).GetAllocator());
+			auto vkSubMesh = std::make_shared<VkRHIGpuSubMesh>(subMesh, litMaterial, rhiDevice);
+			vkSubMesh->Upload(uploadContext._commandBuffer, uploadContext._commandPool, uploadContext._uploadFence, rhiDevice.GetQueue(Vk::Queue::Type::Graphics), Cast<RHI::VkRHIDevice&>(device));
 			gpuMesh->subMeshes.push_back(vkSubMesh);
 		}
 		return gpuMesh;

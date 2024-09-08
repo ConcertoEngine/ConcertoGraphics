@@ -139,9 +139,14 @@ namespace Concerto::Graphics::RHI
 		return std::make_unique<VkRHICommandPool>(*this, family);
 	}
 
-	std::unique_ptr<RHI::Buffer> VkRHIDevice::CreateBuffer(RHI::BufferUsage usage, UInt32 allocationSize, bool allowBufferMapping)
+	std::unique_ptr<RHI::Buffer> VkRHIDevice::CreateBuffer(RHI::BufferUsageFlags usage, UInt32 allocationSize, bool allowBufferMapping)
 	{
 		return std::make_unique<VkRHIBuffer>(*this, usage, allocationSize, allowBufferMapping);
+	}
+
+	std::size_t VkRHIDevice::GetMinimumUniformBufferOffsetAlignment() const
+	{
+		return Vk::Device::GetPhysicalDevice().GetProperties().limits.minUniformBufferOffsetAlignment;
 	}
 
 	Vk::UploadContext& VkRHIDevice::GetUploadContext()

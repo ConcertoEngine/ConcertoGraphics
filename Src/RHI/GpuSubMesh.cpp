@@ -20,11 +20,17 @@ namespace Concerto::Graphics::RHI
 
 	const RHI::MaterialPtr& GpuSubMesh::GetMaterial() const
 	{
-		return _subMesh->GetMaterial();
+		return _material;
 	}
 
 	const RHI::SubMeshPtr& GpuSubMesh::GetSubMesh() const
 	{
 		return _subMesh;
+	}
+
+	const RHI::Buffer& GpuSubMesh::GetVertexBuffer() const
+	{
+		CONCERTO_ASSERT(_vertexBuffer, "ConcertoGraphics: invalid vertex buffer");
+		return *_vertexBuffer;
 	}
 } // Concerto::Graphics::RHI

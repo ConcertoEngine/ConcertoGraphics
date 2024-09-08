@@ -14,7 +14,8 @@ namespace Concerto::Graphics::Vk
 	Buffer::Buffer(Allocator& allocator, std::size_t allocSize, VkBufferUsageFlags usage, VmaMemoryUsage memoryUsage, bool allowBufferMapping) :
 		Object(allocator.GetDevice()),
 		_allocatedSize(allocSize),
-		_allocator(&allocator)
+		_allocator(&allocator),
+		_usage(usage)
 	{
 		VkBufferCreateInfo bufferInfo = {};
 		bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
@@ -33,7 +34,8 @@ namespace Concerto::Graphics::Vk
 	Buffer::Buffer(Buffer&& other) noexcept :
 		Object(other._allocator->GetDevice()),
 		_allocatedSize(other._allocatedSize),
-		_allocator(other._allocator)
+		_allocator(other._allocator),
+		_usage(other._usage)
 	{
 		_allocator = std::exchange(other._allocator, nullptr);
 		_handle = std::exchange(other._handle, VK_NULL_HANDLE);
@@ -82,7 +84,7 @@ namespace Concerto::Graphics::Vk
 		_mapCount++;
 		return true;
 	}
-	
+
 	void Buffer::UnMap()
 	{
 		if (_mapCount == 0)
@@ -108,5 +110,10 @@ namespace Concerto::Graphics::Vk
 	std::size_t Buffer::GetAllocatedSize() const
 	{
 		return _allocatedSize;
+	}
+
+	VkBufferUsageFlags Buffer::GetUsage() const
+	{
+		return _usage;
 	}
 }

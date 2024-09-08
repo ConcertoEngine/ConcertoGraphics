@@ -15,7 +15,7 @@
 namespace Concerto::Graphics::RHI
 {
 	class RenderPass;
-	
+
 	class CONCERTO_GRAPHICS_RHI_BASE_API SwapChain
 	{
 	public:
@@ -26,7 +26,7 @@ namespace Concerto::Graphics::RHI
 		virtual Vector2u GetExtent() const = 0;
 		virtual UInt32 GetImageCount() const = 0;
 		virtual RHI::Frame& AcquireFrame() = 0;
-		
+
 		[[nodiscard]] inline PixelFormat GetPixelFormat() const;
 		[[nodiscard]] inline PixelFormat GetDepthPixelFormat() const;
 

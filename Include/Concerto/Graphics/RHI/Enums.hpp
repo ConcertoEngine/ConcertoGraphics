@@ -196,14 +196,23 @@ namespace Concerto::Graphics::RHI
 		Transfer  /**< Transfer queue for memory operations. */
 	};
 
-	enum class BufferUsage
+	enum class BufferUsage : UInt32
 	{
-		Uniform,
-		Storage,
-		TransferSrc,
-		TransferDst,
-		Indirect
+		Uniform = 0x00000001,
+		Vertex = 0x00000002,
+		Storage = 0x00000004,
+		TransferSrc = 0x00000008,
+		TransferDst = 0x00000010,
+		Indirect = 0x00000020
 	};
+	using BufferUsageFlags = std::underlying_type_t<BufferUsage>;
+
+	inline std::size_t PadUniformBuffer(std::size_t size, std::size_t minUniformBufferOffsetAlignment)
+	{
+		if (size > 0)
+			return (size + minUniformBufferOffsetAlignment - 1) & ~(minUniformBufferOffsetAlignment - 1);
+		return size;
+	}
 }
 
 #endif //CONCERTO_GRAPHICS_RHI_ENUMS_HPP

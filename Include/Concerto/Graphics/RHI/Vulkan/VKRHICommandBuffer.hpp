@@ -24,6 +24,12 @@ namespace Concerto::Graphics::RHI
 		void SetScissor(const Rect2D& scissor) override;
 		void BeginRenderPass(const RHI::RenderPass& renderPass, const RHI::SwapChain& swapChain, const Vector3f& clearColor) override;
 		void EndRenderPass() override;
+		void BindMaterial(const MaterialInfo& material) override;
+		void BindVertexBuffer(const RHI::Buffer& buffer) override;
+		void Draw(UInt32 vertexCount, UInt32 instanceCount, UInt32 firstVertex, UInt32 firstInstance) override;
+
+	private:
+		VkPipeline _lastBoundedPipeline = {};
 	};
 }
 

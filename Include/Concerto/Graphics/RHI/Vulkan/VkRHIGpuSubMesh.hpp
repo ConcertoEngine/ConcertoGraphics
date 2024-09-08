@@ -18,14 +18,13 @@ namespace Concerto::Graphics::Vk
 
 namespace Concerto::Graphics::RHI
 {
+	class VkRHIDevice;
 	class CONCERTO_GRAPHICS_RHI_BASE_API VkRHIGpuSubMesh : public RHI::GpuSubMesh
 	{
 	public:
-		VkRHIGpuSubMesh(RHI::SubMeshPtr meshPtr, RHI::MaterialPtr material, Vk::Allocator& allocator, VkBufferUsageFlags usage, VmaMemoryUsage memoryUsage);
+		VkRHIGpuSubMesh(RHI::SubMeshPtr meshPtr, RHI::MaterialPtr material, VkRHIDevice& device);
 
-		void Upload(Vk::CommandBuffer& commandBuffer, Vk::CommandPool& commandPool, Vk::Fence& fence, const Vk::Queue& queue, Vk::Allocator& allocator);
-	private:
-		Vk::Buffer vertexBuffer;
+		void Upload(Vk::CommandBuffer& commandBuffer, Vk::CommandPool& commandPool, Vk::Fence& fence, const Vk::Queue& queue, VkRHIDevice& device);
 	};
 }
 

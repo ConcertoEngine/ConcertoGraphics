@@ -47,7 +47,8 @@ namespace Concerto::Graphics::RHI
 		virtual std::unique_ptr<MaterialBuilder> CreateMaterialBuilder(const Vector2u& windowExtent) = 0;
 		virtual std::unique_ptr<TextureBuilder> CreateTextureBuilder() = 0;
 		virtual std::unique_ptr<CommandPool> CreateCommandPool(RHI::QueueFamily family) = 0;
-		virtual std::unique_ptr<Buffer> CreateBuffer(RHI::BufferUsage usage, UInt32 allocationSize, bool allowBufferMapping) = 0;
+		virtual std::unique_ptr<Buffer> CreateBuffer(RHI::BufferUsageFlags usage, UInt32 allocationSize, bool allowBufferMapping) = 0;
+		virtual std::size_t GetMinimumUniformBufferOffsetAlignment() const = 0;
 	};
 }
 

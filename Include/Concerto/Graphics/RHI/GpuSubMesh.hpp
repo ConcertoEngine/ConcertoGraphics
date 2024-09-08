@@ -7,9 +7,11 @@
 
 #include <memory>
 
+#include "Buffer.hpp"
 #include "Concerto/Graphics/RHI/Defines.hpp"
 #include "Concerto/Graphics/RHI/SubMesh.hpp"
 #include "Concerto/Graphics/RHI/Material.hpp"
+#include "Concerto/Graphics/RHI/Buffer.hpp"
 
 namespace Concerto::Graphics::RHI
 {
@@ -21,9 +23,13 @@ namespace Concerto::Graphics::RHI
 		[[nodiscard]] const Vertices& GetVertices() const;
 		[[nodiscard]] const RHI::MaterialPtr& GetMaterial() const;
 		[[nodiscard]] const RHI::SubMeshPtr& GetSubMesh() const;
+		const RHI::Buffer& GetVertexBuffer() const;
+
 	private:
 		RHI::SubMeshPtr _subMesh;
 		RHI::MaterialPtr _material;
+	protected:
+		std::unique_ptr<RHI::Buffer> _vertexBuffer;
 	};
 	using GpuSubMeshPtr = std::shared_ptr<GpuSubMesh>;
 } // Concerto::Graphics::Vk

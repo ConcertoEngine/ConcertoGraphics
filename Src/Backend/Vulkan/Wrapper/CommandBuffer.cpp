@@ -22,7 +22,7 @@ namespace Concerto::Graphics::Vk
 {
 	CommandBuffer::CommandBuffer(Device& device, Vk::CommandPool& owner, VkCommandBuffer commandBuffer) :
 		Object(device),
-		_commandPool(&owner)		
+		_commandPool(&owner)
 	{
 		_handle = commandBuffer;
 	}
@@ -94,8 +94,7 @@ namespace Concerto::Graphics::Vk
 		vkCmdBindPipeline(_handle, pipelineBindPoint, pipeline);
 	}
 
-	void CommandBuffer::Draw(const UInt32 vertexCount, const UInt32 instanceCount, const UInt32 firstVertex,
-	                         const UInt32 firstInstance) const
+	void CommandBuffer::Draw(const UInt32 vertexCount, const UInt32 instanceCount, const UInt32 firstVertex, const UInt32 firstInstance) const
 	{
 		vkCmdDraw(_handle, vertexCount, instanceCount, firstVertex, firstInstance);
 	}

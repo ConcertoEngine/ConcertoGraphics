@@ -50,15 +50,18 @@ namespace Concerto::Graphics::RHI
 		{
 		public:
 			SwapChainFrame(VkRHISwapChain& owner);
+
 			void Present() override;
 			RHI::CommandBuffer& GetCommandBuffer() override;
-			
+			std::size_t GetCurrentFrameIndex() override;
+
 			void SetNextImageIndex(UInt32 imageIndex);
 			void Wait();
-			
+
 			Vk::Semaphore& GetPresentSemaphore();
 			Vk::Semaphore& GetRenderSemaphore();
 			Vk::Fence& GetRenderFence();
+
 		private:
 			std::unique_ptr<RHI::CommandBuffer> _commandBuffer;
 			Vk::Fence _renderFence;
@@ -76,7 +79,7 @@ namespace Concerto::Graphics::RHI
 		std::unique_ptr<RHI::RenderPass> _renderPass;
 		std::unique_ptr<RHI::CommandPool> _commandPool;
 		std::unique_ptr<Vk::Queue> _presentQueue;
-		
+
 		UInt32 _currentFrameIndex = 0;
 		bool _needResize = false;
 	};

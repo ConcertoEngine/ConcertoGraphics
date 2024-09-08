@@ -169,7 +169,6 @@ namespace Concerto::Graphics::RHI
 		return {};
 	}
 
-
 	constexpr VkAttachmentLoadOp Converters::ToVulkan(AttachmentLoadOp loadOp)
 	{
 		switch (loadOp)
@@ -240,21 +239,22 @@ namespace Concerto::Graphics::RHI
 		return {};
 	}
 
-	constexpr VkBufferUsageFlags Converters::ToVulkan(BufferUsage usage)
+	constexpr VkBufferUsageFlags Converters::ToVulkan(BufferUsageFlags flags)
 	{
-		switch (usage)
-		{
-		case BufferUsage::Uniform:
-			return VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
-		case BufferUsage::Storage:
-			return  VK_BUFFER_USAGE_STORAGE_BUFFER_BIT;
-		case BufferUsage::TransferSrc:
-			return  VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
-		case BufferUsage::TransferDst:
-			return  VK_BUFFER_USAGE_TRANSFER_DST_BIT;
-		case BufferUsage::Indirect:
-			return  VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT;
-		}
+		VkBufferUsageFlags vkFlags = 0;
+		if (flags & static_cast<BufferUsageFlags>(BufferUsage::Uniform))
+			vkFlags |= VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
+		if (flags & static_cast<BufferUsageFlags>(BufferUsage::Vertex))
+			vkFlags |= VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
+		if (flags & static_cast<BufferUsageFlags>(BufferUsage::Storage))
+			vkFlags |= VK_BUFFER_USAGE_STORAGE_BUFFER_BIT;
+		if (flags & static_cast<BufferUsageFlags>(BufferUsage::TransferSrc))
+			vkFlags |= VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
+		if (flags & static_cast<BufferUsageFlags>(BufferUsage::TransferDst))
+			vkFlags |= VK_BUFFER_USAGE_TRANSFER_DST_BIT;
+		if (flags & static_cast<BufferUsageFlags>(BufferUsage::Indirect))
+			vkFlags |= VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT;
+		return vkFlags;
 	}
 
 	template <>

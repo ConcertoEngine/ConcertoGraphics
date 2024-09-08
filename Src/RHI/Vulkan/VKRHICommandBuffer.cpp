@@ -4,11 +4,15 @@
 
 #include <Concerto/Core/Cast.hpp>
 
-#include "Concerto/Graphics/RHI/Vulkan/VkRHICommandBuffer.hpp"
-
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/Pipeline.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/VulkanInitializer.hpp"
+
+#include "Concerto/Graphics/RHI/Vulkan/VkRHICommandBuffer.hpp"
+#include "Concerto/Graphics/RHI/Vulkan/VkMaterial.hpp"
+#include "Concerto/Graphics/RHI/Vulkan/VkRHIBuffer.hpp"
 #include "Concerto/Graphics/RHI/Vulkan/VKRHIRenderPass.hpp"
 #include "Concerto/Graphics/RHI/Vulkan/VkRHISwapChain.hpp"
+#include "Concerto/Graphics/RHI/Vulkan/VkRHIBuffer.hpp"
 
 namespace Concerto::Graphics::RHI
 {
@@ -49,7 +53,7 @@ namespace Concerto::Graphics::RHI
 
 	void VkRHICommandBuffer::SetScissor(const Rect2D& scissor)
 	{
-		VkRect2D vkScissor = {
+		const VkRect2D vkScissor = {
 			.offset = {
 				.x = scissor.x,
 				.y = scissor.x
@@ -67,21 +71,19 @@ namespace Concerto::Graphics::RHI
 		const VkRHIRenderPass& vkRenderPass = Cast<const VkRHIRenderPass&>(renderPass);
 		const VkRHISwapChain& vkSwapChain = Cast<const VkRHISwapChain&>(swapChain);
 
-		VkExtent2D extent = {
+		const VkExtent2D extent = {
 			.width = vkSwapChain.GetExtent().X(),
 			.height = vkSwapChain.GetExtent().Y()
 		};
-		
-		VkClearValue depthClear;
-		depthClear.depthStencil.depth = 1.f;
-		std::array clearValues = {
+
+		const std::array clearValues = {
 					VkClearValue  {
 					.color = {
-						.float32 = {	clearColor.X(), clearColor.Y(), clearColor.Z(), 1.f}
+						.float32 = {	clearColor.X(), clearColor.Y(), clearColor.Z(), 0.f}
 					}
 				},
 			VkClearValue {
-				.depthStencil = 1.f
+				.depthStencil = {1.f, 0}
 			}
 		};
 		VkRenderPassBeginInfo renderPassInfo = VulkanInitializer::RenderPassBeginInfo(*vkRenderPass.Get(), extent, *vkSwapChain.GetCurrentFrameBuffer().Get());
@@ -94,5 +96,28 @@ namespace Concerto::Graphics::RHI
 	void VkRHICommandBuffer::EndRenderPass()
 	{
 		Vk::CommandBuffer::EndRenderPass();
+	}
+
+	void VkRHICommandBuffer::BindMaterial(const MaterialInfo& material)
+	{
+		const Vk::VkMaterial& vkMaterial = Cast<const Vk::VkMaterial&>(material);
+		const VkPipeline pipeline = *vkMaterial.pipeline->Get();
+		//if (_lastBoundedPipeline == pipeline)
+		//	return;
+		Vk::CommandBuffer::BindPipeline(VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
+		//_lastBoundedPipeline = pipeline;
+		auto cpy = vkMaterial.descriptorSets; //fixme
+		Vk::CommandBuffer::BindDescriptorSets(VK_PIPELINE_BIND_POINT_GRAPHICS, *vkMaterial.pipeline->GetPipelineLayout()->Get(), cpy);
+	}
+
+	void VkRHICommandBuffer::BindVertexBuffer(const RHI::Buffer& buffer)
+	{
+		const VkRHIBuffer& vkBuffer = Cast<const VkRHIBuffer&>(buffer);
+		Vk::CommandBuffer::BindVertexBuffers(vkBuffer);
+	}
+
+	void VkRHICommandBuffer::Draw(UInt32 vertexCount, UInt32 instanceCount, UInt32 firstVertex, UInt32 firstInstance)
+	{
+		Vk::CommandBuffer::Draw(vertexCount, instanceCount, firstVertex, firstInstance);
 	}
 }

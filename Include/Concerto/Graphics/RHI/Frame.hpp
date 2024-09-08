@@ -17,6 +17,7 @@ namespace Concerto::Graphics::RHI
 
 		virtual void Present() = 0;
 		virtual RHI::CommandBuffer& GetCommandBuffer() = 0;
+		virtual std::size_t GetCurrentFrameIndex() = 0;
 	};
 }
 

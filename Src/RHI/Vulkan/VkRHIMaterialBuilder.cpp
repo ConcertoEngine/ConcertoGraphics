@@ -15,6 +15,7 @@
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Device.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Sampler.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/ShaderModule.hpp"
+#include "Concerto/Graphics/RHI/Vulkan/VkRHIBuffer.hpp"
 
 #include "Concerto/Graphics/RHI/Vulkan/VkRHITextureBuilder.hpp"
 #include "Concerto/Graphics/RHI/Vulkan/VKRHIRenderPass.hpp"
@@ -162,6 +163,35 @@ namespace Concerto::Graphics::RHI
 			textureDescriptorSet->WriteImageSamplerDescriptor(_sampler, vkTexture.GetImageView());
 		}
 		return vkMaterialPtr;
+	}
+
+	void VkRHIMaterialBuilder::Update(const RHI::Buffer& buffer, UInt32 setIndex, UInt32 bindingIndex)
+	{
+		const VkRHIBuffer& vkBuffer = Cast<const VkRHIBuffer&>(buffer);
+		VkDescriptorBufferInfo bufferInfo;
+		bufferInfo.buffer = *vkBuffer.Get();
+		bufferInfo.offset = 0;
+		bufferInfo.range = vkBuffer.GetAllocatedSize();
+		const VkDescriptorType descriptorType = [&]() -> VkDescriptorType
+		{
+			const auto usageFlags = vkBuffer.GetUsage();
+			if (usageFlags & VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT)
+				return VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+			if (usageFlags & VK_BUFFER_USAGE_STORAGE_BUFFER_BIT)
+				return VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+			if (usageFlags & VK_BUFFER_USAGE_UNIFORM_TEXEL_BUFFER_BIT)
+				return VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER;
+			if (usageFlags & VK_BUFFER_USAGE_STORAGE_TEXEL_BUFFER_BIT)
+				return VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER;
+			//CONCERTO_ASSERT("ConcertoGraphics: enum value not handled");
+			return {};
+		}();
+		for (const auto& material : _materialsCache)
+		{
+			const VkWriteDescriptorSet cameraWrite = VulkanInitializer::WriteDescriptorBuffer(
+				descriptorType, *material->descriptorSets[setIndex]->Get(), &bufferInfo, bindingIndex);
+			_device.UpdateDescriptorSetWrite(cameraWrite);
+		}
 	}
 
 	std::vector<VkPipelineShaderStageCreateInfo> VkRHIMaterialBuilder::GetShaderStages() const

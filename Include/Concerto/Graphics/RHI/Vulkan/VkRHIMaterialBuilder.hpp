@@ -12,10 +12,12 @@
 #include "Concerto/Graphics/RHI/Defines.hpp"
 #include "Concerto/Graphics/RHI/MaterialBuilder.hpp"
 #include "Concerto/Graphics/RHI/Material.hpp"
+#include "Concerto/Graphics/RHI/Buffer.hpp"
 #include "Concerto/Graphics/RHI/Vulkan/VkMaterial.hpp"
-#include "Concerto/Graphics/Backend/Vulkan/Wrapper/Sampler.hpp"
+
 #include "Concerto/Graphics/Backend/Vulkan/DescriptorAllocator.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/ShaderModuleInfo.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/Sampler.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Pipeline.hpp"
 
 namespace Concerto::Graphics::Vk
@@ -30,7 +32,9 @@ namespace Concerto::Graphics::RHI
 	{
 	 public:
 		explicit VkRHIMaterialBuilder(Vk::Device& device, VkExtent2D windowExtent);
+		~VkRHIMaterialBuilder() override = default;
 		MaterialPtr BuildMaterial(RHI::MaterialInfo& material, const RHI::RenderPass& renderPass) override;
+		void Update(const RHI::Buffer& buffer, UInt32 setIndex, UInt32 bindingIndex) override;
 
 		[[nodiscard]] std::vector<VkPipelineShaderStageCreateInfo> GetShaderStages() const;
 		[[nodiscard]] std::vector<std::shared_ptr<Vk::DescriptorSetLayout>> GetDescriptorSetLayouts() const;

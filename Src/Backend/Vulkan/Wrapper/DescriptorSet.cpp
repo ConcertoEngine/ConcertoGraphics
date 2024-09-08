@@ -23,8 +23,6 @@ namespace Concerto::Graphics::Vk
 		allocInfo.descriptorSetCount = 1;
 		allocInfo.pSetLayouts = descriptorSetLayout.Get();
 		_lastResult = vkAllocateDescriptorSets(*_device->Get(), &allocInfo, &_handle);
-		// commented because the error are handled after
-		//CONCERTO_ASSERT(_lastResult == VK_SUCCESS, "ConcertoGraphics: vkAllocateDescriptorSets failed VkResult={}", static_cast<int>(_lastResult));
 	}
 
 	DescriptorSet::~DescriptorSet()

@@ -18,7 +18,7 @@ namespace Concerto::Graphics::RHI
 		static constexpr inline VkAttachmentLoadOp ToVulkan(AttachmentLoadOp loadOp);
 		static constexpr inline VkAttachmentStoreOp ToVulkan(AttachmentStoreOp storeOp);
 		static constexpr inline VkImageLayout ToVulkan(ImageLayout layout);
-		static constexpr inline VkBufferUsageFlags ToVulkan(BufferUsage usage);
+		static constexpr inline VkBufferUsageFlags ToVulkan(BufferUsageFlags usage);
 
 		template<typename T>
 		static constexpr inline VkFlags ToVulkan(UInt32 flags);

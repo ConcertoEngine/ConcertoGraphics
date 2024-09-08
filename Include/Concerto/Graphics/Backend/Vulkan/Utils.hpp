@@ -15,13 +15,6 @@ namespace Concerto::Graphics::Vk
 		Vector4f _data = {};
 		Matrix4f _renderMatrix = {};
 	};
-
-	inline std::size_t PadUniformBuffer(std::size_t size, std::size_t minUniformBufferOffsetAlignment)
-	{
-		if (size > 0)
-			return (size + minUniformBufferOffsetAlignment - 1) & ~(minUniformBufferOffsetAlignment - 1);
-		return size;
-	}
 }
 
 #endif //CONCERTO_GRAPHICS_UTILS_HPP
