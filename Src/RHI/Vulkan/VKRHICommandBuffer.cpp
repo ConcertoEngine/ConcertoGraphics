@@ -46,7 +46,9 @@ namespace Concerto::Graphics::RHI
 			.x = viewport.x,
 			.y = viewport.y,
 			.width = viewport.width,
-			.height = viewport.height
+			.height = viewport.height,
+			.minDepth = viewport.minDepth,
+			.maxDepth = viewport.maxDepth
 		};
 		Vk::CommandBuffer::SetViewport(vkViewport);
 	}

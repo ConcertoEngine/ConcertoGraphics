@@ -3,6 +3,7 @@
 //
 
 
+#include <chrono>
 #include <Concerto/Core/Math/Algorithm.hpp>
 #include <Concerto/Graphics/Window/Window.hpp>
 #include <Concerto/Graphics/RHI/APIImpl.hpp>
@@ -130,8 +131,8 @@ int main()
 		Viewport viewport{
 			.width = static_cast<float>(window.GetWidth()),
 			.height = static_cast<float>(window.GetHeight()),
-			.minDepth = 0,
-			.maxDepth = 1,
+			.minDepth = 0.f,
+			.maxDepth = 1.f,
 		};
 		std::chrono::steady_clock::time_point lastFrameTime = std::chrono::steady_clock::now();
 		while (!window.ShouldClose())
@@ -153,12 +154,17 @@ int main()
 				commandBuffer.SetScissor(dynamicScissor);
 				commandBuffer.BeginRenderPass(renderPass, *swapChain, Vector3f{ 1.f, 0.f, 0.f });
 				{
+					RHI::MaterialInfo* lastBoundMaterial = nullptr;
 					for (const auto& subMesh : gpuMesh->subMeshes)
 					{
 						const auto& material = subMesh->GetMaterial();
 						if (material == nullptr)
 							continue;
-						commandBuffer.BindMaterial(*material);
+						if (lastBoundMaterial != material.get())
+						{
+							lastBoundMaterial = material.get();
+							commandBuffer.BindMaterial(*material);
+						}
 						commandBuffer.BindVertexBuffer(subMesh->GetVertexBuffer());
 						commandBuffer.Draw(static_cast<UInt32>(subMesh->GetVertices().size()), 1, 0, 0);
 					}
@@ -167,6 +173,7 @@ int main()
 			}
 			commandBuffer.End();
 			currentFrame.Present();
+			window.SetTitle(std::format("ConcertoGraphics - {} fps", 1.f / deltaTime));
 		}
 	}
 	catch (const std::exception& e)
