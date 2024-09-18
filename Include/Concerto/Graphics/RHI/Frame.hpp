@@ -7,6 +7,7 @@
 
 #include "Concerto/Graphics/RHI/Defines.hpp"
 #include "Concerto/Graphics/RHI/CommandBuffer.hpp"
+#include "Concerto/Graphics/RHI/FrameBuffer.hpp"
 
 namespace Concerto::Graphics::RHI
 {
@@ -18,6 +19,8 @@ namespace Concerto::Graphics::RHI
 		virtual void Present() = 0;
 		virtual RHI::CommandBuffer& GetCommandBuffer() = 0;
 		virtual std::size_t GetCurrentFrameIndex() = 0;
+		virtual RHI::FrameBuffer& GetFrameBuffer() = 0;
+
 	};
 }
 

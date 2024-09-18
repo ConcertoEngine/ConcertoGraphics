@@ -48,6 +48,10 @@ namespace Concerto::Graphics::Vk
 		FrameBuffer& operator=(FrameBuffer&&) noexcept = default;
 
 		FrameBuffer& operator=(const FrameBuffer&) = delete;
+
+		VkExtent2D GetExtent2D() const;
+	private:
+		VkExtent2D _extent;
 	};
 
 } // Concerto::Graphics::Vk

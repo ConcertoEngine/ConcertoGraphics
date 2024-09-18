@@ -13,6 +13,7 @@
 #include "Concerto/Graphics/RHI/Vulkan/VKRHIRenderPass.hpp"
 #include "Concerto/Graphics/RHI/Vulkan/VkRHISwapChain.hpp"
 #include "Concerto/Graphics/RHI/Vulkan/VkRHIBuffer.hpp"
+#include "Concerto/Graphics/RHI/Vulkan/VKRHIFrameBuffer.hpp"
 
 namespace Concerto::Graphics::RHI
 {
@@ -68,14 +69,14 @@ namespace Concerto::Graphics::RHI
 		Vk::CommandBuffer::SetScissor(vkScissor);
 	}
 
-	void VkRHICommandBuffer::BeginRenderPass(const RHI::RenderPass& renderPass, const RHI::SwapChain& swapChain, const Vector3f& clearColor)
+	void VkRHICommandBuffer::BeginRenderPass(const RHI::RenderPass& renderPass, const RHI::FrameBuffer& frameBuffer, const Vector3f& clearColor)
 	{
 		const VkRHIRenderPass& vkRenderPass = Cast<const VkRHIRenderPass&>(renderPass);
-		const VkRHISwapChain& vkSwapChain = Cast<const VkRHISwapChain&>(swapChain);
+		const VkRHIFrameBuffer& vkRhiFrameBuffer = Cast<const VkRHIFrameBuffer&>(frameBuffer);
 
 		const VkExtent2D extent = {
-			.width = vkSwapChain.GetExtent().X(),
-			.height = vkSwapChain.GetExtent().Y()
+			.width = frameBuffer.GetWidth(),
+			.height = frameBuffer.GetHeight()
 		};
 
 		const std::array clearValues = {
@@ -88,7 +89,7 @@ namespace Concerto::Graphics::RHI
 				.depthStencil = {1.f, 0}
 			}
 		};
-		VkRenderPassBeginInfo renderPassInfo = VulkanInitializer::RenderPassBeginInfo(*vkRenderPass.Get(), extent, *vkSwapChain.GetCurrentFrameBuffer().Get());
+		VkRenderPassBeginInfo renderPassInfo = VulkanInitializer::RenderPassBeginInfo(*vkRenderPass.Get(), extent, *vkRhiFrameBuffer.Get());
 		renderPassInfo.clearValueCount = static_cast<UInt32>(clearValues.size());
 		renderPassInfo.pClearValues = clearValues.data();
 

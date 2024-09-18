@@ -9,6 +9,7 @@
 #include <unordered_map>
 #include <string>
 #include <vector>
+#include <Concerto/Core/FunctionRef.hpp>
 
 #include <Concerto/Core/SparseVector.hpp>
 
@@ -21,10 +22,10 @@ namespace Concerto
 	class CONCERTO_GRAPHICS_API Input
 	{
 	public:
-		using KeyCallbacks = std::vector<std::function<void()>>;
+		using KeyCallbacks = std::vector<FunctionRef<void()>>;
 		using TriggerTypeCallbacks = std::unordered_map<TriggerType, KeyCallbacks>;
 		using BindingCallback = std::pair<SparseVector<bool>, TriggerTypeCallbacks>;
-		using MouseEventCallback = std::function<void(const MouseEvent&)>;
+		using MouseEventCallback = FunctionRef<void(const MouseEvent&)>;
 
 		Input() = default;
 
@@ -39,7 +40,7 @@ namespace Concerto
 		Input& operator=(Input&&) = default;
 
 
-		void Register(const std::string& name, Key key, TriggerType triggerType, std::function<void()>&& callback);
+		void Register(const std::string& name, Key key, TriggerType triggerType, FunctionRef<void()>&& callback);
 
 		void Register(const std::string& name, MouseEvent::Type key, MouseEventCallback&& callback);
 

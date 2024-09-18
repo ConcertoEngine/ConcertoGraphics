@@ -129,6 +129,8 @@ int main()
 		dynamicScissor.height = window.GetHeight();
 
 		Viewport viewport{
+			.x = 0.f,
+			.y = 0.f,
 			.width = static_cast<float>(window.GetWidth()),
 			.height = static_cast<float>(window.GetHeight()),
 			.minDepth = 0.f,
@@ -152,7 +154,7 @@ int main()
 			{
 				commandBuffer.SetViewport(viewport);
 				commandBuffer.SetScissor(dynamicScissor);
-				commandBuffer.BeginRenderPass(renderPass, *swapChain, Vector3f{ 1.f, 0.f, 0.f });
+				commandBuffer.BeginRenderPass(renderPass, currentFrame.GetFrameBuffer(), Vector3f{ 1.f, 0.f, 0.f });
 				{
 					RHI::MaterialInfo* lastBoundMaterial = nullptr;
 					for (const auto& subMesh : gpuMesh->subMeshes)

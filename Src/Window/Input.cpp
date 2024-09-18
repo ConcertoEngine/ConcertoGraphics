@@ -2,14 +2,13 @@
 // Created by arthur on 17/08/2022.
 //
 
-#include <cassert>
-#include <iostream>
+#include <chrono>
 
 #include "Concerto/Graphics/Window/Input.hpp"
 
 namespace Concerto
 {
-	void Input::Register(const std::string& name, Key key, TriggerType triggerType, std::function<void()>&& callback)
+	void Input::Register(const std::string& name, Key key, TriggerType triggerType, FunctionRef<void()>&& callback)
 	{
 		auto it = _keyCallbacks.find(name);
 		if (it == _keyCallbacks.end())

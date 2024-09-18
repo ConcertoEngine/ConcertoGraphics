@@ -13,7 +13,9 @@
 
 namespace Concerto::Graphics::Vk
 {
-	FrameBuffer::FrameBuffer(Device& device, const RenderPass& renderPass, const std::vector<VkImageView>& attachments, VkExtent2D extent) : Object(device)
+	FrameBuffer::FrameBuffer(Device& device, const RenderPass& renderPass, const std::vector<VkImageView>& attachments, VkExtent2D extent) :
+		Object(device),
+		_extent(extent)
 	{
 		VkFramebufferCreateInfo frameBufferCreateInfo = VulkanInitializer::FramebufferCreateInfo(*renderPass.Get(), extent);
 
@@ -28,5 +30,10 @@ namespace Concerto::Graphics::Vk
 		if (IsNull())
 			return;
 		vkDestroyFramebuffer(*_device->Get(), _handle, nullptr);
+	}
+
+	VkExtent2D FrameBuffer::GetExtent2D() const
+	{
+		return _extent;
 	}
 } // Concerto::Graphics::Vk

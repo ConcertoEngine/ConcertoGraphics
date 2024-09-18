@@ -27,7 +27,6 @@ namespace Concerto::Graphics::RHI
 		auto gpuMesh = std::make_shared<RHI::GpuMesh>();
 
 		auto& meshes = this->GetSubMeshes();
-
 		for (auto& subMesh : meshes)
 		{
 			auto& materialInfo = *subMesh->GetMaterial();
@@ -39,7 +38,9 @@ namespace Concerto::Graphics::RHI
 			Vk::UploadContext& uploadContext = rhiDevice.GetUploadContext();
 
 			auto vkSubMesh = std::make_shared<VkRHIGpuSubMesh>(subMesh, litMaterial, rhiDevice);
+			auto start = std::chrono::system_clock::now();
 			vkSubMesh->Upload(uploadContext._commandBuffer, uploadContext._commandPool, uploadContext._uploadFence, rhiDevice.GetQueue(Vk::Queue::Type::Graphics), Cast<RHI::VkRHIDevice&>(device));
+
 			gpuMesh->subMeshes.push_back(vkSubMesh);
 		}
 		return gpuMesh;

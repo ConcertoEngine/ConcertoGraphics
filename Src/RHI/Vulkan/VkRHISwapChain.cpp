@@ -13,6 +13,7 @@
 #include "Concerto/Graphics/RHI/Vulkan/VkRHIDevice.hpp"
 #include "Concerto/Graphics/RHI/Vulkan/VkRHICommandBuffer.hpp"
 #include "Concerto/Graphics/RHI/Vulkan/VkRHICommandPool.hpp"
+#include "Concerto/Graphics/RHI/Vulkan/VKRHITexture.hpp"
 
 namespace Concerto::Graphics::RHI
 {
@@ -23,7 +24,7 @@ namespace Concerto::Graphics::RHI
 		_depthPixelFormat(depthPixelFormat)
 	{
 		CreateRenderPass();
-		CreateFrameBuffers();
+		CreateFrameBuffers(device);
 		_commandPool = device.CreateCommandPool(QueueFamily::Graphics);
 		_presentQueue = std::make_unique<Vk::Queue>(device, device.GetQueueFamilyIndex(Vk::Queue::Type::Graphics));
 		CreateFrames();
@@ -76,14 +77,14 @@ namespace Concerto::Graphics::RHI
 		return *_presentQueue;
 	}
 
-	Vk::FrameBuffer& VkRHISwapChain::GetCurrentFrameBuffer()
+	RHI::FrameBuffer& VkRHISwapChain::GetCurrentFrameBuffer()
 	{
-		return _frameBuffers[_currentFrameIndex];
+		return *_frameBuffers[_currentFrameIndex];
 	}
 
-	const Vk::FrameBuffer& VkRHISwapChain::GetCurrentFrameBuffer() const
+	const RHI::FrameBuffer& VkRHISwapChain::GetCurrentFrameBuffer() const
 	{
-		return _frameBuffers[_currentFrameIndex];
+		return *_frameBuffers[_currentFrameIndex];
 	}
 
 	void VkRHISwapChain::Present(UInt32 imageIndex)
@@ -108,24 +109,23 @@ namespace Concerto::Graphics::RHI
 		}
 	}
 
-	void VkRHISwapChain::CreateFrameBuffers()
+	void VkRHISwapChain::CreateFrameBuffers(RHI::VkRHIDevice& device)
 	{
 		const std::span<Vk::ImageView> imagesViews = Vk::SwapChain::GetImageViews();
-		std::vector<VkImageView> vkImageViews;
-		vkImageViews.reserve(imagesViews.size());
-		for (auto& image: imagesViews)
-			vkImageViews.push_back(*image.Get());
-
-		_frameBuffers.reserve(vkImageViews.size());
-		for (const VkImageView& imageView : vkImageViews)
+	
+		_frameBuffers.reserve(imagesViews.size());
+		for (const Vk::ImageView& imageView : imagesViews)
 		{
-			std::vector attachments = {imageView, *GetDepthImageView().Get()};
-			CONCERTO_ASSERT(attachments[0] != VK_NULL_HANDLE && attachments[1] != VK_NULL_HANDLE, "ConcertoGraphics: iInvalid attachment");
+			std::vector<std::unique_ptr<RHI::TextureView>> attachments;
+			attachments.emplace_back(std::make_unique<VkRHITextureView>(imageView));
+			attachments.emplace_back(std::make_unique<VkRHITextureView>(GetDepthImageView()));
+			CONCERTO_ASSERT(imageView.Get() != VK_NULL_HANDLE && GetDepthImageView().Get() != VK_NULL_HANDLE, "ConcertoGraphics: iInvalid attachment");
 
-			Vk::FrameBuffer frameBuffer(*_device, static_cast<VkRHIRenderPass&>(*_renderPass), attachments, Vk::SwapChain::GetExtent());
-			CONCERTO_ASSERT(frameBuffer.GetLastResult() == VK_SUCCESS, "ConcertoGraphics: Could not create framebuffer");
+			auto extent = Vk::SwapChain::GetExtent();
+			auto fb = device.CreateFrameBuffer(extent.width, extent.height, Cast<VkRHIRenderPass&>(*_renderPass), attachments);
+			CONCERTO_ASSERT(fb, "ConcertoGraphics: Could not create frame buffer");
 
-			_frameBuffers.emplace_back(std::move(frameBuffer));
+			_frameBuffers.emplace_back(std::move(fb));
 		}
 	}
 
@@ -185,7 +185,7 @@ namespace Concerto::Graphics::RHI
 		{
 			_frames.clear();
 			_frames.reserve(imageCount);
-			for (Int32 i = 0; i < imageCount; ++i)
+			for (UInt32 i = 0; i < imageCount; ++i)
 			{
 				_frames.emplace_back(*this);
 			}
@@ -218,6 +218,11 @@ namespace Concerto::Graphics::RHI
 	std::size_t VkRHISwapChain::SwapChainFrame::GetCurrentFrameIndex()
 	{
 		return _imageIndex;
+	}
+
+	RHI::FrameBuffer& VkRHISwapChain::SwapChainFrame::GetFrameBuffer()
+	{
+		return _owner->GetCurrentFrameBuffer();
 	}
 
 	void VkRHISwapChain::SwapChainFrame::SetNextImageIndex(UInt32 imageIndex)

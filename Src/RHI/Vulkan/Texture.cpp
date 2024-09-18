@@ -24,4 +24,14 @@ namespace Concerto::Graphics::RHI
 	{
 		return _imageView;
 	}
+
+	VkRHITextureView::VkRHITextureView(const Vk::ImageView& image) :
+		_imageView(&image)
+	{
+	}
+
+	const Vk::ImageView& VkRHITextureView::GetImageView() const
+	{
+		return *_imageView;
+	}
 }

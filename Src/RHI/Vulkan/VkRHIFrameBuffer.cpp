@@ -16,18 +16,42 @@ namespace Concerto::Graphics::RHI
 {
 	namespace //Fixme
 	{
-		std::vector<VkImageView> ToImageView(const std::vector<Texture>& textures)
+		std::vector<VkImageView> ToImageView(const std::vector<std::unique_ptr<Texture>>& textures)
 		{
-			std::vector<VkImageView> imageViews(textures.size());
+			std::vector<VkImageView> imageViews;
 			for (auto& texture : textures)
-				imageViews.emplace_back(*Cast<const VkRHITexture&>(texture).GetImageView().Get());
+				imageViews.emplace_back(*Cast<const VkRHITexture&>(*texture).GetImageView().Get());
+			return imageViews;
+		}
+
+		std::vector<VkImageView> ToImageView(const std::vector<std::unique_ptr<TextureView>>& textures)
+		{
+			std::vector<VkImageView> imageViews;
+			for (auto& texture : textures)
+				imageViews.emplace_back(*Cast<const VkRHITextureView&>(*texture).GetImageView().Get());
 			return imageViews;
 		}
 	}
 
-    VkRHIFrameBuffer::VkRHIFrameBuffer(VkRHIDevice& device, UInt32 width, UInt32 height, const VkRHIRenderPass& renderPass, const std::vector<RHI::Texture>& attachments) :
-      RHI::FrameBuffer(),
-      Vk::FrameBuffer(device, renderPass, ToImageView(attachments), {width, height})
-    {
-    }
+	VkRHIFrameBuffer::VkRHIFrameBuffer(VkRHIDevice& device, UInt32 width, UInt32 height, const VkRHIRenderPass& renderPass, const std::vector<std::unique_ptr<RHI::Texture>>& attachments) :
+		RHI::FrameBuffer(),
+		Vk::FrameBuffer(device, renderPass, ToImageView(attachments), { width, height })
+	{
+	}
+
+	VkRHIFrameBuffer::VkRHIFrameBuffer(VkRHIDevice& device, UInt32 width, UInt32 height, const VkRHIRenderPass& renderPass, const std::vector<std::unique_ptr<RHI::TextureView>>& attachments) :
+		RHI::FrameBuffer(),
+		Vk::FrameBuffer(device, renderPass, ToImageView(attachments), { width, height })
+	{
+	}
+
+	UInt32 VkRHIFrameBuffer::GetWidth() const
+	{
+		return GetExtent2D().width;
+	}
+
+	UInt32 VkRHIFrameBuffer::GetHeight() const
+	{
+		return GetExtent2D().height;
+	}
 }

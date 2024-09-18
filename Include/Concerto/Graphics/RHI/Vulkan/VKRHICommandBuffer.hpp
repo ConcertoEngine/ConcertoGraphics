@@ -22,7 +22,7 @@ namespace Concerto::Graphics::RHI
 		void Reset() override;
 		void SetViewport(const Viewport& viewport) override;
 		void SetScissor(const Rect2D& scissor) override;
-		void BeginRenderPass(const RHI::RenderPass& renderPass, const RHI::SwapChain& swapChain, const Vector3f& clearColor) override;
+		void BeginRenderPass(const RHI::RenderPass& renderPass, const RHI::FrameBuffer& frameBuffer, const Vector3f& clearColor) override;
 		void EndRenderPass() override;
 		void BindMaterial(const MaterialInfo& material) override;
 		void BindVertexBuffer(const RHI::Buffer& buffer) override;

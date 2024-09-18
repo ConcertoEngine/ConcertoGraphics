@@ -38,6 +38,15 @@ namespace Concerto::Graphics::RHI
 		Vk::ImageView _imageView;
 	};
 	using VkRHITexturePtr = std::shared_ptr<VkRHITexture>;
+
+	class CONCERTO_GRAPHICS_RHI_BASE_API VkRHITextureView : public RHI::TextureView
+	{
+	public:
+		VkRHITextureView(const Vk::ImageView& image);
+		const Vk::ImageView& GetImageView() const;
+	private:
+		const Vk::ImageView* _imageView;
+	};
 }
 
 #endif //CONCERTO_GRAPHICS_RHI_VULKAN_VKRHITEXTURE_HPP

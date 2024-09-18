@@ -37,12 +37,12 @@ namespace Concerto::Graphics::RHI
 		inline VkRHICommandPool& GetCommandPool() const;
 		inline VkRHIDevice& GetRHIDevice() const;
 		inline Vk::Queue& GetPresentQueue() const;
-		inline Vk::FrameBuffer& GetCurrentFrameBuffer();
-		inline const Vk::FrameBuffer& GetCurrentFrameBuffer() const;
+		inline RHI::FrameBuffer& GetCurrentFrameBuffer();
+		inline const RHI::FrameBuffer& GetCurrentFrameBuffer() const;
 
 		void Present(UInt32 imageIndex);
 	private:
-		void CreateFrameBuffers();
+		void CreateFrameBuffers(RHI::VkRHIDevice& device);
 		void CreateRenderPass();
 		void CreateFrames();
 
@@ -54,7 +54,7 @@ namespace Concerto::Graphics::RHI
 			void Present() override;
 			RHI::CommandBuffer& GetCommandBuffer() override;
 			std::size_t GetCurrentFrameIndex() override;
-
+			RHI::FrameBuffer& GetFrameBuffer() override;
 			void SetNextImageIndex(UInt32 imageIndex);
 			void Wait();
 
@@ -75,7 +75,7 @@ namespace Concerto::Graphics::RHI
 		PixelFormat _depthPixelFormat;
 
 		std::vector<SwapChainFrame> _frames;
-		std::vector<Vk::FrameBuffer> _frameBuffers;
+		std::vector<std::unique_ptr<FrameBuffer>> _frameBuffers;
 		std::unique_ptr<RHI::RenderPass> _renderPass;
 		std::unique_ptr<RHI::CommandPool> _commandPool;
 		std::unique_ptr<Vk::Queue> _presentQueue;

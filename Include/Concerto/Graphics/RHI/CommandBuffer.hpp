@@ -15,8 +15,8 @@
 namespace Concerto::Graphics::RHI
 {
 	class RenderPass;
-	class SwapChain;
 	class Buffer;
+	class FrameBuffer;
 
 	class CONCERTO_GRAPHICS_RHI_BASE_API CommandBuffer
 	{
@@ -29,7 +29,7 @@ namespace Concerto::Graphics::RHI
 		virtual void Reset() = 0;
 		virtual void SetViewport(const Viewport& viewport) = 0;
 		virtual void SetScissor(const Rect2D& scissor) = 0;
-		virtual void BeginRenderPass(const RHI::RenderPass& renderPass, const RHI::SwapChain& swapChain, const Vector3f& clearColor) = 0;
+		virtual void BeginRenderPass(const RHI::RenderPass& renderPass, const RHI::FrameBuffer& frameBuffer, const Vector3f& clearColor) = 0;
 		virtual void EndRenderPass() = 0;
 		virtual void BindMaterial(const MaterialInfo& material) = 0;
 		virtual void BindVertexBuffer(const RHI::Buffer& buffer) = 0;
