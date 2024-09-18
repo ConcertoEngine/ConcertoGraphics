@@ -6,9 +6,10 @@
 
 #include <Concerto/Core/Logger.hpp>
 #include <Concerto/Core/Assert.hpp>
+#include <utility>
 
 #include "Concerto/Graphics/Window/Window.hpp"
-#include "Concerto/Graphics/Vulkan/Wrapper/Instance.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/Instance.hpp"
 #include "Concerto/Graphics/Window/Event.hpp"
 
 #if __linux__
@@ -116,9 +117,9 @@ namespace Concerto::Graphics
 		return w;
 	}
 
-	bool Window::CreateVulkanSurface(Instance& instance, VkSurfaceKHR* surface) const
+	bool Window::CreateVulkanSurface(VkInstance instance, VkSurfaceKHR& surface) const
 	{
-		const auto res = glfwCreateWindowSurface(*instance.Get(), _window, nullptr, surface);
+		const auto res = glfwCreateWindowSurface(instance, _window, nullptr, &surface);
 		if (res != VK_SUCCESS)
 		{
 			Logger::Warning("Unable to create vulkan surface error code: {}",  std::to_string(res));
@@ -148,7 +149,7 @@ namespace Concerto::Graphics
 	void Window::RegisterResizeCallback(std::function<void(Window& window)> callback)
 	{
 		CONCERTO_ASSERT(_window, "ConcertoGraphics: invalid window pointer");
-		_resizeCallback = callback;
+		_resizeCallback = std::move(callback);
 		glfwSetWindowUserPointer(_window, this);
 		glfwSetWindowSizeCallback(_window, [](GLFWwindow* window, int width, int height)
 		{
@@ -175,7 +176,7 @@ namespace Concerto::Graphics
 	void Window::RegisterMouseButtonCallback(std::function<void(Window& window, int button, int action, int mods)> callback)
 	{
 		CONCERTO_ASSERT(_window, "ConcertoGraphics: invalid window pointer");
-		_mouseButtonCallback = callback;
+		_mouseButtonCallback = std::move(callback);
 		glfwSetWindowUserPointer(_window, this);
 		glfwSetMouseButtonCallback(_window, [](GLFWwindow* window, int button, int action, int mods)
 		{
@@ -187,7 +188,7 @@ namespace Concerto::Graphics
 	void Window::RegisterCursorPosCallback(std::function<void(Window& window, double xpos, double ypos)> callback)
 	{
 		CONCERTO_ASSERT(_window, "ConcertoGraphics: invalid window pointer");
-		_cursorPosCallback = callback;
+		_cursorPosCallback = std::move(callback);
 		glfwSetWindowUserPointer(_window, this);
 		glfwSetCursorPosCallback(_window, [](GLFWwindow* window, double xpos, double ypos)
 		{

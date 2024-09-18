@@ -7,11 +7,10 @@
 #include <Concerto/Core/Assert.hpp>
 
 #include "Concerto/Graphics/Primitives.hpp"
-
+#include "Concerto/Graphics/Vertex.hpp"
 
 namespace Concerto::Graphics
 {
-
 	Vertices Primitive::MakeCone(float radius, float height, UInt32 slices)
 	{
 		Vertices vertices;

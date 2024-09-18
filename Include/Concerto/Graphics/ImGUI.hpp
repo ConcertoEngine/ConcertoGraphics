@@ -8,12 +8,16 @@
 #include <imgui.h>
 #include "Concerto/Graphics/Defines.hpp"
 
-#include "Concerto/Graphics/Vulkan/RenderingContext.hpp"
-#include "Concerto/Graphics/Vulkan/Wrapper/DescriptorPool.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/RenderingContext.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/DescriptorPool.hpp"
 
 namespace Concerto::Graphics
 {
 	class Window;
+}
+
+namespace Concerto::Graphics::Vk
+{
 	class CommandBuffer;
 
 	class CONCERTO_GRAPHICS_API ImGUI

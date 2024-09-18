@@ -19,7 +19,6 @@ struct GLFWwindow;
 
 namespace Concerto::Graphics
 {
-	class Instance;
 
 	class CONCERTO_GRAPHICS_API Window
 	{
@@ -50,7 +49,7 @@ namespace Concerto::Graphics
 		 * @param surface The surface to draw on
 		 * @return True if the surface is successfully created, false otherwise
 		 */
-		bool CreateVulkanSurface(Instance& instance, VkSurfaceKHR* surface) const;
+		bool CreateVulkanSurface(VkInstance instance, VkSurfaceKHR& surface) const;
 
 		/**
 		* @brief Get the raw Window

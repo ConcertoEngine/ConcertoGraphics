@@ -9,15 +9,15 @@
 
 #include "Concerto/Graphics/Defines.hpp"
 
-#include "Concerto/Graphics/Vulkan/Wrapper/Buffer.hpp"
-#include "Concerto/Graphics/Vulkan/Wrapper/Fence.hpp"
-#include "Concerto/Graphics/Vulkan/Wrapper/Semaphore.hpp"
-#include "Concerto/Graphics/Vulkan/Wrapper/CommandBuffer.hpp"
-#include "Concerto/Graphics/Vulkan/Wrapper/CommandPool.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/Buffer.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/Fence.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/Semaphore.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/CommandBuffer.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/CommandPool.hpp"
 
 #define MAX_OBJECTS 1000
 
-namespace Concerto::Graphics
+namespace Concerto::Graphics::Vk
 {
 	class Device;
 
@@ -36,7 +36,7 @@ namespace Concerto::Graphics
 
 		FrameData& operator=(FrameData&&) = default;
 		FrameData& operator=(FrameData&) = delete;
-		
+
 		Semaphore presentSemaphore, renderSemaphore;
 		Fence renderFence;
 

@@ -1,0 +1,56 @@
+//
+// Created by arthur on 12/05/2024.
+//
+
+#ifndef CONCERTO_GRAPHICS_RHI_DEVICE_HPP
+#define CONCERTO_GRAPHICS_RHI_DEVICE_HPP
+
+#include <string>
+#include <memory>
+#include <span>
+#include <vector>
+
+#include "Concerto/Graphics/RHI/Defines.hpp"
+#include "Concerto/Graphics/RHI/TextureBuilder.hpp"
+#include "Concerto/Graphics/RHI/FrameBuffer.hpp"
+#include "Concerto/Graphics/RHI/Texture.hpp"
+#include "Concerto/Graphics/RHI/Enums.hpp"
+#include "Concerto/Graphics/RHI/RenderPass.hpp"
+#include "Concerto/Graphics/RHI/MaterialBuilder.hpp"
+#include "Concerto/Graphics/RHI/CommandPool.hpp"
+#include "Concerto/Graphics/RHI/Buffer.hpp"
+
+namespace Concerto::Graphics
+{
+	class Window;
+}
+
+namespace Concerto::Graphics::RHI
+{
+	class SwapChain;
+
+	struct DeviceInfo
+	{
+		std::string name;
+		UInt32 vendor;
+		DeviceType type;
+	};
+
+	class CONCERTO_GRAPHICS_RHI_BASE_API Device
+	{
+	public:
+		Device() = default;
+		virtual ~Device() = default;
+		virtual std::unique_ptr<SwapChain> CreateSwapChain(Window& window, PixelFormat pixelFormat = PixelFormat::BGRA8_SRGB, PixelFormat depthPixelFormat = PixelFormat::D32f) = 0;
+		virtual std::unique_ptr<RenderPass> CreateRenderPass(std::span<RenderPass::Attachment> attachments, std::span<RenderPass::SubPassDescription> subPassDescriptions, std::span<RenderPass::SubPassDependency> subPassDependencies) = 0;
+		virtual std::unique_ptr<FrameBuffer> CreateFrameBuffer(UInt32 width, UInt32 height, const RenderPass& renderPass, const std::vector<std::unique_ptr<Texture>>& attachments) = 0;
+		virtual std::unique_ptr<FrameBuffer> CreateFrameBuffer(UInt32 width, UInt32 height, const RenderPass& renderPass, const std::vector<std::unique_ptr<TextureView>>& attachments) = 0;
+		virtual std::unique_ptr<MaterialBuilder> CreateMaterialBuilder(const Vector2u& windowExtent) = 0;
+		virtual std::unique_ptr<TextureBuilder> CreateTextureBuilder() = 0;
+		virtual std::unique_ptr<CommandPool> CreateCommandPool(RHI::QueueFamily family) = 0;
+		virtual std::unique_ptr<Buffer> CreateBuffer(RHI::BufferUsageFlags usage, UInt32 allocationSize, bool allowBufferMapping) = 0;
+		virtual std::size_t GetMinimumUniformBufferOffsetAlignment() const = 0;
+	};
+}
+
+#endif //CONCERTO_GRAPHICS_RHI_DEVICE_HPP

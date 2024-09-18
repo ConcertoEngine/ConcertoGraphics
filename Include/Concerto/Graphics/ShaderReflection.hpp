@@ -14,7 +14,7 @@
 #include <NZSL/Ast/Module.hpp>
 
 #include "Concerto/Graphics/Defines.hpp"
-#include "Concerto/Graphics/Vulkan/Wrapper/DescriptorSetLayout.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/DescriptorSetLayout.hpp"
 
 namespace Concerto::Graphics
 {

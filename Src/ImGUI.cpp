@@ -7,14 +7,14 @@
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_vulkan.h>
 
-#include "Concerto/Graphics/Vulkan/Wrapper/Instance.hpp"
-#include "Concerto/Graphics/Vulkan/Wrapper/PhysicalDevice.hpp"
-#include "Concerto/Graphics/Vulkan/Wrapper/Device.hpp"
-#include "Concerto/Graphics/Vulkan/Wrapper/RenderPass.hpp"
-#include "Concerto/Graphics/Vulkan/Wrapper/CommandBuffer.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/Instance.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/PhysicalDevice.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/Device.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/RenderPass.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/CommandBuffer.hpp"
 #include "Concerto/Graphics/Window/Window.hpp"
 
-namespace Concerto::Graphics
+namespace Concerto::Graphics::Vk
 {
 	ImGUI::ImGUI(RenderingContext& context, Window& window) : _context(context),
 																	   _descriptorPool(*_context.device,
@@ -65,7 +65,7 @@ namespace Concerto::Graphics
 				});
 	}
 
-	Graphics::ImGUI::~ImGUI()
+	ImGUI::~ImGUI()
 	{
 		ImGui_ImplVulkan_Shutdown();
 		ImGui_ImplGlfw_Shutdown();
@@ -86,7 +86,7 @@ namespace Concerto::Graphics
 
 	void ImGUI::RenderDrawData(CommandBuffer& commandBuffer)
 	{
-		ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), commandBuffer.Get());
+		ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), *commandBuffer.Get());
 	}
 
 	ImGuiContext* ImGUI::GetContext() const

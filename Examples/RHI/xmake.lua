@@ -1,0 +1,7 @@
+target('RHI')
+    add_deps('RHIModule')
+    add_files('main.cpp')
+    set_languages('cxx20')
+    set_warnings('allextra')
+    add_rules('download.assets', 'compile.shaders')
+    add_packages("concerto-core", { public = true })
