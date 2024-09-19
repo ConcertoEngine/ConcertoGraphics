@@ -23,17 +23,17 @@ namespace Concerto::Graphics::Vk
 		return _queueFamilyIndex;
 	}
 
-	void Queue::Submit(const CommandBuffer& commandBuffer, const Semaphore& presentSemaphore, const Semaphore& renderSemaphore, const Fence& renderFence) const
+	void Queue::Submit(const CommandBuffer& commandBuffer, const Semaphore* presentSemaphore, const Semaphore* renderSemaphore, const Fence& renderFence) const
 	{
-		const VkPipelineStageFlags waitStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+		constexpr VkPipelineStageFlags waitStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
 		VkSubmitInfo submit = {};
 		submit.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 		submit.pNext = nullptr;
 		submit.pWaitDstStageMask = &waitStage;
-		submit.waitSemaphoreCount = 1;
-		submit.pWaitSemaphores = presentSemaphore.Get();
-		submit.signalSemaphoreCount = 1;
-		submit.pSignalSemaphores = renderSemaphore.Get();
+		submit.waitSemaphoreCount = presentSemaphore ? 1 : 0;
+		submit.pWaitSemaphores = presentSemaphore ? presentSemaphore->Get() : VK_NULL_HANDLE,
+		submit.signalSemaphoreCount = renderSemaphore ? 1 : 0;
+		submit.pSignalSemaphores = renderSemaphore ? renderSemaphore->Get() : VK_NULL_HANDLE;
 		submit.commandBufferCount = 1;
 		submit.pCommandBuffers = commandBuffer.Get();
 		_lastResult = vkQueueSubmit(_handle, 1, &submit, *renderFence.Get());

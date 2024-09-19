@@ -47,7 +47,7 @@ namespace Concerto::Graphics::Vk
 		template<typename T>
 		void Copy(T& object, std::size_t padding = 0);
 
-		void Copy(void* object, std::size_t size, std::size_t padding = 0);
+		void Copy(const void* object, std::size_t size, std::size_t padding = 0);
 
 		template<typename DestBuffer, typename SrcObj>
 		void Copy(std::vector<SrcObj>& objects, std::function<void(DestBuffer& destBuffer, SrcObj& srcObj)>&& copyFunc, std::size_t padding = 0);
@@ -109,7 +109,7 @@ namespace Concerto::Graphics::Vk
 	*/
 	template<typename T>
 	Buffer MakeBuffer(Allocator& allocator,
-		UInt32 objNumber,
+		std::size_t objNumber,
 		VkBufferUsageFlags usage,
 		VmaMemoryUsage memoryUsage,
 		bool allowBufferMapping)

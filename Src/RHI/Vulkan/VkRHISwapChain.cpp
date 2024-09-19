@@ -206,7 +206,7 @@ namespace Concerto::Graphics::RHI
 	{
 		const Vk::Queue& presentQueue = _owner->GetPresentQueue();
 
-		presentQueue.Submit(Cast<VkRHICommandBuffer&>(*_commandBuffer), _presentSemaphore, _renderSemaphore, _renderFence);
+		presentQueue.Submit(Cast<VkRHICommandBuffer&>(*_commandBuffer), &_presentSemaphore, &_renderSemaphore, _renderFence);
 		_owner->Present(_imageIndex);
 	}
 

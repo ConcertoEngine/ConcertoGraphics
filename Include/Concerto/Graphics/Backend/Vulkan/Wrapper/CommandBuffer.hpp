@@ -189,8 +189,10 @@ namespace Concerto::Graphics::Vk
 	     * @param src The source Buffer object.
 	     * @param dest The destination Buffer object.
 	     * @param size The size of the data to copy.
+	     * @param srcOffset Is the starting offset in bytes from the start of src
+	     * @param dstOffset Is the starting offset in bytes from the start of dst
 	     */
-		void CopyBuffer(const Buffer& src, const Buffer& dest, std::size_t size) const;
+		void CopyBuffer(const Buffer& src, const Buffer& dest, std::size_t size, std::size_t srcOffset = 0, std::size_t dstOffset = 0) const;
 
 		/**
 		 * @brief Sets the viewport on the command buffer.

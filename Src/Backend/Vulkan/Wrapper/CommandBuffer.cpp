@@ -177,11 +177,11 @@ namespace Concerto::Graphics::Vk
 		commandPool.Reset();
 	}
 
-	void CommandBuffer::CopyBuffer(const Buffer& src, const Buffer& dest, const std::size_t size) const
+	void CommandBuffer::CopyBuffer(const Buffer& src, const Buffer& dest, const std::size_t size, std::size_t srcOffset, std::size_t dstOffset) const
 	{
 		const VkBufferCopy copyRegion = {
-			.srcOffset = 0,
-			.dstOffset = 0,
+			.srcOffset = srcOffset,
+			.dstOffset = dstOffset,
 			.size = size
 		};
 		vkCmdCopyBuffer(_handle, *src.Get(), *dest.Get(), 1, &copyRegion);

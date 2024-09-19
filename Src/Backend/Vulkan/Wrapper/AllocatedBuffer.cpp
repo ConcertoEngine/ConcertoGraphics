@@ -63,7 +63,7 @@ namespace Concerto::Graphics::Vk
 		vmaDestroyBuffer(*_allocator->Get(), _handle, _allocation);
 	}
 
-	void Buffer::Copy(void* object, std::size_t size, std::size_t padding)
+	void Buffer::Copy(const void* object, std::size_t size, std::size_t padding)
 	{
 		Byte* data = nullptr;
 		if (Map(&data) == false)
