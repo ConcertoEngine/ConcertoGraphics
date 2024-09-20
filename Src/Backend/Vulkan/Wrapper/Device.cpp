@@ -17,7 +17,8 @@ namespace Concerto::Graphics::Vk
 	Device::Device(PhysicalDevice& physicalDevice, Instance& instance) :
 		_physicalDevice(physicalDevice),
 		_device(VK_NULL_HANDLE),
-		_allocator(nullptr)
+		_allocator(nullptr),
+		_instance(&instance)
 	{
 		std::span<VkQueueFamilyProperties> queueFamilyProperties = _physicalDevice.GetQueueFamilyProperties();
 		std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
@@ -155,6 +156,12 @@ namespace Concerto::Graphics::Vk
 	{
 		CONCERTO_ASSERT(_allocator != nullptr, "ConcertoGraphics: Allocator handle is null");
 		return *_allocator;
+	}
+
+	Instance& Device::GetInstance()
+	{
+		CONCERTO_ASSERT(_instance, "ConcertoGraphics: Invalid Vulkan instance.");
+		return *_instance;
 	}
 
 	void Device::CreateAllocator(Instance& instance)

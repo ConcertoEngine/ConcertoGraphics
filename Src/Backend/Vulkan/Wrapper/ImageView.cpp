@@ -14,11 +14,14 @@
 
 namespace Concerto::Graphics::Vk
 {
-	ImageView::ImageView(Device& device, Image& image, VkImageAspectFlags aspectFlags) : Object(device)
+	ImageView::ImageView(Device& device, Image& image, VkImageAspectFlags aspectFlags) :
+		Object(device),
+		_image(&image)
 	{
 		auto imageInfo = VulkanInitializer::ImageViewCreateInfo(image.GetFormat(), *image.Get(), aspectFlags);
 		_lastResult = vkCreateImageView(*_device->Get(), &imageInfo, nullptr, &_handle);
 		CONCERTO_ASSERT(_lastResult == VK_SUCCESS, "ConcertoGraphics: vkCreateImageView failed VkResult={}", static_cast<int>(_lastResult));
+		device.SetObjectName(reinterpret_cast<UInt64>(_handle), std::format("{}, {}x{}", reinterpret_cast<void*>(_handle), image.GetExtent().width, image.GetExtent().height));
 	}
 
 	ImageView::~ImageView()

@@ -31,12 +31,6 @@ namespace Concerto::Graphics::RHI
 	std::unique_ptr<SwapChain> VkRHIDevice::CreateSwapChain(Window& window, PixelFormat pixelFormat, PixelFormat depthPixelFormat)
 	{
 		CONCERTO_ASSERT(_vkInstance, "ConcertoGraphics: Invalid Vulkan instance");
-		if (GetPhysicalDevice().GetSurface() == nullptr)
-		{
-			VkSurfaceKHR surface;
-			window.CreateVulkanSurface(*_vkInstance->Get(), surface);
-			GetPhysicalDevice().SetSurface(surface);
-		}
 		auto swapChain = std::make_unique<VkRHISwapChain>(*this, window, pixelFormat, depthPixelFormat);
 		if (swapChain->GetLastResult() != VK_SUCCESS)
 		{
@@ -159,5 +153,11 @@ namespace Concerto::Graphics::RHI
 		if (_uploadContext.has_value() == false)
 			_uploadContext.emplace(*this, GetQueueFamilyIndex(Vk::Queue::Type::Graphics));
 		return _uploadContext.value();
+	}
+
+	Vk::Instance& VkRHIDevice::GetVkInstance()
+	{
+		CONCERTO_ASSERT(_vkInstance, "ConcertoGraphics: Invalid Vulkan instance.");
+		return *_vkInstance;
 	}
 } //Concerto::Graphics::RHI

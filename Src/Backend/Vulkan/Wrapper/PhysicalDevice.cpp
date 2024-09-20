@@ -42,7 +42,6 @@ namespace Concerto::Graphics::Vk
 		_formats = std::exchange(other._formats, std::nullopt);
 		_presentModes = std::exchange(other._presentModes, std::nullopt);
 		_physicalDevice = std::exchange(other._physicalDevice, nullptr);
-		_surface = std::exchange(other._surface, VK_NULL_HANDLE);
 	}
 
 	PhysicalDevice& PhysicalDevice::operator=(PhysicalDevice&& other) noexcept
@@ -57,7 +56,6 @@ namespace Concerto::Graphics::Vk
 		_formats = std::exchange(other._formats, std::nullopt);
 		_presentModes = std::exchange(other._presentModes, std::nullopt);
 		_physicalDevice = std::exchange(other._physicalDevice, nullptr);
-		_surface = std::exchange(other._surface, VK_NULL_HANDLE);
 		return *this;
 	}
 
@@ -121,64 +119,53 @@ namespace Concerto::Graphics::Vk
 		std::span<VkExtensionProperties> extensions = GetExtensionProperties();
 		std::vector<const char*> extensionsNames;
 		extensionsNames.reserve(extensions.size());
-		for (const auto& extension: extensions)
+		for (const auto& extension : extensions)
 			extensionsNames.push_back(extension.extensionName);
 		_extensionPropertiesNames = extensionsNames;
 		return _extensionPropertiesNames.value();
 	}
 
-	VkSurfaceCapabilitiesKHR PhysicalDevice::GetCapabilities() const
+	VkSurfaceCapabilitiesKHR PhysicalDevice::GetCapabilities(VkSurfaceKHR surface) const
 	{
 		if (_capabilities)
 			return _capabilities.value();
 		VkSurfaceCapabilitiesKHR capabilities;
-		const VkResult result = vkGetPhysicalDeviceSurfaceCapabilitiesKHR(_physicalDevice, _surface, &capabilities);
+		const VkResult result = vkGetPhysicalDeviceSurfaceCapabilitiesKHR(_physicalDevice, surface, &capabilities);
 		CONCERTO_ASSERT(result == VK_SUCCESS, "ConcertoGraphics: vkGetPhysicalDeviceSurfaceCapabilitiesKHR failed VKResult={}", static_cast<int>(result));
 		_capabilities = capabilities;
 		return _capabilities.value();
 	}
 
-	std::span<VkSurfaceFormatKHR> PhysicalDevice::GetFormats() const
+	std::span<VkSurfaceFormatKHR> PhysicalDevice::GetFormats(VkSurfaceKHR surface) const
 	{
 		if (_formats)
 			return _formats.value();
-		assert(_surface != VK_NULL_HANDLE);
 		UInt32 formatCount = 0;
-		vkGetPhysicalDeviceSurfaceFormatsKHR(_physicalDevice, _surface, &formatCount, nullptr);
+		vkGetPhysicalDeviceSurfaceFormatsKHR(_physicalDevice, surface, &formatCount, nullptr);
 		std::vector<VkSurfaceFormatKHR> formats(formatCount);
-		vkGetPhysicalDeviceSurfaceFormatsKHR(_physicalDevice, _surface, &formatCount, formats.data());
+		vkGetPhysicalDeviceSurfaceFormatsKHR(_physicalDevice, surface, &formatCount, formats.data());
 		_formats = formats;
 		return _formats.value();
 	}
 
-	std::span<VkPresentModeKHR> PhysicalDevice::GetPresentModes() const
+	std::span<VkPresentModeKHR> PhysicalDevice::GetPresentModes(VkSurfaceKHR surface) const
 	{
 		if (_presentModes)
 			return _presentModes.value();
 		UInt32 count = 0;
-		vkGetPhysicalDeviceSurfacePresentModesKHR(_physicalDevice, _surface, &count, nullptr);
+		vkGetPhysicalDeviceSurfacePresentModesKHR(_physicalDevice, surface, &count, nullptr);
 		std::vector<VkPresentModeKHR> modes(count);
-		vkGetPhysicalDeviceSurfacePresentModesKHR(_physicalDevice, _surface, &count, modes.data());
+		vkGetPhysicalDeviceSurfacePresentModesKHR(_physicalDevice, surface, &count, modes.data());
 		_presentModes = modes;
 		return _presentModes.value();
 	}
 
-	PhysicalDevice::SurfaceSupportDetails PhysicalDevice::GetSurfaceSupportDetails() const
+	PhysicalDevice::SurfaceSupportDetails PhysicalDevice::GetSurfaceSupportDetails(VkSurfaceKHR surface) const
 	{
 		SurfaceSupportDetails details;
-		details.capabilities = GetCapabilities();
-		details.formats = GetFormats();
-		details.presentModes = GetPresentModes();
+		details.capabilities = GetCapabilities(surface);
+		details.formats = GetFormats(surface);
+		details.presentModes = GetPresentModes(surface);
 		return details;
-	}
-
-	VkSurfaceKHR PhysicalDevice::GetSurface()
-	{
-		return _surface;
-	}
-
-	void PhysicalDevice::SetSurface(VkSurfaceKHR surface)
-	{
-		_surface = surface;
 	}
 } // Concerto::Graphics::Vk

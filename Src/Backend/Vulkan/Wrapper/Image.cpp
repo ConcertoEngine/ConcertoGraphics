@@ -4,6 +4,7 @@
 
 #define STB_IMAGE_IMPLEMENTATION
 
+#include <format>
 #include <stb_image.h>
 
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Device.hpp"
@@ -18,28 +19,31 @@ namespace Concerto::Graphics::Vk
 {
 	Image::Image(Device& device, VkExtent2D extent, VkFormat depthFormat) :
 		Object(device),
+		_isAllocated(true),
 		_imageFormat(depthFormat),
-		_isAllocated(true)
+		_extent(extent)
 	{
 		VkExtent3D depthImageExtent = {
 				extent.width,
 				extent.height,
 				1
 		};
-		VkImageCreateInfo dimg_info = VulkanInitializer::ImageCreateInfo(depthFormat,
-				VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, depthImageExtent);
-		VmaAllocationCreateInfo dimg_allocinfo = {};
-		dimg_allocinfo.usage = VMA_MEMORY_USAGE_GPU_ONLY;
-		dimg_allocinfo.requiredFlags = VkMemoryPropertyFlags(VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+		VkImageCreateInfo imageCreateInfo = VulkanInitializer::ImageCreateInfo(depthFormat, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, depthImageExtent);
+		VmaAllocationCreateInfo imageAllocInfo = {};
+		imageAllocInfo.usage = VMA_MEMORY_USAGE_GPU_ONLY;
+		imageAllocInfo.requiredFlags = static_cast<VkMemoryPropertyFlags>(VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
 
-		_lastResult = vmaCreateImage(*device.GetAllocator().Get(), &dimg_info, &dimg_allocinfo, &_handle, &_allocation, nullptr);
+		_lastResult = vmaCreateImage(*device.GetAllocator().Get(), &imageCreateInfo, &imageAllocInfo, &_handle, &_allocation, nullptr);
 		CONCERTO_ASSERT(_lastResult == VK_SUCCESS, "ConcertoGraphics: vmaCreateImage failed VkResult={}", static_cast<int>(_lastResult));
+
+		device.SetObjectName(reinterpret_cast<UInt64>(_handle), std::format("{}x{}", _extent.width, _extent.height));
 	}
 
 	Image::Image(Device& device, const std::string& file, CommandBuffer& commandBuffer, UploadContext& uploadContext, Queue& queue) :
 		Object(device),
 		_isAllocated(true),
-		_imageFormat(VK_FORMAT_R8G8B8A8_SRGB)
+		_imageFormat(VK_FORMAT_R8G8B8A8_SRGB),
+		_extent()
 	{
 		int textureWidth, textureHeight, textureChannels;
 		stbi_uc* pixels = stbi_load(file.c_str(), &textureWidth, &textureHeight, &textureChannels, STBI_rgb_alpha);
@@ -54,17 +58,18 @@ namespace Concerto::Graphics::Vk
 		Buffer stagingBuffer(device.GetAllocator(), imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VMA_MEMORY_USAGE_CPU_ONLY, true);
 		stagingBuffer.Copy(pixelPtr, imageSize, 0);
 
-		VkExtent3D imageExtent = {
-				static_cast<uint32_t>(textureWidth),
-				static_cast<uint32_t>(textureHeight),
-				1
+		_extent.width = static_cast<uint32_t>(textureWidth);
+		_extent.height = static_cast<uint32_t>(textureHeight);
+		VkExtent3D extent3D = {
+			.width = _extent.width,
+			.height = _extent.height,
+			.depth = 1
 		};
-		VkImageCreateInfo dimg_info = VulkanInitializer::ImageCreateInfo(VK_FORMAT_R8G8B8A8_SRGB,
-			VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT, imageExtent);
-		VmaAllocationCreateInfo dimg_allocinfo = {};
-		dimg_allocinfo.usage = VMA_MEMORY_USAGE_GPU_ONLY;
+		VkImageCreateInfo imageCreateInfo = VulkanInitializer::ImageCreateInfo(VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT, extent3D);
+		VmaAllocationCreateInfo imageAllocInfo = {};
+		imageAllocInfo.usage = VMA_MEMORY_USAGE_GPU_ONLY;
 
-		const VkResult result = vmaCreateImage(*device.GetAllocator().Get(), &dimg_info, &dimg_allocinfo, &_handle, &_allocation, nullptr);
+		const VkResult result = vmaCreateImage(*device.GetAllocator().Get(), &imageCreateInfo, &imageAllocInfo, &_handle, &_allocation, nullptr);
 		CONCERTO_ASSERT(result == VK_SUCCESS, "ConcertoGraphics: vmaCreateImage failed VKResult={}", static_cast<int>(result));
 
 		commandBuffer.ImmediateSubmit(uploadContext._uploadFence, uploadContext._commandPool, queue,
@@ -101,11 +106,10 @@ namespace Concerto::Graphics::Vk
 					copyRegion.imageSubresource.mipLevel = 0;
 					copyRegion.imageSubresource.baseArrayLayer = 0;
 					copyRegion.imageSubresource.layerCount = 1;
-					copyRegion.imageExtent = imageExtent;
+					copyRegion.imageExtent = extent3D;
 
 					//copy the buffer into the image
-					vkCmdCopyBufferToImage(*cb.Get(), *stagingBuffer.Get(), _handle,
-							VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &copyRegion);
+					vkCmdCopyBufferToImage(*cb.Get(), *stagingBuffer.Get(), _handle, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &copyRegion);
 
 					VkImageMemoryBarrier imageBarrier_toReadable = imageBarrier_toTransfer;
 
@@ -120,6 +124,7 @@ namespace Concerto::Graphics::Vk
 							VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, 0, 0, nullptr, 0, nullptr, 1,
 							&imageBarrier_toReadable);
 				});
+		device.SetObjectName(reinterpret_cast<UInt64>(_handle), std::format("{}x{}", _extent.width, _extent.height));
 	}
 
 	Image::~Image()
@@ -131,16 +136,23 @@ namespace Concerto::Graphics::Vk
 		vmaDestroyImage(*_device->GetAllocator().Get(), _handle, _allocation);
 	}
 
-	Image::Image(Device& device, VkImage image, VkFormat imageFormat) :
+	Image::Image(Device& device, VkExtent2D extent, VkImage image, VkFormat imageFormat) :
 		Object(device),
 		_isAllocated(false),
-		_imageFormat(imageFormat)
+		_imageFormat(imageFormat),
+		_extent(extent)
 	{
 		_handle = image;
+		device.SetObjectName(reinterpret_cast<UInt64>(_handle), std::format("{}x{}", _extent.width, _extent.height));
 	}
 
 	VkFormat Image::GetFormat() const
 	{
 		return _imageFormat;
+	}
+
+	VkExtent2D Image::GetExtent() const
+	{
+		return _extent;
 	}
 }

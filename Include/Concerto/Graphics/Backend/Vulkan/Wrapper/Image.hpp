@@ -36,7 +36,7 @@ namespace Concerto::Graphics::Vk
 		* @param image The existing image handle.
 		* @param imageFormat The format of the image.
 		*/
-		Image(Device& device, VkImage image, VkFormat imageFormat);
+		Image(Device& device, VkExtent2D extent, VkImage image, VkFormat imageFormat);
 
 		/**
 		* @brief Constructs a new image with the specified extent and format.
@@ -75,10 +75,13 @@ namespace Concerto::Graphics::Vk
 		*/
 		[[nodiscard]] VkFormat GetFormat() const;
 
+		VkExtent2D GetExtent() const;
+
 	private:
 		bool _isAllocated;
 		VkFormat _imageFormat{};
 		VmaAllocation _allocation{};
+		VkExtent2D _extent;
 	};
 }
 

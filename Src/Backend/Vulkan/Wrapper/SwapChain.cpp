@@ -13,6 +13,7 @@
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/RenderPass.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Semaphore.hpp"
 #include "Concerto/Graphics/Window/Window.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/Instance.hpp"
 
 namespace Concerto::Graphics::Vk
 {
@@ -25,7 +26,8 @@ namespace Concerto::Graphics::Vk
 		_depthImageView(device, _depthImage, VK_IMAGE_ASPECT_DEPTH_BIT),
 		_physicalDevice(device.GetPhysicalDevice()),
 		_window(window),
-		_currentImageIndex(0)
+		_currentImageIndex(0),
+		_surface(VK_NULL_HANDLE)
 	{
 		this->ReCreate(colorFormat, depthFormat);
 	}
@@ -49,7 +51,7 @@ namespace Concerto::Graphics::Vk
 		std::vector<Image> images;
 		images.reserve(imageCount);
 		for (auto& image: swapChainImages)
-			images.emplace_back(*_device, image, _swapChainImageFormat);
+			images.emplace_back(*_device, _windowExtent, image, _swapChainImageFormat);
 		_swapChainImages = std::move(images);
 		return _swapChainImages.value();
 	}
@@ -110,21 +112,27 @@ namespace Concerto::Graphics::Vk
 
 	bool SwapChain::ReCreate(VkFormat colorFormat, VkFormat depthFormat)
 	{
+		_windowExtent = {_window.GetWidth(), _window.GetHeight()};
 		if (_handle)
-		{
 			vkDestroySwapchainKHR(*_device->Get(), _handle, nullptr);
-		}
-		PhysicalDevice::SurfaceSupportDetails surfaceSupportDetails = _physicalDevice.GetSurfaceSupportDetails();
-		VkSwapchainCreateInfoKHR swapChainCreateInfo{};
+		if (_surface)
+			vkDestroySurfaceKHR(*GetDevice()->GetInstance().Get(), _surface, nullptr);
+		if (!_window.CreateVulkanSurface(*GetDevice()->GetInstance().Get(), _surface))
+			return false;
+		_swapChainImageViews.reset();
+		_swapChainImages.reset();
+		_depthImage = Image(*GetDevice(), _windowExtent, depthFormat);
+		_depthImageView = ImageView(*GetDevice(), _depthImage, VK_IMAGE_ASPECT_DEPTH_BIT);
+		PhysicalDevice::SurfaceSupportDetails surfaceSupportDetails = _physicalDevice.GetSurfaceSupportDetails(_surface);
+		VkSwapchainCreateInfoKHR swapChainCreateInfo = {};
 		UInt32 imageCount = surfaceSupportDetails.capabilities.minImageCount + 1;
-		if (surfaceSupportDetails.capabilities.maxImageCount > 0 &&
-			imageCount > surfaceSupportDetails.capabilities.maxImageCount)
+		if (surfaceSupportDetails.capabilities.maxImageCount > 0 && imageCount > surfaceSupportDetails.capabilities.maxImageCount)
 			imageCount = surfaceSupportDetails.capabilities.maxImageCount;
 
 		swapChainCreateInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
-		swapChainCreateInfo.surface = _physicalDevice.GetSurface();
+		swapChainCreateInfo.surface = _surface;
 		swapChainCreateInfo.minImageCount = imageCount;
-		swapChainCreateInfo.imageFormat = _swapChainImageFormat;
+		swapChainCreateInfo.imageFormat = colorFormat;
 		swapChainCreateInfo.imageColorSpace = VK_COLOR_SPACE_SRGB_NONLINEAR_KHR;
 		swapChainCreateInfo.imageExtent = _windowExtent;
 		swapChainCreateInfo.imageArrayLayers = 1;

@@ -48,12 +48,21 @@ namespace Concerto::Graphics::RHI
 
 	Frame& VkRHISwapChain::AcquireFrame()
 	{
-		SwapChainFrame& frame = _frames[_currentFrameIndex];
-		frame.Wait();
 		if (_needResize)
 		{
+			GetDevice()->WaitIdle();
+			SwapChainFrame& frame = _frames[_currentFrameIndex];
+			frame.Wait();
 			Vk::SwapChain::ReCreate(Converters::ToVulkan(_pixelFormat), Converters::ToVulkan(_depthPixelFormat));
+			_frameBuffers.clear();
+			_frames.clear();
+			CreateRenderPass();
+			CreateFrames();
+			CreateFrameBuffers(GetRHIDevice());
+			_needResize = false;
 		}
+		SwapChainFrame& frame = _frames[_currentFrameIndex];
+		frame.Wait();
 		const UInt32 nextImageIndex = Vk::SwapChain::AcquireNextImage(frame.GetPresentSemaphore(), frame.GetRenderFence(), -1);
 		frame.SetNextImageIndex(nextImageIndex);
 		return frame;

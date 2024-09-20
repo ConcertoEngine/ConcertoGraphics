@@ -122,20 +122,7 @@ int main()
 		materialBuilder->Update(*sceneBuffer, 0, 1);
 		materialBuilder->Update(*objectsBuffer, 1, 0);
 
-		Rect2D dynamicScissor = {};
-		dynamicScissor.x = 0;
-		dynamicScissor.y = 0;
-		dynamicScissor.width = window.GetWidth();
-		dynamicScissor.height = window.GetHeight();
-
-		Viewport viewport{
-			.x = 0.f,
-			.y = 0.f,
-			.width = static_cast<float>(window.GetWidth()),
-			.height = static_cast<float>(window.GetHeight()),
-			.minDepth = 0.f,
-			.maxDepth = 1.f,
-		};
+		
 		std::chrono::steady_clock::time_point lastFrameTime = std::chrono::steady_clock::now();
 		while (!window.ShouldClose())
 		{
@@ -152,6 +139,19 @@ int main()
 			commandBuffer.Reset();
 			commandBuffer.Begin();
 			{
+				Viewport viewport{
+					.x = 0.f,
+					.y = 0.f,
+					.width = static_cast<float>(window.GetWidth()),
+					.height = static_cast<float>(window.GetHeight()),
+					.minDepth = 0.f,
+					.maxDepth = 1.f,
+				};
+				Rect2D dynamicScissor = {};
+				dynamicScissor.x = 0;
+				dynamicScissor.y = 0;
+				dynamicScissor.width = window.GetWidth();
+				dynamicScissor.height = window.GetHeight();
 				commandBuffer.SetViewport(viewport);
 				commandBuffer.SetScissor(dynamicScissor);
 				commandBuffer.BeginRenderPass(renderPass, currentFrame.GetFrameBuffer(), Vector3f{ 1.f, 0.f, 0.f });

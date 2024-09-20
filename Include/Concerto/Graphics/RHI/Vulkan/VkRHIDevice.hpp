@@ -31,7 +31,7 @@ namespace Concerto::Graphics::RHI
 		std::size_t GetMinimumUniformBufferOffsetAlignment() const override;
 
 		Vk::UploadContext& GetUploadContext();
-
+		Vk::Instance& GetVkInstance();
 	private:
 		VkSurfaceKHR _surface;
 		Vk::Instance* _vkInstance;

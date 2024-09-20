@@ -90,6 +90,7 @@ namespace Concerto::Graphics::Vk
 		PhysicalDevice& _physicalDevice;
 		Window& _window;
 		UInt32 _currentImageIndex;
+		VkSurfaceKHR _surface;
 	};
 } // Concerto::Graphics::Vk
 

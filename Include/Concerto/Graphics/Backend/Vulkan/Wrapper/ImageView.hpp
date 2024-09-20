@@ -29,6 +29,8 @@ namespace Concerto::Graphics::Vk
 		ImageView& operator=(const ImageView&) = delete;
 
 		ImageView& operator=(ImageView&&) noexcept = default;
+	private:
+		Image* _image;
 	};
 }
 

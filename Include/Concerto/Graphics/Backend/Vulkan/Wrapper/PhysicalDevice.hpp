@@ -93,21 +93,17 @@ namespace Concerto::Graphics::Vk
 		*/
 		[[nodiscard]] std::span<const char*> GetExtensionPropertiesNames() const;
 
-		VkSurfaceCapabilitiesKHR GetCapabilities() const;
+		VkSurfaceCapabilitiesKHR GetCapabilities(VkSurfaceKHR surface) const;
 
-		std::span<VkSurfaceFormatKHR> GetFormats() const;
+		std::span<VkSurfaceFormatKHR> GetFormats(VkSurfaceKHR surface) const;
 
-		std::span<VkPresentModeKHR> GetPresentModes() const;
+		std::span<VkPresentModeKHR> GetPresentModes(VkSurfaceKHR surface) const;
 
-		SurfaceSupportDetails GetSurfaceSupportDetails() const;
+		SurfaceSupportDetails GetSurfaceSupportDetails(VkSurfaceKHR surface) const;
 
 		[[nodiscard]] VkPhysicalDevice* Get();
 
 		[[nodiscard]] VkPhysicalDevice Get() const;
-
-		[[nodiscard]] VkSurfaceKHR GetSurface();
-
-		void SetSurface(VkSurfaceKHR surface);
 
 	private:
 		mutable std::optional<std::vector<VkQueueFamilyProperties>> _queueFamilyProperties;
@@ -119,8 +115,7 @@ namespace Concerto::Graphics::Vk
 		mutable std::optional<VkSurfaceCapabilitiesKHR> _capabilities;
 		mutable std::optional<std::vector<VkSurfaceFormatKHR>> _formats;
 		mutable std::optional<std::vector<VkPresentModeKHR>> _presentModes;
-		VkPhysicalDevice _physicalDevice{ VK_NULL_HANDLE };
-		VkSurfaceKHR _surface{ VK_NULL_HANDLE };
+		VkPhysicalDevice _physicalDevice = VK_NULL_HANDLE;
 };
 
 } // Concerto::Graphics::Vk

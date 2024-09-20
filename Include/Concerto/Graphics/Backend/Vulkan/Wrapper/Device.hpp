@@ -96,6 +96,8 @@ namespace Concerto::Graphics::Vk
 
 		Allocator& GetAllocator() const;
 
+		Instance& GetInstance();
+
 	private:
 		void CreateAllocator(Instance& instance);
 
@@ -103,6 +105,7 @@ namespace Concerto::Graphics::Vk
 		VkDevice _device;
 		std::unique_ptr<Allocator> _allocator;
 		std::unordered_map<Queue::Type, Queue> _queues;
+		Instance* _instance;
 	};
 
 } // Concerto::Graphics::Vk
