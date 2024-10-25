@@ -2,7 +2,7 @@
 // Created by arthur on 11/06/22.
 //
 
-#include <vulkan/vulkan.h>
+
 #include <Concerto/Core/Assert.hpp>
 
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Swapchain.hpp"
@@ -36,7 +36,7 @@ namespace Concerto::Graphics::Vk
 	{
 		if (IsNull())
 			return;
-		vkDestroySwapchainKHR(*_device->Get(), _handle, nullptr);
+		_device->vkDestroySwapchainKHR(*_device->Get(), _handle, nullptr);
 	}
 
 	std::span<Image> SwapChain::GetImages() const
@@ -45,9 +45,9 @@ namespace Concerto::Graphics::Vk
 			return _swapChainImages.value();
 		UInt32 imageCount;
 		std::vector<VkImage> swapChainImages;
-		vkGetSwapchainImagesKHR(*_device->Get(), _handle, &imageCount, nullptr);
+		_device->vkGetSwapchainImagesKHR(*_device->Get(), _handle, &imageCount, nullptr);
 		swapChainImages.resize(imageCount);
-		vkGetSwapchainImagesKHR(*_device->Get(), _handle, &imageCount, swapChainImages.data());
+		_device->vkGetSwapchainImagesKHR(*_device->Get(), _handle, &imageCount, swapChainImages.data());
 		std::vector<Image> images;
 		images.reserve(imageCount);
 		for (auto& image: swapChainImages)
@@ -101,7 +101,7 @@ namespace Concerto::Graphics::Vk
 
 	UInt32 SwapChain::AcquireNextImage(Semaphore& semaphore, Fence& fence, std::uint64_t timeout)
 	{
-		_lastResult = vkAcquireNextImageKHR(*_device->Get(), _handle, timeout, *semaphore.Get(), VK_NULL_HANDLE, &_currentImageIndex);
+		_lastResult = _device->vkAcquireNextImageKHR(*_device->Get(), _handle, timeout, *semaphore.Get(), VK_NULL_HANDLE, &_currentImageIndex);
 		if (_lastResult != VK_SUCCESS)
 		{
 			CONCERTO_ASSERT_FALSE("ConcertoGraphics: vkCreateSemaphore failed VKResult={}", static_cast<int>(_lastResult));
@@ -110,13 +110,13 @@ namespace Concerto::Graphics::Vk
 		return _currentImageIndex;
 	}
 
-	bool SwapChain::ReCreate(VkFormat colorFormat, VkFormat depthFormat)
+	bool SwapChain::ReCreate(VkFormat pixelFormat, VkFormat depthFormat)
 	{
-		_windowExtent = {_window.GetWidth(), _window.GetHeight()};
+		_windowExtent = { _window.GetWidth(), _window.GetHeight() };
 		if (_handle)
-			vkDestroySwapchainKHR(*_device->Get(), _handle, nullptr);
+			_device->vkDestroySwapchainKHR(*_device->Get(), _handle, nullptr);
 		if (_surface)
-			vkDestroySurfaceKHR(*GetDevice()->GetInstance().Get(), _surface, nullptr);
+			_device->GetInstance().vkDestroySurfaceKHR(*GetDevice()->GetInstance().Get(), _surface, nullptr);
 		if (!_window.CreateVulkanSurface(*GetDevice()->GetInstance().Get(), _surface))
 			return false;
 		_swapChainImageViews.reset();
@@ -132,7 +132,7 @@ namespace Concerto::Graphics::Vk
 		swapChainCreateInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
 		swapChainCreateInfo.surface = _surface;
 		swapChainCreateInfo.minImageCount = imageCount;
-		swapChainCreateInfo.imageFormat = colorFormat;
+		swapChainCreateInfo.imageFormat = pixelFormat;
 		swapChainCreateInfo.imageColorSpace = VK_COLOR_SPACE_SRGB_NONLINEAR_KHR;
 		swapChainCreateInfo.imageExtent = _windowExtent;
 		swapChainCreateInfo.imageArrayLayers = 1;
@@ -143,7 +143,7 @@ namespace Concerto::Graphics::Vk
 		swapChainCreateInfo.presentMode = VK_PRESENT_MODE_IMMEDIATE_KHR;
 		swapChainCreateInfo.clipped = VK_TRUE;
 		swapChainCreateInfo.oldSwapchain = VK_NULL_HANDLE;
-		_lastResult = vkCreateSwapchainKHR(*_device->Get(), &swapChainCreateInfo, nullptr, &_handle);
+		_lastResult = _device->vkCreateSwapchainKHR(*_device->Get(), &swapChainCreateInfo, nullptr, &_handle);
 		if (_lastResult != VK_SUCCESS)
 		{
 			CONCERTO_ASSERT_FALSE("ConcertoGraphics: vkCreateSwapchainKHR failed VKResult={}",

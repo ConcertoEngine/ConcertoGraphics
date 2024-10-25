@@ -7,9 +7,6 @@
 
 #include <memory>
 
-#include <vulkan/vulkan.h>
-
-#include "Concerto/Graphics/Backend/Vulkan/Defines.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Object.hpp"
 
 namespace Concerto::Graphics::Vk

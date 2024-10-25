@@ -28,7 +28,7 @@ namespace Concerto::Graphics::Vk
 	{
 		if (IsNull())
 			return;
-		vkDestroyPipeline(*_device->Get(), _handle, nullptr);
+		_device->vkDestroyPipeline(*_device->Get(), _handle, nullptr);
 	}
 
 	VkPipeline Pipeline::BuildPipeline(VkRenderPass renderPass)
@@ -78,7 +78,7 @@ namespace Concerto::Graphics::Vk
 		pipelineInfo.pDepthStencilState = &_pipelineInfo._depthStencil;
 
 
-		if (vkCreateGraphicsPipelines(*_device->Get(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &_handle) !=
+		if (_device->vkCreateGraphicsPipelines(*_device->Get(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &_handle) !=
 			VK_SUCCESS)
 		{
 			std::cerr << "failed to create pipeline\n";

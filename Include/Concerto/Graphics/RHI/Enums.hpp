@@ -10,7 +10,7 @@
 
 namespace Concerto::Graphics::RHI
 {
-	enum class DeviceType
+	enum class DeviceType : UInt8
 	{
 		Other,      //Unknown device type
 		Integrated, //GPU integrated to the CPU
@@ -19,7 +19,7 @@ namespace Concerto::Graphics::RHI
 		Software    //CPU software renderer
 	};
 
-	enum class ValidationLevel
+	enum class ValidationLevel : UInt8
 	{
 		None = 0,
 		Info = 1,
@@ -28,7 +28,7 @@ namespace Concerto::Graphics::RHI
 		All = 4
 	};
 
-	enum class PixelFormat
+	enum class PixelFormat : UInt8
 	{
 		R8uNorm,
 		R8ui,
@@ -107,20 +107,20 @@ namespace Concerto::Graphics::RHI
 		D32f
 	};
 
-	enum class AttachmentLoadOp
+	enum class AttachmentLoadOp : UInt8
 	{
 		Load,
 		Clear,
 		DontCare
 	};
 
-	enum class AttachmentStoreOp
+	enum class AttachmentStoreOp : UInt8
 	{
 		Store,
 		DontCare
 	};
 
-	enum class ImageLayout
+	enum class ImageLayout : UInt8
 	{
 		Undefined,
 		General,
@@ -189,7 +189,7 @@ namespace Concerto::Graphics::RHI
 		ImageLayout imageLayout;
 	};
 
-	enum class QueueFamily
+	enum class QueueFamily : UInt8
 	{
 		Compute,  /**< Compute queue for parallel computation. */
 		Graphics, /**< Graphics queue for rendering operations. */

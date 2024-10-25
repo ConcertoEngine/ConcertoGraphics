@@ -2,11 +2,14 @@
 // Created by arthur on 25/10/2022.
 //
 
-#include <cassert>
 #include <stdexcept>
 
 #include <Concerto/Core/Assert.hpp>
 
+#include "Concerto/Graphics/Backend/Vulkan/Defines.hpp"
+#include <volk.h> // must be under this ^ include
+
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/Object.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Device.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/PhysicalDevice.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Instance.hpp"
@@ -15,12 +18,12 @@ namespace Concerto::Graphics::Vk
 {
 	std::vector<const char*> deviceExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME, VK_EXT_DEBUG_MARKER_EXTENSION_NAME };
 	Device::Device(PhysicalDevice& physicalDevice, Instance& instance) :
-		_physicalDevice(physicalDevice),
+		_physicalDevice(&physicalDevice),
 		_device(VK_NULL_HANDLE),
 		_allocator(nullptr),
 		_instance(&instance)
 	{
-		std::span<VkQueueFamilyProperties> queueFamilyProperties = _physicalDevice.GetQueueFamilyProperties();
+		std::span<VkQueueFamilyProperties> queueFamilyProperties = _physicalDevice->GetQueueFamilyProperties();
 		std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
 		queueCreateInfos.reserve(queueFamilyProperties.size());
 
@@ -58,14 +61,37 @@ namespace Concerto::Graphics::Vk
 		createInfo.pNext = &shader_draw_parameters_features;
 		createInfo.enabledExtensionCount = static_cast<UInt32>(deviceExtensions.size());
 		createInfo.ppEnabledExtensionNames = deviceExtensions.data();
-		const VkResult result = vkCreateDevice(*_physicalDevice.Get(), &createInfo, nullptr, &_device);
+		const VkResult result = instance.vkCreateDevice(*_physicalDevice->Get(), &createInfo, nullptr, &_device);
 		CONCERTO_ASSERT(result == VK_SUCCESS, "Error cannot create logical device: VkResult={}", static_cast<int>(result));
+
+		for (auto& ext : deviceExtensions)
+			_extensions.emplace(ext);
+
+		VolkDeviceTable deviceTable;
+		volkLoadDeviceTable(&deviceTable, _device);
+		#define CONCERTO_VULKAN_BACKEND_DEVICE_FUNCTION(func) this->func = deviceTable.func;
+
+		#define CONCERTO_VULKAN_BACKEND_DEVICE_EXT_BEGIN(ext)									\
+					if(IsExtensionEnabled(#ext))												\
+					{
+		#define CONCERTO_VULKAN_BACKEND_DEVICE_EXT_FUNCTION(func, ...)							\
+						CONCERTO_VULKAN_BACKEND_DEVICE_FUNCTION(func)							\
+						if (this->func == nullptr)												\
+						{																		\
+							CONCERTO_ASSERT_FALSE("ConcertoGraphics: Function: "				\
+								#func															\
+								" is null but the extension has been reported has supported");	\
+						}
+		#define CONCERTO_VULKAN_BACKEND_DEVICE_EXT_END }
+
+		#include "Concerto/Graphics/Backend/Vulkan/Wrapper/DeviceFunction.hpp"
+
 		CreateAllocator(instance);
 	}
 
 	UInt32 Device::GetQueueFamilyIndex(Queue::Type queueType) const
 	{
-		const std::span<VkQueueFamilyProperties> queueFamilyProperties = _physicalDevice.GetQueueFamilyProperties();
+		const std::span<VkQueueFamilyProperties> queueFamilyProperties = _physicalDevice->GetQueueFamilyProperties();
 		UInt32 i = 0;
 		for (const VkQueueFamilyProperties& properties: queueFamilyProperties)
 		{
@@ -83,7 +109,7 @@ namespace Concerto::Graphics::Vk
 
 	UInt32 Device::GetQueueFamilyIndex(UInt32 flag) const
 	{
-		const std::span<VkQueueFamilyProperties> queueFamilyProperties = _physicalDevice.GetQueueFamilyProperties();
+		const std::span<VkQueueFamilyProperties> queueFamilyProperties = _physicalDevice->GetQueueFamilyProperties();
 		UInt32 i = 0;
 		for (const VkQueueFamilyProperties properties: queueFamilyProperties)
 		{
@@ -116,40 +142,41 @@ namespace Concerto::Graphics::Vk
 
 	void Device::WaitIdle() const
 	{
-		const VkResult result = vkDeviceWaitIdle(_device);
+		const VkResult result = this->vkDeviceWaitIdle(_device);
 		CONCERTO_ASSERT(result == VK_SUCCESS, "ConcertoGraphics: Failed to Wait for device idle VkResult={}", static_cast<int>(result));
 	}
 
 	void Device::UpdateDescriptorSetsWrite(std::span<VkWriteDescriptorSet> descriptorWrites) const
 	{
-		vkUpdateDescriptorSets(_device, static_cast<UInt32>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
+		this->vkUpdateDescriptorSets(_device, static_cast<UInt32>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
 	}
 
 	void Device::UpdateDescriptorSetWrite(VkWriteDescriptorSet descriptorWrite)
 	{
-		vkUpdateDescriptorSets(_device, 1, &descriptorWrite, 0, nullptr);
+		this->vkUpdateDescriptorSets(_device, 1, &descriptorWrite, 0, nullptr);
 	}
 
 	void Device::SetObjectName(UInt64 object, std::string_view name)
 	{
-		//auto pfnDebugMarkerSetObjectTag = (PFN_vkDebugMarkerSetObjectTagEXT)vkGetDeviceProcAddr(_device, "vkDebugMarkerSetObjectTagEXT");
-		auto pfnDebugMarkerSetObjectName = (PFN_vkDebugMarkerSetObjectNameEXT)vkGetDeviceProcAddr(_device, "vkDebugMarkerSetObjectNameEXT");
-		//auto pfnCmdDebugMarkerBegin = (PFN_vkCmdDebugMarkerBeginEXT)vkGetDeviceProcAddr(_device, "vkCmdDebugMarkerBeginEXT");
-		//auto pfnCmdDebugMarkerEnd = (PFN_vkCmdDebugMarkerEndEXT)vkGetDeviceProcAddr(_device, "vkCmdDebugMarkerEndEXT");
-		//auto pfnCmdDebugMarkerInsert = (PFN_vkCmdDebugMarkerInsertEXT)vkGetDeviceProcAddr(_device, "vkCmdDebugMarkerInsertEXT");
-
+#ifdef CONCERTO_DEBUG
+		if (!IsExtensionEnabled(VK_EXT_DEBUG_MARKER_EXTENSION_NAME))
+		{
+			CONCERTO_ASSERT_FALSE("Device::SetObjectName is called but extension " VK_EXT_DEBUG_MARKER_EXTENSION_NAME " is not enabled");
+			return;
+		}
 		VkDebugMarkerObjectNameInfoEXT nameInfo = {};
 		nameInfo.sType = VK_STRUCTURE_TYPE_DEBUG_MARKER_OBJECT_NAME_INFO_EXT;
 		nameInfo.objectType = VK_DEBUG_REPORT_OBJECT_TYPE_UNKNOWN_EXT;
 		nameInfo.object = object;
 		nameInfo.pObjectName = name.data();
-		if (pfnDebugMarkerSetObjectName)
-			pfnDebugMarkerSetObjectName(_device, &nameInfo);
+		this->vkDebugMarkerSetObjectNameEXT(_device, &nameInfo);
+#endif
 	}
 
 	PhysicalDevice& Device::GetPhysicalDevice() const
 	{
-		return _physicalDevice;
+		CONCERTO_ASSERT_FALSE("ConcertoGraphics: Invalid physical device handle");
+		return *_physicalDevice;
 	}
 
 	Allocator& Device::GetAllocator() const
@@ -164,9 +191,14 @@ namespace Concerto::Graphics::Vk
 		return *_instance;
 	}
 
+	bool Device::IsExtensionEnabled(const std::string& ext) const
+	{
+		return _extensions.contains(ext);
+	}
+
 	void Device::CreateAllocator(Instance& instance)
 	{
-		_allocator = std::make_unique<Allocator>(_physicalDevice, *this, instance);
+		_allocator = std::make_unique<Allocator>(*_physicalDevice, *this, instance);
 		CONCERTO_ASSERT(_allocator != nullptr, "ConcertoGraphics: Cannot create allocator");
 	}
 

@@ -35,8 +35,6 @@ namespace Concerto::Graphics::Vk
 
 		_lastResult = vmaCreateImage(*device.GetAllocator().Get(), &imageCreateInfo, &imageAllocInfo, &_handle, &_allocation, nullptr);
 		CONCERTO_ASSERT(_lastResult == VK_SUCCESS, "ConcertoGraphics: vmaCreateImage failed VkResult={}", static_cast<int>(_lastResult));
-
-		device.SetObjectName(reinterpret_cast<UInt64>(_handle), std::format("{}x{}", _extent.width, _extent.height));
 	}
 
 	Image::Image(Device& device, const std::string& file, CommandBuffer& commandBuffer, UploadContext& uploadContext, Queue& queue) :
@@ -94,7 +92,7 @@ namespace Concerto::Graphics::Vk
 					imageBarrier_toTransfer.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
 
 					//barrier the image into the Transfer-receive layout
-					vkCmdPipelineBarrier(*cb.Get(), VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT, 0,
+					_device->vkCmdPipelineBarrier(*cb.Get(), VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT, 0,
 							0, nullptr, 0, nullptr, 1, &imageBarrier_toTransfer);
 
 					VkBufferImageCopy copyRegion = {};
@@ -109,7 +107,7 @@ namespace Concerto::Graphics::Vk
 					copyRegion.imageExtent = extent3D;
 
 					//copy the buffer into the image
-					vkCmdCopyBufferToImage(*cb.Get(), *stagingBuffer.Get(), _handle, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &copyRegion);
+					_device->vkCmdCopyBufferToImage(*cb.Get(), *stagingBuffer.Get(), _handle, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &copyRegion);
 
 					VkImageMemoryBarrier imageBarrier_toReadable = imageBarrier_toTransfer;
 
@@ -120,11 +118,10 @@ namespace Concerto::Graphics::Vk
 					imageBarrier_toReadable.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
 
 					//barrier the image into the shader readable layout
-					vkCmdPipelineBarrier(*cb.Get(), VK_PIPELINE_STAGE_TRANSFER_BIT,
+					_device->vkCmdPipelineBarrier(*cb.Get(), VK_PIPELINE_STAGE_TRANSFER_BIT,
 							VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, 0, 0, nullptr, 0, nullptr, 1,
 							&imageBarrier_toReadable);
 				});
-		device.SetObjectName(reinterpret_cast<UInt64>(_handle), std::format("{}x{}", _extent.width, _extent.height));
 	}
 
 	Image::~Image()
@@ -143,7 +140,6 @@ namespace Concerto::Graphics::Vk
 		_extent(extent)
 	{
 		_handle = image;
-		device.SetObjectName(reinterpret_cast<UInt64>(_handle), std::format("{}x{}", _extent.width, _extent.height));
 	}
 
 	VkFormat Image::GetFormat() const

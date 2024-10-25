@@ -5,7 +5,7 @@
 #ifndef CONCERTO_GRAPHICS_SAMPLER_HPP
 #define CONCERTO_GRAPHICS_SAMPLER_HPP
 
-#include <vulkan/vulkan.h>
+
 
 #include "Concerto/Graphics/Backend/Vulkan/Defines.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Object.hpp"

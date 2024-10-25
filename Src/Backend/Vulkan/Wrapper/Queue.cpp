@@ -13,9 +13,11 @@
 
 namespace Concerto::Graphics::Vk
 {
-	Queue::Queue(Device& device, UInt32 queueFamilyIndex) : Object<VkQueue>(device), _queueFamilyIndex(queueFamilyIndex)
+	Queue::Queue(Device& device, UInt32 queueFamilyIndex) :
+		Object<VkQueue>(device),
+		_queueFamilyIndex(queueFamilyIndex)
 	{
-		vkGetDeviceQueue(*_device->Get(), _queueFamilyIndex, 0, &_handle);
+		_device->vkGetDeviceQueue(*_device->Get(), _queueFamilyIndex, 0, &_handle);
 	}
 
 	UInt32 Queue::GetFamilyIndex() const
@@ -36,7 +38,7 @@ namespace Concerto::Graphics::Vk
 		submit.pSignalSemaphores = renderSemaphore ? renderSemaphore->Get() : VK_NULL_HANDLE;
 		submit.commandBufferCount = 1;
 		submit.pCommandBuffers = commandBuffer.Get();
-		_lastResult = vkQueueSubmit(_handle, 1, &submit, *renderFence.Get());
+		_lastResult = _device->vkQueueSubmit(_handle, 1, &submit, *renderFence.Get());
 		CONCERTO_ASSERT(_lastResult == VK_SUCCESS, "ConcertoGraphics: vkQueueSubmit failed VKResult={}", static_cast<int>(_lastResult));
 	}
 
@@ -50,7 +52,7 @@ namespace Concerto::Graphics::Vk
 		present.pWaitSemaphores = renderSemaphore.Get();
 		present.waitSemaphoreCount = 1;
 		present.pImageIndices = &swapchainImageIndex;
-		_lastResult = vkQueuePresentKHR(_handle, &present);
+		_lastResult = _device->vkQueuePresentKHR(_handle, &present);
 		if (_lastResult == VK_ERROR_OUT_OF_DATE_KHR || _lastResult == VK_SUBOPTIMAL_KHR)
 		{
 			return false;

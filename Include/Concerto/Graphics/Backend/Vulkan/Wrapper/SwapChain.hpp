@@ -9,7 +9,7 @@
 #include <optional>
 #include <span>
 
-#include <vulkan/vulkan.h>
+
 #include "Concerto/Graphics/Backend/Vulkan/Defines.hpp"
 
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Object.hpp"
@@ -76,7 +76,7 @@ namespace Concerto::Graphics::Vk
 		 */
 		UInt32 AcquireNextImage(Semaphore& semaphore, Fence& fence, std::uint64_t timeout);
 
-		bool ReCreate(VkFormat colorFormat = VK_FORMAT_B8G8R8A8_SRGB, VkFormat depthFormat = VK_FORMAT_D32_SFLOAT);
+		bool ReCreate(VkFormat pixelFormat = VK_FORMAT_B8G8R8A8_SRGB, VkFormat depthFormat = VK_FORMAT_D32_SFLOAT);
 
 	private:
 		void CreateFrameBuffers();

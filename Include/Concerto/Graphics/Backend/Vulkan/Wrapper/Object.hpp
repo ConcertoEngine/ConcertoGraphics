@@ -5,8 +5,7 @@
 #ifndef CONCERTO_GRAPHICS_OBJECT_HPP
 #define CONCERTO_GRAPHICS_OBJECT_HPP
 
-#include <functional>
-#include <vulkan/vulkan.h>
+#include "Concerto/Graphics/Backend/Vulkan/Defines.hpp"
 
 namespace Concerto::Graphics::Vk
 {
@@ -40,6 +39,6 @@ namespace Concerto::Graphics::Vk
 	};
 }
 
-#include "Object.inl"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/Object.inl"
 
 #endif //CONCERTO_GRAPHICS_OBJECT_HPP

@@ -16,7 +16,7 @@ namespace Concerto::Graphics::Vk
 	Sampler::Sampler(Device& device, VkFilter filter, VkSamplerAddressMode samplerAddressMode) : Object(device)
 	{
 		VkSamplerCreateInfo samplerInfo = VulkanInitializer::SamplerCreateInfo(filter, samplerAddressMode);
-		_lastResult = vkCreateSampler(*_device->Get(), &samplerInfo, nullptr, &_handle);
+		_lastResult = _device->vkCreateSampler(*_device->Get(), &samplerInfo, nullptr, &_handle);
 		if (_lastResult != VK_SUCCESS)
 		{
 			CONCERTO_ASSERT_FALSE("ConcertoGraphics: vkCreateSampler failed VKResult={}", static_cast<int>(_lastResult));
@@ -28,6 +28,6 @@ namespace Concerto::Graphics::Vk
 	{
 		if (IsNull())
 			return;
-		vkDestroySampler(*_device->Get(), _handle, nullptr);
+		_device->vkDestroySampler(*_device->Get(), _handle, nullptr);
 	}
 }

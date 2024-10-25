@@ -29,7 +29,7 @@ namespace Concerto::Graphics::Vk
 		pipelineLayoutCreateInfo.pSetLayouts = vkDescriptorSetLayouts.data();
 		pipelineLayoutCreateInfo.pushConstantRangeCount = 0;
 		pipelineLayoutCreateInfo.pPushConstantRanges = nullptr;
-		const VkResult result = vkCreatePipelineLayout(*_device->Get(), &pipelineLayoutCreateInfo, nullptr, &_handle);
+		const VkResult result = _device->vkCreatePipelineLayout(*_device->Get(), &pipelineLayoutCreateInfo, nullptr, &_handle);
 		CONCERTO_ASSERT(result == VK_SUCCESS, "ConcertoGraphics: vkCreatePipelineLayout failed VKResult={}", static_cast<int>(result));
 	}
 
@@ -37,7 +37,7 @@ namespace Concerto::Graphics::Vk
 	{
 		if (IsNull())
 			return;
-		vkDestroyPipelineLayout(*_device->Get(), _handle, nullptr);
+		_device->vkDestroyPipelineLayout(*_device->Get(), _handle, nullptr);
 	}
 
 	const std::vector<std::shared_ptr<DescriptorSetLayout>>& PipelineLayout::GetDescriptorSetLayouts() const

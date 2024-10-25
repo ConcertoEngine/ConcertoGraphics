@@ -19,25 +19,25 @@ namespace Concerto::Graphics::Vk
 		Object<VmaAllocator>(device)
 	{
 		VmaVulkanFunctions vulkanFunctions {
-			.vkGetInstanceProcAddr = vkGetInstanceProcAddr,
-			.vkGetDeviceProcAddr = vkGetDeviceProcAddr,
-			.vkGetPhysicalDeviceProperties = vkGetPhysicalDeviceProperties,
-			.vkGetPhysicalDeviceMemoryProperties = vkGetPhysicalDeviceMemoryProperties,
-			.vkAllocateMemory = vkAllocateMemory,
-			.vkFreeMemory = vkFreeMemory,
-			.vkMapMemory = vkMapMemory,
-			.vkUnmapMemory = vkUnmapMemory,
-			.vkFlushMappedMemoryRanges = vkFlushMappedMemoryRanges,
-			.vkInvalidateMappedMemoryRanges = vkInvalidateMappedMemoryRanges,
-			.vkBindBufferMemory = vkBindBufferMemory,
-			.vkBindImageMemory = vkBindImageMemory,
-			.vkGetBufferMemoryRequirements = vkGetBufferMemoryRequirements,
-			.vkGetImageMemoryRequirements = vkGetImageMemoryRequirements,
-			.vkCreateBuffer = vkCreateBuffer,
-			.vkDestroyBuffer = vkDestroyBuffer,
-			.vkCreateImage = vkCreateImage,
-			.vkDestroyImage = vkDestroyImage,
-			.vkCmdCopyBuffer = vkCmdCopyBuffer
+			.vkGetInstanceProcAddr = Instance::vkGetInstanceProcAddr,
+			.vkGetDeviceProcAddr = instance.vkGetDeviceProcAddr,
+			.vkGetPhysicalDeviceProperties = instance.vkGetPhysicalDeviceProperties,
+			.vkGetPhysicalDeviceMemoryProperties = instance.vkGetPhysicalDeviceMemoryProperties,
+			.vkAllocateMemory = device.vkAllocateMemory,
+			.vkFreeMemory = device.vkFreeMemory,
+			.vkMapMemory = device.vkMapMemory,
+			.vkUnmapMemory = device.vkUnmapMemory,
+			.vkFlushMappedMemoryRanges = device.vkFlushMappedMemoryRanges,
+			.vkInvalidateMappedMemoryRanges = device.vkInvalidateMappedMemoryRanges,
+			.vkBindBufferMemory = device.vkBindBufferMemory,
+			.vkBindImageMemory = device.vkBindImageMemory,
+			.vkGetBufferMemoryRequirements = device.vkGetBufferMemoryRequirements,
+			.vkGetImageMemoryRequirements = device.vkGetImageMemoryRequirements,
+			.vkCreateBuffer = device.vkCreateBuffer,
+			.vkDestroyBuffer = device.vkDestroyBuffer,
+			.vkCreateImage = device.vkCreateImage,
+			.vkDestroyImage = device.vkDestroyImage,
+			.vkCmdCopyBuffer = device.vkCmdCopyBuffer
 		};
 		VmaAllocatorCreateInfo allocatorInfo = {};
 		allocatorInfo.physicalDevice = *physicalDevice.Get();

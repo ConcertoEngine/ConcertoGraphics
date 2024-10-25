@@ -6,7 +6,6 @@
 #define CONCERTO_GRAPHICS_BACKEND_VULKAN_VERTEX_HPP
 
 #include <vector>
-#include <vulkan/vulkan.hpp>
 
 #include "Concerto/Graphics/Backend/Vulkan/Defines.hpp"
 

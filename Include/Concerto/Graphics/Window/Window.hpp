@@ -8,8 +8,7 @@
 #include <string>
 #include <functional>
 #include <optional>
-
-#include <vulkan/vulkan.h>
+#include <vulkan/vulkan_core.h>
 
 #include "Concerto/Graphics/Defines.hpp"
 #include "Concerto/Graphics/Window/Key.hpp"

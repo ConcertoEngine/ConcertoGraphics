@@ -7,12 +7,6 @@
 
 #include "Concerto/Graphics/RHI/Vulkan/VkRHI.hpp"
 #include "Concerto/Graphics/RHI/Vulkan/VkRHIDevice.hpp"
-#ifdef CONCERTO_PLATFORM_WINDOWS
-#include <Windows.h>
-#include <vulkan/vulkan_win32.h>
-#elif defined(CONCERTO_PLATFORM_POSIX)
-#error "fixme"
-#endif
 
 namespace Concerto::Graphics
 {

@@ -6,6 +6,7 @@
 #define CONCERTO_GRAPHICS_BUFFER_HPP
 
 #include <cstddef>
+#include <functional>
 
 #include <Concerto/Core/Assert.hpp>
 

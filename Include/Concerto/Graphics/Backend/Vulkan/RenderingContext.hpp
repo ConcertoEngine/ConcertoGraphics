@@ -5,8 +5,7 @@
 #ifndef CONCERTO_GRAPHICS_RENDERINGCONTEXT_HPP
 #define CONCERTO_GRAPHICS_RENDERINGCONTEXT_HPP
 
-#include <cstdint>
-#include <vulkan/vulkan.h>
+#include "Concerto/Graphics/Backend/Vulkan/Defines.hpp"
 
 namespace Concerto::Graphics::Vk
 {

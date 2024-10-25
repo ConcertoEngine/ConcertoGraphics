@@ -8,10 +8,8 @@
 #include <optional>
 #include <span>
 #include <string>
+#include <unordered_set>
 #include <vector>
-
-#include <vulkan/vulkan.h>
-#include <Concerto/Core/Types.hpp>
 
 #include "Concerto/Graphics/Backend/Vulkan/Defines.hpp"
 #include "Concerto/Graphics/Version.hpp"
@@ -80,11 +78,20 @@ namespace Concerto::Graphics::Vk
 
 		[[nodiscard]] inline VkResult GetLastError() const;
 
+		bool IsExtensionEnabled(const std::string& ext) const; //use string_view instead
+
+		#define CONCERTO_VULKAN_BACKEND_INSTANCE_FUNCTION(func) PFN_##func func = nullptr;
+		#define CONCERTO_VULKAN_BACKEND_INSTANCE_EXT_FUNCTION(func, ...) CONCERTO_VULKAN_BACKEND_INSTANCE_FUNCTION(func)
+		#include "Concerto/Graphics/Backend/Vulkan/Wrapper/InstanceFunction.hpp"
+
+		static PFN_vkGetInstanceProcAddr vkGetInstanceProcAddr;
 	private:
 		VkInstance _instance;
 		Version _apiVersion;
 		mutable VkResult _lastResult;
 		mutable std::optional<std::vector<PhysicalDevice>> _physicalDevices;
+		std::unordered_set<std::string> _loadedExtensions;
+		std::unordered_set<std::string> _loadedLayers;
 	};
 } // Concerto::Graphics::Vk
 

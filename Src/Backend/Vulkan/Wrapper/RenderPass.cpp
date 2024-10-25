@@ -25,7 +25,7 @@ namespace Concerto::Graphics::Vk
 		renderPassCreateInfo.dependencyCount = static_cast<UInt32>(subPassDependencies.size());
 		renderPassCreateInfo.pDependencies = subPassDependencies.data();
 
-		const VkResult result = vkCreateRenderPass(*_device->Get(), &renderPassCreateInfo, nullptr, &_handle);
+		const VkResult result = _device->vkCreateRenderPass(*_device->Get(), &renderPassCreateInfo, nullptr, &_handle);
 		CONCERTO_ASSERT(result == VK_SUCCESS, "ConcertoGraphics: vkCreateRenderPass failed VKResult={}", static_cast<int>(result));
 	}
 
@@ -33,6 +33,6 @@ namespace Concerto::Graphics::Vk
 	{
 		if (IsNull())
 			return;
-		vkDestroyRenderPass(*_device->Get(), _handle, nullptr);
+		_device->vkDestroyRenderPass(*_device->Get(), _handle, nullptr);
 	}
 } // Concerto::Graphics::Vk

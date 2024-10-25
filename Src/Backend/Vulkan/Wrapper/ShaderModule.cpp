@@ -40,7 +40,7 @@ namespace Concerto::Graphics::Vk
 	{
 		if (IsNull())
 			return;
-		vkDestroyShaderModule(*_device->Get(), _handle, nullptr);
+		_device->vkDestroyShaderModule(*_device->Get(), _handle, nullptr);
 	}
 
 	VkPipelineShaderStageCreateInfo ShaderModule::GetPipelineShaderStageCreateInfo() const
@@ -77,7 +77,7 @@ namespace Concerto::Graphics::Vk
 
 	void ShaderModule::CreateShaderModule()
 	{
-		_lastResult = vkCreateShaderModule(*_device->Get(), &_shaderModuleCreateInfo, nullptr, &_handle);
+		_lastResult = _device->vkCreateShaderModule(*_device->Get(), &_shaderModuleCreateInfo, nullptr, &_handle);
 		CONCERTO_ASSERT(_lastResult == VK_SUCCESS, "ConcertoGraphics: vkCreateShaderModule failed VKResult={}", static_cast<int>(_lastResult));
 	}
 }

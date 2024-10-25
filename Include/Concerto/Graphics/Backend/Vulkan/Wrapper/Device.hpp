@@ -5,14 +5,12 @@
 #ifndef CONCERTO_GRAPHICS_DEVICE_HPP
 #define CONCERTO_GRAPHICS_DEVICE_HPP
 
-#include <cstdint>
 #include <span>
 #include <unordered_map>
 #include <memory>
+#include <unordered_set>
 
-#include <vulkan/vulkan.h>
 #include "Concerto/Graphics/Backend/Vulkan/Defines.hpp"
-
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Queue.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Allocator.hpp"
 
@@ -98,14 +96,21 @@ namespace Concerto::Graphics::Vk
 
 		Instance& GetInstance();
 
+		bool IsExtensionEnabled(const std::string& ext) const; //fixme: use std::string_view
+
+		#define CONCERTO_VULKAN_BACKEND_DEVICE_FUNCTION(func) PFN_##func func = nullptr;
+		#define CONCERTO_VULKAN_BACKEND_DEVICE_EXT_FUNCTION(func, ...) CONCERTO_VULKAN_BACKEND_DEVICE_FUNCTION(func)
+
+		#include "Concerto/Graphics/Backend/Vulkan/Wrapper/DeviceFunction.hpp"
 	private:
 		void CreateAllocator(Instance& instance);
 
-		PhysicalDevice& _physicalDevice;
+		PhysicalDevice* _physicalDevice;
 		VkDevice _device;
 		std::unique_ptr<Allocator> _allocator;
 		std::unordered_map<Queue::Type, Queue> _queues;
 		Instance* _instance;
+		std::unordered_set<std::string> _extensions;
 	};
 
 } // Concerto::Graphics::Vk

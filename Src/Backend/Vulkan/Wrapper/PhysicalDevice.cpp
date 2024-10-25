@@ -2,18 +2,20 @@
 // Created by arthur on 25/10/2022.
 //
 
-#include <cassert>
 #include <stdexcept>
 #include <vector>
 #include <utility>
 
-#include "Concerto/Graphics/Backend/Vulkan/Wrapper/PhysicalDevice.hpp"
-
 #include <Concerto/Core/Assert.hpp>
+
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/Instance.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/PhysicalDevice.hpp"
 
 namespace Concerto::Graphics::Vk
 {
-	PhysicalDevice::PhysicalDevice(VkPhysicalDevice physicalDevice) : _physicalDevice(physicalDevice)
+	PhysicalDevice::PhysicalDevice(Vk::Instance& instance, VkPhysicalDevice physicalDevice) :
+		_physicalDevice(physicalDevice),
+		_instance(&instance)
 	{
 
 	}
@@ -23,9 +25,9 @@ namespace Concerto::Graphics::Vk
 		if (_queueFamilyProperties)
 			return _queueFamilyProperties.value();
 		UInt32 queueFamilyCount = 0;
-		vkGetPhysicalDeviceQueueFamilyProperties(_physicalDevice, &queueFamilyCount, nullptr);
+		_instance->vkGetPhysicalDeviceQueueFamilyProperties(_physicalDevice, &queueFamilyCount, nullptr);
 		std::vector<VkQueueFamilyProperties> queueFamilyProperties(queueFamilyCount);
-		vkGetPhysicalDeviceQueueFamilyProperties(_physicalDevice, &queueFamilyCount, queueFamilyProperties.data());
+		_instance->vkGetPhysicalDeviceQueueFamilyProperties(_physicalDevice, &queueFamilyCount, queueFamilyProperties.data());
 		_queueFamilyProperties = std::move(queueFamilyProperties);
 		return _queueFamilyProperties.value();
 	}
@@ -64,7 +66,7 @@ namespace Concerto::Graphics::Vk
 		if (_physicalDeviceProperties)
 			return _physicalDeviceProperties.value();
 		VkPhysicalDeviceProperties properties;
-		vkGetPhysicalDeviceProperties(_physicalDevice, &properties);
+		_instance->vkGetPhysicalDeviceProperties(_physicalDevice, &properties);
 		_physicalDeviceProperties = properties;
 		return _physicalDeviceProperties.value();
 	}
@@ -74,7 +76,7 @@ namespace Concerto::Graphics::Vk
 		if (_physicalDeviceFeatures)
 			return _physicalDeviceFeatures.value();
 		VkPhysicalDeviceFeatures features;
-		vkGetPhysicalDeviceFeatures(_physicalDevice, &features);
+		_instance->vkGetPhysicalDeviceFeatures(_physicalDevice, &features);
 		_physicalDeviceFeatures = features;
 		return _physicalDeviceFeatures.value();
 	}
@@ -84,7 +86,7 @@ namespace Concerto::Graphics::Vk
 		if (_physicalDeviceMemoryProperties)
 			return _physicalDeviceMemoryProperties.value();
 		VkPhysicalDeviceMemoryProperties memoryProperties;
-		vkGetPhysicalDeviceMemoryProperties(_physicalDevice, &memoryProperties);
+		_instance->vkGetPhysicalDeviceMemoryProperties(_physicalDevice, &memoryProperties);
 		_physicalDeviceMemoryProperties = memoryProperties;
 		return _physicalDeviceMemoryProperties.value();
 	}
@@ -94,9 +96,9 @@ namespace Concerto::Graphics::Vk
 		if (_extensionProperties)
 			return _extensionProperties.value();
 		UInt32 extensionCount = 0;
-		vkEnumerateDeviceExtensionProperties(_physicalDevice, nullptr, &extensionCount, nullptr);
+		_instance->vkEnumerateDeviceExtensionProperties(_physicalDevice, nullptr, &extensionCount, nullptr);
 		std::vector<VkExtensionProperties> extensions(extensionCount);
-		vkEnumerateDeviceExtensionProperties(_physicalDevice, nullptr, &extensionCount, extensions.data());
+		_instance->vkEnumerateDeviceExtensionProperties(_physicalDevice, nullptr, &extensionCount, extensions.data());
 		_extensionProperties = extensions;
 		return _extensionProperties.value();
 	}
@@ -130,7 +132,7 @@ namespace Concerto::Graphics::Vk
 		if (_capabilities)
 			return _capabilities.value();
 		VkSurfaceCapabilitiesKHR capabilities;
-		const VkResult result = vkGetPhysicalDeviceSurfaceCapabilitiesKHR(_physicalDevice, surface, &capabilities);
+		const VkResult result = _instance->vkGetPhysicalDeviceSurfaceCapabilitiesKHR(_physicalDevice, surface, &capabilities);
 		CONCERTO_ASSERT(result == VK_SUCCESS, "ConcertoGraphics: vkGetPhysicalDeviceSurfaceCapabilitiesKHR failed VKResult={}", static_cast<int>(result));
 		_capabilities = capabilities;
 		return _capabilities.value();
@@ -141,9 +143,9 @@ namespace Concerto::Graphics::Vk
 		if (_formats)
 			return _formats.value();
 		UInt32 formatCount = 0;
-		vkGetPhysicalDeviceSurfaceFormatsKHR(_physicalDevice, surface, &formatCount, nullptr);
+		_instance->vkGetPhysicalDeviceSurfaceFormatsKHR(_physicalDevice, surface, &formatCount, nullptr);
 		std::vector<VkSurfaceFormatKHR> formats(formatCount);
-		vkGetPhysicalDeviceSurfaceFormatsKHR(_physicalDevice, surface, &formatCount, formats.data());
+		_instance->vkGetPhysicalDeviceSurfaceFormatsKHR(_physicalDevice, surface, &formatCount, formats.data());
 		_formats = formats;
 		return _formats.value();
 	}
@@ -153,9 +155,9 @@ namespace Concerto::Graphics::Vk
 		if (_presentModes)
 			return _presentModes.value();
 		UInt32 count = 0;
-		vkGetPhysicalDeviceSurfacePresentModesKHR(_physicalDevice, surface, &count, nullptr);
+		_instance->vkGetPhysicalDeviceSurfacePresentModesKHR(_physicalDevice, surface, &count, nullptr);
 		std::vector<VkPresentModeKHR> modes(count);
-		vkGetPhysicalDeviceSurfacePresentModesKHR(_physicalDevice, surface, &count, modes.data());
+		_instance->vkGetPhysicalDeviceSurfacePresentModesKHR(_physicalDevice, surface, &count, modes.data());
 		_presentModes = modes;
 		return _presentModes.value();
 	}

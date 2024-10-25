@@ -5,7 +5,7 @@
 #ifndef CONCERTO_GRAPHICS_INCLUDE_SHADERMODULEINFO_HPP_
 #define CONCERTO_GRAPHICS_INCLUDE_SHADERMODULEINFO_HPP_
 
-#include <vulkan/vulkan.h>
+
 #include <NZSL/Parser.hpp>
 #include <NZSL/SpirvWriter.hpp>
 #include <NZSL/Ast/ReflectVisitor.hpp>

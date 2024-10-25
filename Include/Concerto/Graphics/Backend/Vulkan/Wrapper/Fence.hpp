@@ -5,8 +5,6 @@
 #ifndef CONCERTO_GRAPHICS_FENCE_HPP
 #define CONCERTO_GRAPHICS_FENCE_HPP
 
-#include <vulkan/vulkan.hpp>
-
 #include "Concerto/Graphics/Backend/Vulkan/Defines.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Object.hpp"
 

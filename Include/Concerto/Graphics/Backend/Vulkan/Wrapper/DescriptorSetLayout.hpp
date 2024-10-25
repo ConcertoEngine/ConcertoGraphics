@@ -8,7 +8,7 @@
 #include <vector>
 #include <memory>
 
-#include <vulkan/vulkan.h>
+
 #include <Concerto/Core/Assert.hpp>
 
 #include "Concerto/Graphics/Backend/Vulkan/Defines.hpp"

@@ -8,7 +8,7 @@
 #include <vector>
 #include <memory>
 
-#include <vulkan/vulkan.h>
+
 
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/PipelineLayout.hpp"
 

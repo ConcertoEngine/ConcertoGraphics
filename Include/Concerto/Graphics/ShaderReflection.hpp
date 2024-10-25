@@ -8,7 +8,7 @@
 #include <unordered_map>
 #include <vector>
 
-#include <vulkan/vulkan.h>
+
 #include <NZSL/Ast/RecursiveVisitor.hpp>
 #include <NZSL/Math/FieldOffsets.hpp>
 #include <NZSL/Ast/Module.hpp>

@@ -2,8 +2,6 @@
 // Created by arthur on 16/06/22.
 //
 
-
-#include <stdexcept>
 #include <cassert>
 
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/DescriptorPool.hpp"
@@ -25,12 +23,11 @@ namespace Concerto::Graphics::Vk
 		};
 		VkDescriptorPoolCreateInfo descriptorPoolCreateInfo = {};
 		descriptorPoolCreateInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-		descriptorPoolCreateInfo.flags = 0;
 		descriptorPoolCreateInfo.maxSets = 1000;
 		descriptorPoolCreateInfo.poolSizeCount = static_cast<UInt32>(sizes.size());
 		descriptorPoolCreateInfo.pPoolSizes = sizes.data();
 		descriptorPoolCreateInfo.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
-		_lastResult = vkCreateDescriptorPool(*device.Get(), &descriptorPoolCreateInfo, nullptr, &_handle);
+		_lastResult = device.vkCreateDescriptorPool(*device.Get(), &descriptorPoolCreateInfo, nullptr, &_handle);
 		CONCERTO_ASSERT(_lastResult == VK_SUCCESS, "ConcertoGraphics: vkCreateDescriptorPool failed VkResult={}", static_cast<const int>(_lastResult));
 	}
 
@@ -42,7 +39,7 @@ namespace Concerto::Graphics::Vk
 		descriptorPoolCreateInfo.poolSizeCount = static_cast<UInt32>(poolSizes.size());
 		descriptorPoolCreateInfo.pPoolSizes = poolSizes.data();
 		descriptorPoolCreateInfo.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
-		_lastResult = vkCreateDescriptorPool(*device.Get(), &descriptorPoolCreateInfo, nullptr, &_handle);
+		_lastResult = device.vkCreateDescriptorPool(*device.Get(), &descriptorPoolCreateInfo, nullptr, &_handle);
 		CONCERTO_ASSERT(_lastResult == VK_SUCCESS, "ConcertoGraphics: Failed to create descriptor pool VkResult={}", static_cast<const int>(_lastResult));
 	}
 
@@ -50,7 +47,7 @@ namespace Concerto::Graphics::Vk
 	{
 		if (IsNull())
 			return;
-		vkDestroyDescriptorPool(*_device->Get(), _handle, nullptr);
+		_device->vkDestroyDescriptorPool(*_device->Get(), _handle, nullptr);
 	}
 
 	DescriptorSet DescriptorPool::AllocateDescriptorSet(DescriptorSetLayout& setLayout)
@@ -60,6 +57,6 @@ namespace Concerto::Graphics::Vk
 
 	void DescriptorPool::Reset()
 	{
-		vkResetDescriptorPool(*_device->Get(), _handle, 0);
+		_device->vkResetDescriptorPool(*_device->Get(), _handle, 0);
 	}
 }

@@ -19,9 +19,9 @@ namespace Concerto::Graphics::Vk
 		_image(&image)
 	{
 		auto imageInfo = VulkanInitializer::ImageViewCreateInfo(image.GetFormat(), *image.Get(), aspectFlags);
-		_lastResult = vkCreateImageView(*_device->Get(), &imageInfo, nullptr, &_handle);
+		_lastResult = _device->vkCreateImageView(*_device->Get(), &imageInfo, nullptr, &_handle);
 		CONCERTO_ASSERT(_lastResult == VK_SUCCESS, "ConcertoGraphics: vkCreateImageView failed VkResult={}", static_cast<int>(_lastResult));
-		device.SetObjectName(reinterpret_cast<UInt64>(_handle), std::format("{}, {}x{}", reinterpret_cast<void*>(_handle), image.GetExtent().width, image.GetExtent().height));
+		Logger::Info("{}, {}x{}", reinterpret_cast<void*>(_handle), image.GetExtent().width, image.GetExtent().height);
 	}
 
 	ImageView::~ImageView()
@@ -29,6 +29,6 @@ namespace Concerto::Graphics::Vk
 		if (IsNull())
 			return;
 		_device->WaitIdle();
-		vkDestroyImageView(*_device->Get(), _handle, nullptr);
+		_device->vkDestroyImageView(*_device->Get(), _handle, nullptr);
 	}
 }

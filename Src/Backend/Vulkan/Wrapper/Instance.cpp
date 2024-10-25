@@ -9,11 +9,17 @@
 
 #include <Concerto/Core/Assert.hpp>
 
+#include "Concerto/Graphics/Backend/Vulkan/Defines.hpp"
+#define VOLK_IMPLEMENTATION
+#include <volk.h> // must be under this ^ include
+
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Instance.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/PhysicalDevice.hpp"
 
 namespace Concerto::Graphics::Vk
 {
+	PFN_vkGetInstanceProcAddr Instance::vkGetInstanceProcAddr = nullptr;
+
 	VKAPI_ATTR VkBool32 VKAPI_CALL DebugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
 			VkDebugUtilsMessageTypeFlagsEXT messageType, const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
 			void* pUserData)
@@ -39,7 +45,10 @@ namespace Concerto::Graphics::Vk
 
 	Instance::Instance(const std::string& appName, const std::string& engineName, const Version& apiVersion,
 			const Version& appVersion, const Version& engineVersion, std::span<const char*> extensions,
-			std::span<const char*> layers) : _instance(VK_NULL_HANDLE), _lastResult(VK_SUCCESS), _apiVersion(apiVersion)
+			std::span<const char*> layers) :
+		_instance(VK_NULL_HANDLE),
+		_apiVersion(apiVersion),
+		_lastResult(VK_SUCCESS)
 	{
 		VkApplicationInfo appInfo = {};
 		appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
@@ -69,8 +78,36 @@ namespace Concerto::Graphics::Vk
 		createInfo.ppEnabledLayerNames = layers.empty() ? VK_NULL_HANDLE : layers.data();
 		createInfo.pNext = &debugCreateInfo;
 
+		for (auto& ext : extensions)
+			_loadedExtensions.emplace(ext);
+		for (auto& layer : layers)
+			_loadedLayers.emplace(layer);
+
+		_lastResult = volkInitialize();
+		if (_lastResult != VK_SUCCESS)
+		{
+			CONCERTO_ASSERT_FALSE("ConcertoGraphics: volkInitialize() failed VkResult={}", static_cast<int>(_lastResult));
+			throw std::runtime_error("volkInitialize Failed");
+		}
+
 		_lastResult = vkCreateInstance(&createInfo, nullptr, &_instance);
 		CONCERTO_ASSERT(_lastResult == VK_SUCCESS, "ConcertoGraphics: vkCreateInstance failed VKResult={}", static_cast<int>(_lastResult));
+		volkLoadInstanceOnly(_instance);
+		Instance::vkGetInstanceProcAddr = ::vkGetInstanceProcAddr;
+		#define CONCERTO_VULKAN_BACKEND_INSTANCE_FUNCTION(func) this->func = ::##func;
+
+		#define CONCERTO_VULKAN_BACKEND_INSTANCE_EXT_BEGIN(ext)				\
+					if(IsExtensionEnabled(#ext))							\
+					{
+		#define CONCERTO_VULKAN_BACKEND_INSTANCE_EXT_FUNCTION(func, ...)	\
+						CONCERTO_VULKAN_BACKEND_INSTANCE_FUNCTION(func)		\
+						if (this->func == nullptr)							\
+						{													\
+							CONCERTO_ASSERT_FALSE("ConcertoGraphics: Function: " #func " is null but the extension has been reported has supported");\
+						}
+		#define CONCERTO_VULKAN_BACKEND_INSTANCE_EXT_END }
+
+		#include "Concerto/Graphics/Backend/Vulkan/Wrapper/InstanceFunction.hpp"
 	}
 
 	Version Instance::GetApiVersion() const
@@ -97,7 +134,7 @@ namespace Concerto::Graphics::Vk
 		std::vector<PhysicalDevice> physicalDevices;
 		for(VkPhysicalDevice device : devices)
 		{
-			physicalDevices.emplace_back(device);
+			physicalDevices.emplace_back(const_cast<Instance&>(*this), device);
 		}
 		_physicalDevices = std::move(physicalDevices);
 		return _physicalDevices.value();
@@ -106,5 +143,10 @@ namespace Concerto::Graphics::Vk
 	VkResult Instance::GetLastError() const
 	{
 		return _lastResult;
+	}
+
+	bool Instance::IsExtensionEnabled(const std::string& ext) const
+	{
+		return _loadedExtensions.contains(ext);
 	}
 } // namespace Concerto::Graphics::Vk

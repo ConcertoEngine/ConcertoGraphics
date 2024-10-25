@@ -21,7 +21,7 @@ namespace Concerto::Graphics::Vk
 		createInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
 		createInfo.pBindings = _bindings.data();
 		createInfo.bindingCount = static_cast<UInt32>(_bindings.size());
-		_lastResult = vkCreateDescriptorSetLayout(*_device->Get(), &createInfo, nullptr, &_handle);
+		_lastResult = _device->vkCreateDescriptorSetLayout(*_device->Get(), &createInfo, nullptr, &_handle);
 		CONCERTO_ASSERT(_lastResult == VK_SUCCESS, "ConcertoGraphics: vkCreateDescriptorSetLayout failed VkResult={}", static_cast<int>(_lastResult));
 	}
 
@@ -29,7 +29,7 @@ namespace Concerto::Graphics::Vk
 	{
 		if (IsNull())
 			return;
-		vkDestroyDescriptorSetLayout(*_device->Get(), _handle, nullptr);
+		_device->vkDestroyDescriptorSetLayout(*_device->Get(), _handle, nullptr);
 	}
 
 	const std::vector<VkDescriptorSetLayoutBinding>& DescriptorSetLayout::GetBindings() const

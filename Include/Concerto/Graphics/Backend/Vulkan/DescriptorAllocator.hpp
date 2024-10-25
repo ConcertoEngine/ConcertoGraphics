@@ -6,8 +6,7 @@
 #define CONCERTO_GRAPHICS_INCLUDE_DESCRIPTORALLOCATOR_HPP_
 
 #include <vector>
-
-#include <vulkan/vulkan.h>
+#include <unordered_map>
 
 #include "Concerto/Graphics/Backend/Vulkan/Defines.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/DescriptorPool.hpp"

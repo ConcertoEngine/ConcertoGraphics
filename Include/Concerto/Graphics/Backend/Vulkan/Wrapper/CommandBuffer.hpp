@@ -9,10 +9,7 @@
 #include <span>
 #include <memory>
 
-#include <vulkan/vulkan.h>
-
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Object.hpp"
-#include "Concerto/Graphics/Backend/Vulkan/Defines.hpp"
 
 namespace Concerto::Graphics::Vk
 {

@@ -5,8 +5,6 @@
 #ifndef CONCERTO_GRAPHICS_SEMAPHORE_HPP
 #define CONCERTO_GRAPHICS_SEMAPHORE_HPP
 
-#include <vulkan/vulkan.hpp>
-
 #include "Concerto/Graphics/Backend/Vulkan/Defines.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Object.hpp"
 

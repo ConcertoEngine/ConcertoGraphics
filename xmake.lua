@@ -1,8 +1,9 @@
 add_rules("mode.debug")
 add_repositories("Concerto-xrepo https://github.com/ConcertoEngine/xmake-repo.git main")
 add_repositories("nazara-repo https://github.com/NazaraEngine/xmake-repo")
-add_requires("imgui", {configs = {glfw_vulkan = true, debug = is_mode("debug"), with_symbols = true}})
-add_requires("concerto-core", "vulkan-loader", "vulkan-memory-allocator", "stb", "glfw", "nzsl")
+add_requires("imgui", {configs = {vulkan = true, glfw = true, debug = is_mode("debug"), with_symbols = true}})
+add_requires("volk", {configs = {header_only = true}})
+add_requires("concerto-core", "vulkan-headers", "vulkan-memory-allocator", "stb", "glfw", "nzsl")
 
 if (has_config("examples")) then
     add_requires("glslang", {configs = {binaryonly = true}})
@@ -22,7 +23,7 @@ target("ConcertoGraphics")
     add_files("Src/Camera.cpp", "Src/Primitives.cpp", "Src/Camera.cpp", "Src/Window/**.cpp")
     add_includedirs("Include/", { public = true })
     add_headerfiles("Include/(Concerto/Graphics/*.hpp)", "Include/(Concerto/Graphics/*.hpp)", "Include/(Concerto/Graphics/Window/*.hpp)")
-    add_packages("concerto-core", "vulkan-loader", "glfw", { public = true })
+    add_packages("concerto-core", "glfw", "vulkan-headers", "imgui", { public = true })
 
 target("VulkanBackend")
     set_kind("shared")
@@ -32,12 +33,13 @@ target("VulkanBackend")
         set_symbols("debug")
     end
     add_defines("CONCERTO_GRAPHICS_VULKAN_BACKEND_BUILD")
+    add_defines("VK_NO_PROTOTYPES", { public = true })
     add_files("Src/Backend/Vulkan/**.cpp")
     add_includedirs("Include/", { public = true })
     add_headerfiles("Include/(Concerto/Graphics/Backend/Vulkan/*.hpp)",
                     "Include/(Concerto/Graphics/Backend/Vulkan/Wrapper/*.hpp)",
                     "Include/(Concerto/Graphics/Backend/Vulkan/Wrapper/*.inl)")
-    add_packages("concerto-core", "vulkan-loader", "vulkan-memory-allocator", "nzsl", { public = true })
+    add_packages("concerto-core", "volk", "vulkan-headers", "vulkan-memory-allocator", "nzsl", { public = true })
     add_packages("stb", { public = false })
     add_deps("ConcertoGraphics")
 

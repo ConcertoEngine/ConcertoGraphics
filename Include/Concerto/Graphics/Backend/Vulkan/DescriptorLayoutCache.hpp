@@ -8,7 +8,7 @@
 #include <unordered_map>
 #include <algorithm>
 
-#include <vulkan/vulkan.h>
+
 
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/DescriptorSetLayout.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Device.hpp"

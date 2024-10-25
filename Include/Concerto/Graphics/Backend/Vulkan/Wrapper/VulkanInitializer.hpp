@@ -5,7 +5,6 @@
 #ifndef ENGINE_VULKANINITIALIZER_HPP
 #define ENGINE_VULKANINITIALIZER_HPP
 
-#include <vulkan/vulkan.hpp>
 #include "Concerto/Graphics/Backend/Vulkan/Defines.hpp"
 
 namespace VulkanInitializer
