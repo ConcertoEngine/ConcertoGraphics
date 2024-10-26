@@ -12,5 +12,8 @@ namespace Concerto::Graphics::Vk
 		_commandPool(device, queueFamily),
 		_commandBuffer(_commandPool.AllocateCommandBuffer())
 	{
+#ifdef CONCERTO_DEBUG
+		_commandBuffer.SetDebugName("UploadContextCommandBuffer");
+#endif
 	}
 }

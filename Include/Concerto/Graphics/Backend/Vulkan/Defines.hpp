@@ -25,6 +25,7 @@
 	#include <windows.h>
 	#undef max
 	#undef min
+	#undef GetObject
 	#include <vulkan/vulkan_win32.h>
 #endif
 

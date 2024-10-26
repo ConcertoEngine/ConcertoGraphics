@@ -13,6 +13,7 @@
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Device.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/PhysicalDevice.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Instance.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/ObjectDebug.hpp"
 
 namespace Concerto::Graphics::Vk
 {
@@ -156,26 +157,9 @@ namespace Concerto::Graphics::Vk
 		this->vkUpdateDescriptorSets(_device, 1, &descriptorWrite, 0, nullptr);
 	}
 
-	void Device::SetObjectName(UInt64 object, std::string_view name)
-	{
-#ifdef CONCERTO_DEBUG
-		if (!IsExtensionEnabled(VK_EXT_DEBUG_MARKER_EXTENSION_NAME))
-		{
-			CONCERTO_ASSERT_FALSE("Device::SetObjectName is called but extension " VK_EXT_DEBUG_MARKER_EXTENSION_NAME " is not enabled");
-			return;
-		}
-		VkDebugMarkerObjectNameInfoEXT nameInfo = {};
-		nameInfo.sType = VK_STRUCTURE_TYPE_DEBUG_MARKER_OBJECT_NAME_INFO_EXT;
-		nameInfo.objectType = VK_DEBUG_REPORT_OBJECT_TYPE_UNKNOWN_EXT;
-		nameInfo.object = object;
-		nameInfo.pObjectName = name.data();
-		this->vkDebugMarkerSetObjectNameEXT(_device, &nameInfo);
-#endif
-	}
-
 	PhysicalDevice& Device::GetPhysicalDevice() const
 	{
-		CONCERTO_ASSERT_FALSE("ConcertoGraphics: Invalid physical device handle");
+		CONCERTO_ASSERT(_physicalDevice, "ConcertoGraphics: Invalid physical device handle");
 		return *_physicalDevice;
 	}
 

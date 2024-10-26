@@ -55,6 +55,10 @@ int main()
 		std::unique_ptr<RHI::TextureBuilder> textureBuilder = device->CreateTextureBuilder();
 		RHI::VkRHIMesh mesh("./assets/sponza/sponza.obj"); //fixme
 		std::shared_ptr<RHI::GpuMesh> gpuMesh = mesh.BuildGpuMesh(*materialBuilder, renderPass, *device);
+		
+		//GraphicPass& pbrPass = graphBuilder.AddPass("pbr", RHI::PipelineStage::AllGraphics);
+		//pbrPass.AddColorOutput("albedo", ??);
+		//pbrPass.AddColorOutput("normal", ??);
 
 		float aspect = static_cast<float>(window.GetWidth()) / static_cast<float>(window.GetHeight());
 		Camera camera(ToRadians(90.f), 0.1f, 1000000.f, aspect);

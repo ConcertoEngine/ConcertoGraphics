@@ -19,7 +19,9 @@ namespace Concerto::Graphics::Vk
 	class PhysicalDevice;
 	class Instance;
 	class UploadContext;
-
+#ifdef CONCERTO_DEBUG
+	class ObjectDebug;
+#endif
 	/**
 	* @class Device
 	* @brief This class represents a device in the Vulkan API.
@@ -87,8 +89,6 @@ namespace Concerto::Graphics::Vk
 		* @brief Update the contents of a descriptor set object
 		*/
 		void UpdateDescriptorSetWrite(VkWriteDescriptorSet descriptorWrite);
-
-		void SetObjectName(UInt64 object, std::string_view name);
 
 		PhysicalDevice& GetPhysicalDevice() const;
 

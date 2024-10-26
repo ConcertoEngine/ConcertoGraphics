@@ -8,6 +8,7 @@
 #include <utility>
 
 #include <Concerto/Core/Assert.hpp>
+#include <Concerto/Core/TypeInfo.hpp>
 
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Object.hpp"
 
@@ -15,6 +16,9 @@ namespace Concerto::Graphics::Vk
 {
 	template<typename VkType>
 	Object<VkType>::Object(Device& device) :
+#ifdef CONCERTO_DEBUG
+	ObjectDebug(device, TypeName<std::remove_pointer_t<std::remove_cvref_t<VkType>>>(), reinterpret_cast<void**>(&this->_handle)),
+#endif
 		_handle(nullptr),
 		_device(&device),
 		_lastResult(VK_SUCCESS)
@@ -24,6 +28,10 @@ namespace Concerto::Graphics::Vk
 
 	template<typename VkType>
 	Object<VkType>::Object(Object&& other) noexcept
+#ifdef CONCERTO_DEBUG
+		:
+	ObjectDebug(*other.GetDevice(), TypeName<std::remove_pointer_t<std::remove_cvref_t<VkType>>>(), reinterpret_cast<void**>(&this->_handle))
+#endif
 	{
 		_handle = std::exchange(other._handle, nullptr);
 		_device = std::exchange(other._device, nullptr);

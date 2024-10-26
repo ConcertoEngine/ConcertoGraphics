@@ -64,10 +64,28 @@ namespace Concerto::Graphics::Vk
 
 		const VkResult result = _device->vkBeginCommandBuffer(_handle, &cmdBeginInfo);
 		CONCERTO_ASSERT(result == VK_SUCCESS, "ConcertoGraphics: vkBeginCommandBuffer failed VKResult={}", static_cast<int>(result));
+#ifdef CONCERTO_DEBUG
+		if (_device->IsExtensionEnabled(VK_EXT_DEBUG_MARKER_EXTENSION_NAME))
+		{
+			VkDebugMarkerMarkerInfoEXT markerInfo = {
+				.sType = VK_STRUCTURE_TYPE_DEBUG_MARKER_MARKER_INFO_EXT,
+				.pNext = nullptr,
+				.pMarkerName = ObjectDebug::GetDebugName().data(),
+				.color = {1.f, 1.f, 0.f}
+			};
+			_device->vkCmdDebugMarkerBeginEXT(_handle, &markerInfo);
+		}
+#endif
 	}
 
 	void CommandBuffer::End() const
 	{
+#ifdef CONCERTO_DEBUG
+		if (_device->IsExtensionEnabled(VK_EXT_DEBUG_MARKER_EXTENSION_NAME))
+		{
+			_device->vkCmdDebugMarkerEndEXT(_handle);
+		}
+#endif
 		const VkResult result = _device->vkEndCommandBuffer(_handle);
 		CONCERTO_ASSERT(result == VK_SUCCESS, "ConcertoGraphics: vkEndCommandBuffer failed VKResult={}", static_cast<int>(result));
 	}

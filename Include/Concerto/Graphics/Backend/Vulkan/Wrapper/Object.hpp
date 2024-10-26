@@ -6,13 +6,18 @@
 #define CONCERTO_GRAPHICS_OBJECT_HPP
 
 #include "Concerto/Graphics/Backend/Vulkan/Defines.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/ObjectDebug.hpp"
 
 namespace Concerto::Graphics::Vk
 {
 	class Device;
 
-	template<typename vkType>
+	template<typename VkType>
 	class Object
+#ifdef CONCERTO_DEBUG
+		:
+		public ObjectDebug
+#endif
 	{
 	public:
 		explicit Object(Device& device);
@@ -27,13 +32,13 @@ namespace Concerto::Graphics::Vk
 
 		Object& operator=(Object&&) noexcept;
 
-		[[nodiscard]] vkType* Get() const;
+		[[nodiscard]] VkType* Get() const;
 		[[nodiscard]] bool IsNull() const;
 		[[nodiscard]] Device* GetDevice() const;
 		[[nodiscard]] VkResult GetLastResult() const;
 
 	protected:
-		vkType _handle;
+		VkType _handle;
 		Device* _device;
 		mutable VkResult _lastResult;
 	};

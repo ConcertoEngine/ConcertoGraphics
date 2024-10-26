@@ -12,7 +12,7 @@ namespace Concerto::Graphics::RHI
 		_image(device, file, commandBuffer, uploadContext, queue),
 		_imageView(device, _image, aspectFlags)
 	{
-
+		_image.SetDebugName("lol");
 	}
 
 	const Vk::Image& VkRHITexture::GetImage() const

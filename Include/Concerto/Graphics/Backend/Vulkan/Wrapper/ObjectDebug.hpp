@@ -1,0 +1,38 @@
+//
+// Created by arthur on 25/10/2023.
+//
+
+#ifndef CONCERTO_GRAPHICS_BACKEND_VULKAN_OBJECTDEBUG_HPP
+#define CONCERTO_GRAPHICS_BACKEND_VULKAN_OBJECTDEBUG_HPP
+
+#include <string_view>
+#include <string>
+
+#include "Concerto/Graphics/Backend/Vulkan/Defines.hpp"
+
+namespace Concerto::Graphics::Vk
+{
+#ifdef CONCERTO_DEBUG
+
+	class Device;
+	class CONCERTO_GRAPHICS_VULKAN_BACKEND_API ObjectDebug
+	{
+	public:
+		ObjectDebug(Device& device, std::string_view typeName, void** vkHandle);
+		VkDebugReportObjectTypeEXT GetDebugReportObjectType() const;
+		UInt64 GetObject() const;
+
+		void SetDebugName(std::string_view name);
+		std::string_view GetDebugName() const;
+	private:
+		Device* _device;
+		std::string_view _typeName;
+		VkDebugReportObjectTypeEXT _debugReportObjectType;
+		void** _vkHandle;
+		std::string _debugName;
+	};
+
+#endif
+}
+
+#endif //CONCERTO_GRAPHICS_BACKEND_VULKAN_OBJECTDEBUG_HPP

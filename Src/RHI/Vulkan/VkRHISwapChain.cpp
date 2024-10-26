@@ -3,10 +3,12 @@
 //
 
 #include <array>
+#include <format>
+
 #include <Concerto/Core/Cast.hpp>
 
-#include "Concerto/Graphics/RHI/Vulkan/VkRHISwapChain.hpp"
 
+#include "Concerto/Graphics/RHI/Vulkan/VkRHISwapChain.hpp"
 #include "Concerto/Graphics/RHI/Vulkan/VkRHIDevice.hpp"
 #include "Concerto/Graphics/RHI/Vulkan/Utils.hpp"
 #include "Concerto/Graphics/RHI/Vulkan/VkRHIRenderPass.hpp"
@@ -209,6 +211,9 @@ namespace Concerto::Graphics::RHI
 		_owner(&owner),
 		_imageIndex(0)
 	{
+#ifdef CONCERTO_DEBUG
+		Cast<VkRHICommandBuffer&>(*_commandBuffer).SetDebugName("SwapChainFrameCommandBuffer");
+#endif
 	}
 
 	void VkRHISwapChain::SwapChainFrame::Present()
@@ -237,6 +242,9 @@ namespace Concerto::Graphics::RHI
 	void VkRHISwapChain::SwapChainFrame::SetNextImageIndex(UInt32 imageIndex)
 	{
 		_imageIndex = imageIndex;
+#ifdef CONCERTO_DEBUG
+		Cast<VkRHICommandBuffer&>(*_commandBuffer).SetDebugName(std::format("SwapChainFrameCommandBuffer[{}]", imageIndex));
+#endif
 	}
 
 	void VkRHISwapChain::SwapChainFrame::Wait()
