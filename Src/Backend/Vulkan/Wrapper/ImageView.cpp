@@ -21,7 +21,6 @@ namespace Concerto::Graphics::Vk
 		auto imageInfo = VulkanInitializer::ImageViewCreateInfo(image.GetFormat(), *image.Get(), aspectFlags);
 		_lastResult = _device->vkCreateImageView(*_device->Get(), &imageInfo, nullptr, &_handle);
 		CONCERTO_ASSERT(_lastResult == VK_SUCCESS, "ConcertoGraphics: vkCreateImageView failed VkResult={}", static_cast<int>(_lastResult));
-		Logger::Info("{}, {}x{}", reinterpret_cast<void*>(_handle), image.GetExtent().width, image.GetExtent().height);
 	}
 
 	ImageView::~ImageView()
