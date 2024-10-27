@@ -105,7 +105,7 @@ namespace Concerto::Graphics::Vk
 		if (_lastResult != VK_SUCCESS)
 		{
 			CONCERTO_ASSERT_FALSE("ConcertoGraphics: vkCreateSemaphore failed VKResult={}", static_cast<int>(_lastResult));
-			return -1u;
+			return std::numeric_limits<UInt32>::max();
 		}
 		return _currentImageIndex;
 	}

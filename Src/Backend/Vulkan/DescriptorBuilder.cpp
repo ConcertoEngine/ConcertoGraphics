@@ -92,7 +92,7 @@ namespace Concerto::Graphics::Vk
 		for (VkWriteDescriptorSet& w : _writes)
 			w.dstSet = *set->Get();
 
-		_alloc.GetDevice().vkUpdateDescriptorSets(*_alloc.GetDevice().Get(), _writes.size(), _writes.data(), 0, nullptr);
+		_alloc.GetDevice().vkUpdateDescriptorSets(*_alloc.GetDevice().Get(), static_cast<UInt32>(_writes.size()), _writes.data(), 0, nullptr);
 		_bindings.clear();
 		_writes.clear();
 		return true;

@@ -15,9 +15,9 @@ namespace Concerto::Graphics::Vk
 		_shaderStages = std::move(shaderStages);
 		_vertexInputInfo = VulkanInitializer::VertexInputStateCreateInfo();
 		_vertexInputInfo.pVertexAttributeDescriptions = vertexDescription.attributes.data();
-		_vertexInputInfo.vertexAttributeDescriptionCount = vertexDescription.attributes.size();
+		_vertexInputInfo.vertexAttributeDescriptionCount = static_cast<UInt32>(vertexDescription.attributes.size());
 		_vertexInputInfo.pVertexBindingDescriptions = vertexDescription.bindings.data();
-		_vertexInputInfo.vertexBindingDescriptionCount = vertexDescription.bindings.size();
+		_vertexInputInfo.vertexBindingDescriptionCount = static_cast<UInt32>(vertexDescription.bindings.size());
 		_inputAssembly = VulkanInitializer::InputAssemblyCreateInfo(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
 		_viewport.x = 0.0f;
 		_viewport.y = 0.0f;

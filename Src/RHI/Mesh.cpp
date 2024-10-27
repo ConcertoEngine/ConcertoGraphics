@@ -17,7 +17,7 @@ namespace Concerto::Graphics::RHI
 {
 	Mesh::Mesh(std::string filePath) : _path(std::move(filePath))
 	{
-		LoadFromFile(_path);
+		CONCERTO_ASSERT(LoadFromFile(_path), "ConcertoGraphics: LoadFromFile failed");
 	}
 
 	Mesh::Mesh(Vertices vertices)

@@ -21,8 +21,9 @@ namespace Concerto::Graphics::Vk
 	PFN_vkGetInstanceProcAddr Instance::vkGetInstanceProcAddr = nullptr;
 
 	VKAPI_ATTR VkBool32 VKAPI_CALL DebugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
-			VkDebugUtilsMessageTypeFlagsEXT messageType, const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
-			void* pUserData)
+			[[maybe_unused]] VkDebugUtilsMessageTypeFlagsEXT messageType,
+			[[maybe_unused]] const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
+			[[maybe_unused]] void* pUserData)
 	{
 		if (messageSeverity == VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT)
 		{
@@ -72,9 +73,9 @@ namespace Concerto::Graphics::Vk
 		VkInstanceCreateInfo createInfo = {};
 		createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
 		createInfo.pApplicationInfo = &appInfo;
-		createInfo.enabledExtensionCount = extensions.size();
+		createInfo.enabledExtensionCount = static_cast<UInt32>(extensions.size());
 		createInfo.ppEnabledExtensionNames = extensions.empty() ? VK_NULL_HANDLE : extensions.data();
-		createInfo.enabledLayerCount = layers.size();
+		createInfo.enabledLayerCount = static_cast<UInt32>(layers.size());
 		createInfo.ppEnabledLayerNames = layers.empty() ? VK_NULL_HANDLE : layers.data();
 		createInfo.pNext = &debugCreateInfo;
 
@@ -94,7 +95,7 @@ namespace Concerto::Graphics::Vk
 		CONCERTO_ASSERT(_lastResult == VK_SUCCESS, "ConcertoGraphics: vkCreateInstance failed VKResult={}", static_cast<int>(_lastResult));
 		volkLoadInstanceOnly(_instance);
 		Instance::vkGetInstanceProcAddr = ::vkGetInstanceProcAddr;
-		#define CONCERTO_VULKAN_BACKEND_INSTANCE_FUNCTION(func) this->func = ::##func;
+		#define CONCERTO_VULKAN_BACKEND_INSTANCE_FUNCTION(func) this->func = ::func;
 
 		#define CONCERTO_VULKAN_BACKEND_INSTANCE_EXT_BEGIN(ext)				\
 					if(IsExtensionEnabled(#ext))							\

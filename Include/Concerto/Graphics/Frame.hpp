@@ -26,7 +26,7 @@ namespace Concerto::Graphics::Vk
 	public:
 		FrameData() = delete;
 
-		explicit FrameData(Device& device, bool signaled = true);
+		FrameData(Device& device, bool signaled = true);
 
 		~FrameData() = default;
 

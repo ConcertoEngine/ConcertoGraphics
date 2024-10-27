@@ -63,7 +63,7 @@ namespace Concerto::Graphics::Vk
 		pipelineInfo.pNext = nullptr;
 
 		pipelineInfo.pStages = _pipelineInfo._shaderStages.data();
-		pipelineInfo.stageCount = _pipelineInfo._shaderStages.size();
+		pipelineInfo.stageCount = static_cast<UInt32>(_pipelineInfo._shaderStages.size());
 		pipelineInfo.pVertexInputState = &_pipelineInfo._vertexInputInfo;
 		pipelineInfo.pInputAssemblyState = &_pipelineInfo._inputAssembly;
 		pipelineInfo.pViewportState = &viewportState;

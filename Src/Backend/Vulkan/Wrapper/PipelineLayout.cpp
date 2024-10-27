@@ -25,7 +25,7 @@ namespace Concerto::Graphics::Vk
 		pipelineLayoutCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
 		pipelineLayoutCreateInfo.pNext = nullptr;
 		pipelineLayoutCreateInfo.flags = 0;
-		pipelineLayoutCreateInfo.setLayoutCount = vkDescriptorSetLayouts.size();
+		pipelineLayoutCreateInfo.setLayoutCount = static_cast<UInt32>(vkDescriptorSetLayouts.size());
 		pipelineLayoutCreateInfo.pSetLayouts = vkDescriptorSetLayouts.data();
 		pipelineLayoutCreateInfo.pushConstantRangeCount = 0;
 		pipelineLayoutCreateInfo.pPushConstantRanges = nullptr;

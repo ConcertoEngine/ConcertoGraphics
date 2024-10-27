@@ -166,7 +166,7 @@ namespace Concerto::Graphics::Vk
 		vkDescriptorSets.reserve(descriptorSets.size());
 		for (const auto& descriptorSet : descriptorSets)
 			vkDescriptorSets.push_back(*descriptorSet->Get());
-		_device->vkCmdBindDescriptorSets(_handle, pipelineBindPoint, pipelineLayout, 0, vkDescriptorSets.size(), vkDescriptorSets.data(), 0, nullptr);
+		_device->vkCmdBindDescriptorSets(_handle, pipelineBindPoint, pipelineLayout, 0, static_cast<UInt32>(vkDescriptorSets.size()), vkDescriptorSets.data(), 0, nullptr);
 	}
 
 	void CommandBuffer::ImmediateSubmit(Fence& fence, CommandPool& commandPool, const Queue& queue,
