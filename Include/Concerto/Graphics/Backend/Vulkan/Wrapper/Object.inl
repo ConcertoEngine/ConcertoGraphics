@@ -30,7 +30,7 @@ namespace Concerto::Graphics::Vk
 	Object<VkType>::Object(Object&& other) noexcept
 #ifdef CONCERTO_DEBUG
 		:
-	ObjectDebug(*other.GetDevice(), TypeName<std::remove_pointer_t<std::remove_cvref_t<VkType>>>(), reinterpret_cast<void**>(&this->_handle))
+	ObjectDebug(*other.GetDevice(), TypeName<std::remove_pointer_t<std::remove_cvref_t<VkType>>>(), reinterpret_cast<void**>(&other._handle))
 #endif
 	{
 		_handle = std::exchange(other._handle, nullptr);
@@ -41,8 +41,8 @@ namespace Concerto::Graphics::Vk
 	template<typename VkType>
 	Object<VkType>& Object<VkType>::operator=(Object&& other) noexcept
 	{
-		_handle = std::exchange(other._handle, nullptr);
-		_device = std::exchange(other._device, nullptr);
+		std::swap(_handle, other._handle);
+		std::swap(_device, other._device);
 		return *this;
 	}
 

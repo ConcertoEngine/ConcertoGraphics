@@ -133,6 +133,25 @@ namespace Concerto::Graphics::Vk
 		vmaDestroyImage(*_device->GetAllocator().Get(), _handle, _allocation);
 	}
 
+	Image::Image(Image&& image) noexcept:
+		Object(std::move(image)),
+		_isAllocated(std::exchange(image._isAllocated, false)),
+		_imageFormat(std::exchange(image._imageFormat, {})),
+		_allocation(std::exchange(image._allocation, nullptr)),
+		_extent(std::exchange(image._extent, {}))
+	{
+	}
+
+	Image& Image::operator=(Image&& image) noexcept
+	{
+		std::swap(_isAllocated, image._isAllocated);
+		std::swap(_imageFormat, image._imageFormat);
+		std::swap(_allocation, image._allocation);
+		std::swap(_extent, image._extent);
+		Object::operator=(std::move(image));
+		return *this;
+	}
+
 	Image::Image(Device& device, VkExtent2D extent, VkImage image, VkFormat imageFormat) :
 		Object(device),
 		_isAllocated(false),

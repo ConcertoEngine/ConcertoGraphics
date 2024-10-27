@@ -60,11 +60,11 @@ namespace Concerto::Graphics::Vk
 
 		~Image();
 
-		Image(Image&&) = default;
+		Image(Image&&) noexcept;
 
 		Image(const Image&) = delete;
 
-		Image& operator=(Image&&) = default;
+		Image& operator=(Image&&) noexcept;
 
 		Image& operator=(const Image&) = delete;
 
@@ -79,8 +79,8 @@ namespace Concerto::Graphics::Vk
 
 	private:
 		bool _isAllocated;
-		VkFormat _imageFormat{};
-		VmaAllocation _allocation{};
+		VkFormat _imageFormat = {};
+		VmaAllocation _allocation = {};
 		VkExtent2D _extent;
 	};
 }
