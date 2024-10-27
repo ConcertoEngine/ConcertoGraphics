@@ -1,0 +1,8 @@
+//
+// Created by arthur on 27/10/2024.
+//
+
+#ifndef CONCERTO_GRAPHICS_MONITOR_HPP
+#define CONCERTO_GRAPHICS_MONITOR_HPP
+
+#endif //CONCERTO_GRAPHICS_MONITOR_HPP

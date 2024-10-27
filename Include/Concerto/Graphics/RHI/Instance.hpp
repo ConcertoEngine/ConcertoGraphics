@@ -16,6 +16,7 @@ namespace Concerto::Graphics::RHI
 {
 	class Device;
 	class APIImpl;
+	class DisplayManager;
 
 	class CONCERTO_GRAPHICS_RHI_BASE_API Instance
 	{
@@ -35,9 +36,12 @@ namespace Concerto::Graphics::RHI
 
 		std::span<const DeviceInfo> EnumerateDevices() const;
 		std::unique_ptr<Device> CreateDevice(std::size_t index);
+		std::unique_ptr<DisplayManager> CreateDisplayManager();
+
 		inline APIImpl* GetImpl();
 	private:
 		std::unique_ptr<APIImpl> _apiImpl;
+		Backend _backend;
 	};
 }
 

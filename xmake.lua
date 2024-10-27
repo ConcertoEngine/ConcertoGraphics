@@ -1,9 +1,9 @@
 add_rules("mode.debug")
 add_repositories("Concerto-xrepo https://github.com/ConcertoEngine/xmake-repo.git main")
 add_repositories("nazara-repo https://github.com/NazaraEngine/xmake-repo")
-add_requires("imgui", {configs = {vulkan = true, glfw = true, debug = is_mode("debug"), with_symbols = true}})
+add_requires("imgui", {configs = {vulkan = true, sdl2 = true, debug = is_mode("debug"), with_symbols = true}})
 add_requires("volk", {configs = {header_only = true}})
-add_requires("concerto-core", "vulkan-headers", "vulkan-memory-allocator", "stb", "glfw", "nzsl")
+add_requires("concerto-core", "vulkan-headers", "vulkan-memory-allocator", "stb", "libsdl", "nzsl")
 
 if (has_config("examples")) then
     add_requires("glslang", {configs = {binaryonly = true}})
@@ -20,10 +20,10 @@ target("ConcertoGraphics")
         set_symbols("debug")
     end
     add_defines("CONCERTO_GRAPHICS_BUILD")
-    add_files("Src/Camera.cpp", "Src/Primitives.cpp", "Src/Camera.cpp", "Src/Window/**.cpp")
+    add_files("Src/Camera.cpp", "Src/Primitives.cpp", "Src/Camera.cpp", "Src/Window/**.cpp", "Src/Monitor/**.cpp", "Src/DisplayManager.cpp")
     add_includedirs("Include/", { public = true })
     add_headerfiles("Include/(Concerto/Graphics/*.hpp)", "Include/(Concerto/Graphics/*.hpp)", "Include/(Concerto/Graphics/Window/*.hpp)")
-    add_packages("concerto-core", "glfw", "vulkan-headers", "imgui", { public = true })
+    add_packages("concerto-core", "libsdl", "vulkan-headers", "imgui", { public = true })
 
 target("VulkanBackend")
     set_kind("shared")
