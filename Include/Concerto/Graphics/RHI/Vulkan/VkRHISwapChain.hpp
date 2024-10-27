@@ -74,11 +74,11 @@ namespace Concerto::Graphics::RHI
 		PixelFormat _pixelFormat;
 		PixelFormat _depthPixelFormat;
 
-		std::vector<SwapChainFrame> _frames;
 		std::vector<std::unique_ptr<FrameBuffer>> _frameBuffers;
 		std::unique_ptr<RHI::RenderPass> _renderPass;
 		std::unique_ptr<RHI::CommandPool> _commandPool;
 		std::unique_ptr<Vk::Queue> _presentQueue;
+		std::vector<SwapChainFrame> _frames;
 
 		UInt32 _currentFrameIndex = 0;
 		bool _needResize = false;
