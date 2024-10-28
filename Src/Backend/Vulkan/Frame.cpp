@@ -2,6 +2,8 @@
 // Created by arthur on 13/09/2022.
 //
 
+#include <vk_mem_alloc.h>
+
 #include "Concerto/Graphics/Frame.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/CommandBuffer.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/CommandPool.hpp"

@@ -21,6 +21,7 @@
 
 #include "Concerto/Graphics/Camera.hpp"
 #include "Concerto/Graphics/GPUData.hpp"
+#include "Concerto/Graphics/RHI/DisplayManager.hpp"
 #include "Concerto/Graphics/RHI/GpuMesh.hpp"
 #include "Concerto/Graphics/RHI/GpuSubMesh.hpp"
 
@@ -31,8 +32,20 @@ int main()
 {
 	try
 	{
-		Window window("Concerto Graphics", 1280, 720);
-		Input& inputManager = window.GetInputManager();
+		RHI::DisplayManager displayManager;
+		auto displayInfos = displayManager.EnumerateDisplaysInfos();
+
+		Logger::Info("Displays:");
+		for (auto& displayInfo : displayInfos)
+		{
+			Logger::Info("\t{} primary: {}", displayInfo.displayName, displayInfo.isPrimary);
+			Logger::Info("\t\tDisplay modes:");
+			for (auto& displayMode : displayInfo.displayModes)
+			{
+				Logger::Info("\t\t\twidth:{}, height:{}", displayMode.width, displayMode.height);
+			}
+		}
+		auto window = displayManager.CreateWindow(0, "Concerto Graphics", 1280, 720);
 
 		RHI::Instance rInstance;
 		std::unique_ptr<RHI::Device> device;
@@ -48,7 +61,7 @@ int main()
 			++deviceIndex;
 		}
 		std::size_t minimumAlignment = device->GetMinimumUniformBufferOffsetAlignment();
-		std::unique_ptr<RHI::SwapChain> swapChain = device->CreateSwapChain(window);
+		std::unique_ptr<RHI::SwapChain> swapChain = device->CreateSwapChain(*window);
 		RHI::RenderPass& renderPass = swapChain->GetRenderPass();
 
 		std::unique_ptr<RHI::MaterialBuilder> materialBuilder = device->CreateMaterialBuilder(swapChain->GetExtent());
@@ -60,13 +73,13 @@ int main()
 		//pbrPass.AddColorOutput("albedo", ??);
 		//pbrPass.AddColorOutput("normal", ??);
 
-		float aspect = static_cast<float>(window.GetWidth()) / static_cast<float>(window.GetHeight());
+		float aspect = static_cast<float>(window->GetWidth()) / static_cast<float>(window->GetHeight());
 		Camera camera(ToRadians(90.f), 0.1f, 1000000.f, aspect);
 		bool cursorDisabled = false;
 		float deltaTime = 0.f;
 		float speed = 15000.f;
-		window.SetCursorDisabled(cursorDisabled);
-		window.RegisterResizeCallback([&](Window& window)
+		window->SetCursorDisabled(cursorDisabled);
+		window->RegisterResizeCallback([&](Window& window)
 		{
 			aspect = static_cast<float>(window.GetWidth()) / static_cast<float>(window.GetHeight());
 			camera.SetAspectRatio(aspect);
@@ -74,36 +87,36 @@ int main()
 			camera.SetNear(0.0001f);
 			camera.SetFar(1000.f);
 		});
-		inputManager.Register("MouseMoved", MouseEvent::Type::Moved, [&camera](const MouseEvent& e)
-		{
-			camera.Rotate(e.mouseMove.deltaX, -e.mouseMove.deltaY);
-		});
+		//inputManager.Register("MouseMoved", MouseEvent::Type::Moved, [&camera](const MouseEvent& e)
+		//{
+		//	camera.Rotate(e.mouseMove.deltaX, -e.mouseMove.deltaY);
+		//});
 
-		inputManager.Register("Forward", Key::Z, TriggerType::Held, [&camera, &speed, &deltaTime]()
-		{
-			camera.Move(Camera::CameraMovement::Forward, deltaTime * speed);
-		});
+		//inputManager.Register("Forward", Key::Z, TriggerType::Held, [&camera, &speed, &deltaTime]()
+		//{
+		//	camera.Move(Camera::CameraMovement::Forward, deltaTime * speed);
+		//});
 
-		inputManager.Register("Backward", Key::S, TriggerType::Held, [&camera, &speed, &deltaTime]()
-		{
-			camera.Move(Camera::CameraMovement::Backward, deltaTime * speed);
-		});
+		//inputManager.Register("Backward", Key::S, TriggerType::Held, [&camera, &speed, &deltaTime]()
+		//{
+		//	camera.Move(Camera::CameraMovement::Backward, deltaTime * speed);
+		//});
 
-		inputManager.Register("Left", Key::Q, TriggerType::Held, [&camera, &speed, &deltaTime]()
-		{
-			camera.Move(Camera::CameraMovement::Left, deltaTime * speed);
-		});
+		//inputManager.Register("Left", Key::Q, TriggerType::Held, [&camera, &speed, &deltaTime]()
+		//{
+		//	camera.Move(Camera::CameraMovement::Left, deltaTime * speed);
+		//});
 
-		inputManager.Register("Right", Key::D, TriggerType::Held, [&camera, &speed, &deltaTime]()
-		{
-			camera.Move(Camera::CameraMovement::Right, deltaTime * speed);
-		});
+		//inputManager.Register("Right", Key::D, TriggerType::Held, [&camera, &speed, &deltaTime]()
+		//{
+		//	camera.Move(Camera::CameraMovement::Right, deltaTime * speed);
+		//});
 
-		inputManager.Register("MouseFocused", Key::LeftAlt, TriggerType::Pressed, [&cursorDisabled, &window]()
-		{
-			cursorDisabled = !cursorDisabled;
-			window.SetCursorDisabled(cursorDisabled);
-		});
+		//inputManager.Register("MouseFocused", Key::LeftAlt, TriggerType::Pressed, [&cursorDisabled, &window]()
+		//{
+		//	cursorDisabled = !cursorDisabled;
+		//	window->SetCursorDisabled(cursorDisabled);
+		//});
 		Scene sceneParameters = {};
 		sceneParameters.gpuSceneData.sunlightDirection = Vector4f{ 3.1f, 1.f, -1.f, 0 };
 		sceneParameters.gpuSceneData.ambientColor = Vector4f{ 0.f, 0.f, 0.f, 1.f };
@@ -128,9 +141,9 @@ int main()
 
 		
 		std::chrono::steady_clock::time_point lastFrameTime = std::chrono::steady_clock::now();
-		while (!window.ShouldClose())
+		while (!window->ShouldClose())
 		{
-			window.PopEvent();
+			window->PopEvent();
 			camera.UpdateViewProjectionMatrix();
 			auto beginTime = std::chrono::high_resolution_clock::now();
 			deltaTime = std::chrono::duration<float>(beginTime - lastFrameTime).count();
@@ -146,16 +159,16 @@ int main()
 				Viewport viewport{
 					.x = 0.f,
 					.y = 0.f,
-					.width = static_cast<float>(window.GetWidth()),
-					.height = static_cast<float>(window.GetHeight()),
+					.width = static_cast<float>(window->GetWidth()),
+					.height = static_cast<float>(window->GetHeight()),
 					.minDepth = 0.f,
 					.maxDepth = 1.f,
 				};
 				Rect2D dynamicScissor = {};
 				dynamicScissor.x = 0;
 				dynamicScissor.y = 0;
-				dynamicScissor.width = window.GetWidth();
-				dynamicScissor.height = window.GetHeight();
+				dynamicScissor.width = window->GetWidth();
+				dynamicScissor.height = window->GetHeight();
 				commandBuffer.SetViewport(viewport);
 				commandBuffer.SetScissor(dynamicScissor);
 				commandBuffer.BeginRenderPass(renderPass, currentFrame.GetFrameBuffer(), Vector3f{ 1.f, 0.f, 0.f });
@@ -179,7 +192,7 @@ int main()
 			}
 			commandBuffer.End();
 			currentFrame.Present();
-			window.SetTitle(std::format("ConcertoGraphics - {} fps", 1.f / deltaTime));
+			window->SetTitle(std::format("ConcertoGraphics - {} fps", 1.f / deltaTime));
 		}
 	}
 	catch (const std::exception& e)

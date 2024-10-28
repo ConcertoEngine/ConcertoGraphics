@@ -4,6 +4,7 @@
 
 #include <stdexcept>
 #include <utility>
+#include <vk_mem_alloc.h>
 
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Buffer.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Device.hpp"

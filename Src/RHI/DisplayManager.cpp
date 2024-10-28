@@ -108,6 +108,7 @@ namespace Concerto::Graphics::RHI
 					.height = sdlDisplayMode.h,
 					.refreshRate = sdlDisplayMode.refresh_rate
 				};
+				displayModes.emplace_back(std::move(displayMode));
 			}
 
 			DisplayInfo displayInfo = {
@@ -121,5 +122,10 @@ namespace Concerto::Graphics::RHI
 			displayInfos.emplace_back(std::move(displayInfo));
 		}
 		return displayInfos;
+	}
+
+	std::unique_ptr<Window> DisplayManager::CreateWindow(Int32 displayIndex, const std::string& name, Int32 width, Int32 height)
+	{
+		return std::make_unique<Window>(displayIndex, name, width, height);
 	}
 }

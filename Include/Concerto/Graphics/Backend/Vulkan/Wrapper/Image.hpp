@@ -7,7 +7,6 @@
 
 #include <string>
 
-
 #include <vk_mem_alloc.h>
 
 #include "Concerto/Graphics/Backend/Vulkan/Defines.hpp"

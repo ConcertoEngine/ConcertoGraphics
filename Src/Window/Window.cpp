@@ -6,23 +6,11 @@
 
 #include <Concerto/Core/Logger.hpp>
 #include <Concerto/Core/Assert.hpp>
-#include <utility>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_syswm.h>
 
 #include "Concerto/Graphics/Window/Window.hpp"
-#include "Concerto/Graphics/Backend/Vulkan/Wrapper/Instance.hpp"
 #include "Concerto/Graphics/Window/Event.hpp"
-
-#if __linux__
-#define GLFW_EXPOSE_NATIVE_X11
-#elif _WIN32
-#define GLFW_EXPOSE_NATIVE_WIN32
-#elif __APPLE__
-#define GLFW_EXPOSE_NATIVE_COCOA
-#endif
-#define GLFW_INCLUDE_VULKAN
-#include <GLFW/glfw3.h>
-#include <GLFW/glfw3native.h>
-
 namespace Concerto::Graphics
 {
 	void ErrorCallback(int ec, const char* description)
@@ -30,62 +18,41 @@ namespace Concerto::Graphics
 		Logger::Error("GLFW Error: code {}, description '{}'", std::to_string(ec), std::string(description));
 	}
 
-	Window::Window(const std::string& title, int width, int height) :
+	Window::Window(Int32 displayIndex, const std::string& title, Int32 width, Int32 height) :
 		_title(title),
 		_width(width),
 		_height(height),
 		_window(nullptr)
 	{
-		glfwSetErrorCallback(ErrorCallback);
-		if (glfwInit() == GLFW_FALSE)
+		Uint32 flags = 0;
+		flags |= SDL_WINDOW_RESIZABLE;
+		_window = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED_DISPLAY(displayIndex), SDL_WINDOWPOS_CENTERED_DISPLAY(displayIndex), width, height, flags);
+		if (_window == nullptr)
 		{
-			CONCERTO_ASSERT_FALSE("ConcertoGraphics: Glfw initialization failed");
-			throw std::runtime_error("GLFW3 initialization failed");
+			CONCERTO_ASSERT_FALSE("ConcertoGraphics: Window creation failed message: {}", SDL_GetError());
+			throw std::runtime_error(std::format("ConcertoGraphics: Window creation failed message: {}", SDL_GetError()));
 		}
-		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-		_window = glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);;
-		if (!_window)
-		{
-			CONCERTO_ASSERT_FALSE("ConcertoGraphics: Window creation failed");
-			throw std::runtime_error("GLFW3 Window creation failed");
-		}
+
 		RegisterInputCallbacks();
 	}
 	Window::~Window()
 	{
-		glfwDestroyWindow(_window);
+		SDL_DestroyWindow(_window);
 		_window = nullptr;
-		glfwTerminate();
-	}
-
-	bool Window::IsVulkanSupported()
-	{
-		return glfwVulkanSupported() == GLFW_TRUE;
 	}
 
 	void Window::SetTitle(const std::string& title)
 	{
 		CONCERTO_ASSERT(_window, "ConcertoGraphics: invalid window pointer");
-		glfwSetWindowTitle(_window, title.c_str());
-	}
-
-	void Window::SetIcon(const std::string& path)
-	{
-		CONCERTO_ASSERT(_window, "ConcertoGraphics: invalid window pointer");
+		SDL_SetWindowTitle(_window, title.c_str());
 	}
 
 	void Window::SetCursorVisible(bool visible)
 	{
 		CONCERTO_ASSERT(_window, "ConcertoGraphics: invalid window pointer");
-		if (visible)
-			glfwSetInputMode(_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-		else glfwSetInputMode(_window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
-	}
-
-	void Window::SetCursorPosition(int x, int y)
-	{
-		CONCERTO_ASSERT(_window, "ConcertoGraphics: invalid window pointer");
-		glfwSetCursorPos(_window, x, y);
+		Int32 result = SDL_ShowCursor(visible);
+		if (result < 0)
+			Logger::Warning("{}", SDL_GetError());
 	}
 
 	void Window::SetCursorIcon(const std::string& path)
@@ -96,105 +63,123 @@ namespace Concerto::Graphics
 	void Window::SetCursorDisabled(bool disabled)
 	{
 		CONCERTO_ASSERT(_window, "ConcertoGraphics: invalid window pointer");
-		if (disabled)
-			glfwSetInputMode(_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-		else glfwSetInputMode(_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-	}
-
-	UInt32 Window::GetHeight()
-	{
-		CONCERTO_ASSERT(_window, "ConcertoGraphics: invalid window pointer");
-		int w, h;
-		glfwGetWindowSize(_window, &w, &h);
-		return h;
-	}
-
-	UInt32 Window::GetWidth()
-	{
-		CONCERTO_ASSERT(_window, "ConcertoGraphics: invalid window pointer");
-		int w, h;
-		glfwGetWindowSize(_window, &w, &h);
-		return w;
-	}
-
-	bool Window::CreateVulkanSurface(VkInstance instance, VkSurfaceKHR& surface) const
-	{
-		const auto res = glfwCreateWindowSurface(instance, _window, nullptr, &surface);
-		if (res != VK_SUCCESS)
-		{
-			Logger::Warning("Unable to create vulkan surface error code: {}",  std::to_string(res));
-			return false;
+		if (disabled) {
+			Int32 result = SDL_ShowCursor(SDL_DISABLE);
+			if (result < 0)
+				Logger::Warning("{}", SDL_GetError());
+			result = SDL_SetRelativeMouseMode(SDL_TRUE);
+			if (result < 0)
+				Logger::Warning("{}", SDL_GetError());
 		}
-		return true;
+		else {
+			Int32 result = SDL_ShowCursor(SDL_ENABLE);
+			if (result < 0)
+				Logger::Warning("{}", SDL_GetError());
+			result = SDL_SetRelativeMouseMode(SDL_FALSE);
+			if (result < 0)
+				Logger::Warning("{}", SDL_GetError());
+		}
 	}
 
-	void* Window::GetRawWindow()
+	UInt32 Window::GetHeight() const
 	{
 		CONCERTO_ASSERT(_window, "ConcertoGraphics: invalid window pointer");
-		return _window;
+		int w, h;
+		SDL_GetWindowSize(_window, &w, &h);
+		return static_cast<UInt32>(h);
+	}
+
+	UInt32 Window::GetWidth() const
+	{
+		CONCERTO_ASSERT(_window, "ConcertoGraphics: invalid window pointer");
+		int w, h;
+		SDL_GetWindowSize(_window, &w, &h);
+		return static_cast<UInt32>(w);
+	}
+
+	NativeWindow Window::GetNativeWindow() const
+	{
+		CONCERTO_ASSERT(_window, "ConcertoGraphics: invalid window pointer");
+		SDL_SysWMinfo wmInfo;
+		SDL_VERSION(&wmInfo.version)
+		NativeWindow nativeWindow;
+		if (SDL_GetWindowWMInfo(_window, &wmInfo)) {
+#if defined(CONCERTO_PLATFORM_WINDOWS)
+			nativeWindow.window = wmInfo.info.win.window;
+			nativeWindow.hinstance= wmInfo.info.win.hinstance;
+#elif defined(CONCERTO_PLATFORM_MACOS))
+			CONCERTO_ASSERT_FALSE("Not implemented");
+#elif defined(CONCERTO_PLATFORM_LINUX)
+			CONCERTO_ASSERT_FALSE("Not implemented");
+#endif
+		}
+		else {
+			CONCERTO_ASSERT_FALSE("ConcertoGraphics: Could not get native window handle message:", SDL_GetError());
+			return {};
+		}
+		return nativeWindow;
 	}
 
 	std::optional<Key> Window::PopEvent()
 	{
-		glfwPollEvents();
 		return {};
 	}
 
-	bool Window::ShouldClose()
+	bool Window::ShouldClose() const
 	{
 		CONCERTO_ASSERT(_window, "ConcertoGraphics: invalid window pointer");
-		return glfwWindowShouldClose(_window);
+		//return glfwWindowShouldClose(_window);
+		return false;
 	}
 
 	void Window::RegisterResizeCallback(std::function<void(Window& window)> callback)
 	{
 		CONCERTO_ASSERT(_window, "ConcertoGraphics: invalid window pointer");
 		_resizeCallback = std::move(callback);
-		glfwSetWindowUserPointer(_window, this);
-		glfwSetWindowSizeCallback(_window, [](GLFWwindow* window, int width, int height)
-		{
-			auto* self = static_cast<Window*>(glfwGetWindowUserPointer(window));
-			self->_width = width;
-			self->_height = height;
-			self->_resizeCallback(*self);
-		});
+		//glfwSetWindowUserPointer(_window, this);
+		//glfwSetWindowSizeCallback(_window, [](GLFWwindow* window, int width, int height)
+		//{
+		//	auto* self = static_cast<Window*>(glfwGetWindowUserPointer(window));
+		//	self->_width = width;
+		//	self->_height = height;
+		//	self->_resizeCallback(*self);
+		//});
 	}
 
 	void Window::RegisterKeyCallback(std::function<void(Window&, Key, int, int, int)> callback)
 	{
 		CONCERTO_ASSERT(_window, "ConcertoGraphics: invalid window pointer");
 		_keyCallback = callback;
-		glfwSetWindowUserPointer(_window, this);
-		glfwSetKeyCallback(_window, [](GLFWwindow* window, int key, int scancode, int action, int mods)
-		{
-			auto* self = static_cast<Window*>(glfwGetWindowUserPointer(window));
-			self->_keyCallback(*self, static_cast<Key>(key), scancode, action, mods);
-		});
-
+		//glfwSetWindowUserPointer(_window, this);
+		//glfwSetKeyCallback(_window, [](GLFWwindow* window, int key, int scancode, int action, int mods)
+		//{
+		//	auto* self = static_cast<Window*>(glfwGetWindowUserPointer(window));
+		//	self->_keyCallback(*self, static_cast<Key>(key), scancode, action, mods);
+		//});
 	}
 
 	void Window::RegisterMouseButtonCallback(std::function<void(Window& window, int button, int action, int mods)> callback)
 	{
 		CONCERTO_ASSERT(_window, "ConcertoGraphics: invalid window pointer");
 		_mouseButtonCallback = std::move(callback);
-		glfwSetWindowUserPointer(_window, this);
-		glfwSetMouseButtonCallback(_window, [](GLFWwindow* window, int button, int action, int mods)
-		{
-			auto* self = static_cast<Window*>(glfwGetWindowUserPointer(window));
-			self->_mouseButtonCallback(*self, button, action, mods);
-		});
+		//glfwSetWindowUserPointer(_window, this);
+		//glfwSetMouseButtonCallback(_window, [](GLFWwindow* window, int button, int action, int mods)
+		//{
+		//	auto* self = static_cast<Window*>(glfwGetWindowUserPointer(window));
+		//	self->_mouseButtonCallback(*self, button, action, mods);
+		//});
 	}
 
 	void Window::RegisterCursorPosCallback(std::function<void(Window& window, double xpos, double ypos)> callback)
 	{
 		CONCERTO_ASSERT(_window, "ConcertoGraphics: invalid window pointer");
 		_cursorPosCallback = std::move(callback);
-		glfwSetWindowUserPointer(_window, this);
-		glfwSetCursorPosCallback(_window, [](GLFWwindow* window, double xpos, double ypos)
-		{
-			auto* self = static_cast<Window*>(glfwGetWindowUserPointer(window));
-			self->_cursorPosCallback(*self, xpos, ypos);
-		});
+		//glfwSetWindowUserPointer(_window, this);
+		//glfwSetCursorPosCallback(_window, [](GLFWwindow* window, double xpos, double ypos)
+		//{
+		//	auto* self = static_cast<Window*>(glfwGetWindowUserPointer(window));
+		//	self->_cursorPosCallback(*self, xpos, ypos);
+		//});
 	}
 
 	Input& Window::GetInputManager()

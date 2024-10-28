@@ -36,8 +36,6 @@ namespace Concerto::Graphics::RHI
 
 		std::span<const DeviceInfo> EnumerateDevices() const;
 		std::unique_ptr<Device> CreateDevice(std::size_t index);
-		std::unique_ptr<DisplayManager> CreateDisplayManager();
-
 		inline APIImpl* GetImpl();
 	private:
 		std::unique_ptr<APIImpl> _apiImpl;

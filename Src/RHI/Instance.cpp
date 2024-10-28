@@ -7,8 +7,6 @@
 #include "Concerto/Graphics/RHI/APIImpl.hpp"
 #include "Concerto/Graphics/RHI/Vulkan/VkRHI.hpp"
 
-#include "Concerto/Graphics/RHI/Vulkan/VkRHIDisplayManager.hpp"
-
 namespace Concerto::Graphics::RHI
 {
 	Instance::Instance(Backend backend, ValidationLevel validationLevel) :
@@ -41,29 +39,6 @@ namespace Concerto::Graphics::RHI
 	{
 		CONCERTO_ASSERT(_apiImpl, "ConcertoGraphics: Tying to get an invalid ApiImpl");
 		return _apiImpl->CreateDevice(index);
-	}
-
-	std::unique_ptr<DisplayManager> Instance::CreateDisplayManager()
-	{
-		switch (_backend)
-		{
-		case Backend::ConcertoVulkan:
-			{
-				return std::make_unique<VkRHIDisplayManager>();
-			}
-		case Backend::Vulkan:
-			break;
-		case Backend::DirectX11:
-			break;
-		case Backend::DirectX12:
-			break;
-		case Backend::Metal:
-			break;
-		case Backend::OpenGL:
-			break;
-		case Backend::OpenGLES:
-			break;
-		}
 	}
 
 	APIImpl* Instance::GetImpl()
