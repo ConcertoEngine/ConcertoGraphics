@@ -5,11 +5,42 @@
 #include <SDL2/SDL.h>
 #include <Concerto/Core/Assert.hpp>
 
-#include "Concerto/Graphics/DisplayManager.hpp"
+#include "Concerto/Graphics/RHI/DisplayManager.hpp"
 
-
-namespace Concerto::Graphics
+namespace Concerto::Graphics::RHI
 {
+	namespace
+	{
+		PixelFormat PixelFormatFrom(UInt32 pixelFormat)
+		{
+			switch (pixelFormat) {
+			case SDL_PIXELFORMAT_RGB888:
+				return PixelFormat::RGB8uNorm;
+			case SDL_PIXELFORMAT_RGB24:
+				return PixelFormat::RGB8uNorm;
+			case SDL_PIXELFORMAT_RGBA8888:
+				return PixelFormat::RGBA8uNorm;
+			case SDL_PIXELFORMAT_ARGB8888:
+				return PixelFormat::BGRA8uNorm; // Assuming BGRA is ARGB
+			case SDL_PIXELFORMAT_BGR888:
+				return PixelFormat::BGRuNorm;
+			case SDL_PIXELFORMAT_ABGR8888:
+				return PixelFormat::BGRA8uNorm;
+			case SDL_PIXELFORMAT_RGB565:
+				return PixelFormat::RGB8uNorm; // Assuming it’s closest to 8-bit normalized
+			case SDL_PIXELFORMAT_RGBA5551:
+				return PixelFormat::RGBA8uNorm;
+			case SDL_PIXELFORMAT_RGB332:
+				return PixelFormat::RGB8uNorm; // Approximated to RGB8
+			case SDL_PIXELFORMAT_RGB444:
+				return PixelFormat::RGB8uNorm;
+			case SDL_PIXELFORMAT_RGB555:
+				return PixelFormat::RGB8uNorm;
+			default:
+				throw std::invalid_argument("Unsupported SDL format");
+			}
+		}
+	}
 	DisplayManager::DisplayManager()
 	{
 		int result = SDL_Init(SDL_INIT_VIDEO);
@@ -23,5 +54,72 @@ namespace Concerto::Graphics
 	DisplayManager::~DisplayManager()
 	{
 		SDL_Quit();
+	}
+
+	std::vector<DisplayInfo> DisplayManager::EnumerateDisplaysInfos()
+	{
+		std::vector<DisplayInfo> displayInfos;
+		const Int32 numDisplay = SDL_GetNumVideoDisplays();
+		if (numDisplay < 0)
+		{
+			CONCERTO_ASSERT_FALSE("ConcertoGraphics: Display enumeration failed code: {}, message: {}", numDisplay, SDL_GetError());
+			return {};
+		}
+
+		for (Int32 displayIndex = 0; displayIndex < numDisplay; ++displayIndex)
+		{
+			const char* displayName = SDL_GetDisplayName(displayIndex);
+			if (displayName == nullptr)
+			{
+				CONCERTO_ASSERT_FALSE("ConcertoGraphics: Couldn't get display name message: {}", SDL_GetError());
+				continue;
+			}
+			SDL_Rect displayBounds;
+			Int32 result = SDL_GetDisplayBounds(displayIndex, &displayBounds);
+			if (result < 0)
+			{
+				CONCERTO_ASSERT_FALSE("ConcertoGraphics: Couldn't get display bounds code: {}, message: {}", result, SDL_GetError());
+				continue;
+			}
+			static_assert(sizeof(SDL_Rect) == sizeof(DisplayInfo::Bounds) && "Invalid Bounds size");
+
+
+			Int32 numDisplayMode = SDL_GetNumDisplayModes(displayIndex);
+			if (numDisplayMode < 0)
+			{
+				CONCERTO_ASSERT_FALSE("ConcertoGraphics: Couldn't get display bounds code: {}, message: {}", result, SDL_GetError());
+				continue;
+			}
+
+			std::vector<DisplayInfo::DisplayMode> displayModes;
+			for (Int32 displayModeIndex = 0; displayModeIndex < numDisplayMode; ++displayModeIndex)
+			{
+				SDL_DisplayMode sdlDisplayMode = {};
+				result = SDL_GetDisplayMode(displayIndex, displayModeIndex, &sdlDisplayMode);
+				if (result < 0)
+				{
+					CONCERTO_ASSERT_FALSE("ConcertoGraphics: Couldn't get display mode code: {}, message: {}", result, SDL_GetError());
+					continue;
+				}
+				DisplayInfo::DisplayMode displayMode = {
+					.displayModeIndex = displayModeIndex,
+					.pixelFormat = PixelFormatFrom(sdlDisplayMode.format),
+					.width = sdlDisplayMode.w,
+					.height = sdlDisplayMode.h,
+					.refreshRate = sdlDisplayMode.refresh_rate
+				};
+			}
+
+			DisplayInfo displayInfo = {
+				.displayIndex = displayIndex,
+				.displayName = std::string_view(displayName, std::strlen(displayName)),
+				.displayBounds = {}, //filled below with std::memcpy
+				.isPrimary = displayIndex == 0,
+				.displayModes = std::move(displayModes)
+			};
+			std::memcpy(&displayInfo.displayBounds, &displayBounds, sizeof(DisplayInfo::Bounds));
+			displayInfos.emplace_back(std::move(displayInfo));
+		}
+		return displayInfos;
 	}
 }

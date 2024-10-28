@@ -5,14 +5,46 @@
 #ifndef CONCERTO_GRAPHICS_DISPLAYMANAGER_HPP
 #define CONCERTO_GRAPHICS_DISPLAYMANAGER_HPP
 
+#include <vector>
+
+#include "Concerto/Graphics/RHI/Enums.hpp"
 #include "Concerto/Graphics/Defines.hpp"
 
 namespace Concerto::Graphics::RHI
 {
+	struct DisplayInfo
+	{
+		struct Bounds
+		{
+			Int32 x, y;
+			Int32 w, h;
+		};
+
+		struct DisplayMode
+		{
+			Int32 displayModeIndex;
+			PixelFormat pixelFormat;
+			Int32 width;
+			Int32 height;
+			Int32 refreshRate;
+		};
+
+		Int32 displayIndex;
+		std::string_view displayName;
+		Bounds displayBounds;
+		bool isPrimary;
+
+		std::vector<DisplayMode> displayModes;
+	};
+
 	class CONCERTO_GRAPHICS_API DisplayManager
 	{
+	public:
 		DisplayManager();
 		~DisplayManager();
+
+		std::vector<DisplayInfo> EnumerateDisplaysInfos();
+	private:
 	};
 }
 
