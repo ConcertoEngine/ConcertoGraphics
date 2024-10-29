@@ -21,7 +21,7 @@
 
 #include "Concerto/Graphics/Camera.hpp"
 #include "Concerto/Graphics/GPUData.hpp"
-#include "Concerto/Graphics/RHI/DisplayManager.hpp"
+#include "Concerto/Graphics/DisplayManager.hpp"
 #include "Concerto/Graphics/RHI/GpuMesh.hpp"
 #include "Concerto/Graphics/RHI/GpuSubMesh.hpp"
 
@@ -32,7 +32,7 @@ int main()
 {
 	try
 	{
-		RHI::DisplayManager displayManager;
+		DisplayManager displayManager;
 		auto displayInfos = displayManager.EnumerateDisplaysInfos();
 
 		Logger::Info("Displays:");

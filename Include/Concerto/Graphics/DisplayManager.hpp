@@ -7,11 +7,11 @@
 
 #include <vector>
 
-#include "Concerto/Graphics/RHI/Enums.hpp"
+#include "Concerto/Graphics/PixelFormat.hpp"
 #include "Concerto/Graphics/Window/Window.hpp"
 #include "Concerto/Graphics/Defines.hpp"
 
-namespace Concerto::Graphics::RHI
+namespace Concerto::Graphics
 {
 	struct DisplayInfo
 	{

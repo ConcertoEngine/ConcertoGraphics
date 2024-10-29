@@ -5,9 +5,9 @@
 #include <SDL2/SDL.h>
 #include <Concerto/Core/Assert.hpp>
 
-#include "Concerto/Graphics/RHI/DisplayManager.hpp"
+#include "Concerto/Graphics/DisplayManager.hpp"
 
-namespace Concerto::Graphics::RHI
+namespace Concerto::Graphics
 {
 	namespace
 	{

@@ -20,7 +20,7 @@ target("ConcertoGraphics")
         set_symbols("debug")
     end
     add_defines("CONCERTO_GRAPHICS_BUILD")
-    add_files("Src/Camera.cpp", "Src/Primitives.cpp", "Src/Camera.cpp", "Src/Window/**.cpp", "Src/Monitor/**.cpp", "Src/DisplayManager.cpp")
+    add_files("Src/Camera.cpp", "Src/Primitives.cpp", "Src/Camera.cpp", "Src/Window/**.cpp", "Src/DisplayManager.cpp")
     add_includedirs("Include/", { public = true })
     add_headerfiles("Include/(Concerto/Graphics/*.hpp)", "Include/(Concerto/Graphics/*.hpp)", "Include/(Concerto/Graphics/Window/*.hpp)")
     add_packages("concerto-core", "libsdl", "vulkan-headers", "imgui", { public = true })
