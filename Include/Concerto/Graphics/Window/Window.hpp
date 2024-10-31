@@ -7,7 +7,6 @@
 
 #include <string>
 #include <functional>
-#include <optional>
 
 #include "Concerto/Graphics/Defines.hpp"
 #include "Concerto/Graphics/Window/Key.hpp"
@@ -79,12 +78,6 @@ namespace Concerto::Graphics
 		void SetCursorDisabled(bool disabled);
 
 		/**
-		 * @brief Get an event
-		 * @return an empty optional if the key is not pressed, a filled optional otherwise
-		 */
-		std::optional<Key> PopEvent();
-
-		/**
 		 * @brief Check if the Window should close
 		 * @return True if the Window should close, false otherwise
 		 */
@@ -115,7 +108,12 @@ namespace Concerto::Graphics
 		void RegisterCursorPosCallback(std::function<void(Window& window, double xpos, double ypos)> callback);
 
 		Input& GetInputManager();
-	protected:
+
+		UInt32 GetId() const;
+
+		void SetShouldQuit(bool value);
+		void TriggerResize();
+	private:
 		void RegisterInputCallbacks();
 		std::string _title;
 		std::size_t _width;
@@ -126,6 +124,8 @@ namespace Concerto::Graphics
 		std::function<void(Window& window, Key key, int scancode, int action, int mods)> _keyCallback;
 		std::function<void(Window& window, int button, int action, int mods)> _mouseButtonCallback;
 		std::function<void(Window& window, double xpos, double ypos)> _cursorPosCallback;
+		UInt32 _windowID;
+		bool _shouldQuit;
 	};
 }
 

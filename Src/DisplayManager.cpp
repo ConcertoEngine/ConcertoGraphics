@@ -128,4 +128,9 @@ namespace Concerto::Graphics
 	{
 		return std::make_unique<Window>(displayIndex, name, width, height);
 	}
+
+	void DisplayManager::DispatchEvents()
+	{
+		SDL_PumpEvents();
+	}
 }

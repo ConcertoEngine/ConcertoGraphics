@@ -47,6 +47,7 @@ namespace Concerto::Graphics
 		std::vector<DisplayInfo> EnumerateDisplaysInfos();
 
 		std::unique_ptr<Window> CreateWindow(Int32 displayIndex, const std::string& name, Int32 width, Int32 height);
+		void DispatchEvents();
 	private:
 	};
 }
