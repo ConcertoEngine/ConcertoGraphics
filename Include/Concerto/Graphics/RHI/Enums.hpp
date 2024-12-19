@@ -8,7 +8,7 @@
 #include <type_traits>
 #include <Concerto/Core/Types.hpp>
 
-namespace Concerto::Graphics::RHI
+namespace cct::gfx::rhi
 {
 	enum class DeviceType : UInt8
 	{

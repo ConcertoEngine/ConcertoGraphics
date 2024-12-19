@@ -4,7 +4,7 @@
 
 #include "Concerto/Graphics/Camera.hpp"
 
-namespace Concerto::Graphics
+namespace cct::gfx
 {
 	Camera::Camera(float fov, float near, float far, float aspectRatio) :
 		_eulerAngles(),

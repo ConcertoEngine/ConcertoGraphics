@@ -9,9 +9,9 @@
 #include "Concerto/Graphics/RHI/CommandBuffer.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/CommandBuffer.hpp"
 
-namespace Concerto::Graphics::RHI
+namespace cct::gfx::rhi
 {
-	class CONCERTO_GRAPHICS_RHI_BASE_API VkRHIFrame final: public RHI::Frame
+	class CONCERTO_GRAPHICS_RHI_BASE_API VkRHIFrame final: public rhi::Frame
 	{
 	public:
 		VkRHIFrame();

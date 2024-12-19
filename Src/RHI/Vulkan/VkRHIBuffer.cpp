@@ -5,10 +5,10 @@
 #include "Concerto/Graphics/RHI/Vulkan/VkRHIBuffer.hpp"
 #include "Concerto/Graphics/RHI/Vulkan/Utils.hpp"
 
-namespace Concerto::Graphics::RHI
+namespace cct::gfx::rhi
 {
-	VkRHIBuffer::VkRHIBuffer(VkRHIDevice& device, RHI::BufferUsageFlags usage, UInt32 allocationSize, bool allowBufferMapping) :
-		Vk::Buffer(device.GetAllocator(), allocationSize, Converters::ToVulkan(usage), VMA_MEMORY_USAGE_AUTO, allowBufferMapping),
+	VkRHIBuffer::VkRHIBuffer(VkRHIDevice& device, rhi::BufferUsageFlags usage, UInt32 allocationSize, bool allowBufferMapping) :
+		vk::Buffer(device.GetAllocator(), allocationSize, Converters::ToVulkan(usage), VMA_MEMORY_USAGE_AUTO, allowBufferMapping),
 		_allowBufferMapping(allowBufferMapping)
 	{
 	}
@@ -17,19 +17,19 @@ namespace Concerto::Graphics::RHI
 	{
 		if (!_allowBufferMapping)
 		{
-			CONCERTO_ASSERT_FALSE("ConcertoGraphics: buffer mapping is not enabled");
+			CCT_ASSERT_FALSE("ConcertoGraphics: buffer mapping is not enabled");
 			return false;
 		}
-		return Vk::Buffer::Map(data);;
+		return vk::Buffer::Map(data);;
 	}
 
 	void VkRHIBuffer::UnMap()
 	{
 		if (!_allowBufferMapping)
 		{
-			CONCERTO_ASSERT_FALSE("ConcertoGraphics: buffer mapping is not enabled");
+			CCT_ASSERT_FALSE("ConcertoGraphics: buffer mapping is not enabled");
 			return;
 		}
-		Vk::Buffer::UnMap();
+		vk::Buffer::UnMap();
 	}
 }

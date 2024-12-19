@@ -11,7 +11,7 @@
 
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Object.hpp"
 
-namespace Concerto::Graphics::Vk
+namespace cct::gfx::vk
 {
 	class Device;
 	class Fence;
@@ -39,7 +39,7 @@ namespace Concerto::Graphics::Vk
 		 * @param device The Device object to associate with this command buffer.
 		 * @param commandPool The VkCommandPool to associate with this command buffer.
 		 */
-		explicit CommandBuffer(Device& device, Vk::CommandPool& owner, VkCommandBuffer commandBuffer);
+		explicit CommandBuffer(Device& device, vk::CommandPool& owner, VkCommandBuffer commandBuffer);
 
 		~CommandBuffer();
 
@@ -204,8 +204,8 @@ namespace Concerto::Graphics::Vk
 		void SetScissor(VkRect2D scissor) const;
 
 	private:
-		Vk::CommandPool* _commandPool;
+		vk::CommandPool* _commandPool;
 	};
-} // namespace Concerto::Graphics::Vk
+} // namespace cct::gfx::vk
 
 #endif //CONCERTO_GRAPHICS_COMMANDBUFFER_HPP

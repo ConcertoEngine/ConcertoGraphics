@@ -13,7 +13,7 @@
 #include "Concerto/Graphics/Backend/Vulkan/Defines.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/ShaderModule.hpp"
 
-namespace Concerto::Graphics::Vk
+namespace cct::gfx::vk
 {
 	class Device;
 	class ShaderModule;
@@ -32,7 +32,7 @@ namespace Concerto::Graphics::Vk
 		nzsl::Ast::ModulePtr shaderAst;
 		nzsl::Ast::ModulePtr sanitizedModule;
 		std::vector<UInt32> spirv;
-		std::unique_ptr<Vk::ShaderModule> shaderModule;
+		std::unique_ptr<vk::ShaderModule> shaderModule;
 		std::unordered_map<UInt32 /*binding set*/, std::vector<VkDescriptorSetLayoutBinding>> bindings;
 		std::string entryPointName;
 		VkShaderStageFlagBits stage;

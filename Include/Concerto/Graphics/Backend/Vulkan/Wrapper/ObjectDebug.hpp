@@ -10,9 +10,9 @@
 
 #include "Concerto/Graphics/Backend/Vulkan/Defines.hpp"
 
-namespace Concerto::Graphics::Vk
+namespace cct::gfx::vk
 {
-#ifdef CONCERTO_DEBUG
+#ifdef CCT_DEBUG
 
 	class Device;
 	class CONCERTO_GRAPHICS_VULKAN_BACKEND_API ObjectDebug

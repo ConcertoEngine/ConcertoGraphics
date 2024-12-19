@@ -14,12 +14,12 @@
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Queue.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Allocator.hpp"
 
-namespace Concerto::Graphics::Vk
+namespace cct::gfx::vk
 {
 	class PhysicalDevice;
 	class Instance;
 	class UploadContext;
-#ifdef CONCERTO_DEBUG
+#ifdef CCT_DEBUG
 	class ObjectDebug;
 #endif
 	/**
@@ -113,6 +113,6 @@ namespace Concerto::Graphics::Vk
 		std::unordered_set<std::string> _extensions;
 	};
 
-} // Concerto::Graphics::Vk
+} // cct::gfx::vk
 
 #endif //CONCERTO_GRAPHICS_DEVICE_HPP

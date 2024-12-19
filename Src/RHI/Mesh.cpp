@@ -13,21 +13,21 @@
 #include "Concerto/Graphics/RHI/Material.hpp"
 #include "Concerto/Graphics/RHI/SubMesh.hpp"
 
-namespace Concerto::Graphics::RHI
+namespace cct::gfx::rhi
 {
 	Mesh::Mesh(std::string filePath) : _path(std::move(filePath))
 	{
-		CONCERTO_ASSERT(LoadFromFile(_path), "ConcertoGraphics: LoadFromFile failed");
+		CCT_ASSERT(LoadFromFile(_path), "ConcertoGraphics: LoadFromFile failed");
 	}
 
 	Mesh::Mesh(Vertices vertices)
 	{
-		RHI::SubMeshPtr subMesh = std::make_shared<RHI::SubMesh>(this);
+		rhi::SubMeshPtr subMesh = std::make_shared<rhi::SubMesh>(this);
 		subMesh->GetVertices() = std::move(vertices);
 		_subMeshes.push_back(subMesh);
 	}
 
-	std::vector<RHI::SubMeshPtr>& Mesh::GetSubMeshes()
+	std::vector<rhi::SubMeshPtr>& Mesh::GetSubMeshes()
 	{
 		return _subMeshes;
 	}
@@ -62,7 +62,7 @@ namespace Concerto::Graphics::RHI
 		path = path.parent_path();
 		for (auto& material : materials)
 		{
-			std::shared_ptr<RHI::MaterialInfo> mat = std::make_shared<RHI::MaterialInfo>();
+			std::shared_ptr<rhi::MaterialInfo> mat = std::make_shared<rhi::MaterialInfo>();
 			mat->diffuseTexturePath = material.diffuse_texname.empty() ? "" : (path / material.diffuse_texname).string();
 			mat->normalTexturePath = material.normal_texname.empty() ? "" : (path / material.normal_texname).string();
 			//mat->diffuseColor.x = material.diffuse[0];
@@ -133,7 +133,7 @@ namespace Concerto::Graphics::RHI
 		return _path;
 	}
 
-	std::unordered_map<std::string, std::shared_ptr<RHI::MaterialInfo>>& Mesh::GetMaterials()
+	std::unordered_map<std::string, std::shared_ptr<rhi::MaterialInfo>>& Mesh::GetMaterials()
 	{
 		return _materials;
 	}

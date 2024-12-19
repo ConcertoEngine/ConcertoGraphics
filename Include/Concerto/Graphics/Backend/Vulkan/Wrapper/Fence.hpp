@@ -8,7 +8,7 @@
 #include "Concerto/Graphics/Backend/Vulkan/Defines.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Object.hpp"
 
-namespace Concerto::Graphics::Vk
+namespace cct::gfx::vk
 {
 	class Device;
 
@@ -53,6 +53,6 @@ namespace Concerto::Graphics::Vk
 		*/
 		void Reset() const;
 	};
-} // namespace Concerto::Graphics::Vk
+} // namespace cct::gfx::vk
 
 #endif //CONCERTO_GRAPHICS_FENCE_HPP

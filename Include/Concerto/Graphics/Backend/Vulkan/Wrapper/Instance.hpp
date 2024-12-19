@@ -15,7 +15,7 @@
 #include "Concerto/Graphics/Version.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/PhysicalDevice.hpp"
 
-namespace Concerto::Graphics::Vk
+namespace cct::gfx::vk
 {
 	/**
 	* @class Instance
@@ -93,6 +93,6 @@ namespace Concerto::Graphics::Vk
 		std::unordered_set<std::string> _loadedExtensions;
 		std::unordered_set<std::string> _loadedLayers;
 	};
-} // Concerto::Graphics::Vk
+} // cct::gfx::vk
 
 #endif //CONCERTO_GRAPHICS_INSTANCE_HPP

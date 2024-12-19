@@ -5,9 +5,10 @@
 #ifndef CONCERTO_GRAPHICS_VERTEX_HPP
 #define CONCERTO_GRAPHICS_VERTEX_HPP
 
+#include <vector>
 #include <Concerto/Core/Math/Vector.hpp>
 
-namespace Concerto::Graphics
+namespace cct::gfx
 {
 	struct Vertex
 	{

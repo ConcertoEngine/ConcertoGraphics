@@ -10,7 +10,7 @@
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/CommandPool.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Device.hpp"
 
-namespace Concerto::Graphics::Vk
+namespace cct::gfx::vk
 {
 	CommandPool::CommandPool(Device& device, UInt32 queueFamily) :
 		Object(device),
@@ -22,7 +22,7 @@ namespace Concerto::Graphics::Vk
 		info.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
 		info.queueFamilyIndex = _queueFamily;
 		_lastResult = _device->vkCreateCommandPool(*_device->Get(), &info, nullptr, &_handle);
-		CONCERTO_ASSERT(_lastResult == VK_SUCCESS, "Error cannot create command pool: VkResult={}", static_cast<int>(_lastResult));
+		CCT_ASSERT(_lastResult == VK_SUCCESS, "Error cannot create command pool: VkResult={}", static_cast<int>(_lastResult));
 	}
 
 	CommandPool::~CommandPool()
@@ -35,10 +35,10 @@ namespace Concerto::Graphics::Vk
 	void CommandPool::Reset() const
 	{
 		_lastResult = _device->vkResetCommandPool(*_device->Get(), _handle, 0);
-		CONCERTO_ASSERT(_lastResult == VK_SUCCESS, "ConcertoGraphics: Error cannot reset command pool: VkResult={}", static_cast<int>(_lastResult));
+		CCT_ASSERT(_lastResult == VK_SUCCESS, "ConcertoGraphics: Error cannot reset command pool: VkResult={}", static_cast<int>(_lastResult));
 	}
 
-	Vk::CommandBuffer CommandPool::AllocateCommandBuffer()
+	vk::CommandBuffer CommandPool::AllocateCommandBuffer()
 	{
 		VkCommandBufferAllocateInfo info = {};
 		info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
@@ -48,7 +48,7 @@ namespace Concerto::Graphics::Vk
 		info.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
 		VkCommandBuffer commandBuffer;
 		const VkResult result = _device->vkAllocateCommandBuffers(*_device->Get(), &info, &commandBuffer);
-		CONCERTO_ASSERT(result == VK_SUCCESS, "ConcertoGraphics: vkAllocateCommandBuffers failed VkResult={}", static_cast<int>(result));
-		return Vk::CommandBuffer(*_device, *this, commandBuffer);
+		CCT_ASSERT(result == VK_SUCCESS, "ConcertoGraphics: vkAllocateCommandBuffers failed VkResult={}", static_cast<int>(result));
+		return vk::CommandBuffer(*_device, *this, commandBuffer);
 	}
 }

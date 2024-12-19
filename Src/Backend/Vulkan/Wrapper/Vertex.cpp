@@ -5,9 +5,9 @@
 #include "Concerto/Graphics/Backend/Vulkan/Vertex.hpp"
 #include "Concerto/Graphics/Vertex.hpp"
 
-namespace Concerto::Graphics::Vk
+namespace cct::gfx::vk
 {
-	VertexInputDescription Concerto::Graphics::Vk::GetVertexDescription()
+	VertexInputDescription cct::gfx::vk::GetVertexDescription()
 	{
 		VertexInputDescription description {};
 

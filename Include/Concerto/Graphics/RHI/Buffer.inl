@@ -9,7 +9,7 @@
 
 #include "Concerto/Graphics/RHI/Buffer.hpp"
 
-namespace Concerto::Graphics::RHI
+namespace cct::gfx::rhi
 {
 	template <typename T>
 		requires std::is_trivially_copyable_v<T>
@@ -18,7 +18,7 @@ namespace Concerto::Graphics::RHI
 		Byte* data = nullptr;
 		if (Map(&data) == false)
 		{
-			CONCERTO_ASSERT_FALSE("ConcertoGraphics: Cannot map buffer");
+			CCT_ASSERT_FALSE("ConcertoGraphics: Cannot map buffer");
 			return;
 		}
 		data += padding;
@@ -32,7 +32,7 @@ namespace Concerto::Graphics::RHI
 		Byte* data = nullptr;
 		if (Map(&data) == false)
 		{
-			CONCERTO_ASSERT_FALSE("ConcertoGraphics: Cannot map buffer");
+			CCT_ASSERT_FALSE("ConcertoGraphics: Cannot map buffer");
 			return;
 		}
 		data += padding;

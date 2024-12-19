@@ -10,7 +10,7 @@
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/CommandBuffer.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Fence.hpp"
 
-namespace Concerto::Graphics::Vk
+namespace cct::gfx::vk
 {
 	class CONCERTO_GRAPHICS_VULKAN_BACKEND_API UploadContext
 	{

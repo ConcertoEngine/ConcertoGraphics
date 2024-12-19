@@ -7,20 +7,20 @@
 
 #include <Concerto/Core/Types.hpp>
 
-#ifdef CONCERTO_COMPILER_MSVC
+#ifdef CCT_COMPILER_MSVC
 #pragma warning(disable: 4251) // Disable warning about DLL interface needed
 #endif
 
 #ifdef CONCERTO_GRAPHICS_VULKAN_BACKEND_BUILD
-	#define CONCERTO_GRAPHICS_VULKAN_BACKEND_API CONCERTO_EXPORT
+	#define CONCERTO_GRAPHICS_VULKAN_BACKEND_API CCT_EXPORT
 #else
-#define CONCERTO_GRAPHICS_VULKAN_BACKEND_API CONCERTO_IMPORT
+#define CONCERTO_GRAPHICS_VULKAN_BACKEND_API CCT_IMPORT
 #endif // CONCERTO_GRAPHICS_VULKAN_BACKEND_BUILD
 
 #include <vulkan/vk_platform.h>
 #include <vulkan/vulkan_core.h>
 
-#ifdef CONCERTO_PLATFORM_WINDOWS
+#ifdef CCT_PLATFORM_WINDOWS
 	#define VK_USE_PLATFORM_WIN32_KHR
 	#include <windows.h>
 	#undef max

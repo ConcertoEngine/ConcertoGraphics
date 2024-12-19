@@ -12,7 +12,7 @@
 
 #include "Concerto/Graphics/RHI/Texture.hpp"
 
-namespace Concerto::Graphics::RHI
+namespace cct::gfx::rhi
 {
 	class CONCERTO_GRAPHICS_RHI_BASE_API MaterialInfo
 	{
@@ -49,6 +49,6 @@ namespace Concerto::Graphics::RHI
 		std::string vertexShaderPath;
 		std::string fragmentShaderPath;
 	};
-	using MaterialPtr = std::shared_ptr<RHI::MaterialInfo>;
+	using MaterialPtr = std::shared_ptr<rhi::MaterialInfo>;
 }
 #endif //CONCERTO_GRAPHICS_INCLUDE_MATERIAL_HPP_

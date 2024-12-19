@@ -9,7 +9,7 @@
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/DescriptorSetLayout.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Device.hpp"
 
-namespace Concerto::Graphics::Vk
+namespace cct::gfx::vk
 {
 
 	DescriptorAllocator::DescriptorAllocator(Device& device) :
@@ -102,7 +102,7 @@ namespace Concerto::Graphics::Vk
 
 	Device& DescriptorAllocator::GetDevice() const
 	{
-		CONCERTO_ASSERT(_device != nullptr, "Vulkan device is null");
+		CCT_ASSERT(_device != nullptr, "Vulkan device is null");
 		return *_device;
 	}
 

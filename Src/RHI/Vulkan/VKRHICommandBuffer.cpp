@@ -15,21 +15,21 @@
 #include "Concerto/Graphics/RHI/Vulkan/VkRHIBuffer.hpp"
 #include "Concerto/Graphics/RHI/Vulkan/VKRHIFrameBuffer.hpp"
 
-namespace Concerto::Graphics::RHI
+namespace cct::gfx::rhi
 {
-	VkRHICommandBuffer::VkRHICommandBuffer(VkRHIDevice& device, Vk::CommandPool& commandPool) :
-		Vk::CommandBuffer(commandPool.AllocateCommandBuffer())
+	VkRHICommandBuffer::VkRHICommandBuffer(VkRHIDevice& device, vk::CommandPool& commandPool) :
+		vk::CommandBuffer(commandPool.AllocateCommandBuffer())
 	{
 	}
 
 	void VkRHICommandBuffer::Begin()
 	{
-		Vk::CommandBuffer::Begin();
+		vk::CommandBuffer::Begin();
 	}
 
 	void VkRHICommandBuffer::End()
 	{
-		Vk::CommandBuffer::End();
+		vk::CommandBuffer::End();
 	}
 
 	void VkRHICommandBuffer::Submit()
@@ -38,7 +38,7 @@ namespace Concerto::Graphics::RHI
 
 	void VkRHICommandBuffer::Reset()
 	{
-		Vk::CommandBuffer::Reset();
+		vk::CommandBuffer::Reset();
 	}
 
 	void VkRHICommandBuffer::SetViewport(const Viewport& viewport)
@@ -51,7 +51,7 @@ namespace Concerto::Graphics::RHI
 			.minDepth = viewport.minDepth,
 			.maxDepth = viewport.maxDepth
 		};
-		Vk::CommandBuffer::SetViewport(vkViewport);
+		vk::CommandBuffer::SetViewport(vkViewport);
 	}
 
 	void VkRHICommandBuffer::SetScissor(const Rect2D& scissor)
@@ -66,10 +66,10 @@ namespace Concerto::Graphics::RHI
 				.height = scissor.height
 			}
 		};
-		Vk::CommandBuffer::SetScissor(vkScissor);
+		vk::CommandBuffer::SetScissor(vkScissor);
 	}
 
-	void VkRHICommandBuffer::BeginRenderPass(const RHI::RenderPass& renderPass, const RHI::FrameBuffer& frameBuffer, const Vector3f& clearColor)
+	void VkRHICommandBuffer::BeginRenderPass(const rhi::RenderPass& renderPass, const rhi::FrameBuffer& frameBuffer, const Vector3f& clearColor)
 	{
 		const VkRHIRenderPass& vkRenderPass = Cast<const VkRHIRenderPass&>(renderPass);
 		const VkRHIFrameBuffer& vkRhiFrameBuffer = Cast<const VkRHIFrameBuffer&>(frameBuffer);
@@ -93,34 +93,34 @@ namespace Concerto::Graphics::RHI
 		renderPassInfo.clearValueCount = static_cast<UInt32>(clearValues.size());
 		renderPassInfo.pClearValues = clearValues.data();
 
-		Vk::CommandBuffer::BeginRenderPass(renderPassInfo);
+		vk::CommandBuffer::BeginRenderPass(renderPassInfo);
 	}
 
 	void VkRHICommandBuffer::EndRenderPass()
 	{
-		Vk::CommandBuffer::EndRenderPass();
+		vk::CommandBuffer::EndRenderPass();
 	}
 
 	void VkRHICommandBuffer::BindMaterial(const MaterialInfo& material)
 	{
-		const Vk::VkMaterial& vkMaterial = Cast<const Vk::VkMaterial&>(material);
+		const vk::VkMaterial& vkMaterial = Cast<const vk::VkMaterial&>(material);
 		const VkPipeline pipeline = *vkMaterial.pipeline->Get();
 		//if (_lastBoundedPipeline == pipeline)
 		//	return;
-		Vk::CommandBuffer::BindPipeline(VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
+		vk::CommandBuffer::BindPipeline(VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
 		//_lastBoundedPipeline = pipeline;
 		auto cpy = vkMaterial.descriptorSets; //fixme
-		Vk::CommandBuffer::BindDescriptorSets(VK_PIPELINE_BIND_POINT_GRAPHICS, *vkMaterial.pipeline->GetPipelineLayout()->Get(), cpy);
+		vk::CommandBuffer::BindDescriptorSets(VK_PIPELINE_BIND_POINT_GRAPHICS, *vkMaterial.pipeline->GetPipelineLayout()->Get(), cpy);
 	}
 
-	void VkRHICommandBuffer::BindVertexBuffer(const RHI::Buffer& buffer)
+	void VkRHICommandBuffer::BindVertexBuffer(const rhi::Buffer& buffer)
 	{
 		const VkRHIBuffer& vkBuffer = Cast<const VkRHIBuffer&>(buffer);
-		Vk::CommandBuffer::BindVertexBuffers(vkBuffer);
+		vk::CommandBuffer::BindVertexBuffers(vkBuffer);
 	}
 
 	void VkRHICommandBuffer::Draw(UInt32 vertexCount, UInt32 instanceCount, UInt32 firstVertex, UInt32 firstInstance)
 	{
-		Vk::CommandBuffer::Draw(vertexCount, instanceCount, firstVertex, firstInstance);
+		vk::CommandBuffer::Draw(vertexCount, instanceCount, firstVertex, firstInstance);
 	}
 }

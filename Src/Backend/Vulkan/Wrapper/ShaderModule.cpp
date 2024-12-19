@@ -12,7 +12,7 @@
 
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Device.hpp"
 
-namespace Concerto::Graphics::Vk
+namespace cct::gfx::vk
 {
 
 	ShaderModule::ShaderModule(Device& device, const std::string& shaderPath, VkShaderStageFlagBits stageFlags, std::string entryPoint /*= "main"*/) :
@@ -61,7 +61,7 @@ namespace Concerto::Graphics::Vk
 		std::ifstream file(shaderPath, std::ios::ate | std::ios::binary);
 		if (!file.is_open())
 		{
-			CONCERTO_ASSERT_FALSE("ConcertoGraphics: Failed to open shader module '{}'", shaderPath);
+			CCT_ASSERT_FALSE("ConcertoGraphics: Failed to open shader module '{}'", shaderPath);
 			return;
 		}
 		std::streamsize fileSize = file.tellg();
@@ -78,6 +78,6 @@ namespace Concerto::Graphics::Vk
 	void ShaderModule::CreateShaderModule()
 	{
 		_lastResult = _device->vkCreateShaderModule(*_device->Get(), &_shaderModuleCreateInfo, nullptr, &_handle);
-		CONCERTO_ASSERT(_lastResult == VK_SUCCESS, "ConcertoGraphics: vkCreateShaderModule failed VKResult={}", static_cast<int>(_lastResult));
+		CCT_ASSERT(_lastResult == VK_SUCCESS, "ConcertoGraphics: vkCreateShaderModule failed VKResult={}", static_cast<int>(_lastResult));
 	}
 }

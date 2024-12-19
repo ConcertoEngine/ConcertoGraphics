@@ -7,7 +7,7 @@
 
 #include "Concerto/Graphics/Defines.hpp"
 
-namespace Concerto::Graphics
+namespace cct::gfx
 {
 	struct Version
 	{

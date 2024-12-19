@@ -12,18 +12,18 @@
 #include "Concerto/Graphics/Backend/Vulkan/UploadContext.hpp"
 #include "Concerto/Graphics/RHI/Vulkan/VkRHIDevice.hpp"
 
-namespace Concerto::Graphics::RHI
+namespace cct::gfx::rhi
 {
 	VkRHITextureBuilder* VkRHITextureBuilder::_instance = nullptr;
 
-	VkRHITextureBuilder::VkRHITextureBuilder(RHI::Device& device, Vk::UploadContext& uploadContext, Vk::Queue& queue) :
+	VkRHITextureBuilder::VkRHITextureBuilder(rhi::Device& device, vk::UploadContext& uploadContext, vk::Queue& queue) :
 		_device(device),
 		_uploadContext(uploadContext),
 		_queue(queue)
 	{
 		if (_instance != nullptr)
 		{
-			CONCERTO_ASSERT_FALSE("ConcertoGraphics: Texture builder instance is null");
+			CCT_ASSERT_FALSE("ConcertoGraphics: Texture builder instance is null");
 			return;
 		}
 		_instance = this;
@@ -36,7 +36,7 @@ namespace Concerto::Graphics::RHI
 
 	VkRHITextureBuilder* VkRHITextureBuilder::Instance()
 	{
-		CONCERTO_ASSERT(_instance, "ConcertoGraphics: VkRHITextureBuilder instance is null");
+		CCT_ASSERT(_instance, "ConcertoGraphics: VkRHITextureBuilder instance is null");
 		return _instance;
 	}
 

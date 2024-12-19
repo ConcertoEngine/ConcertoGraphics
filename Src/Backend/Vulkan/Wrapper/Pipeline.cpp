@@ -10,7 +10,7 @@
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Device.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/VulkanInitializer.hpp"
 
-namespace Concerto::Graphics::Vk
+namespace cct::gfx::vk
 {
 
 	Pipeline::Pipeline(Device& device, PipelineInfo pipeLineInfo) :

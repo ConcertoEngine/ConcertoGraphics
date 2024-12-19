@@ -12,7 +12,7 @@
 #include "Concerto/Graphics/RHI/Enums.hpp"
 #include "Concerto/Graphics/RHI/Device.hpp"
 
-namespace Concerto::Graphics::RHI
+namespace cct::gfx::rhi
 {
 	class Device;
 	class APIImpl;

@@ -14,7 +14,7 @@
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/CommandBuffer.hpp"
 #include "Concerto/Graphics/Window/Window.hpp"
 
-namespace Concerto::Graphics::Vk
+namespace cct::gfx::vk
 {
 	ImGUI::ImGUI(RenderingContext& context, Window& window) : _context(context),
 																	   _descriptorPool(*_context.device,
@@ -51,7 +51,7 @@ namespace Concerto::Graphics::Vk
 		const bool res = ImGui_ImplGlfw_InitForVulkan((GLFWwindow*)window.GetRawWindow(), true);
 		if (res == false)
 		{
-			CONCERTO_ASSERT_FALSE("ConcertoGraphics: error ImGui_ImplGlfw_InitForVulkan");
+			CCT_ASSERT_FALSE("ConcertoGraphics: error ImGui_ImplGlfw_InitForVulkan");
 			return;
 		}
 		_context.commandBuffer->ImmediateSubmit(*_context.fence, *_context.commandPool, *_context.queue,
@@ -60,7 +60,7 @@ namespace Concerto::Graphics::Vk
 					const bool res = ImGui_ImplVulkan_CreateFontsTexture();
 					if (res == false)
 					{
-						CONCERTO_ASSERT_FALSE("ConcertoGraphics: error ImGui_ImplVulkan_CreateFontsTexture");
+						CCT_ASSERT_FALSE("ConcertoGraphics: error ImGui_ImplVulkan_CreateFontsTexture");
 					}
 				});
 	}
@@ -105,4 +105,4 @@ namespace Concerto::Graphics::Vk
 		ImGuiIO& io = ImGui::GetIO();
 		io.AddMouseButtonEvent(button, pressed);
 	}
-} // Concerto::Graphics
+} // cct::gfx

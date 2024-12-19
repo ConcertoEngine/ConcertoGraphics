@@ -10,7 +10,7 @@
 
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Device.hpp"
 
-namespace Concerto::Graphics::Vk
+namespace cct::gfx::vk
 {
 	DescriptorPool::DescriptorPool(Device& device) : Object(device)
 	{
@@ -28,7 +28,7 @@ namespace Concerto::Graphics::Vk
 		descriptorPoolCreateInfo.pPoolSizes = sizes.data();
 		descriptorPoolCreateInfo.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
 		_lastResult = device.vkCreateDescriptorPool(*device.Get(), &descriptorPoolCreateInfo, nullptr, &_handle);
-		CONCERTO_ASSERT(_lastResult == VK_SUCCESS, "ConcertoGraphics: vkCreateDescriptorPool failed VkResult={}", static_cast<const int>(_lastResult));
+		CCT_ASSERT(_lastResult == VK_SUCCESS, "ConcertoGraphics: vkCreateDescriptorPool failed VkResult={}", static_cast<const int>(_lastResult));
 	}
 
 	DescriptorPool::DescriptorPool(Device& device, std::vector<VkDescriptorPoolSize> poolSizes) : Object<VkDescriptorPool>(device)
@@ -40,7 +40,7 @@ namespace Concerto::Graphics::Vk
 		descriptorPoolCreateInfo.pPoolSizes = poolSizes.data();
 		descriptorPoolCreateInfo.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
 		_lastResult = device.vkCreateDescriptorPool(*device.Get(), &descriptorPoolCreateInfo, nullptr, &_handle);
-		CONCERTO_ASSERT(_lastResult == VK_SUCCESS, "ConcertoGraphics: Failed to create descriptor pool VkResult={}", static_cast<const int>(_lastResult));
+		CCT_ASSERT(_lastResult == VK_SUCCESS, "ConcertoGraphics: Failed to create descriptor pool VkResult={}", static_cast<const int>(_lastResult));
 	}
 
 	DescriptorPool::~DescriptorPool()

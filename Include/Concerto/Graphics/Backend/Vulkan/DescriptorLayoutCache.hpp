@@ -13,7 +13,7 @@
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/DescriptorSetLayout.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Device.hpp"
 
-namespace Concerto::Graphics::Vk
+namespace cct::gfx::vk
 {
 //	template<typename HashMap = std::unordered_map<void, void>>
 	class DescriptorLayoutCache

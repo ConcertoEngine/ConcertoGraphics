@@ -10,7 +10,7 @@
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/RenderPass.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/ImageView.hpp"
 
-namespace Concerto::Graphics::Vk
+namespace cct::gfx::vk
 {
 	FrameBuffer::FrameBuffer(Device& device, const RenderPass& renderPass, const std::vector<VkImageView>& attachments, VkExtent2D extent) :
 		Object(device),
@@ -21,7 +21,7 @@ namespace Concerto::Graphics::Vk
 		frameBufferCreateInfo.pAttachments = attachments.data();
 		frameBufferCreateInfo.attachmentCount = static_cast<UInt32>(attachments.size());
 		_lastResult = _device->vkCreateFramebuffer(*_device->Get(), &frameBufferCreateInfo, nullptr, &_handle);
-		CONCERTO_ASSERT(_lastResult == VK_SUCCESS, "ConcertoGraphics: vkCreateFramebuffer failed VkResult={}", static_cast<int>(_lastResult));
+		CCT_ASSERT(_lastResult == VK_SUCCESS, "ConcertoGraphics: vkCreateFramebuffer failed VkResult={}", static_cast<int>(_lastResult));
 	}
 
 	FrameBuffer::~FrameBuffer()
@@ -35,4 +35,4 @@ namespace Concerto::Graphics::Vk
 	{
 		return _extent;
 	}
-} // Concerto::Graphics::Vk
+} // cct::gfx::vk

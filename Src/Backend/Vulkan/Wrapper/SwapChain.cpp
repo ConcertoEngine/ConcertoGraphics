@@ -15,7 +15,7 @@
 #include "Concerto/Graphics/Window/Window.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Instance.hpp"
 
-namespace Concerto::Graphics::Vk
+namespace cct::gfx::vk
 {
 	SwapChain::SwapChain(Device& device, Window& window, VkFormat colorFormat, VkFormat depthFormat) : Object(device),
 		_swapChainImages(),
@@ -104,7 +104,7 @@ namespace Concerto::Graphics::Vk
 		_lastResult = _device->vkAcquireNextImageKHR(*_device->Get(), _handle, timeout, *semaphore.Get(), VK_NULL_HANDLE, &_currentImageIndex);
 		if (_lastResult != VK_SUCCESS)
 		{
-			CONCERTO_ASSERT_FALSE("ConcertoGraphics: vkCreateSemaphore failed VKResult={}", static_cast<int>(_lastResult));
+			CCT_ASSERT_FALSE("ConcertoGraphics: vkCreateSemaphore failed VKResult={}", static_cast<int>(_lastResult));
 			return std::numeric_limits<UInt32>::max();
 		}
 		return _currentImageIndex;
@@ -146,7 +146,7 @@ namespace Concerto::Graphics::Vk
 		_lastResult = _device->vkCreateSwapchainKHR(*_device->Get(), &swapChainCreateInfo, nullptr, &_handle);
 		if (_lastResult != VK_SUCCESS)
 		{
-			CONCERTO_ASSERT_FALSE("ConcertoGraphics: vkCreateSwapchainKHR failed VKResult={}",
+			CCT_ASSERT_FALSE("ConcertoGraphics: vkCreateSwapchainKHR failed VKResult={}",
 								  static_cast<int>(_lastResult));
 			return false;
 		}

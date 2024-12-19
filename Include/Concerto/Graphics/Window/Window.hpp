@@ -16,7 +16,7 @@
 
 struct GLFWwindow;
 
-namespace Concerto::Graphics
+namespace cct::gfx
 {
 
 	class CONCERTO_GRAPHICS_API Window

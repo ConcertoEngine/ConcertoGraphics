@@ -14,7 +14,7 @@
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Object.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/PipelineInfo.hpp"
 
-namespace Concerto::Graphics::Vk
+namespace cct::gfx::vk
 {
 	class Device;
 	class PipelineLayout;

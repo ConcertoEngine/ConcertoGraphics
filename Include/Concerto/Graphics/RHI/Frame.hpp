@@ -9,7 +9,7 @@
 #include "Concerto/Graphics/RHI/CommandBuffer.hpp"
 #include "Concerto/Graphics/RHI/FrameBuffer.hpp"
 
-namespace Concerto::Graphics::RHI
+namespace cct::gfx::rhi
 {
 	class CONCERTO_GRAPHICS_RHI_BASE_API Frame
 	{
@@ -17,9 +17,9 @@ namespace Concerto::Graphics::RHI
 		virtual ~Frame() = default;
 
 		virtual void Present() = 0;
-		virtual RHI::CommandBuffer& GetCommandBuffer() = 0;
+		virtual rhi::CommandBuffer& GetCommandBuffer() = 0;
 		virtual std::size_t GetCurrentFrameIndex() = 0;
-		virtual RHI::FrameBuffer& GetFrameBuffer() = 0;
+		virtual rhi::FrameBuffer& GetFrameBuffer() = 0;
 
 	};
 }

@@ -17,7 +17,7 @@
 
 #define MAX_OBJECTS 1000
 
-namespace Concerto::Graphics::Vk
+namespace cct::gfx::vk
 {
 	class Device;
 

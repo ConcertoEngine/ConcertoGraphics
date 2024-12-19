@@ -16,9 +16,9 @@
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/DescriptorSet.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Utils.hpp"
 
-namespace Concerto::Graphics::Vk
+namespace cct::gfx::vk
 {
-	CommandBuffer::CommandBuffer(Device& device, Vk::CommandPool& owner, VkCommandBuffer commandBuffer) :
+	CommandBuffer::CommandBuffer(Device& device, vk::CommandPool& owner, VkCommandBuffer commandBuffer) :
 		Object(device),
 		_commandPool(&owner)
 	{
@@ -50,7 +50,7 @@ namespace Concerto::Graphics::Vk
 	void CommandBuffer::Reset() const
 	{
 		const VkResult result = _device->vkResetCommandBuffer(_handle, 0);
-		CONCERTO_ASSERT(result == VK_SUCCESS, "ConcertoGraphics: vkResetCommandBuffer VKResult={}", static_cast<int>(result));
+		CCT_ASSERT(result == VK_SUCCESS, "ConcertoGraphics: vkResetCommandBuffer VKResult={}", static_cast<int>(result));
 	}
 
 	void CommandBuffer::Begin() const
@@ -63,8 +63,8 @@ namespace Concerto::Graphics::Vk
 		cmdBeginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
 
 		const VkResult result = _device->vkBeginCommandBuffer(_handle, &cmdBeginInfo);
-		CONCERTO_ASSERT(result == VK_SUCCESS, "ConcertoGraphics: vkBeginCommandBuffer failed VKResult={}", static_cast<int>(result));
-#ifdef CONCERTO_DEBUG
+		CCT_ASSERT(result == VK_SUCCESS, "ConcertoGraphics: vkBeginCommandBuffer failed VKResult={}", static_cast<int>(result));
+#ifdef CCT_DEBUG
 		if (_device->IsExtensionEnabled(VK_EXT_DEBUG_MARKER_EXTENSION_NAME))
 		{
 			VkDebugMarkerMarkerInfoEXT markerInfo = {
@@ -80,14 +80,14 @@ namespace Concerto::Graphics::Vk
 
 	void CommandBuffer::End() const
 	{
-#ifdef CONCERTO_DEBUG
+#ifdef CCT_DEBUG
 		if (_device->IsExtensionEnabled(VK_EXT_DEBUG_MARKER_EXTENSION_NAME))
 		{
 			_device->vkCmdDebugMarkerEndEXT(_handle);
 		}
 #endif
 		const VkResult result = _device->vkEndCommandBuffer(_handle);
-		CONCERTO_ASSERT(result == VK_SUCCESS, "ConcertoGraphics: vkEndCommandBuffer failed VKResult={}", static_cast<int>(result));
+		CCT_ASSERT(result == VK_SUCCESS, "ConcertoGraphics: vkEndCommandBuffer failed VKResult={}", static_cast<int>(result));
 	}
 
 	void CommandBuffer::BeginRenderPass(const VkRenderPassBeginInfo& info) const
@@ -180,7 +180,7 @@ namespace Concerto::Graphics::Vk
 		End();
 
 		const VkResult result = _device->vkQueueSubmit(*queue.Get(), 1, &submitInfo, *fence.Get());
-		CONCERTO_ASSERT(result == VK_SUCCESS, "ConcertoGraphics: vkQueueSubmit failed VKResult={}", static_cast<int>(result));
+		CCT_ASSERT(result == VK_SUCCESS, "ConcertoGraphics: vkQueueSubmit failed VKResult={}", static_cast<int>(result));
 
 		fence.Wait(9999999999);
 		fence.Reset();

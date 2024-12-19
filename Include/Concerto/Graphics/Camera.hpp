@@ -11,7 +11,7 @@
 #include "Concerto/Graphics/Defines.hpp"
 #include "Concerto/Graphics/GPUData.hpp"
 
-namespace Concerto::Graphics
+namespace cct::gfx
 {
 	class CONCERTO_GRAPHICS_API Camera : public GPUCamera
 	{

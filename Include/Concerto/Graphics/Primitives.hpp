@@ -8,7 +8,7 @@
 #include "Concerto/Graphics/Defines.hpp"
 #include "Concerto/Graphics/Vertex.hpp"
 
-namespace Concerto::Graphics
+namespace cct::gfx
 {
 	struct CONCERTO_GRAPHICS_API Primitive
 	{

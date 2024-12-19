@@ -11,11 +11,11 @@
 #include "Concerto/Graphics/RHI/RenderPass.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/RenderPass.hpp"
 
-namespace Concerto::Graphics::RHI
+namespace cct::gfx::rhi
 {
 	class VkRHIDevice;
 
-	class CONCERTO_GRAPHICS_RHI_BASE_API VkRHIRenderPass final : public RHI::RenderPass, public Vk::RenderPass
+	class CONCERTO_GRAPHICS_RHI_BASE_API VkRHIRenderPass final : public rhi::RenderPass, public vk::RenderPass
 	{
 	public:
 		VkRHIRenderPass(VkRHIDevice& device, std::span<VkAttachmentDescription> attachmentDescriptions, std::span<VkSubpassDescription> subPassDescriptions, std::span<VkSubpassDependency> subPassDependencies);

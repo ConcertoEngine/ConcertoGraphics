@@ -13,25 +13,25 @@
 #include "Concerto/Graphics/RHI/Material.hpp"
 #include "Concerto/Graphics/RHI/Buffer.hpp"
 
-namespace Concerto::Graphics::RHI
+namespace cct::gfx::rhi
 {
 	class CONCERTO_GRAPHICS_RHI_BASE_API GpuSubMesh
 	{
 	public:
-		GpuSubMesh(RHI::SubMeshPtr meshPtr, RHI::MaterialPtr material);
+		GpuSubMesh(rhi::SubMeshPtr meshPtr, rhi::MaterialPtr material);
 
 		[[nodiscard]] const Vertices& GetVertices() const;
-		[[nodiscard]] const RHI::MaterialPtr& GetMaterial() const;
-		[[nodiscard]] const RHI::SubMeshPtr& GetSubMesh() const;
-		const RHI::Buffer& GetVertexBuffer() const;
+		[[nodiscard]] const rhi::MaterialPtr& GetMaterial() const;
+		[[nodiscard]] const rhi::SubMeshPtr& GetSubMesh() const;
+		const rhi::Buffer& GetVertexBuffer() const;
 
 	private:
-		RHI::SubMeshPtr _subMesh;
-		RHI::MaterialPtr _material;
+		rhi::SubMeshPtr _subMesh;
+		rhi::MaterialPtr _material;
 	protected:
-		std::unique_ptr<RHI::Buffer> _vertexBuffer;
+		std::unique_ptr<rhi::Buffer> _vertexBuffer;
 	};
 	using GpuSubMeshPtr = std::shared_ptr<GpuSubMesh>;
-} // Concerto::Graphics::Vk
+} // cct::gfx::vk
 
 #endif //CONCERTO_GRAPHICS_RHI_GPUSUBMESH_HPP

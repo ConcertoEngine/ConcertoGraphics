@@ -11,24 +11,24 @@
 #include "Concerto/Graphics/RHI/APIImpl.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Instance.hpp"
 
-namespace Concerto::Graphics
+namespace cct::gfx
 {
-	class VkRHI final : public RHI::APIImpl
+	class VkRHI final : public rhi::APIImpl
 	{
 	public:
 		VkRHI() = default;
 		~VkRHI() override = default;
 
-		bool Create(RHI::ValidationLevel validationLevel) override;
+		bool Create(rhi::ValidationLevel validationLevel) override;
 
-		[[nodiscard]] std::span<const RHI::DeviceInfo> EnumerateDevices() override;
-		std::unique_ptr<RHI::Device> CreateDevice(std::size_t index) override;
-		static constexpr inline RHI::DeviceType FromVulkan(VkPhysicalDeviceType deviceType);
+		[[nodiscard]] std::span<const rhi::DeviceInfo> EnumerateDevices() override;
+		std::unique_ptr<rhi::Device> CreateDevice(std::size_t index) override;
+		static constexpr inline rhi::DeviceType FromVulkan(VkPhysicalDeviceType deviceType);
 
 	private:
-		std::unique_ptr<Vk::Instance> _instance;
-		std::vector<RHI::DeviceInfo> _devicesInfo;
-		std::vector<RHI::Device> _devices;
+		std::unique_ptr<vk::Instance> _instance;
+		std::vector<rhi::DeviceInfo> _devicesInfo;
+		std::vector<rhi::Device> _devices;
 	};
 }
 

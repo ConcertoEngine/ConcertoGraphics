@@ -12,11 +12,11 @@
 
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Object.hpp"
 
-namespace Concerto::Graphics::Vk
+namespace cct::gfx::vk
 {
 	template<typename VkType>
 	Object<VkType>::Object(Device& device) :
-#ifdef CONCERTO_DEBUG
+#ifdef CCT_DEBUG
 	ObjectDebug(device, TypeName<std::remove_pointer_t<std::remove_cvref_t<VkType>>>(), reinterpret_cast<void**>(&this->_handle)),
 #endif
 		_handle(nullptr),
@@ -28,7 +28,7 @@ namespace Concerto::Graphics::Vk
 
 	template<typename VkType>
 	Object<VkType>::Object(Object&& other) noexcept
-#ifdef CONCERTO_DEBUG
+#ifdef CCT_DEBUG
 		:
 	ObjectDebug(*other.GetDevice(), TypeName<std::remove_pointer_t<std::remove_cvref_t<VkType>>>(), reinterpret_cast<void**>(&other._handle))
 #endif
@@ -49,7 +49,7 @@ namespace Concerto::Graphics::Vk
 	template<typename VkType>
 	VkType* Object<VkType>::Get() const
 	{
-		CONCERTO_ASSERT(!IsNull(), "The vulkan object handle is null");
+		CCT_ASSERT(!IsNull(), "The vulkan object handle is null");
 		return const_cast<VkType*>(&_handle);
 	}
 
@@ -62,7 +62,7 @@ namespace Concerto::Graphics::Vk
 	template<typename VkType>
 	Device* Object<VkType>::GetDevice() const
 	{
-		CONCERTO_ASSERT(_device, "Invalid device");
+		CCT_ASSERT(_device, "Invalid device");
 		return _device;
 	}
 

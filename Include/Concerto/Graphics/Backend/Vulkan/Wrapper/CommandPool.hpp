@@ -11,7 +11,7 @@
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Object.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/CommandBuffer.hpp"
 
-namespace Concerto::Graphics::Vk
+namespace cct::gfx::vk
 {
 	class Device;
 
@@ -54,7 +54,7 @@ namespace Concerto::Graphics::Vk
 	    */
 		void Reset() const;
 
-		Vk::CommandBuffer AllocateCommandBuffer();
+		vk::CommandBuffer AllocateCommandBuffer();
 
 	private:
 		UInt32 _queueFamily;

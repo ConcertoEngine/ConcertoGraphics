@@ -7,7 +7,7 @@
 
 #include "Concerto/Graphics/RHI/Defines.hpp"
 
-namespace Concerto::Graphics::RHI
+namespace cct::gfx::rhi
 {
 	class Texture;
 	class RenderPass;

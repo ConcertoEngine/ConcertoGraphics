@@ -33,7 +33,7 @@ namespace VulkanInitializer
 	CONCERTO_GRAPHICS_VULKAN_BACKEND_API VkCommandBufferBeginInfo CommandBufferBeginInfo(VkCommandBufferUsageFlags flags = 0);
 	CONCERTO_GRAPHICS_VULKAN_BACKEND_API VkSamplerCreateInfo SamplerCreateInfo(VkFilter filter, VkSamplerAddressMode samplerAddressMode = VK_SAMPLER_ADDRESS_MODE_REPEAT);
 
-	CONCERTO_GRAPHICS_VULKAN_BACKEND_API VkWriteDescriptorSet WriteDescriptorImage(VkDescriptorType type, VkDescriptorSet pT, VkDescriptorImageInfo* pInfo, Concerto::UInt32 i);
+	CONCERTO_GRAPHICS_VULKAN_BACKEND_API VkWriteDescriptorSet WriteDescriptorImage(VkDescriptorType type, VkDescriptorSet pT, VkDescriptorImageInfo* pInfo, cct::UInt32 i);
 };
 
 

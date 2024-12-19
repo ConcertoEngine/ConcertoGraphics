@@ -10,7 +10,7 @@
 
 #include "Concerto/Graphics/Window/Key.hpp"
 
-namespace Concerto
+namespace cct
 {
 	enum class TriggerType
 	{

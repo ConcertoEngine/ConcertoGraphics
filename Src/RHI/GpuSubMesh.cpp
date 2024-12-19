@@ -4,9 +4,9 @@
 
 #include "Concerto/Graphics/RHI/GpuSubMesh.hpp"
 
-namespace Concerto::Graphics::RHI
+namespace cct::gfx::rhi
 {
-	GpuSubMesh::GpuSubMesh(RHI::SubMeshPtr meshPtr, RHI::MaterialPtr material) :
+	GpuSubMesh::GpuSubMesh(rhi::SubMeshPtr meshPtr, rhi::MaterialPtr material) :
 		_subMesh(std::move(meshPtr)),
 		_material(std::move(material))
 	{
@@ -18,19 +18,19 @@ namespace Concerto::Graphics::RHI
 		return _subMesh->GetVertices();
 	}
 
-	const RHI::MaterialPtr& GpuSubMesh::GetMaterial() const
+	const rhi::MaterialPtr& GpuSubMesh::GetMaterial() const
 	{
 		return _material;
 	}
 
-	const RHI::SubMeshPtr& GpuSubMesh::GetSubMesh() const
+	const rhi::SubMeshPtr& GpuSubMesh::GetSubMesh() const
 	{
 		return _subMesh;
 	}
 
-	const RHI::Buffer& GpuSubMesh::GetVertexBuffer() const
+	const rhi::Buffer& GpuSubMesh::GetVertexBuffer() const
 	{
-		CONCERTO_ASSERT(_vertexBuffer, "ConcertoGraphics: invalid vertex buffer");
+		CCT_ASSERT(_vertexBuffer, "ConcertoGraphics: invalid vertex buffer");
 		return *_vertexBuffer;
 	}
-} // Concerto::Graphics::RHI
+} // cct::gfx::RHI

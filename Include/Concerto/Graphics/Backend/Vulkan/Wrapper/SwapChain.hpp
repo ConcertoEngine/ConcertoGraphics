@@ -17,12 +17,12 @@
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/ImageView.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/FrameBuffer.hpp"
 
-namespace Concerto::Graphics
+namespace cct::gfx
 {
 	class Window;
 }
 
-namespace Concerto::Graphics::Vk
+namespace cct::gfx::vk
 {
 	class Device;
 	class PhysicalDevice;
@@ -92,6 +92,6 @@ namespace Concerto::Graphics::Vk
 		UInt32 _currentImageIndex;
 		VkSurfaceKHR _surface;
 	};
-} // Concerto::Graphics::Vk
+} // cct::gfx::vk
 
 #endif //CONCERTO_GRAPHICS_SWAPCHAIN_HPP
