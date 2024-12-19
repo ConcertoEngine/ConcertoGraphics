@@ -5,6 +5,8 @@
 #ifndef CONCERTO_GRAPHICS_RHI_VULKAN_VKRHITEXTURE_HPP
 #define CONCERTO_GRAPHICS_RHI_VULKAN_VKRHITEXTURE_HPP
 
+#include <memory>
+
 #include "Concerto/Graphics/RHI/Defines.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Image.hpp"
 #include "Concerto/Graphics/RHI/Texture.hpp"

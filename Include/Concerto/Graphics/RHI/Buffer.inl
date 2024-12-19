@@ -5,6 +5,8 @@
 #ifndef CONCERTO_GRAPHICS_RHI_INL
 #define CONCERTO_GRAPHICS_RHI_INL
 
+#include <cstring>
+
 #include <Concerto/Core/Assert.hpp>
 
 #include "Concerto/Graphics/RHI/Buffer.hpp"

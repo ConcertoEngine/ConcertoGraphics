@@ -123,7 +123,7 @@ namespace cct::gfx::rhi
 	void VkRHISwapChain::CreateFrameBuffers(rhi::VkRHIDevice& device)
 	{
 		const std::span<vk::ImageView> imagesViews = vk::SwapChain::GetImageViews();
-	
+
 		_frameBuffers.reserve(imagesViews.size());
 		for (const vk::ImageView& imageView : imagesViews)
 		{

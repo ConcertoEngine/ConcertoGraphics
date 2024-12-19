@@ -96,7 +96,7 @@ namespace cct::gfx::vk
 	template<typename T>
 	Buffer MakeBuffer(Allocator& allocator, VkBufferUsageFlags usage, VmaMemoryUsage memoryUsage)
 	{
-		return { allocator, sizeof(T), usage, memoryUsage };
+		return Buffer { allocator, sizeof(T), usage, memoryUsage };
 	}
 
 	/**

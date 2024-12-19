@@ -5,6 +5,8 @@
 #ifndef CONCERTO_GRAPHICS_BUFFER_INL
 #define CONCERTO_GRAPHICS_BUFFER_INL
 
+#include <cstring>
+
 #include <Concerto/Core/Assert.hpp>
 
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Buffer.hpp"

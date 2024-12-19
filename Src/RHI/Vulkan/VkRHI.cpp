@@ -13,10 +13,24 @@ namespace cct::gfx
 	bool VkRHI::Create(rhi::ValidationLevel validationLevel)
 	{
 		std::vector<const char*> extensions = {VK_KHR_SURFACE_EXTENSION_NAME};
-#if defined(CCT_PLATFORM_WINDOWS)
+#ifdef VK_USE_PLATFORM_XCB_KHR
+		extensions.push_back(VK_KHR_XCB_SURFACE_EXTENSION_NAME);
+#endif
+
+#ifdef VK_USE_PLATFORM_XLIB_KHR
+		extensions.push_back(VK_KHR_XLIB_SURFACE_EXTENSION_NAME);
+#endif
+
+#ifdef VK_USE_PLATFORM_WAYLAND_KHR
+		extensions.push_back(VK_KHR_WAYLAND_SURFACE_EXTENSION_NAME);
+#endif
+
+#ifdef VK_USE_PLATFORM_WIN32_KHR
 		extensions.push_back(VK_KHR_WIN32_SURFACE_EXTENSION_NAME);
-#elif defined(CCT_PLATFORM_POSIX)
-		#error "fixme"
+#endif
+
+#ifdef VK_USE_PLATFORM_METAL_EXT
+		extensions.push_back(VK_EXT_METAL_SURFACE_EXTENSION_NAME);
 #endif
 		if (validationLevel != rhi::ValidationLevel::None)
 		{

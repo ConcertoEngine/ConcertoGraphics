@@ -5,6 +5,8 @@
 #ifndef CONCERTO_GRAPHICS_BACKEND_RHI_VULKAN_FRAMEBUFFER_HPP
 #define CONCERTO_GRAPHICS_BACKEND_RHI_VULKAN_FRAMEBUFFER_HPP
 
+#include <memory>
+
 #include "Concerto/Graphics/Defines.hpp"
 #include "Concerto/Graphics/RHI/Texture.hpp"
 #include "Concerto/Graphics/RHI/FrameBuffer.hpp"

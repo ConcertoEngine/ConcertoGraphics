@@ -7,7 +7,7 @@
 
 namespace cct::gfx::vk
 {
-	VertexInputDescription cct::gfx::vk::GetVertexDescription()
+	VertexInputDescription GetVertexDescription()
 	{
 		VertexInputDescription description {};
 

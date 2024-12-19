@@ -132,7 +132,7 @@ int main()
 		{
 			window.PopEvent();
 			camera.UpdateViewProjectionMatrix();
-			auto beginTime = std::chrono::high_resolution_clock::now();
+			auto beginTime = std::chrono::steady_clock::now();
 			deltaTime = std::chrono::duration<float>(beginTime - lastFrameTime).count();
 			lastFrameTime = beginTime;
 			rhi::Frame& currentFrame = swapChain->AcquireFrame();
