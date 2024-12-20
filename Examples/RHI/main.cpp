@@ -25,8 +25,8 @@
 #include "Concerto/Graphics/RHI/GpuMesh.hpp"
 #include "Concerto/Graphics/RHI/GpuSubMesh.hpp"
 
-using namespace Concerto;
-using namespace Concerto::Graphics;
+using namespace cct;
+using namespace cct::gfx;
 
 int main()
 {
@@ -48,13 +48,13 @@ int main()
 		auto window = displayManager.CreateWindow(1, "Concerto Graphics", 1280, 720);
 		Input& inputManager = window->GetInputManager();
 
-		RHI::Instance rInstance;
-		std::unique_ptr<RHI::Device> device;
+		rhi::Instance rInstance;
+		std::unique_ptr<rhi::Device> device;
 
 		std::size_t deviceIndex = 0;
 		for (const auto& [name, vendor, type] : rInstance.EnumerateDevices())
 		{
-			if (type == RHI::DeviceType::Dedicated)
+			if (type == rhi::DeviceType::Dedicated)
 			{
 				device = rInstance.CreateDevice(deviceIndex);
 				break;
@@ -62,15 +62,15 @@ int main()
 			++deviceIndex;
 		}
 		std::size_t minimumAlignment = device->GetMinimumUniformBufferOffsetAlignment();
-		std::unique_ptr<RHI::SwapChain> swapChain = device->CreateSwapChain(*window);
-		RHI::RenderPass& renderPass = swapChain->GetRenderPass();
+		std::unique_ptr<rhi::SwapChain> swapChain = device->CreateSwapChain(*window);
+		rhi::RenderPass& renderPass = swapChain->GetRenderPass();
 
-		std::unique_ptr<RHI::MaterialBuilder> materialBuilder = device->CreateMaterialBuilder(swapChain->GetExtent());
-		std::unique_ptr<RHI::TextureBuilder> textureBuilder = device->CreateTextureBuilder();
-		RHI::VkRHIMesh mesh("./assets/sponza/sponza.obj"); //fixme
-		std::shared_ptr<RHI::GpuMesh> gpuMesh = mesh.BuildGpuMesh(*materialBuilder, renderPass, *device);
+		std::unique_ptr<rhi::MaterialBuilder> materialBuilder = device->CreateMaterialBuilder(swapChain->GetExtent());
+		std::unique_ptr<rhi::TextureBuilder> textureBuilder = device->CreateTextureBuilder();
+		rhi::VkRHIMesh mesh("./assets/sponza/sponza.obj"); //fixme
+		std::shared_ptr<rhi::GpuMesh> gpuMesh = mesh.BuildGpuMesh(*materialBuilder, renderPass, *device);
 		
-		//GraphicPass& pbrPass = graphBuilder.AddPass("pbr", RHI::PipelineStage::AllGraphics);
+		//GraphicPass& pbrPass = graphBuilder.AddPass("pbr", rhi::PipelineStage::AllGraphics);
 		//pbrPass.AddColorOutput("albedo", ??);
 		//pbrPass.AddColorOutput("normal", ??);
 
@@ -132,9 +132,9 @@ int main()
 		modelMatrix *= rotation.ToQuaternion().ToRotationMatrix<Matrix4f>();
 		modelMatrix *= scale.ToScalingMatrix();
 
-		std::unique_ptr<RHI::Buffer> cameraBuffer = device->CreateBuffer(static_cast<RHI::BufferUsageFlags>(RHI::BufferUsage::Uniform), sizeof(GPUCamera), true);
-		std::unique_ptr<RHI::Buffer> sceneBuffer = device->CreateBuffer(static_cast<RHI::BufferUsageFlags>(RHI::BufferUsage::Uniform), sizeof(Scene), true);
-		std::unique_ptr<RHI::Buffer> objectsBuffer = device->CreateBuffer(static_cast<RHI::BufferUsageFlags>(RHI::BufferUsage::Storage), sizeof(GPUObjectData), true);
+		std::unique_ptr<rhi::Buffer> cameraBuffer = device->CreateBuffer(static_cast<rhi::BufferUsageFlags>(rhi::BufferUsage::Uniform), sizeof(GPUCamera), true);
+		std::unique_ptr<rhi::Buffer> sceneBuffer = device->CreateBuffer(static_cast<rhi::BufferUsageFlags>(rhi::BufferUsage::Uniform), sizeof(Scene), true);
+		std::unique_ptr<rhi::Buffer> objectsBuffer = device->CreateBuffer(static_cast<rhi::BufferUsageFlags>(rhi::BufferUsage::Storage), sizeof(GPUObjectData), true);
 
 		materialBuilder->Update(*cameraBuffer, 0, 0);
 		materialBuilder->Update(*sceneBuffer, 0, 1);
@@ -149,9 +149,9 @@ int main()
 			auto beginTime = std::chrono::high_resolution_clock::now();
 			deltaTime = std::chrono::duration<float>(beginTime - lastFrameTime).count();
 			lastFrameTime = beginTime;
-			RHI::Frame& currentFrame = swapChain->AcquireFrame();
-			RHI::CommandBuffer& commandBuffer = currentFrame.GetCommandBuffer();
-			cameraBuffer->Write<GPUCamera>(camera, RHI::PadUniformBuffer(sizeof(GPUCamera), minimumAlignment * currentFrame.GetCurrentFrameIndex()));
+			rhi::Frame& currentFrame = swapChain->AcquireFrame();
+			rhi::CommandBuffer& commandBuffer = currentFrame.GetCommandBuffer();
+			cameraBuffer->Write<GPUCamera>(camera, rhi::PadUniformBuffer(sizeof(GPUCamera), minimumAlignment * currentFrame.GetCurrentFrameIndex()));
 			sceneBuffer->Write(sceneParameters.gpuSceneData);
 			objectsBuffer->Write(modelMatrix);
 			commandBuffer.Reset();
@@ -174,7 +174,7 @@ int main()
 				commandBuffer.SetScissor(dynamicScissor);
 				commandBuffer.BeginRenderPass(renderPass, currentFrame.GetFrameBuffer(), Vector3f{ 1.f, 0.f, 0.f });
 				{
-					RHI::MaterialInfo* lastBoundMaterial = nullptr;
+					rhi::MaterialInfo* lastBoundMaterial = nullptr;
 					for (const auto& subMesh : gpuMesh->subMeshes)
 					{
 						const auto& material = subMesh->GetMaterial();

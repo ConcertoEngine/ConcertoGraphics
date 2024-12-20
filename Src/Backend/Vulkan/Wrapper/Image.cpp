@@ -15,7 +15,7 @@
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/VulkanInitializer.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/UploadContext.hpp"
 
-namespace Concerto::Graphics::Vk
+namespace cct::gfx::vk
 {
 	Image::Image(Device& device, VkExtent2D extent, VkFormat depthFormat) :
 		Object(device),
@@ -34,7 +34,7 @@ namespace Concerto::Graphics::Vk
 		imageAllocInfo.requiredFlags = static_cast<VkMemoryPropertyFlags>(VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
 
 		_lastResult = vmaCreateImage(*device.GetAllocator().Get(), &imageCreateInfo, &imageAllocInfo, &_handle, &_allocation, nullptr);
-		CONCERTO_ASSERT(_lastResult == VK_SUCCESS, "ConcertoGraphics: vmaCreateImage failed VkResult={}", static_cast<int>(_lastResult));
+		CCT_ASSERT(_lastResult == VK_SUCCESS, "ConcertoGraphics: vmaCreateImage failed VkResult={}", static_cast<int>(_lastResult));
 	}
 
 	Image::Image(Device& device, const std::string& file, CommandBuffer& commandBuffer, UploadContext& uploadContext, Queue& queue) :
@@ -47,7 +47,7 @@ namespace Concerto::Graphics::Vk
 		stbi_uc* pixels = stbi_load(file.c_str(), &textureWidth, &textureHeight, &textureChannels, STBI_rgb_alpha);
 		if (!pixels)
 		{
-			CONCERTO_ASSERT_FALSE("ConcertoGraphics: Failed to load texture '{}'", file);
+			CCT_ASSERT_FALSE("ConcertoGraphics: Failed to load texture '{}'", file);
 			return;
 		}
 
@@ -68,7 +68,7 @@ namespace Concerto::Graphics::Vk
 		imageAllocInfo.usage = VMA_MEMORY_USAGE_GPU_ONLY;
 
 		const VkResult result = vmaCreateImage(*device.GetAllocator().Get(), &imageCreateInfo, &imageAllocInfo, &_handle, &_allocation, nullptr);
-		CONCERTO_ASSERT(result == VK_SUCCESS, "ConcertoGraphics: vmaCreateImage failed VKResult={}", static_cast<int>(result));
+		CCT_ASSERT(result == VK_SUCCESS, "ConcertoGraphics: vmaCreateImage failed VKResult={}", static_cast<int>(result));
 
 		commandBuffer.ImmediateSubmit(uploadContext._uploadFence, uploadContext._commandPool, queue,
 				[&](CommandBuffer& cb)

@@ -11,7 +11,7 @@
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/ShaderModule.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/VulkanInitializer.hpp"
 
-namespace Concerto::Graphics::Vk
+namespace cct::gfx::vk
 {
 	ShaderModuleInfo::ShaderModuleInfo(Device& device, std::string_view path) :
 		shaderAst(nzsl::ParseFromFile(path)),
@@ -61,7 +61,7 @@ namespace Concerto::Graphics::Vk
 		};
 		spirvWriter.SetEnv(env);
 		spirv = spirvWriter.Generate(*sanitizedModule);
-		shaderModule = std::make_unique<Vk::ShaderModule>(device, spirv, static_cast<VkShaderStageFlagBits>(shaderStageFlag), std::move(entryPointName));
+		shaderModule = std::make_unique<vk::ShaderModule>(device, spirv, static_cast<VkShaderStageFlagBits>(shaderStageFlag), std::move(entryPointName));
 	}
 
 	VkDescriptorType ShaderModuleInfo::GetBindingType(const nzsl::Ast::ExpressionType* varType)
@@ -74,7 +74,7 @@ namespace Concerto::Graphics::Vk
 			return VK_DESCRIPTOR_TYPE_STORAGE_IMAGE;
 		if (IsUniformType(*varType))
 			return VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-		CONCERTO_ASSERT_FALSE("ConcertoGraphics: Unexpeted type {}", ToString(varType));
+		CCT_ASSERT_FALSE("ConcertoGraphics: Unexpeted type {}", ToString(varType));
 		throw std::runtime_error("unexpected type " + nzsl::Ast::ToString(varType));
 
 	}

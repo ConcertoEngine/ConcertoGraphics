@@ -11,7 +11,8 @@
 
 #include "Concerto/Graphics/Window/Window.hpp"
 #include "Concerto/Graphics/Window/Event.hpp"
-namespace Concerto::Graphics
+
+namespace cct::gfx
 {
 	namespace
 	{
@@ -27,7 +28,7 @@ namespace Concerto::Graphics
 				return MouseButton::Button::Button1;
 			if (btn == SDL_BUTTON_X2)
 				return MouseButton::Button::Button2;
-			CONCERTO_ASSERT_FALSE("ConcertoGraphics: Invalid button value");
+			CCT_ASSERT_FALSE("ConcertoGraphics: Invalid button value");
 			return MouseButton::Button::Button5;
 		}
 
@@ -385,14 +386,14 @@ namespace Concerto::Graphics
 		_window = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED_DISPLAY(displayIndex), SDL_WINDOWPOS_CENTERED_DISPLAY(displayIndex), width, height, flags);
 		if (_window == nullptr)
 		{
-			CONCERTO_ASSERT_FALSE("ConcertoGraphics: Window creation failed message: {}", SDL_GetError());
-			throw std::runtime_error(std::format("ConcertoGraphics: Window creation failed message: {}", SDL_GetError()));
+			CCT_ASSERT_FALSE("ConcertoGraphics: Glfw initialization failed");
+			throw std::runtime_error("GLFW3 initialization failed");
 		}
 		_windowID = SDL_GetWindowID(_window);
 
 		if (_windowID == 0)
 		{
-			CONCERTO_ASSERT_FALSE("ConcertoGraphics: Could not get window id message: {}", SDL_GetError());
+			CCT_ASSERT_FALSE("ConcertoGraphics: Could not get window id message: {}", SDL_GetError());
 			throw std::runtime_error(std::format("ConcertoGraphics: Could not get window id message: {}", SDL_GetError()));
 		}
 
@@ -407,13 +408,14 @@ namespace Concerto::Graphics
 
 	void Window::SetTitle(const std::string& title)
 	{
-		CONCERTO_ASSERT(_window, "ConcertoGraphics: invalid window pointer");
+		CCT_ASSERT(_window, "ConcertoGraphics: invalid window pointer");
 		SDL_SetWindowTitle(_window, title.c_str());
 	}
 
+
 	void Window::SetCursorVisible(bool visible)
 	{
-		CONCERTO_ASSERT(_window, "ConcertoGraphics: invalid window pointer");
+		CCT_ASSERT(_window, "ConcertoGraphics: invalid window pointer");
 		Int32 result = SDL_ShowCursor(visible);
 		if (result < 0)
 			Logger::Warning("{}", SDL_GetError());
@@ -421,13 +423,14 @@ namespace Concerto::Graphics
 
 	void Window::SetCursorIcon(const std::string& path)
 	{
-		CONCERTO_ASSERT(_window, "ConcertoGraphics: invalid window pointer");
+		CCT_ASSERT(_window, "ConcertoGraphics: invalid window pointer");
 	}
 
 	void Window::SetCursorDisabled(bool disabled)
 	{
-		CONCERTO_ASSERT(_window, "ConcertoGraphics: invalid window pointer");
-		if (disabled) {
+		CCT_ASSERT(_window, "ConcertoGraphics: invalid window pointer");
+		if (disabled)
+		{
 			Int32 result = SDL_ShowCursor(SDL_DISABLE);
 			if (result < 0)
 				Logger::Warning("{}", SDL_GetError());
@@ -435,7 +438,8 @@ namespace Concerto::Graphics
 			if (result < 0)
 				Logger::Warning("{}", SDL_GetError());
 		}
-		else {
+		else
+		{
 			Int32 result = SDL_ShowCursor(SDL_ENABLE);
 			if (result < 0)
 				Logger::Warning("{}", SDL_GetError());
@@ -447,7 +451,7 @@ namespace Concerto::Graphics
 
 	UInt32 Window::GetHeight() const
 	{
-		CONCERTO_ASSERT(_window, "ConcertoGraphics: invalid window pointer");
+		CCT_ASSERT(_window, "ConcertoGraphics: invalid window pointer");
 		int w, h;
 		SDL_GetWindowSize(_window, &w, &h);
 		return static_cast<UInt32>(h);
@@ -455,7 +459,7 @@ namespace Concerto::Graphics
 
 	UInt32 Window::GetWidth() const
 	{
-		CONCERTO_ASSERT(_window, "ConcertoGraphics: invalid window pointer");
+		CCT_ASSERT(_window, "ConcertoGraphics: invalid window pointer");
 		int w, h;
 		SDL_GetWindowSize(_window, &w, &h);
 		return static_cast<UInt32>(w);
@@ -463,22 +467,22 @@ namespace Concerto::Graphics
 
 	NativeWindow Window::GetNativeWindow() const
 	{
-		CONCERTO_ASSERT(_window, "ConcertoGraphics: invalid window pointer");
+		CCT_ASSERT(_window, "ConcertoGraphics: invalid window pointer");
 		SDL_SysWMinfo wmInfo;
 		SDL_VERSION(&wmInfo.version)
-			NativeWindow nativeWindow;
+		NativeWindow nativeWindow;
 		if (SDL_GetWindowWMInfo(_window, &wmInfo)) {
-#if defined(CONCERTO_PLATFORM_WINDOWS)
+#if defined(CCT_PLATFORM_WINDOWS)
 			nativeWindow.window = wmInfo.info.win.window;
 			nativeWindow.hinstance = wmInfo.info.win.hinstance;
-#elif defined(CONCERTO_PLATFORM_MACOS))
-			CONCERTO_ASSERT_FALSE("Not implemented");
-#elif defined(CONCERTO_PLATFORM_LINUX)
-			CONCERTO_ASSERT_FALSE("Not implemented");
+#elif defined(CCT_PLATFORM_MACOS))
+			CCT_ASSERT_FALSE("Not implemented");
+#elif defined(CCT_PLATFORM_LINUX)
+			CCT_ASSERT_FALSE("Not implemented");
 #endif
 		}
 		else {
-			CONCERTO_ASSERT_FALSE("ConcertoGraphics: Could not get native window handle message:", SDL_GetError());
+			CCT_ASSERT_FALSE("ConcertoGraphics: Could not get native window handle message:", SDL_GetError());
 			return {};
 		}
 		return nativeWindow;
@@ -491,25 +495,25 @@ namespace Concerto::Graphics
 
 	void Window::RegisterResizeCallback(std::function<void(Window& window)> callback)
 	{
-		CONCERTO_ASSERT(_window, "ConcertoGraphics: invalid window pointer");
+		CCT_ASSERT(_window, "ConcertoGraphics: invalid window pointer");
 		_resizeCallback = std::move(callback);
 	}
 
 	void Window::RegisterKeyCallback(std::function<void(Window&, Key, int, int, int)> callback)
 	{
-		CONCERTO_ASSERT(_window, "ConcertoGraphics: invalid window pointer");
+		CCT_ASSERT(_window, "ConcertoGraphics: invalid window pointer");
 		_keyCallback = std::move(callback);
 	}
 
 	void Window::RegisterMouseButtonCallback(std::function<void(Window& window, int button, int action, int mods)> callback)
 	{
-		CONCERTO_ASSERT(_window, "ConcertoGraphics: invalid window pointer");
+		CCT_ASSERT(_window, "ConcertoGraphics: invalid window pointer");
 		_mouseButtonCallback = std::move(callback);
 	}
 
 	void Window::RegisterCursorPosCallback(std::function<void(Window& window, double xpos, double ypos)> callback)
 	{
-		CONCERTO_ASSERT(_window, "ConcertoGraphics: invalid window pointer");
+		CCT_ASSERT(_window, "ConcertoGraphics: invalid window pointer");
 		_cursorPosCallback = std::move(callback);
 	}
 

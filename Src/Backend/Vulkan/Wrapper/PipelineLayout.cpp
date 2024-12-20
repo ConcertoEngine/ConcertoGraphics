@@ -8,7 +8,7 @@
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/PipelineLayout.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Device.hpp"
 
-namespace Concerto::Graphics::Vk
+namespace cct::gfx::vk
 {
 
 	PipelineLayout::PipelineLayout(Device& device, std::vector<std::shared_ptr<DescriptorSetLayout>> descriptorSetLayouts) :
@@ -30,7 +30,7 @@ namespace Concerto::Graphics::Vk
 		pipelineLayoutCreateInfo.pushConstantRangeCount = 0;
 		pipelineLayoutCreateInfo.pPushConstantRanges = nullptr;
 		const VkResult result = _device->vkCreatePipelineLayout(*_device->Get(), &pipelineLayoutCreateInfo, nullptr, &_handle);
-		CONCERTO_ASSERT(result == VK_SUCCESS, "ConcertoGraphics: vkCreatePipelineLayout failed VKResult={}", static_cast<int>(result));
+		CCT_ASSERT(result == VK_SUCCESS, "ConcertoGraphics: vkCreatePipelineLayout failed VKResult={}", static_cast<int>(result));
 	}
 
 	PipelineLayout::~PipelineLayout()

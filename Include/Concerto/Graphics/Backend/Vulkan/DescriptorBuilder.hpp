@@ -10,7 +10,7 @@
 
 #include "Concerto/Graphics/Backend/Vulkan/Defines.hpp"
 
-namespace Concerto::Graphics::Vk
+namespace cct::gfx::vk
 {
 	class DescriptorSetLayout;
 	class DescriptorSet;

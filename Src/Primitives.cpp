@@ -9,12 +9,12 @@
 #include "Concerto/Graphics/Primitives.hpp"
 #include "Concerto/Graphics/Vertex.hpp"
 
-namespace Concerto::Graphics
+namespace cct::gfx
 {
 	Vertices Primitive::MakeCone(float radius, float height, UInt32 slices)
 	{
 		Vertices vertices;
-		const float angleStep = 2.0f * Concerto::Pi<float> / static_cast<float>(slices);
+		const float angleStep = 2.0f * cct::Pi<float> / static_cast<float>(slices);
 		const Vector3f baseCenter(0.0f, -0.5f * height, 0.0f);
 		for (UInt32 i = 0; i < slices; ++i)
 		{
@@ -112,8 +112,8 @@ namespace Concerto::Graphics
 		vertices.push_back({ bottom, Vector3f(0.0f, -1.0f, 0.0f), Vector3f(1.0f, 1.0f, 1.0f),
 							 Vector2f(0.0f, 0.0f) });
 
-		const float phiStep = Concerto::Pi<float> / static_cast<float>(stacks + 1);
-		const float thetaStep = 2.0f * Concerto::Pi<float> / static_cast<float>(slices);
+		const float phiStep = cct::Pi<float> / static_cast<float>(stacks + 1);
+		const float thetaStep = 2.0f * cct::Pi<float> / static_cast<float>(slices);
 		for (UInt32 i = 1; i <= stacks; ++i)
 		{
 			const float phi = static_cast<float>(i) * phiStep;
@@ -187,7 +187,7 @@ namespace Concerto::Graphics
 
 	Vertices Primitive::MakeCylinder(float radius, float height, UInt32 slices)
 	{
-		const float step = 2 * Concerto::Pi<float> / slices;
+		const float step = 2 * cct::Pi<float> / slices;
 
 		Vertices vertices;
 
@@ -248,7 +248,7 @@ namespace Concerto::Graphics
 
 	Vertices Primitive::MakePlane(float /*size*/)
 	{
-		CONCERTO_ASSERT_FALSE("Not implemented");
+		CCT_ASSERT_FALSE("Not implemented");
 		return {};
 	}
 }

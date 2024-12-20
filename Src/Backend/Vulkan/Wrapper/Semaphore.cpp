@@ -9,7 +9,7 @@
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Semaphore.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Device.hpp"
 
-namespace Concerto::Graphics::Vk
+namespace cct::gfx::vk
 {
 
 	Semaphore::Semaphore(Device& device) : Object(device)
@@ -21,7 +21,7 @@ namespace Concerto::Graphics::Vk
 		_lastResult = _device->vkCreateSemaphore(*_device->Get(), &info, nullptr, &_handle);
 		if (_lastResult != VK_SUCCESS)
 		{
-			CONCERTO_ASSERT_FALSE("ConcertoGraphics: vkCreateSemaphore failed VKResult={}", static_cast<int>(_lastResult));
+			CCT_ASSERT_FALSE("ConcertoGraphics: vkCreateSemaphore failed VKResult={}", static_cast<int>(_lastResult));
 			return;
 		}
 	}
@@ -32,4 +32,4 @@ namespace Concerto::Graphics::Vk
 			return;
 		_device->vkDestroySemaphore(*_device->Get(), _handle, nullptr);
 	}
-} // namespace Concerto::Graphics::Vk
+} // namespace cct::gfx::vk

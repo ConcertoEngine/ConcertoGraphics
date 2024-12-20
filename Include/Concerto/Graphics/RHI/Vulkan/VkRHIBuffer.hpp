@@ -9,12 +9,12 @@
 #include "Concerto/Graphics/RHI/Vulkan/VkRHIDevice.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Buffer.hpp"
 
-namespace Concerto::Graphics::RHI
+namespace cct::gfx::rhi
 {
-	class CONCERTO_GRAPHICS_RHI_BASE_API VkRHIBuffer final: public RHI::Buffer, public Vk::Buffer
+	class CONCERTO_GRAPHICS_RHI_BASE_API VkRHIBuffer final: public rhi::Buffer, public vk::Buffer
 	{
 	public:
-		VkRHIBuffer(VkRHIDevice& device, RHI::BufferUsageFlags usage, UInt32 allocationSize, bool allowBufferMapping);
+		VkRHIBuffer(VkRHIDevice& device, rhi::BufferUsageFlags usage, UInt32 allocationSize, bool allowBufferMapping);
 
 		bool Map(Byte** data) override;
 		void UnMap() override;

@@ -9,7 +9,7 @@
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Buffer.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Device.hpp"
 
-namespace Concerto::Graphics::Vk
+namespace cct::gfx::vk
 {
 
 	Buffer::Buffer(Allocator& allocator, std::size_t allocSize, VkBufferUsageFlags usage, VmaMemoryUsage memoryUsage, bool allowBufferMapping) :
@@ -29,7 +29,7 @@ namespace Concerto::Graphics::Vk
 		vmaAllocInfo.usage = memoryUsage;
 		vmaAllocInfo.flags = allowBufferMapping ? VMA_ALLOCATION_CREATE_HOST_ACCESS_SEQUENTIAL_WRITE_BIT | VMA_ALLOCATION_CREATE_MAPPED_BIT : 0;
 		_lastResult = vmaCreateBuffer(*allocator.Get(), &bufferInfo, &vmaAllocInfo, &_handle, &_allocation, nullptr);
-		CONCERTO_ASSERT(_lastResult == VK_SUCCESS, "ConcertoGraphics: vmaCreateBuffer failed VkResult={}", static_cast<int>(_lastResult));
+		CCT_ASSERT(_lastResult == VK_SUCCESS, "ConcertoGraphics: vmaCreateBuffer failed VkResult={}", static_cast<int>(_lastResult));
 	}
 
 	Buffer::Buffer(Buffer&& other) noexcept :
@@ -57,7 +57,7 @@ namespace Concerto::Graphics::Vk
 			return;
 		if (_mapCount != 0)
 		{
-			CONCERTO_ASSERT_FALSE("ConcertoGraphics: Trying to destroy a buffer that is mapped");
+			CCT_ASSERT_FALSE("ConcertoGraphics: Trying to destroy a buffer that is mapped");
 			return;
 		}
 		_allocator->GetDevice().WaitIdle();
@@ -79,7 +79,7 @@ namespace Concerto::Graphics::Vk
 		const auto res = vmaMapMemory(*_allocator->Get(), _allocation, reinterpret_cast<void**>(data));
 		if (res != VK_SUCCESS)
 		{
-			CONCERTO_ASSERT_FALSE("ConcertoGraphics: Cannot map buffer");
+			CCT_ASSERT_FALSE("ConcertoGraphics: Cannot map buffer");
 			return false;
 		}
 		_mapCount++;
@@ -90,7 +90,7 @@ namespace Concerto::Graphics::Vk
 	{
 		if (_mapCount == 0)
 		{
-			CONCERTO_ASSERT_FALSE("ConcertoGraphics: Trying to destroy a buffer that is mapped");
+			CCT_ASSERT_FALSE("ConcertoGraphics: Trying to destroy a buffer that is mapped");
 			return;
 		}
 		_mapCount--;
@@ -104,7 +104,7 @@ namespace Concerto::Graphics::Vk
 
 	Allocator& Buffer::GetAllocator() const
 	{
-		CONCERTO_ASSERT(_allocator, "ConcertoGraphics: allocator is null");
+		CCT_ASSERT(_allocator, "ConcertoGraphics: allocator is null");
 		return *_allocator;
 	}
 

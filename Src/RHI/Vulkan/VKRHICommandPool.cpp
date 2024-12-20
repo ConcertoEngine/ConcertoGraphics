@@ -7,10 +7,10 @@
 #include "Concerto/Graphics/RHI/Vulkan/VkRHICommandPool.hpp"
 #include "Concerto/Graphics/RHI/Vulkan/VkRHICommandBuffer.hpp"
 
-namespace Concerto::Graphics::RHI
+namespace cct::gfx::rhi
 {
 	VkRHICommandPool::VkRHICommandPool(VkRHIDevice& device, QueueFamily family) :
-		Vk::CommandPool(device, device.GetQueueFamilyIndex(static_cast<Vk::Queue::Type>(family))), //fixme?
+		vk::CommandPool(device, device.GetQueueFamilyIndex(static_cast<vk::Queue::Type>(family))), //fixme?
 		_device(device)
 	{
 	}

@@ -11,7 +11,7 @@
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Device.hpp"
 #include "Concerto/Graphics/Frame.hpp"
 
-namespace Concerto::Graphics::Vk
+namespace cct::gfx::vk
 {
 	Queue::Queue(Device& device, UInt32 queueFamilyIndex) :
 		Object<VkQueue>(device),
@@ -39,7 +39,7 @@ namespace Concerto::Graphics::Vk
 		submit.commandBufferCount = 1;
 		submit.pCommandBuffers = commandBuffer.Get();
 		_lastResult = _device->vkQueueSubmit(_handle, 1, &submit, *renderFence.Get());
-		CONCERTO_ASSERT(_lastResult == VK_SUCCESS, "ConcertoGraphics: vkQueueSubmit failed VKResult={}", static_cast<int>(_lastResult));
+		CCT_ASSERT(_lastResult == VK_SUCCESS, "ConcertoGraphics: vkQueueSubmit failed VKResult={}", static_cast<int>(_lastResult));
 	}
 
 	bool Queue::Present(const Semaphore& renderSemaphore, SwapChain& swapchain, UInt32 swapchainImageIndex) const
@@ -59,7 +59,7 @@ namespace Concerto::Graphics::Vk
 		}
 		if (_lastResult != VK_SUCCESS)
 		{
-			CONCERTO_ASSERT_FALSE("ConcertoGraphics: vkQueuePresentKHR failed VKResult={}", static_cast<int>(_lastResult));
+			CCT_ASSERT_FALSE("ConcertoGraphics: vkQueuePresentKHR failed VKResult={}", static_cast<int>(_lastResult));
 			return false;
 		}
 		return true;

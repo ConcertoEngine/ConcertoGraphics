@@ -8,7 +8,7 @@
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/DescriptorSetLayout.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Device.hpp"
 
-namespace Concerto::Graphics::Vk
+namespace cct::gfx::vk
 {
 
 	DescriptorSetLayout::DescriptorSetLayout(Device& device, std::vector<VkDescriptorSetLayoutBinding> bindings) :
@@ -22,7 +22,7 @@ namespace Concerto::Graphics::Vk
 		createInfo.pBindings = _bindings.data();
 		createInfo.bindingCount = static_cast<UInt32>(_bindings.size());
 		_lastResult = _device->vkCreateDescriptorSetLayout(*_device->Get(), &createInfo, nullptr, &_handle);
-		CONCERTO_ASSERT(_lastResult == VK_SUCCESS, "ConcertoGraphics: vkCreateDescriptorSetLayout failed VkResult={}", static_cast<int>(_lastResult));
+		CCT_ASSERT(_lastResult == VK_SUCCESS, "ConcertoGraphics: vkCreateDescriptorSetLayout failed VkResult={}", static_cast<int>(_lastResult));
 	}
 
 	DescriptorSetLayout::~DescriptorSetLayout()

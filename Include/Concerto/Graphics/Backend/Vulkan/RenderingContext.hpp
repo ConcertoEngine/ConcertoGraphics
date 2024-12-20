@@ -7,7 +7,7 @@
 
 #include "Concerto/Graphics/Backend/Vulkan/Defines.hpp"
 
-namespace Concerto::Graphics::Vk
+namespace cct::gfx::vk
 {
 	class Instance;
 	class PhysicalDevice;
@@ -37,5 +37,5 @@ namespace Concerto::Graphics::Vk
 		CommandPool* commandPool;
 		RenderPass* renderPass;
 	};
-} // Concerto::Graphics::Vk
+} // cct::gfx::vk
 #endif //CONCERTO_GRAPHICS_RENDERINGCONTEXT_HPP

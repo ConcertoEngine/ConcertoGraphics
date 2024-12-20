@@ -8,13 +8,13 @@
 #include "Concerto/Graphics/Backend/Vulkan/Defines.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/ObjectDebug.hpp"
 
-namespace Concerto::Graphics::Vk
+namespace cct::gfx::vk
 {
 	class Device;
 
 	template<typename VkType>
 	class Object
-#ifdef CONCERTO_DEBUG
+#ifdef CCT_DEBUG
 		:
 		public ObjectDebug
 #endif

@@ -14,7 +14,7 @@
 #include "Concerto/Graphics/Version.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Instance.hpp"
 
-namespace Concerto::Graphics::Vk
+namespace cct::gfx::vk
 {
 	class Device;
 	class PhysicalDevice;
@@ -36,7 +36,7 @@ namespace Concerto::Graphics::Vk
 
 		static Vulkan* GetInstance();
 
-		Device* CreateDevice(RHI::DeviceType type = RHI::DeviceType::Dedicated);
+		Device* CreateDevice(rhi::DeviceType type = rhi::DeviceType::Dedicated);
 
 		Instance& GetVkInstance();
 
@@ -45,7 +45,7 @@ namespace Concerto::Graphics::Vk
 		RendererInfo _info;
 		Instance _vkInstance;
 		std::span<PhysicalDevice> _physicalDevices;
-		std::multimap<RHI::DeviceType, Device> _devices;
+		std::multimap<rhi::DeviceType, Device> _devices;
 	};
 }
 

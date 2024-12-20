@@ -9,12 +9,12 @@
 #include "Concerto/Graphics/RHI/CommandPool.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/CommandPool.hpp"
 
-namespace Concerto::Graphics::RHI
+namespace cct::gfx::rhi
 {
-	class CONCERTO_GRAPHICS_RHI_BASE_API VkRHICommandPool final: public CommandPool, public Vk::CommandPool
+	class CONCERTO_GRAPHICS_RHI_BASE_API VkRHICommandPool final: public CommandPool, public vk::CommandPool
 	{
 	public:
-		VkRHICommandPool(VkRHIDevice& device, RHI::QueueFamily family);
+		VkRHICommandPool(VkRHIDevice& device, rhi::QueueFamily family);
 
 		std::unique_ptr<CommandBuffer> AllocateCommandBuffer(CommandBufferUasge usage) override;
 	private:

@@ -7,7 +7,7 @@
 
 #include <Concerto/Core/Types.hpp>
 
-namespace Concerto::Graphics
+namespace cct::gfx
 {
 	enum class PixelFormat : UInt8
 	{

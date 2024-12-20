@@ -15,7 +15,7 @@
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/PhysicalDevice.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Device.hpp"
 
-namespace Concerto::Graphics::Vk
+namespace cct::gfx::vk
 {
 	Allocator::Allocator(PhysicalDevice& physicalDevice, Device& device, Instance& instance) :
 		Object<VmaAllocator>(device)
@@ -48,7 +48,7 @@ namespace Concerto::Graphics::Vk
 		allocatorInfo.pVulkanFunctions = &vulkanFunctions;
 
 		_lastResult = vmaCreateAllocator(&allocatorInfo, &_handle);
-		CONCERTO_ASSERT(_lastResult == VK_SUCCESS, "ConcertoGraphics: Unable to create vma allocator VkResult={}", static_cast<int>(_lastResult));
+		CCT_ASSERT(_lastResult == VK_SUCCESS, "ConcertoGraphics: Unable to create vma allocator VkResult={}", static_cast<int>(_lastResult));
 	}
 
 	Allocator::~Allocator()
@@ -60,7 +60,7 @@ namespace Concerto::Graphics::Vk
 
 	Device& Allocator::GetDevice() const
 	{
-		CONCERTO_ASSERT(_device != nullptr, "ConcertoGraphics: device is null");
+		CCT_ASSERT(_device != nullptr, "ConcertoGraphics: device is null");
 		return *_device;
 	}
 

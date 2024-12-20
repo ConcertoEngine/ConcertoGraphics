@@ -6,17 +6,17 @@
 #include "Concerto/Graphics/RHI/Mesh.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/ShaderModule.hpp"
 
-namespace Concerto::Graphics::RHI
+namespace cct::gfx::rhi
 {
 	SubMesh::SubMesh(Mesh* parent) :
 		_vertices(),
-		_material(std::make_shared<RHI::MaterialInfo>()),
+		_material(std::make_shared<rhi::MaterialInfo>()),
 		_parent(parent)
 	{
 
 	}
 
-	SubMesh::SubMesh(const Vertices& vertices, std::shared_ptr<RHI::MaterialInfo>& material, Mesh* parent) :
+	SubMesh::SubMesh(const Vertices& vertices, std::shared_ptr<rhi::MaterialInfo>& material, Mesh* parent) :
 		_vertices(vertices),
 		_material(material),
 		_parent(parent)
@@ -29,7 +29,7 @@ namespace Concerto::Graphics::RHI
 		return _vertices;
 	}
 
-	std::shared_ptr<RHI::MaterialInfo>& SubMesh::GetMaterial()
+	std::shared_ptr<rhi::MaterialInfo>& SubMesh::GetMaterial()
 	{
 		return _material;
 	}

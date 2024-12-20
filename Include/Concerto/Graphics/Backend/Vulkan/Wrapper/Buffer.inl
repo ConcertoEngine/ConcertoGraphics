@@ -5,11 +5,13 @@
 #ifndef CONCERTO_GRAPHICS_BUFFER_INL
 #define CONCERTO_GRAPHICS_BUFFER_INL
 
+#include <cstring>
+
 #include <Concerto/Core/Assert.hpp>
 
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Buffer.hpp"
 
-namespace Concerto::Graphics::Vk
+namespace cct::gfx::vk
 {
 	template <typename T>
 	void Buffer::Copy(T& object, std::size_t padding)
@@ -17,7 +19,7 @@ namespace Concerto::Graphics::Vk
 		Byte* data = nullptr;
 		if(Map(&data) == false)
 		{
-			CONCERTO_ASSERT_FALSE("ConcertoGraphics: Cannot map buffer");
+			CCT_ASSERT_FALSE("ConcertoGraphics: Cannot map buffer");
 			return;
 		}
 		data += padding;
@@ -31,7 +33,7 @@ namespace Concerto::Graphics::Vk
 		Byte* data = nullptr;
 		if (Map(&data) == false)
 		{
-			CONCERTO_ASSERT_FALSE("ConcertoGraphics: Cannot map buffer");
+			CCT_ASSERT_FALSE("ConcertoGraphics: Cannot map buffer");
 			return;
 		}
 		data += padding;
@@ -48,8 +50,8 @@ namespace Concerto::Graphics::Vk
 	{
 		Byte* data = nullptr;
 		if (Map(&data) == false)
-			CONCERTO_ASSERT_FALSE("ConcertoGraphics: Cannot map buffer");
+			CCT_ASSERT_FALSE("ConcertoGraphics: Cannot map buffer");
 		return reinterpret_cast<T*>(data);
 	}
-} // Concerto::Graphics::Vk
+} // cct::gfx::vk
 #endif //CONCERTO_GRAPHICS_BUFFER_INL

@@ -20,12 +20,12 @@
 #include "Concerto/Graphics/RHI/CommandPool.hpp"
 #include "Concerto/Graphics/RHI/Buffer.hpp"
 
-namespace Concerto::Graphics
+namespace cct::gfx
 {
 	class Window;
 }
 
-namespace Concerto::Graphics::RHI
+namespace cct::gfx::rhi
 {
 	class SwapChain;
 
@@ -47,8 +47,8 @@ namespace Concerto::Graphics::RHI
 		virtual std::unique_ptr<FrameBuffer> CreateFrameBuffer(UInt32 width, UInt32 height, const RenderPass& renderPass, const std::vector<std::unique_ptr<TextureView>>& attachments) = 0;
 		virtual std::unique_ptr<MaterialBuilder> CreateMaterialBuilder(const Vector2u& windowExtent) = 0;
 		virtual std::unique_ptr<TextureBuilder> CreateTextureBuilder() = 0;
-		virtual std::unique_ptr<CommandPool> CreateCommandPool(RHI::QueueFamily family) = 0;
-		virtual std::unique_ptr<Buffer> CreateBuffer(RHI::BufferUsageFlags usage, UInt32 allocationSize, bool allowBufferMapping) = 0;
+		virtual std::unique_ptr<CommandPool> CreateCommandPool(rhi::QueueFamily family) = 0;
+		virtual std::unique_ptr<Buffer> CreateBuffer(rhi::BufferUsageFlags usage, UInt32 allocationSize, bool allowBufferMapping) = 0;
 		virtual std::size_t GetMinimumUniformBufferOffsetAlignment() const = 0;
 	};
 }

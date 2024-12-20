@@ -17,7 +17,7 @@
 #include "Concerto/Graphics/Window/Event.hpp"
 #include "Concerto/Graphics/Window/Key.hpp"
 
-namespace Concerto
+namespace cct
 {
 	class CONCERTO_GRAPHICS_API Input
 	{

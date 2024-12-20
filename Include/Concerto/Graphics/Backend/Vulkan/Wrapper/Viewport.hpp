@@ -5,7 +5,7 @@
 #ifndef CONCERTO_GRAPHICS_VIEWPORT_HPP
 #define CONCERTO_GRAPHICS_VIEWPORT_HPP
 
-namespace Concerto::Graphics::Vk
+namespace cct::gfx::vk
 {
 	struct Viewport
 	{
@@ -17,6 +17,6 @@ namespace Concerto::Graphics::Vk
 		float maxDepth;
 	};
 
-} // Concerto::Graphics::Vk
+} // cct::gfx::vk
 
 #endif //CONCERTO_GRAPHICS_VIEWPORT_HPP

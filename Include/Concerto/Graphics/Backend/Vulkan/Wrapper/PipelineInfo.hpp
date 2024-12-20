@@ -12,7 +12,7 @@
 
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/PipelineLayout.hpp"
 
-namespace Concerto::Graphics::Vk
+namespace cct::gfx::vk
 {
 
 	class CONCERTO_GRAPHICS_VULKAN_BACKEND_API PipelineInfo
@@ -32,6 +32,6 @@ namespace Concerto::Graphics::Vk
 		VkPipelineDepthStencilStateCreateInfo _depthStencil;
 	};
 
-} // Concerto::Graphics::Vk
+} // cct::gfx::vk
 
 #endif //CONCERTO_GRAPHICS_PIPELINEINFO_HPP

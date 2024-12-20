@@ -14,7 +14,7 @@
 #include "Concerto/Graphics/Window/NativeWindow.hpp"
 struct SDL_Window;
 
-namespace Concerto::Graphics
+namespace cct::gfx
 {
 
 	class CONCERTO_GRAPHICS_API Window

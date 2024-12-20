@@ -16,7 +16,7 @@
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Instance.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/PhysicalDevice.hpp"
 
-namespace Concerto::Graphics::Vk
+namespace cct::gfx::vk
 {
 	PFN_vkGetInstanceProcAddr Instance::vkGetInstanceProcAddr = nullptr;
 
@@ -87,12 +87,12 @@ namespace Concerto::Graphics::Vk
 		_lastResult = volkInitialize();
 		if (_lastResult != VK_SUCCESS)
 		{
-			CONCERTO_ASSERT_FALSE("ConcertoGraphics: volkInitialize() failed VkResult={}", static_cast<int>(_lastResult));
+			CCT_ASSERT_FALSE("ConcertoGraphics: volkInitialize() failed VkResult={}", static_cast<int>(_lastResult));
 			throw std::runtime_error("volkInitialize Failed");
 		}
 
 		_lastResult = vkCreateInstance(&createInfo, nullptr, &_instance);
-		CONCERTO_ASSERT(_lastResult == VK_SUCCESS, "ConcertoGraphics: vkCreateInstance failed VKResult={}", static_cast<int>(_lastResult));
+		CCT_ASSERT(_lastResult == VK_SUCCESS, "ConcertoGraphics: vkCreateInstance failed VKResult={}", static_cast<int>(_lastResult));
 		volkLoadInstanceOnly(_instance);
 		Instance::vkGetInstanceProcAddr = ::vkGetInstanceProcAddr;
 		#define CONCERTO_VULKAN_BACKEND_INSTANCE_FUNCTION(func) this->func = ::func;
@@ -104,7 +104,7 @@ namespace Concerto::Graphics::Vk
 						CONCERTO_VULKAN_BACKEND_INSTANCE_FUNCTION(func)		\
 						if (this->func == nullptr)							\
 						{													\
-							CONCERTO_ASSERT_FALSE("ConcertoGraphics: Function: " #func " is null but the extension has been reported has supported");\
+							CCT_ASSERT_FALSE("ConcertoGraphics: Function: " #func " is null but the extension has been reported has supported");\
 						}
 		#define CONCERTO_VULKAN_BACKEND_INSTANCE_EXT_END }
 
@@ -128,10 +128,10 @@ namespace Concerto::Graphics::Vk
 			return _physicalDevices.value();
 		UInt32 deviceCount = 0;
 		_lastResult = vkEnumeratePhysicalDevices(_instance, &deviceCount, nullptr);
-		CONCERTO_ASSERT(_lastResult == VK_SUCCESS, "ConcertoGraphics: vkEnumeratePhysicalDevices failed VKResult={}", static_cast<int>(_lastResult));
+		CCT_ASSERT(_lastResult == VK_SUCCESS, "ConcertoGraphics: vkEnumeratePhysicalDevices failed VKResult={}", static_cast<int>(_lastResult));
 		std::vector<VkPhysicalDevice> devices(deviceCount);
 		_lastResult = vkEnumeratePhysicalDevices(_instance, &deviceCount, devices.data());
-		CONCERTO_ASSERT(_lastResult == VK_SUCCESS, "ConcertoGraphics: vkEnumeratePhysicalDevices failed VKResult={}", static_cast<int>(_lastResult));
+		CCT_ASSERT(_lastResult == VK_SUCCESS, "ConcertoGraphics: vkEnumeratePhysicalDevices failed VKResult={}", static_cast<int>(_lastResult));
 		std::vector<PhysicalDevice> physicalDevices;
 		for(VkPhysicalDevice device : devices)
 		{
@@ -150,4 +150,4 @@ namespace Concerto::Graphics::Vk
 	{
 		return _loadedExtensions.contains(ext);
 	}
-} // namespace Concerto::Graphics::Vk
+} // namespace cct::gfx::vk

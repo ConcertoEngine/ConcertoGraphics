@@ -7,7 +7,7 @@
 
 #include "Concerto/Graphics/RHI/Vulkan/VkRHISwapChain.hpp"
 
-namespace Concerto::Graphics::RHI
+namespace cct::gfx::rhi
 {
 	inline SwapChain::SwapChain(PixelFormat pixelFormat, PixelFormat depthPixelFormat) :
 		_pixelFormat(pixelFormat),

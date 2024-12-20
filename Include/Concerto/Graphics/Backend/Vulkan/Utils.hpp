@@ -8,7 +8,7 @@
 #include <Concerto/Core/Math/Vector.hpp>
 #include <Concerto/Core/Math/Matrix.hpp>
 
-namespace Concerto::Graphics::Vk
+namespace cct::gfx::vk
 {
 	class MeshPushConstants
 	{

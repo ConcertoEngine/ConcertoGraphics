@@ -17,35 +17,35 @@
 #include "Concerto/Graphics/RHI/Vulkan/VkRHICommandPool.hpp"
 #include "Concerto/Graphics/RHI/Vulkan/VKRHITexture.hpp"
 
-namespace Concerto::Graphics::RHI
+namespace cct::gfx::rhi
 {
-	VkRHISwapChain::VkRHISwapChain(RHI::VkRHIDevice& device, Window& window, PixelFormat pixelFormat, PixelFormat depthPixelFormat) :
-		RHI::SwapChain(pixelFormat, depthPixelFormat),
-		Vk::SwapChain(device, window, Converters::ToVulkan(pixelFormat), Converters::ToVulkan(depthPixelFormat)),
+	VkRHISwapChain::VkRHISwapChain(rhi::VkRHIDevice& device, Window& window, PixelFormat pixelFormat, PixelFormat depthPixelFormat) :
+		rhi::SwapChain(pixelFormat, depthPixelFormat),
+		vk::SwapChain(device, window, Converters::ToVulkan(pixelFormat), Converters::ToVulkan(depthPixelFormat)),
 		_pixelFormat(pixelFormat),
 		_depthPixelFormat(depthPixelFormat)
 	{
 		CreateRenderPass();
 		CreateFrameBuffers(device);
 		_commandPool = device.CreateCommandPool(QueueFamily::Graphics);
-		_presentQueue = std::make_unique<Vk::Queue>(device, device.GetQueueFamilyIndex(Vk::Queue::Type::Graphics));
+		_presentQueue = std::make_unique<vk::Queue>(device, device.GetQueueFamilyIndex(vk::Queue::Type::Graphics));
 		CreateFrames();
 	}
 
-	RHI::RenderPass& VkRHISwapChain::GetRenderPass()
+	rhi::RenderPass& VkRHISwapChain::GetRenderPass()
 	{
-		CONCERTO_ASSERT(_renderPass, "ConcertoGraphics: Invalid renderpass");
+		CCT_ASSERT(_renderPass, "ConcertoGraphics: Invalid renderpass");
 		return *_renderPass;
 	}
 
 	Vector2u VkRHISwapChain::GetExtent() const
 	{
-		return Vector2u{ Vk::SwapChain::GetExtent().width, Vk::SwapChain::GetExtent().height };
+		return Vector2u{ vk::SwapChain::GetExtent().width, vk::SwapChain::GetExtent().height };
 	}
 
 	UInt32 VkRHISwapChain::GetImageCount() const
 	{
-		return static_cast<UInt32>(Vk::SwapChain::GetImages().size());
+		return static_cast<UInt32>(vk::SwapChain::GetImages().size());
 	}
 
 	Frame& VkRHISwapChain::AcquireFrame()
@@ -55,7 +55,7 @@ namespace Concerto::Graphics::RHI
 			GetDevice()->WaitIdle();
 			SwapChainFrame& frame = _frames[_currentFrameIndex];
 			frame.Wait();
-			Vk::SwapChain::ReCreate(Converters::ToVulkan(_pixelFormat), Converters::ToVulkan(_depthPixelFormat));
+			vk::SwapChain::ReCreate(Converters::ToVulkan(_pixelFormat), Converters::ToVulkan(_depthPixelFormat));
 			_frameBuffers.clear();
 			_frames.clear();
 			CreateRenderPass();
@@ -65,35 +65,35 @@ namespace Concerto::Graphics::RHI
 		}
 		SwapChainFrame& frame = _frames[_currentFrameIndex];
 		frame.Wait();
-		const UInt32 nextImageIndex = Vk::SwapChain::AcquireNextImage(frame.GetPresentSemaphore(), frame.GetRenderFence(), -1);
+		const UInt32 nextImageIndex = vk::SwapChain::AcquireNextImage(frame.GetPresentSemaphore(), frame.GetRenderFence(), -1);
 		frame.SetNextImageIndex(nextImageIndex);
 		return frame;
 	}
 
 	VkRHICommandPool& VkRHISwapChain::GetCommandPool() const
 	{
-		CONCERTO_ASSERT(_commandPool, "ConcertoGraphics: Invalid command pool");
+		CCT_ASSERT(_commandPool, "ConcertoGraphics: Invalid command pool");
 		return Cast<VkRHICommandPool&>(*_commandPool);
 	}
 
 	VkRHIDevice& VkRHISwapChain::GetRHIDevice() const
 	{
-		CONCERTO_ASSERT(Vk::SwapChain::GetDevice(), "ConcertoGraphics: Invalid device");
-		return Cast<VkRHIDevice&>(*Vk::SwapChain::GetDevice());
+		CCT_ASSERT(vk::SwapChain::GetDevice(), "ConcertoGraphics: Invalid device");
+		return Cast<VkRHIDevice&>(*vk::SwapChain::GetDevice());
 	}
 
-	Vk::Queue& VkRHISwapChain::GetPresentQueue() const
+	vk::Queue& VkRHISwapChain::GetPresentQueue() const
 	{
-		CONCERTO_ASSERT(_presentQueue, "ConcertoGraphics: Invalid present queue");
+		CCT_ASSERT(_presentQueue, "ConcertoGraphics: Invalid present queue");
 		return *_presentQueue;
 	}
 
-	RHI::FrameBuffer& VkRHISwapChain::GetCurrentFrameBuffer()
+	rhi::FrameBuffer& VkRHISwapChain::GetCurrentFrameBuffer()
 	{
 		return *_frameBuffers[_currentFrameIndex];
 	}
 
-	const RHI::FrameBuffer& VkRHISwapChain::GetCurrentFrameBuffer() const
+	const rhi::FrameBuffer& VkRHISwapChain::GetCurrentFrameBuffer() const
 	{
 		return *_frameBuffers[_currentFrameIndex];
 	}
@@ -114,27 +114,27 @@ namespace Concerto::Graphics::RHI
 			}
 			default:
 				{
-					CONCERTO_ASSERT_FALSE("ConcertoGraphics: Present failed VKResult={}", static_cast<int>(_presentQueue->GetLastResult()));
+					CCT_ASSERT_FALSE("ConcertoGraphics: Present failed VKResult={}", static_cast<int>(_presentQueue->GetLastResult()));
 				}
 			}
 		}
 	}
 
-	void VkRHISwapChain::CreateFrameBuffers(RHI::VkRHIDevice& device)
+	void VkRHISwapChain::CreateFrameBuffers(rhi::VkRHIDevice& device)
 	{
-		const std::span<Vk::ImageView> imagesViews = Vk::SwapChain::GetImageViews();
-	
+		const std::span<vk::ImageView> imagesViews = vk::SwapChain::GetImageViews();
+
 		_frameBuffers.reserve(imagesViews.size());
-		for (const Vk::ImageView& imageView : imagesViews)
+		for (const vk::ImageView& imageView : imagesViews)
 		{
-			std::vector<std::unique_ptr<RHI::TextureView>> attachments;
+			std::vector<std::unique_ptr<rhi::TextureView>> attachments;
 			attachments.emplace_back(std::make_unique<VkRHITextureView>(imageView));
 			attachments.emplace_back(std::make_unique<VkRHITextureView>(GetDepthImageView()));
-			CONCERTO_ASSERT(imageView.Get() != VK_NULL_HANDLE && GetDepthImageView().Get() != VK_NULL_HANDLE, "ConcertoGraphics: iInvalid attachment");
+			CCT_ASSERT(imageView.Get() != VK_NULL_HANDLE && GetDepthImageView().Get() != VK_NULL_HANDLE, "ConcertoGraphics: iInvalid attachment");
 
-			auto extent = Vk::SwapChain::GetExtent();
+			auto extent = vk::SwapChain::GetExtent();
 			auto fb = device.CreateFrameBuffer(extent.width, extent.height, Cast<VkRHIRenderPass&>(*_renderPass), attachments);
-			CONCERTO_ASSERT(fb, "ConcertoGraphics: Could not create frame buffer");
+			CCT_ASSERT(fb, "ConcertoGraphics: Could not create frame buffer");
 
 			_frameBuffers.emplace_back(std::move(fb));
 		}
@@ -142,51 +142,51 @@ namespace Concerto::Graphics::RHI
 
 	void VkRHISwapChain::CreateRenderPass()
 	{
-		std::vector<RHI::RenderPass::Attachment> attachment;
+		std::vector<rhi::RenderPass::Attachment> attachment;
 		auto& colorAttachment = attachment.emplace_back();
 		colorAttachment.pixelFormat = GetPixelFormat();
-		colorAttachment.loadOp = RHI::AttachmentLoadOp::Clear;
-		colorAttachment.storeOp = RHI::AttachmentStoreOp::Store;
-		colorAttachment.stencilLoadOp = RHI::AttachmentLoadOp::DontCare;
-		colorAttachment.stencilStoreOp = RHI::AttachmentStoreOp::DontCare;
-		colorAttachment.initialLayout = RHI::ImageLayout::Undefined;
-		colorAttachment.finalLayout = RHI::ImageLayout::PresentSrcKhr;
+		colorAttachment.loadOp = rhi::AttachmentLoadOp::Clear;
+		colorAttachment.storeOp = rhi::AttachmentStoreOp::Store;
+		colorAttachment.stencilLoadOp = rhi::AttachmentLoadOp::DontCare;
+		colorAttachment.stencilStoreOp = rhi::AttachmentStoreOp::DontCare;
+		colorAttachment.initialLayout = rhi::ImageLayout::Undefined;
+		colorAttachment.finalLayout = rhi::ImageLayout::PresentSrcKhr;
 
 		auto& depthAttachment = attachment.emplace_back();
 		depthAttachment.pixelFormat = GetDepthPixelFormat();
-		depthAttachment.loadOp = RHI::AttachmentLoadOp::Clear;
-		depthAttachment.storeOp = RHI::AttachmentStoreOp::Store;
-		depthAttachment.stencilLoadOp = RHI::AttachmentLoadOp::Clear;
-		depthAttachment.stencilStoreOp = RHI::AttachmentStoreOp::DontCare;
-		depthAttachment.initialLayout = RHI::ImageLayout::Undefined;
-		depthAttachment.finalLayout = RHI::ImageLayout::DepthStencilAttachmentOptimal;
+		depthAttachment.loadOp = rhi::AttachmentLoadOp::Clear;
+		depthAttachment.storeOp = rhi::AttachmentStoreOp::Store;
+		depthAttachment.stencilLoadOp = rhi::AttachmentLoadOp::Clear;
+		depthAttachment.stencilStoreOp = rhi::AttachmentStoreOp::DontCare;
+		depthAttachment.initialLayout = rhi::ImageLayout::Undefined;
+		depthAttachment.finalLayout = rhi::ImageLayout::DepthStencilAttachmentOptimal;
 
-		std::vector<RHI::RenderPass::SubPassDescription> subPassDescriptions;
+		std::vector<rhi::RenderPass::SubPassDescription> subPassDescriptions;
 
 		auto& subPass = subPassDescriptions.emplace_back();
-		subPass.colorAttachments.push_back({ 0, RHI::ImageLayout::ColorAttachmentOptimal });
-		subPass.depthStencilAttachment = { 1, RHI::ImageLayout::DepthStencilAttachmentOptimal };
+		subPass.colorAttachments.push_back({ 0, rhi::ImageLayout::ColorAttachmentOptimal });
+		subPass.depthStencilAttachment = { 1, rhi::ImageLayout::DepthStencilAttachmentOptimal };
 
 
-		std::vector<RHI::RenderPass::SubPassDependency> subPassDependencies;
+		std::vector<rhi::RenderPass::SubPassDependency> subPassDependencies;
 		auto& colorDependency = subPassDependencies.emplace_back();
-		colorDependency.srcSubPassIndex = RHI::RenderPass::SubPassDependency::ExternalSubPass;
+		colorDependency.srcSubPassIndex = rhi::RenderPass::SubPassDependency::ExternalSubPass;
 		colorDependency.dstSubPassIndex = 0u;
-		colorDependency.srcStageMask = static_cast<RHI::PipelineStageFlags>(RHI::PipelineStage::ColorAttachmentOutput);
+		colorDependency.srcStageMask = static_cast<rhi::PipelineStageFlags>(rhi::PipelineStage::ColorAttachmentOutput);
 		colorDependency.srcAccessFlags = 0u;
-		colorDependency.dstStageMask = static_cast<RHI::PipelineStageFlags>(RHI::PipelineStage::ColorAttachmentOutput);
-		colorDependency.dstAccessFlags = static_cast<RHI::MemoryAccessFlags>(RHI::MemoryAccess::ColorAttachmentWrite);
+		colorDependency.dstStageMask = static_cast<rhi::PipelineStageFlags>(rhi::PipelineStage::ColorAttachmentOutput);
+		colorDependency.dstAccessFlags = static_cast<rhi::MemoryAccessFlags>(rhi::MemoryAccess::ColorAttachmentWrite);
 
 		auto& depthDependency = subPassDependencies.emplace_back();
-		depthDependency.srcSubPassIndex = RHI::RenderPass::SubPassDependency::ExternalSubPass;
+		depthDependency.srcSubPassIndex = rhi::RenderPass::SubPassDependency::ExternalSubPass;
 		depthDependency.dstSubPassIndex = 0u;
-		depthDependency.srcStageMask = static_cast<RHI::PipelineStageFlags>(RHI::PipelineStage::EarlyFragmentTests) | static_cast<RHI::PipelineStageFlags>(RHI::PipelineStage::LateFragmentTests);
+		depthDependency.srcStageMask = static_cast<rhi::PipelineStageFlags>(rhi::PipelineStage::EarlyFragmentTests) | static_cast<rhi::PipelineStageFlags>(rhi::PipelineStage::LateFragmentTests);
 		depthDependency.srcAccessFlags = 0u;
-		depthDependency.dstStageMask = static_cast<RHI::PipelineStageFlags>(RHI::PipelineStage::EarlyFragmentTests) | static_cast<RHI::PipelineStageFlags>(RHI::PipelineStage::LateFragmentTests);
-		depthDependency.dstAccessFlags = static_cast<RHI::MemoryAccessFlags>(RHI::MemoryAccess::DepthStencilAttachmentWrite);
+		depthDependency.dstStageMask = static_cast<rhi::PipelineStageFlags>(rhi::PipelineStage::EarlyFragmentTests) | static_cast<rhi::PipelineStageFlags>(rhi::PipelineStage::LateFragmentTests);
+		depthDependency.dstAccessFlags = static_cast<rhi::MemoryAccessFlags>(rhi::MemoryAccess::DepthStencilAttachmentWrite);
 
 		_renderPass = Cast<VkRHIDevice&>(*_device).CreateRenderPass(attachment, subPassDescriptions, subPassDependencies);
-		CONCERTO_ASSERT(_renderPass && Cast<VkRHIRenderPass&>(*_renderPass).GetLastResult() == VK_SUCCESS, "ConcertoGraphics: Could not create render pass");
+		CCT_ASSERT(_renderPass && Cast<VkRHIRenderPass&>(*_renderPass).GetLastResult() == VK_SUCCESS, "ConcertoGraphics: Could not create render pass");
 	}
 
 	void VkRHISwapChain::CreateFrames()
@@ -211,20 +211,20 @@ namespace Concerto::Graphics::RHI
 		_owner(&owner),
 		_imageIndex(0)
 	{
-#ifdef CONCERTO_DEBUG
+#ifdef CCT_DEBUG
 		Cast<VkRHICommandBuffer&>(*_commandBuffer).SetDebugName("SwapChainFrameCommandBuffer");
 #endif
 	}
 
 	void VkRHISwapChain::SwapChainFrame::Present()
 	{
-		const Vk::Queue& presentQueue = _owner->GetPresentQueue();
+		const vk::Queue& presentQueue = _owner->GetPresentQueue();
 
 		presentQueue.Submit(Cast<VkRHICommandBuffer&>(*_commandBuffer), &_presentSemaphore, &_renderSemaphore, _renderFence);
 		_owner->Present(_imageIndex);
 	}
 
-	RHI::CommandBuffer& VkRHISwapChain::SwapChainFrame::GetCommandBuffer()
+	rhi::CommandBuffer& VkRHISwapChain::SwapChainFrame::GetCommandBuffer()
 	{
 		return *_commandBuffer;
 	}
@@ -234,7 +234,7 @@ namespace Concerto::Graphics::RHI
 		return _imageIndex;
 	}
 
-	RHI::FrameBuffer& VkRHISwapChain::SwapChainFrame::GetFrameBuffer()
+	rhi::FrameBuffer& VkRHISwapChain::SwapChainFrame::GetFrameBuffer()
 	{
 		return _owner->GetCurrentFrameBuffer();
 	}
@@ -242,7 +242,7 @@ namespace Concerto::Graphics::RHI
 	void VkRHISwapChain::SwapChainFrame::SetNextImageIndex(UInt32 imageIndex)
 	{
 		_imageIndex = imageIndex;
-#ifdef CONCERTO_DEBUG
+#ifdef CCT_DEBUG
 		Cast<VkRHICommandBuffer&>(*_commandBuffer).SetDebugName(std::format("SwapChainFrameCommandBuffer[{}]", imageIndex));
 #endif
 	}
@@ -253,17 +253,17 @@ namespace Concerto::Graphics::RHI
 		_renderFence.Reset();
 	}
 
-	Vk::Semaphore& VkRHISwapChain::SwapChainFrame::GetPresentSemaphore()
+	vk::Semaphore& VkRHISwapChain::SwapChainFrame::GetPresentSemaphore()
 	{
 		return _presentSemaphore;
 	}
 
-	Vk::Semaphore& VkRHISwapChain::SwapChainFrame::GetRenderSemaphore()
+	vk::Semaphore& VkRHISwapChain::SwapChainFrame::GetRenderSemaphore()
 	{
 		return _renderSemaphore;
 	}
 
-	Vk::Fence& VkRHISwapChain::SwapChainFrame::GetRenderFence()
+	vk::Fence& VkRHISwapChain::SwapChainFrame::GetRenderFence()
 	{
 		return _renderFence;
 	}

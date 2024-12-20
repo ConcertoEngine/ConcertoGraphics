@@ -12,7 +12,7 @@
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Image.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/VulkanInitializer.hpp"
 
-namespace Concerto::Graphics::Vk
+namespace cct::gfx::vk
 {
 	ImageView::ImageView(Device& device, Image& image, VkImageAspectFlags aspectFlags) :
 		Object(device),
@@ -20,7 +20,7 @@ namespace Concerto::Graphics::Vk
 	{
 		auto imageInfo = VulkanInitializer::ImageViewCreateInfo(image.GetFormat(), *image.Get(), aspectFlags);
 		_lastResult = _device->vkCreateImageView(*_device->Get(), &imageInfo, nullptr, &_handle);
-		CONCERTO_ASSERT(_lastResult == VK_SUCCESS, "ConcertoGraphics: vkCreateImageView failed VkResult={}", static_cast<int>(_lastResult));
+		CCT_ASSERT(_lastResult == VK_SUCCESS, "ConcertoGraphics: vkCreateImageView failed VkResult={}", static_cast<int>(_lastResult));
 	}
 
 	ImageView::~ImageView()

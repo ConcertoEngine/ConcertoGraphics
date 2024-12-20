@@ -12,32 +12,32 @@
 #include "Concerto/Graphics/Defines.hpp"
 #include "Concerto/Graphics/RHI/TextureBuilder.hpp"
 
-namespace Concerto::Graphics::Vk
+namespace cct::gfx::vk
 {
 	class UploadContext;
 	class CommandBuffer;
 	class Queue;
 }
 
-namespace Concerto::Graphics::RHI
+namespace cct::gfx::rhi
 {
 	class Device;
 
-	class CONCERTO_GRAPHICS_RHI_BASE_API VkRHITextureBuilder : public RHI::TextureBuilder
+	class CONCERTO_GRAPHICS_RHI_BASE_API VkRHITextureBuilder : public rhi::TextureBuilder
 	{
 	 public:
-		VkRHITextureBuilder(RHI::Device& device, Vk::UploadContext& uploadContext, Vk::Queue& queue);
+		VkRHITextureBuilder(rhi::Device& device, vk::UploadContext& uploadContext, vk::Queue& queue);
 		~VkRHITextureBuilder() override;
 
 		static VkRHITextureBuilder* Instance();
 
-		std::shared_ptr<RHI::Texture> BuildTexture(const std::string& path) override;
+		std::shared_ptr<rhi::Texture> BuildTexture(const std::string& path) override;
 	 private:
 		static VkRHITextureBuilder* _instance;
 		std::unordered_map<std::string, std::shared_ptr<Texture>> _texturesCache;
-		RHI::Device& _device;
-		Vk::UploadContext& _uploadContext;
-		Vk::Queue& _queue;
+		rhi::Device& _device;
+		vk::UploadContext& _uploadContext;
+		vk::Queue& _queue;
 	};
 }
 

@@ -11,7 +11,7 @@
 #include "Concerto/Graphics/RHI/Enums.hpp"
 #include "Concerto/Graphics/RHI/Defines.hpp"
 
-namespace Concerto::Graphics::RHI
+namespace cct::gfx::rhi
 {
 	class CONCERTO_GRAPHICS_RHI_BASE_API RenderPass
 	{

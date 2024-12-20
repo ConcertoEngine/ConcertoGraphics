@@ -11,7 +11,7 @@
 
 #include "Concerto/Graphics/Backend/Vulkan/Defines.hpp"
 
-namespace Concerto::Graphics::Vk
+namespace cct::gfx::vk
 {
 	class Instance;
 
@@ -35,7 +35,7 @@ namespace Concerto::Graphics::Vk
 
 		PhysicalDevice() = default;
 
-		explicit PhysicalDevice(Vk::Instance& instance, VkPhysicalDevice physicalDevice);
+		explicit PhysicalDevice(vk::Instance& instance, VkPhysicalDevice physicalDevice);
 
 		~PhysicalDevice() = default;
 
@@ -114,9 +114,9 @@ namespace Concerto::Graphics::Vk
 		mutable std::optional<std::vector<VkSurfaceFormatKHR>> _formats;
 		mutable std::optional<std::vector<VkPresentModeKHR>> _presentModes;
 		VkPhysicalDevice _physicalDevice = VK_NULL_HANDLE;
-		Vk::Instance* _instance;
+		vk::Instance* _instance;
 };
 
-} // Concerto::Graphics::Vk
+} // cct::gfx::vk
 
 #endif //CONCERTO_GRAPHICS_PHYSICALDEVICE_HPP

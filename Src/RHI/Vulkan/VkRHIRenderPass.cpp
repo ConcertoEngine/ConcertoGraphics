@@ -5,10 +5,10 @@
 #include "Concerto/Graphics/RHI/Vulkan/VkRHIRenderPass.hpp"
 #include "Concerto/Graphics/RHI/Vulkan/VkRHIDevice.hpp"
 
-namespace Concerto::Graphics::RHI
+namespace cct::gfx::rhi
 {
 	VkRHIRenderPass::VkRHIRenderPass(VkRHIDevice& device, std::span<VkAttachmentDescription> attachmentDescriptions, std::span<VkSubpassDescription> subPassDescriptions, std::span<VkSubpassDependency> subPassDependencies) :
-		Vk::RenderPass(device, attachmentDescriptions, subPassDescriptions, subPassDependencies)
+		vk::RenderPass(device, attachmentDescriptions, subPassDescriptions, subPassDependencies)
 	{
 	}
 }

@@ -13,7 +13,7 @@
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Object.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/DescriptorSet.hpp"
 
-namespace Concerto::Graphics::Vk
+namespace cct::gfx::vk
 {
 	class Device;
 

@@ -6,7 +6,7 @@
 
 #include "Concerto/Graphics/Window/Input.hpp"
 
-namespace Concerto
+namespace cct
 {
 	void Input::Register(const std::string& name, Key key, TriggerType triggerType, FunctionRef<void()>&& callback)
 	{

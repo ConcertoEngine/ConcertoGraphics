@@ -10,7 +10,7 @@
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/ImageView.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/VulkanInitializer.hpp"
 
-namespace Concerto::Graphics::Vk
+namespace cct::gfx::vk
 {
 	DescriptorSet::DescriptorSet(Device& device, DescriptorPool& pool, const DescriptorSetLayout& descriptorSetLayout) :
 		Object(device),
@@ -31,7 +31,7 @@ namespace Concerto::Graphics::Vk
 			return;
 		if (_pool == nullptr)
 		{
-			CONCERTO_ASSERT_FALSE("ConcertoGraphics: Trying to destroy a descriptor set with an invalid pool");
+			CCT_ASSERT_FALSE("ConcertoGraphics: Trying to destroy a descriptor set with an invalid pool");
 			return;
 		}
 		_device->vkFreeDescriptorSets(*_device->Get(), *_pool->Get(), 1, &_handle);

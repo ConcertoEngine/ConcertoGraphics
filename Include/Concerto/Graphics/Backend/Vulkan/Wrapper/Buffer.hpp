@@ -13,7 +13,7 @@
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Object.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Allocator.hpp"
 
-namespace Concerto::Graphics::Vk
+namespace cct::gfx::vk
 {
 	/**
 	 * @class Buffer
@@ -96,7 +96,7 @@ namespace Concerto::Graphics::Vk
 	template<typename T>
 	Buffer MakeBuffer(Allocator& allocator, VkBufferUsageFlags usage, VmaMemoryUsage memoryUsage)
 	{
-		return { allocator, sizeof(T), usage, memoryUsage };
+		return Buffer { allocator, sizeof(T), usage, memoryUsage };
 	}
 
 	/**
@@ -117,7 +117,7 @@ namespace Concerto::Graphics::Vk
 	{
 		return { allocator, sizeof(T) * objNumber, usage, memoryUsage, allowBufferMapping };
 	}
-} // Concerto::Graphics::Vk
+} // cct::gfx::vk
 
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Buffer.inl"
 

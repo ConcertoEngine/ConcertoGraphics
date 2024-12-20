@@ -8,7 +8,7 @@
 #include <memory>
 #include <vector>
 
-namespace Concerto::Graphics::RHI
+namespace cct::gfx::rhi
 {
 	class GpuSubMesh;
 	class CONCERTO_GRAPHICS_RHI_BASE_API GpuMesh

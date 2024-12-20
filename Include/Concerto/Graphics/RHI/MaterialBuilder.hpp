@@ -9,7 +9,7 @@
 #include "Concerto/Graphics/RHI/Material.hpp"
 #include "Concerto/Graphics/RHI/Buffer.hpp"
 
-namespace Concerto::Graphics::RHI
+namespace cct::gfx::rhi
 {
 	class Device;
 	class RenderPass;
@@ -20,7 +20,7 @@ namespace Concerto::Graphics::RHI
 		virtual ~MaterialBuilder() = default;
 
 		virtual MaterialPtr BuildMaterial(MaterialInfo& material, const RenderPass& renderPass) = 0;
-		virtual void Update(const RHI::Buffer& buffer, UInt32 setIndex, UInt32 bindingIndex) = 0;
+		virtual void Update(const rhi::Buffer& buffer, UInt32 setIndex, UInt32 bindingIndex) = 0;
 	};
 }
 

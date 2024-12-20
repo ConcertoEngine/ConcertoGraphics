@@ -21,9 +21,9 @@
 #include "Concerto/Graphics/RHI/Vulkan/VKRHIRenderPass.hpp"
 #include "Concerto/Graphics/RHI/Vulkan/VKRHITexture.hpp"
 
-namespace Concerto::Graphics::RHI
+namespace cct::gfx::rhi
 {
-	VkRHIMaterialBuilder::VkRHIMaterialBuilder(Vk::Device& device, VkExtent2D windowExtent) :
+	VkRHIMaterialBuilder::VkRHIMaterialBuilder(vk::Device& device, VkExtent2D windowExtent) :
 		_allocator(device),
 		_device(device),
 		_materialsCache(),
@@ -34,18 +34,18 @@ namespace Concerto::Graphics::RHI
 
 	}
 
-	MaterialPtr VkRHIMaterialBuilder::BuildMaterial(RHI::MaterialInfo& material, const RHI::RenderPass& renderPass)
+	MaterialPtr VkRHIMaterialBuilder::BuildMaterial(rhi::MaterialInfo& material, const rhi::RenderPass& renderPass)
 	{
-		Vk::ShaderModuleInfo* vertexShaderModuleInfo = nullptr;
-		Vk::ShaderModuleInfo* fragShaderModuleInfo = nullptr;
+		vk::ShaderModuleInfo* vertexShaderModuleInfo = nullptr;
+		vk::ShaderModuleInfo* fragShaderModuleInfo = nullptr;
 		{
 			auto it = _shaderModuleInfos.find(material.vertexShaderPath);
 			if (it == _shaderModuleInfos.end())
-				vertexShaderModuleInfo = &_shaderModuleInfos.emplace(material.vertexShaderPath, Vk::ShaderModuleInfo(_device, material.vertexShaderPath)).first->second;
+				vertexShaderModuleInfo = &_shaderModuleInfos.emplace(material.vertexShaderPath, vk::ShaderModuleInfo(_device, material.vertexShaderPath)).first->second;
 			else vertexShaderModuleInfo = &it->second;
 			it = _shaderModuleInfos.find(material.fragmentShaderPath);
 			if (it == _shaderModuleInfos.end())
-				fragShaderModuleInfo = &_shaderModuleInfos.emplace(material.fragmentShaderPath, Vk::ShaderModuleInfo(_device, material.fragmentShaderPath)).first->second;
+				fragShaderModuleInfo = &_shaderModuleInfos.emplace(material.fragmentShaderPath, vk::ShaderModuleInfo(_device, material.fragmentShaderPath)).first->second;
 			else fragShaderModuleInfo = &it->second;
 		}
 
@@ -59,9 +59,9 @@ namespace Concerto::Graphics::RHI
 				it->second.insert(it->second.end(), setBindings.begin(), setBindings.end());
 		}
 
-		std::vector<std::shared_ptr<Vk::DescriptorSetLayout>> descriptorSetLayouts;
-		std::shared_ptr<Vk::DescriptorSetLayout> texture = nullptr;
-		Vk::DescriptorSetPtr textureDescriptorSet = nullptr;
+		std::vector<std::shared_ptr<vk::DescriptorSetLayout>> descriptorSetLayouts;
+		std::shared_ptr<vk::DescriptorSetLayout> texture = nullptr;
+		vk::DescriptorSetPtr textureDescriptorSet = nullptr;
 		UInt32 destinationBinding = 0;
 		for (auto& setBindings : bindings | std::views::values)
 		{
@@ -74,23 +74,23 @@ namespace Concerto::Graphics::RHI
 						if (binding.descriptorType == VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER)
 							destinationBinding = binding.binding;
 					}
-					texture = Vk::MakeDescriptorSetLayout(_device, setBindings);
+					texture = vk::MakeDescriptorSetLayout(_device, setBindings);
 					descriptorSetLayouts.push_back(texture);
 				}
 				else
 				{
-					CONCERTO_ASSERT_FALSE("ConcertoGraphics: Multiple textures are not supported yet");
+					CCT_ASSERT_FALSE("ConcertoGraphics: Multiple textures are not supported yet");
 				}
 				continue;
 			}
 			descriptorSetLayouts.push_back(GeDescriptorSetLayout(setBindings));
 		}
 
-		auto vkMaterialPtr = std::make_shared<Vk::VkMaterial>();
+		auto vkMaterialPtr = std::make_shared<vk::VkMaterial>();
 		_materialsCache.emplace(vkMaterialPtr);
 		vkMaterialPtr->descriptorSets.reserve(descriptorSetLayouts.size());
 
-		Vk::PipelinePtr pipeline;
+		vk::PipelinePtr pipeline;
 		UInt64 hash = 0;
 		std::hash<std::string> hasher;
 		hash ^= hasher(material.vertexShaderPath) + 0x9e3779b9 + (hash << 6) + (hash >> 2);
@@ -105,10 +105,10 @@ namespace Concerto::Graphics::RHI
 					VulkanInitializer::PipelineShaderStageCreateInfo(VK_SHADER_STAGE_VERTEX_BIT, *vertexShaderModuleInfo->shaderModule->Get()),
 					VulkanInitializer::PipelineShaderStageCreateInfo(VK_SHADER_STAGE_FRAGMENT_BIT, *fragShaderModuleInfo->shaderModule->Get())
 				};
-				auto pl = std::make_shared<Vk::PipelineLayout>(_device, descriptorSetLayouts);
+				auto pl = std::make_shared<vk::PipelineLayout>(_device, descriptorSetLayouts);
 				const VkRHIRenderPass& vkRenderPass = Cast<const VkRHIRenderPass&>(renderPass);
-				Vk::PipelineInfo pipelineInfo(std::move(shaderStages), _windowExtent, pl);
-				pipeline = std::make_shared<Vk::Pipeline>(_device, std::move(pipelineInfo));
+				vk::PipelineInfo pipelineInfo(std::move(shaderStages), _windowExtent, pl);
+				pipeline = std::make_shared<vk::Pipeline>(_device, std::move(pipelineInfo));
 				pipeline->BuildPipeline(*vkRenderPass.Get());
 				_pipelinesCache.emplace(hash, pipeline);
 			}
@@ -128,7 +128,7 @@ namespace Concerto::Graphics::RHI
 			{
 				if (!_allocator.AllocateWithoutCache(descriptorSet, *descriptorSetLayout))
 				{
-					CONCERTO_ASSERT_FALSE("ConcertoGraphics: Cannot allocate descriptor set");
+					CCT_ASSERT_FALSE("ConcertoGraphics: Cannot allocate descriptor set");
 				}
 				textureDescriptorSet = descriptorSet;
 			}
@@ -136,14 +136,14 @@ namespace Concerto::Graphics::RHI
 			{
 				if (!_allocator.Allocate(descriptorSet, *descriptorSetLayout))
 				{
-					CONCERTO_ASSERT_FALSE("ConcertoGraphics: Cannot allocate descriptor set");
+					CCT_ASSERT_FALSE("ConcertoGraphics: Cannot allocate descriptor set");
 				}
 			}
 		}
 
 		if (!material.diffuseTexturePath.empty())
 		{
-			vkMaterialPtr->diffuseTexture = RHI::VkRHITextureBuilder::Instance()->BuildTexture(material.diffuseTexturePath);
+			vkMaterialPtr->diffuseTexture = rhi::VkRHITextureBuilder::Instance()->BuildTexture(material.diffuseTexturePath);
 			auto& vkTexture = Cast<VkRHITexture&>(*vkMaterialPtr->diffuseTexture);
 			VkDescriptorImageInfo imageInfo = {};
 			imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
@@ -165,7 +165,7 @@ namespace Concerto::Graphics::RHI
 		return vkMaterialPtr;
 	}
 
-	void VkRHIMaterialBuilder::Update(const RHI::Buffer& buffer, UInt32 setIndex, UInt32 bindingIndex)
+	void VkRHIMaterialBuilder::Update(const rhi::Buffer& buffer, UInt32 setIndex, UInt32 bindingIndex)
 	{
 		const VkRHIBuffer& vkBuffer = Cast<const VkRHIBuffer&>(buffer);
 		VkDescriptorBufferInfo bufferInfo;
@@ -183,7 +183,7 @@ namespace Concerto::Graphics::RHI
 				return VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER;
 			if (usageFlags & VK_BUFFER_USAGE_STORAGE_TEXEL_BUFFER_BIT)
 				return VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER;
-			//CONCERTO_ASSERT("ConcertoGraphics: enum value not handled");
+			//CCT_ASSERT("ConcertoGraphics: enum value not handled");
 			return {};
 		}();
 		for (const auto& material : _materialsCache)
@@ -202,29 +202,29 @@ namespace Concerto::Graphics::RHI
 		return shaderStages;
 	}
 
-	std::vector<std::shared_ptr<Vk::DescriptorSetLayout>> VkRHIMaterialBuilder::GetDescriptorSetLayouts() const
+	std::vector<std::shared_ptr<vk::DescriptorSetLayout>> VkRHIMaterialBuilder::GetDescriptorSetLayouts() const
 	{
-		std::vector<std::shared_ptr<Vk::DescriptorSetLayout>> descriptorSetLayouts;
+		std::vector<std::shared_ptr<vk::DescriptorSetLayout>> descriptorSetLayouts;
 
 		for (const auto& layout : _descriptorSetLayoutsCache | std::views::values)
 			descriptorSetLayouts.push_back(layout);
 		return descriptorSetLayouts;
 	}
 
-	std::set<Vk::VkMaterialPtr> VkRHIMaterialBuilder::GetMaterials()
+	std::set<vk::VkMaterialPtr> VkRHIMaterialBuilder::GetMaterials()
 	{
 		return _materialsCache;
 	}
 
-	std::shared_ptr<Vk::DescriptorSetLayout> VkRHIMaterialBuilder::GeDescriptorSetLayout(const std::vector<VkDescriptorSetLayoutBinding>& bindings)
+	std::shared_ptr<vk::DescriptorSetLayout> VkRHIMaterialBuilder::GeDescriptorSetLayout(const std::vector<VkDescriptorSetLayoutBinding>& bindings)
 	{
-		UInt64 hash = Vk::DescriptorSetLayout::GetHash(bindings);
+		UInt64 hash = vk::DescriptorSetLayout::GetHash(bindings);
 
 		const auto it = _descriptorSetLayoutsCache.find(hash);
 		if (it != _descriptorSetLayoutsCache.end())
 			return it->second;
 
-		std::shared_ptr<Vk::DescriptorSetLayout> descriptorSetLayout = MakeDescriptorSetLayout(_device, bindings);
+		std::shared_ptr<vk::DescriptorSetLayout> descriptorSetLayout = MakeDescriptorSetLayout(_device, bindings);
 		_descriptorSetLayoutsCache.emplace(hash, descriptorSetLayout);
 		return descriptorSetLayout;
 	}

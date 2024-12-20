@@ -8,7 +8,7 @@
 
 #include "Concerto/Graphics/RHI/CommandBuffer.hpp"
 
-namespace Concerto::Graphics::RHI
+namespace cct::gfx::rhi
 {
 
 	enum class CommandBufferUasge

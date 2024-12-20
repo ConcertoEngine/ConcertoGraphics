@@ -16,7 +16,7 @@
 #include "Concerto/Graphics/Defines.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/DescriptorSetLayout.hpp"
 
-namespace Concerto::Graphics
+namespace cct::gfx
 {
 	class PipelineLayout;
 	class Device;

@@ -19,10 +19,10 @@
 #include "Concerto/Graphics/RHI/Vulkan/VkRHIMaterialBuilder.hpp"
 #include "Concerto/Graphics/RHI/Vulkan/VkRHITextureBuilder.hpp"
 
-namespace Concerto::Graphics::RHI
+namespace cct::gfx::rhi
 {
-	VkRHIDevice::VkRHIDevice(Vk::PhysicalDevice& physicalDevice, Vk::Instance& instance) :
-		Vk::Device(physicalDevice, instance),
+	VkRHIDevice::VkRHIDevice(vk::PhysicalDevice& physicalDevice, vk::Instance& instance) :
+		vk::Device(physicalDevice, instance),
 		_surface(nullptr),
 		_vkInstance(&instance)
 	{
@@ -30,17 +30,17 @@ namespace Concerto::Graphics::RHI
 
 	std::unique_ptr<SwapChain> VkRHIDevice::CreateSwapChain(Window& window, PixelFormat pixelFormat, PixelFormat depthPixelFormat)
 	{
-		CONCERTO_ASSERT(_vkInstance, "ConcertoGraphics: Invalid Vulkan instance");
+		CCT_ASSERT(_vkInstance, "ConcertoGraphics: Invalid Vulkan instance");
 		auto swapChain = std::make_unique<VkRHISwapChain>(*this, window, pixelFormat, depthPixelFormat);
 		if (swapChain->GetLastResult() != VK_SUCCESS)
 		{
-			CONCERTO_ASSERT_FALSE("ConcertoGraphics: Error occured during swapchain creation error={}", static_cast<Int32>(swapChain->GetLastResult()));
+			CCT_ASSERT_FALSE("ConcertoGraphics: Error occured during swapchain creation error={}", static_cast<Int32>(swapChain->GetLastResult()));
 			return nullptr;
 		}
 		return swapChain;
 	}
 
-	std::unique_ptr<RenderPass> VkRHIDevice::CreateRenderPass(std::span<RHI::RenderPass::Attachment> attachments, std::span<RHI::RenderPass::SubPassDescription> subPassDescriptions, std::span<RHI::RenderPass::SubPassDependency> subPassDependencies)
+	std::unique_ptr<RenderPass> VkRHIDevice::CreateRenderPass(std::span<rhi::RenderPass::Attachment> attachments, std::span<rhi::RenderPass::SubPassDescription> subPassDescriptions, std::span<rhi::RenderPass::SubPassDependency> subPassDependencies)
 	{
 		std::vector<VkAttachmentDescription> vkAttachmentDescriptions;
 		std::vector<VkSubpassDescription> vkSubPassDescriptions;
@@ -112,7 +112,7 @@ namespace Concerto::Graphics::RHI
 		return std::make_unique<VkRHIRenderPass>(*this, vkAttachmentDescriptions, vkSubPassDescriptions, vkSubPassDependencies);
 	}
 
-	std::unique_ptr<FrameBuffer> VkRHIDevice::CreateFrameBuffer(UInt32 width, UInt32 height, const RHI::RenderPass& renderPass, const std::vector<std::unique_ptr<RHI::Texture>>& attachments)
+	std::unique_ptr<FrameBuffer> VkRHIDevice::CreateFrameBuffer(UInt32 width, UInt32 height, const rhi::RenderPass& renderPass, const std::vector<std::unique_ptr<rhi::Texture>>& attachments)
 	{
 		return std::make_unique<VkRHIFrameBuffer>(*this, width, height, Cast<const VkRHIRenderPass&>(renderPass), attachments);
 	}
@@ -130,34 +130,34 @@ namespace Concerto::Graphics::RHI
 	std::unique_ptr<TextureBuilder> VkRHIDevice::CreateTextureBuilder()
 	{
 		auto& uploadContext = GetUploadContext();
-		return std::make_unique<VkRHITextureBuilder>(*this, uploadContext, GetQueue(Vk::Queue::Type::Graphics));
+		return std::make_unique<VkRHITextureBuilder>(*this, uploadContext, GetQueue(vk::Queue::Type::Graphics));
 	}
 
-	std::unique_ptr<CommandPool> VkRHIDevice::CreateCommandPool(RHI::QueueFamily family)
+	std::unique_ptr<CommandPool> VkRHIDevice::CreateCommandPool(rhi::QueueFamily family)
 	{
 		return std::make_unique<VkRHICommandPool>(*this, family);
 	}
 
-	std::unique_ptr<RHI::Buffer> VkRHIDevice::CreateBuffer(RHI::BufferUsageFlags usage, UInt32 allocationSize, bool allowBufferMapping)
+	std::unique_ptr<rhi::Buffer> VkRHIDevice::CreateBuffer(rhi::BufferUsageFlags usage, UInt32 allocationSize, bool allowBufferMapping)
 	{
 		return std::make_unique<VkRHIBuffer>(*this, usage, allocationSize, allowBufferMapping);
 	}
 
 	std::size_t VkRHIDevice::GetMinimumUniformBufferOffsetAlignment() const
 	{
-		return Vk::Device::GetPhysicalDevice().GetProperties().limits.minUniformBufferOffsetAlignment;
+		return vk::Device::GetPhysicalDevice().GetProperties().limits.minUniformBufferOffsetAlignment;
 	}
 
-	Vk::UploadContext& VkRHIDevice::GetUploadContext()
+	vk::UploadContext& VkRHIDevice::GetUploadContext()
 	{
 		if (_uploadContext.has_value() == false)
-			_uploadContext.emplace(*this, GetQueueFamilyIndex(Vk::Queue::Type::Graphics));
+			_uploadContext.emplace(*this, GetQueueFamilyIndex(vk::Queue::Type::Graphics));
 		return _uploadContext.value();
 	}
 
-	Vk::Instance& VkRHIDevice::GetVkInstance()
+	vk::Instance& VkRHIDevice::GetVkInstance()
 	{
-		CONCERTO_ASSERT(_vkInstance, "ConcertoGraphics: Invalid Vulkan instance.");
+		CCT_ASSERT(_vkInstance, "ConcertoGraphics: Invalid Vulkan instance.");
 		return *_vkInstance;
 	}
-} //Concerto::Graphics::RHI
+} //cct::Graphics::RHI

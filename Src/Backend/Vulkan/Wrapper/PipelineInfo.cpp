@@ -7,7 +7,7 @@
 #include "Concerto/Graphics/Backend/Vulkan/Vertex.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/VulkanInitializer.hpp"
 
-namespace Concerto::Graphics::Vk
+namespace cct::gfx::vk
 {
 	PipelineInfo::PipelineInfo(std::vector<VkPipelineShaderStageCreateInfo> shaderStages, VkExtent2D windowExtent, std::shared_ptr<PipelineLayout>& pipelineLayout)
 	{
@@ -33,4 +33,4 @@ namespace Concerto::Graphics::Vk
 		_pipelineLayout = pipelineLayout;
 		_depthStencil = VulkanInitializer::DepthStencilCreateInfo(true, true, VK_COMPARE_OP_LESS_OR_EQUAL);
 	}
-} // Concerto::Graphics::Vk
+} // cct::gfx::vk

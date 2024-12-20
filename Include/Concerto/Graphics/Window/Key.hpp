@@ -5,7 +5,7 @@
 #ifndef CONCERTO_KEY_HPP
 #define CONCERTO_KEY_HPP
 
-namespace Concerto
+namespace cct
 {
 	enum class Key
 	{

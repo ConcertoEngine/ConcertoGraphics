@@ -12,19 +12,19 @@
 #include "Concerto/Graphics/Vertex.hpp"
 #include "Concerto/Graphics/RHI/Mesh.hpp"
 
-namespace Concerto::Graphics::RHI
+namespace cct::gfx::rhi
 {
 	class CONCERTO_GRAPHICS_RHI_BASE_API SubMesh
 	{
 	 public:
 		explicit SubMesh(Mesh* parent);
-		SubMesh(const Vertices& vertices, std::shared_ptr<RHI::MaterialInfo>& material, Mesh* parent);
+		SubMesh(const Vertices& vertices, std::shared_ptr<rhi::MaterialInfo>& material, Mesh* parent);
 		[[nodiscard]] Vertices& GetVertices();
-		[[nodiscard]] std::shared_ptr<RHI::MaterialInfo>& GetMaterial();
+		[[nodiscard]] std::shared_ptr<rhi::MaterialInfo>& GetMaterial();
 		[[nodiscard]] Mesh* GetParent();
 	 private:
 		Vertices _vertices;
-		std::shared_ptr<RHI::MaterialInfo> _material;
+		std::shared_ptr<rhi::MaterialInfo> _material;
 		Mesh* _parent;
 	};
 	using SubMeshPtr = std::shared_ptr<SubMesh>;

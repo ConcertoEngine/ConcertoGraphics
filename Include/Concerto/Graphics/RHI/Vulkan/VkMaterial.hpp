@@ -12,12 +12,12 @@
 #include "Concerto/Graphics/RHI/Material.hpp"
 #include "Concerto/Graphics/RHI/Texture.hpp"
 
-namespace Concerto::Graphics::Vk
+namespace cct::gfx::vk
 {
 	class DescriptorSet;
 	class Pipeline;
 
-	struct CONCERTO_GRAPHICS_RHI_BASE_API VkMaterial : public RHI::MaterialInfo
+	struct CONCERTO_GRAPHICS_RHI_BASE_API VkMaterial : public rhi::MaterialInfo
 	{
 		VkMaterial() = default;
 		VkMaterial(VkMaterial&&other) = default;

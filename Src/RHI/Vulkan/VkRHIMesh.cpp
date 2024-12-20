@@ -11,7 +11,7 @@
 #include "Concerto/Graphics/RHI/GpuMesh.hpp"
 #include "Concerto/Graphics/RHI/Vulkan/VkRHIBuffer.hpp"
 
-namespace Concerto::Graphics::RHI
+namespace cct::gfx::rhi
 {
 	VkRHIMesh::VkRHIMesh(std::string filePath) :
 		Mesh(std::move(filePath))
@@ -23,13 +23,13 @@ namespace Concerto::Graphics::RHI
 	{
 	}
 
-	std::shared_ptr<RHI::GpuMesh> VkRHIMesh::BuildGpuMesh(RHI::MaterialBuilder& materialBuilder, const RHI::RenderPass& renderPass, RHI::Device& device)
+	std::shared_ptr<rhi::GpuMesh> VkRHIMesh::BuildGpuMesh(rhi::MaterialBuilder& materialBuilder, const rhi::RenderPass& renderPass, rhi::Device& device)
 	{
-		auto gpuMesh = std::make_shared<RHI::GpuMesh>();
+		auto gpuMesh = std::make_shared<rhi::GpuMesh>();
 
 		auto& meshes = this->GetSubMeshes();
-		RHI::VkRHIDevice& rhiDevice = Cast<RHI::VkRHIDevice&>(device);
-		Vk::UploadContext& uploadContext = rhiDevice.GetUploadContext();
+		rhi::VkRHIDevice& rhiDevice = Cast<rhi::VkRHIDevice&>(device);
+		vk::UploadContext& uploadContext = rhiDevice.GetUploadContext();
 
 		std::size_t totalVertices = 0;
 		for (auto& subMesh : meshes)
@@ -39,13 +39,13 @@ namespace Concerto::Graphics::RHI
 			materialInfo.vertexShaderPath = "./Shaders/tri_mesh_ssbo.nzsl";
 			materialInfo.fragmentShaderPath = materialInfo.diffuseTexturePath.empty() ? "./Shaders/default_lit.nzsl" : "./Shaders/textured_lit.nzsl";
 
-			RHI::MaterialPtr litMaterial = materialBuilder.BuildMaterial(materialInfo, renderPass);
+			rhi::MaterialPtr litMaterial = materialBuilder.BuildMaterial(materialInfo, renderPass);
 
 			auto vkSubMesh = std::make_shared<VkRHIGpuSubMesh>(subMesh, litMaterial, rhiDevice);
 			gpuMesh->subMeshes.push_back(vkSubMesh);
 		}
 
-		Vk::Buffer stagingBuffer(Vk::MakeBuffer<Vertex>(rhiDevice.GetAllocator(), totalVertices * sizeof(Vertex), VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VMA_MEMORY_USAGE_CPU_ONLY, true));
+		vk::Buffer stagingBuffer(vk::MakeBuffer<Vertex>(rhiDevice.GetAllocator(), totalVertices * sizeof(Vertex), VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VMA_MEMORY_USAGE_CPU_ONLY, true));
 
 		uploadContext._commandBuffer.Begin();
 		{
@@ -61,11 +61,11 @@ namespace Concerto::Graphics::RHI
 		}
 		uploadContext._commandBuffer.End();
 
-		rhiDevice.GetQueue(Vk::Queue::Type::Graphics).Submit(uploadContext._commandBuffer, nullptr, nullptr, uploadContext._uploadFence);
+		rhiDevice.GetQueue(vk::Queue::Type::Graphics).Submit(uploadContext._commandBuffer, nullptr, nullptr, uploadContext._uploadFence);
 		uploadContext._uploadFence.Wait(9999999999);
 		uploadContext._uploadFence.Reset();
 		uploadContext._commandPool.Reset();
 
 		return gpuMesh;
 	}
-} // namespace Concerto::Graphics
+} // namespace cct::gfx

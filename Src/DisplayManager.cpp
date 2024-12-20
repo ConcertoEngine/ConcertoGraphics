@@ -7,7 +7,7 @@
 
 #include "Concerto/Graphics/DisplayManager.hpp"
 
-namespace Concerto::Graphics
+namespace cct::gfx
 {
 	namespace
 	{
@@ -46,7 +46,7 @@ namespace Concerto::Graphics
 		int result = SDL_Init(SDL_INIT_VIDEO);
 		if (result < 0)
 		{
-			CONCERTO_ASSERT_FALSE("ConcertoGraphics: SDL initialization failed error code: {}, message {}", result, SDL_GetError());
+			CCT_ASSERT_FALSE("ConcertoGraphics: SDL initialization failed error code: {}, message {}", result, SDL_GetError());
 			throw std::runtime_error(std::format("SDL initialization failed error code: {}, message {}", result, SDL_GetError()));
 		}
 	}
@@ -62,7 +62,7 @@ namespace Concerto::Graphics
 		const Int32 numDisplay = SDL_GetNumVideoDisplays();
 		if (numDisplay < 0)
 		{
-			CONCERTO_ASSERT_FALSE("ConcertoGraphics: Display enumeration failed code: {}, message: {}", numDisplay, SDL_GetError());
+			CCT_ASSERT_FALSE("ConcertoGraphics: Display enumeration failed code: {}, message: {}", numDisplay, SDL_GetError());
 			return {};
 		}
 
@@ -71,14 +71,14 @@ namespace Concerto::Graphics
 			const char* displayName = SDL_GetDisplayName(displayIndex);
 			if (displayName == nullptr)
 			{
-				CONCERTO_ASSERT_FALSE("ConcertoGraphics: Couldn't get display name message: {}", SDL_GetError());
+				CCT_ASSERT_FALSE("ConcertoGraphics: Couldn't get display name message: {}", SDL_GetError());
 				continue;
 			}
 			SDL_Rect displayBounds;
 			Int32 result = SDL_GetDisplayBounds(displayIndex, &displayBounds);
 			if (result < 0)
 			{
-				CONCERTO_ASSERT_FALSE("ConcertoGraphics: Couldn't get display bounds code: {}, message: {}", result, SDL_GetError());
+				CCT_ASSERT_FALSE("ConcertoGraphics: Couldn't get display bounds code: {}, message: {}", result, SDL_GetError());
 				continue;
 			}
 			static_assert(sizeof(SDL_Rect) == sizeof(DisplayInfo::Bounds) && "Invalid Bounds size");
@@ -87,7 +87,7 @@ namespace Concerto::Graphics
 			Int32 numDisplayMode = SDL_GetNumDisplayModes(displayIndex);
 			if (numDisplayMode < 0)
 			{
-				CONCERTO_ASSERT_FALSE("ConcertoGraphics: Couldn't get display bounds code: {}, message: {}", result, SDL_GetError());
+				CCT_ASSERT_FALSE("ConcertoGraphics: Couldn't get display bounds code: {}, message: {}", result, SDL_GetError());
 				continue;
 			}
 
@@ -98,7 +98,7 @@ namespace Concerto::Graphics
 				result = SDL_GetDisplayMode(displayIndex, displayModeIndex, &sdlDisplayMode);
 				if (result < 0)
 				{
-					CONCERTO_ASSERT_FALSE("ConcertoGraphics: Couldn't get display mode code: {}, message: {}", result, SDL_GetError());
+					CCT_ASSERT_FALSE("ConcertoGraphics: Couldn't get display mode code: {}, message: {}", result, SDL_GetError());
 					continue;
 				}
 				DisplayInfo::DisplayMode displayMode = {

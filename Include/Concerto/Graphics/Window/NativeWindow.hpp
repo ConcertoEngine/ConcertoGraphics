@@ -7,21 +7,21 @@
 
 #include "Concerto/Graphics/Defines.hpp"
 
-namespace Concerto::Graphics
+namespace cct::gfx
 {
 
-#if defined(CONCERTO_PLATFORM_WINDOWS)
+#if defined(CCT_PLATFORM_WINDOWS)
 	struct NativeWindow
 	{
 		void* window;
 		void* hinstance;
 	};
-#elif defined(CONCERTO_PLATFORM_MACOS) )
+#elif defined(CCT_PLATFORM_MACOS)
 	struct NativeWindow
 	{
 		//Not implemented
 	};
-#elif defined(CONCERTO_PLATFORM_LINUX)
+#elif defined(CCT_PLATFORM_LINUX)
 	struct NativeWindow
 	{
 		//Not implemented

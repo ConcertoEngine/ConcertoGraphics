@@ -4,6 +4,6 @@
 
 #include "Concerto/Graphics/RHI/Vulkan/Utils.hpp"
 
-namespace Concerto::Graphics::RHI
+namespace cct::gfx::rhi
 {
-} // namespace Concerto::Graphics::RHI
+} // namespace cct::gfx::rhi

@@ -15,7 +15,7 @@
 #include "Concerto/Graphics/Window/Window.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Instance.hpp"
 
-namespace Concerto::Graphics::Vk
+namespace cct::gfx::vk
 {
 	SwapChain::SwapChain(Device& device, Window& window, VkFormat colorFormat, VkFormat depthFormat) : Object(device),
 		_swapChainImages(),
@@ -104,7 +104,7 @@ namespace Concerto::Graphics::Vk
 		_lastResult = _device->vkAcquireNextImageKHR(*_device->Get(), _handle, timeout, *semaphore.Get(), VK_NULL_HANDLE, &_currentImageIndex);
 		if (_lastResult != VK_SUCCESS)
 		{
-			CONCERTO_ASSERT_FALSE("ConcertoGraphics: vkCreateSemaphore failed VKResult={}", static_cast<int>(_lastResult));
+			CCT_ASSERT_FALSE("ConcertoGraphics: vkCreateSemaphore failed VKResult={}", static_cast<int>(_lastResult));
 			return std::numeric_limits<UInt32>::max();
 		}
 		return _currentImageIndex;
@@ -118,7 +118,7 @@ namespace Concerto::Graphics::Vk
 		if (_surface)
 			_device->GetInstance().vkDestroySurfaceKHR(*GetDevice()->GetInstance().Get(), _surface, nullptr);
 		NativeWindow nativeWindow = _window.GetNativeWindow();
-#if defined(CONCERTO_PLATFORM_WINDOWS)
+#if defined(CCT_PLATFORM_WINDOWS)
 		const VkWin32SurfaceCreateInfoKHR createInfo = {
 			.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR,
 			.pNext = nullptr,
@@ -127,14 +127,14 @@ namespace Concerto::Graphics::Vk
 			.hwnd = static_cast<HWND>(nativeWindow.window)
 		};
 		VkResult result = _device->GetInstance().vkCreateWin32SurfaceKHR(*_device->GetInstance().Get(), &createInfo, nullptr, &_surface);
-#elif defined(CONCERTO_PLATFORM_MACOS))
-		CONCERTO_ASSERT_FALSE("Not implemented");
-#elif defined(CONCERTO_PLATFORM_LINUX)
-		CONCERTO_ASSERT_FALSE("Not implemented");
+#elif defined(CCT_PLATFORM_MACOS))
+		CCT_ASSERT_FALSE("Not implemented");
+#elif defined(CCT_PLATFORM_LINUX)
+		CCT_ASSERT_FALSE("Not implemented");
 #endif
 		if (result != VK_SUCCESS)
 		{
-			CONCERTO_ASSERT_FALSE("ConcertoGraphics: could not create vulkan window surface");
+			CCT_ASSERT_FALSE("ConcertoGraphics: could not create vulkan window surface");
 			return false;
 		}
 		_swapChainImageViews.reset();
@@ -164,7 +164,7 @@ namespace Concerto::Graphics::Vk
 		_lastResult = _device->vkCreateSwapchainKHR(*_device->Get(), &swapChainCreateInfo, nullptr, &_handle);
 		if (_lastResult != VK_SUCCESS)
 		{
-			CONCERTO_ASSERT_FALSE("ConcertoGraphics: vkCreateSwapchainKHR failed VKResult={}",
+			CCT_ASSERT_FALSE("ConcertoGraphics: vkCreateSwapchainKHR failed VKResult={}",
 								  static_cast<int>(_lastResult));
 			return false;
 		}

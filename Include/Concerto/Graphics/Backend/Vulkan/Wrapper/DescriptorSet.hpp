@@ -9,7 +9,7 @@
 
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Object.hpp"
 
-namespace Concerto::Graphics::Vk
+namespace cct::gfx::vk
 {
 	class DescriptorPool;
 	class DescriptorSetLayout;

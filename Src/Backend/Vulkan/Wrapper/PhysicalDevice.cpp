@@ -11,9 +11,9 @@
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Instance.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/PhysicalDevice.hpp"
 
-namespace Concerto::Graphics::Vk
+namespace cct::gfx::vk
 {
-	PhysicalDevice::PhysicalDevice(Vk::Instance& instance, VkPhysicalDevice physicalDevice) :
+	PhysicalDevice::PhysicalDevice(vk::Instance& instance, VkPhysicalDevice physicalDevice) :
 		_physicalDevice(physicalDevice),
 		_instance(&instance)
 	{
@@ -105,7 +105,7 @@ namespace Concerto::Graphics::Vk
 
 	VkPhysicalDevice* PhysicalDevice::Get()
 	{
-		CONCERTO_ASSERT(_physicalDevice != VK_NULL_HANDLE, "ConcertoGraphics: physical device handle is null");
+		CCT_ASSERT(_physicalDevice != VK_NULL_HANDLE, "ConcertoGraphics: physical device handle is null");
 		return &_physicalDevice;
 	}
 
@@ -133,7 +133,7 @@ namespace Concerto::Graphics::Vk
 			return _capabilities.value();
 		VkSurfaceCapabilitiesKHR capabilities;
 		const VkResult result = _instance->vkGetPhysicalDeviceSurfaceCapabilitiesKHR(_physicalDevice, surface, &capabilities);
-		CONCERTO_ASSERT(result == VK_SUCCESS, "ConcertoGraphics: vkGetPhysicalDeviceSurfaceCapabilitiesKHR failed VKResult={}", static_cast<int>(result));
+		CCT_ASSERT(result == VK_SUCCESS, "ConcertoGraphics: vkGetPhysicalDeviceSurfaceCapabilitiesKHR failed VKResult={}", static_cast<int>(result));
 		_capabilities = capabilities;
 		return _capabilities.value();
 	}
@@ -170,4 +170,4 @@ namespace Concerto::Graphics::Vk
 		details.presentModes = GetPresentModes(surface);
 		return details;
 	}
-} // Concerto::Graphics::Vk
+} // cct::gfx::vk

@@ -12,7 +12,7 @@
 #include "Concerto/Graphics/RHI/Vulkan/VKRHIRenderPass.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/ImageView.hpp"
 
-namespace Concerto::Graphics::RHI
+namespace cct::gfx::rhi
 {
 	namespace //Fixme
 	{
@@ -33,15 +33,15 @@ namespace Concerto::Graphics::RHI
 		}
 	}
 
-	VkRHIFrameBuffer::VkRHIFrameBuffer(VkRHIDevice& device, UInt32 width, UInt32 height, const VkRHIRenderPass& renderPass, const std::vector<std::unique_ptr<RHI::Texture>>& attachments) :
-		RHI::FrameBuffer(),
-		Vk::FrameBuffer(device, renderPass, ToImageView(attachments), { width, height })
+	VkRHIFrameBuffer::VkRHIFrameBuffer(VkRHIDevice& device, UInt32 width, UInt32 height, const VkRHIRenderPass& renderPass, const std::vector<std::unique_ptr<rhi::Texture>>& attachments) :
+		rhi::FrameBuffer(),
+		vk::FrameBuffer(device, renderPass, ToImageView(attachments), { width, height })
 	{
 	}
 
-	VkRHIFrameBuffer::VkRHIFrameBuffer(VkRHIDevice& device, UInt32 width, UInt32 height, const VkRHIRenderPass& renderPass, const std::vector<std::unique_ptr<RHI::TextureView>>& attachments) :
-		RHI::FrameBuffer(),
-		Vk::FrameBuffer(device, renderPass, ToImageView(attachments), { width, height })
+	VkRHIFrameBuffer::VkRHIFrameBuffer(VkRHIDevice& device, UInt32 width, UInt32 height, const VkRHIRenderPass& renderPass, const std::vector<std::unique_ptr<rhi::TextureView>>& attachments) :
+		rhi::FrameBuffer(),
+		vk::FrameBuffer(device, renderPass, ToImageView(attachments), { width, height })
 	{
 	}
 

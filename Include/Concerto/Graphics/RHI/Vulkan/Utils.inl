@@ -9,7 +9,7 @@
 #include "Concerto/Graphics/RHI/Enums.hpp"
 #include "Concerto/Graphics/RHI/Vulkan/Utils.hpp"
 
-namespace Concerto::Graphics::RHI
+namespace cct::gfx::rhi
 {
 	constexpr VkFormat Converters::ToVulkan(PixelFormat pixelFormat)
 	{

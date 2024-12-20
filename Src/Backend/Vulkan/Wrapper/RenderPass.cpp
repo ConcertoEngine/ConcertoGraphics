@@ -11,7 +11,7 @@
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/RenderPass.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Device.hpp"
 
-namespace Concerto::Graphics::Vk
+namespace cct::gfx::vk
 {
 	RenderPass::RenderPass(Device& device, std::span<VkAttachmentDescription> attachmentDescriptions, std::span<VkSubpassDescription> subPassDescriptions, std::span<VkSubpassDependency> subPassDependencies) :
 		Object(device)
@@ -26,7 +26,7 @@ namespace Concerto::Graphics::Vk
 		renderPassCreateInfo.pDependencies = subPassDependencies.data();
 
 		const VkResult result = _device->vkCreateRenderPass(*_device->Get(), &renderPassCreateInfo, nullptr, &_handle);
-		CONCERTO_ASSERT(result == VK_SUCCESS, "ConcertoGraphics: vkCreateRenderPass failed VKResult={}", static_cast<int>(result));
+		CCT_ASSERT(result == VK_SUCCESS, "ConcertoGraphics: vkCreateRenderPass failed VKResult={}", static_cast<int>(result));
 	}
 
 	RenderPass::~RenderPass()
@@ -35,4 +35,4 @@ namespace Concerto::Graphics::Vk
 			return;
 		_device->vkDestroyRenderPass(*_device->Get(), _handle, nullptr);
 	}
-} // Concerto::Graphics::Vk
+} // cct::gfx::vk

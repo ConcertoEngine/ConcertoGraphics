@@ -11,7 +11,7 @@
 #include "Concerto/Graphics/Window/Window.hpp"
 #include "Concerto/Graphics/Defines.hpp"
 
-namespace Concerto::Graphics
+namespace cct::gfx
 {
 	struct DisplayInfo
 	{

@@ -9,7 +9,7 @@
 #include <Concerto/Core/Types.hpp>
 #include <Concerto/Graphics/PixelFormat.hpp>
 
-namespace Concerto::Graphics::RHI
+namespace cct::gfx::rhi
 {
 	enum class DeviceType : UInt8
 	{

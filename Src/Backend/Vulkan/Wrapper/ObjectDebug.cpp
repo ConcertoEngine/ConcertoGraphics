@@ -5,7 +5,7 @@
 
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/ObjectDebug.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Device.hpp"
-#ifdef CONCERTO_DEBUG
+#ifdef CCT_DEBUG
 
 namespace
 {
@@ -78,7 +78,7 @@ namespace
 	}
 }
 
-namespace Concerto::Graphics::Vk
+namespace cct::gfx::vk
 {
 	ObjectDebug::ObjectDebug(Device& device, std::string_view typeName, void** vkHandle) :
 		_device(&device),
@@ -92,7 +92,7 @@ namespace Concerto::Graphics::Vk
 	{
 		if (!_device->IsExtensionEnabled(VK_EXT_DEBUG_REPORT_EXTENSION_NAME))
 		{
-			CONCERTO_ASSERT_FALSE("ObjectDebug::GetDebugReportObjectType() is called but extension " VK_EXT_DEBUG_REPORT_EXTENSION_NAME " is not enabled");
+			CCT_ASSERT_FALSE("ObjectDebug::GetDebugReportObjectType() is called but extension " VK_EXT_DEBUG_REPORT_EXTENSION_NAME " is not enabled");
 		}
 		return _debugReportObjectType;
 	}
@@ -106,7 +106,7 @@ namespace Concerto::Graphics::Vk
 	{
 		if (!_device->IsExtensionEnabled(VK_EXT_DEBUG_MARKER_EXTENSION_NAME))
 		{
-			CONCERTO_ASSERT_FALSE("ObjectDebug::SetDebugName is called but extension " VK_EXT_DEBUG_MARKER_EXTENSION_NAME " is not enabled");
+			CCT_ASSERT_FALSE("ObjectDebug::SetDebugName is called but extension " VK_EXT_DEBUG_MARKER_EXTENSION_NAME " is not enabled");
 			return;
 		}
 		_debugName = name;
@@ -120,7 +120,7 @@ namespace Concerto::Graphics::Vk
 
 	std::string_view ObjectDebug::GetDebugName() const
 	{
-		CONCERTO_ASSERT(!_debugName.empty(), "ConcertoGraphics: ObjectDebug::GetDebugName() has been called but ObjectDebug::SetDebugName was never called");
+		CCT_ASSERT(!_debugName.empty(), "ConcertoGraphics: ObjectDebug::GetDebugName() has been called but ObjectDebug::SetDebugName was never called");
 		return _debugName;
 	}
 }

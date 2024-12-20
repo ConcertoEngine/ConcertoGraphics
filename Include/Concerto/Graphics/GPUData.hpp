@@ -8,7 +8,7 @@
 #include <Concerto/Core/Math/Matrix.hpp>
 #include <Concerto/Core/Math/Vector.hpp>
 
-namespace Concerto::Graphics
+namespace cct::gfx
 {
 	struct GPUCamera
 	{

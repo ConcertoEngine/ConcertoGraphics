@@ -9,21 +9,21 @@
 #include "Concerto/Graphics/RHI/GpuSubMesh.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Buffer.hpp"
 
-namespace Concerto::Graphics::Vk
+namespace cct::gfx::vk
 {
 	class CommandPool;
 	class Fence;
 }
 
-namespace Concerto::Graphics::RHI
+namespace cct::gfx::rhi
 {
 	class VkRHIDevice;
-	class CONCERTO_GRAPHICS_RHI_BASE_API VkRHIGpuSubMesh : public RHI::GpuSubMesh
+	class CONCERTO_GRAPHICS_RHI_BASE_API VkRHIGpuSubMesh : public rhi::GpuSubMesh
 	{
 	public:
-		VkRHIGpuSubMesh(RHI::SubMeshPtr meshPtr, RHI::MaterialPtr material, VkRHIDevice& device);
+		VkRHIGpuSubMesh(rhi::SubMeshPtr meshPtr, rhi::MaterialPtr material, VkRHIDevice& device);
 
-		void Upload(Vk::CommandBuffer& commandBuffer, Vk::CommandPool& commandPool, Vk::Fence& fence, const Vk::Queue& queue, VkRHIDevice& device);
+		void Upload(vk::CommandBuffer& commandBuffer, vk::CommandPool& commandPool, vk::Fence& fence, const vk::Queue& queue, VkRHIDevice& device);
 	};
 }
 

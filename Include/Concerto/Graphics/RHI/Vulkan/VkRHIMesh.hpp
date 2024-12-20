@@ -15,20 +15,20 @@
 #include "Concerto/Graphics/RHI/Mesh.hpp"
 #include "Concerto/Graphics/RHI/SubMesh.hpp"
 
-namespace Concerto::Graphics::Vk
+namespace cct::gfx::vk
 {
 	class GpuMesh;
 }
 
-namespace Concerto::Graphics::RHI
+namespace cct::gfx::rhi
 {
-	class CONCERTO_GRAPHICS_RHI_BASE_API VkRHIMesh : public RHI::Mesh
+	class CONCERTO_GRAPHICS_RHI_BASE_API VkRHIMesh : public rhi::Mesh
 	{
 	public:
 		explicit VkRHIMesh(std::string filePath);
 		explicit VkRHIMesh(Vertices vertices);
 
-		std::shared_ptr<RHI::GpuMesh> BuildGpuMesh(RHI::MaterialBuilder& materialBuilder, const RHI::RenderPass& renderPass, RHI::Device& device) override;
+		std::shared_ptr<rhi::GpuMesh> BuildGpuMesh(rhi::MaterialBuilder& materialBuilder, const rhi::RenderPass& renderPass, rhi::Device& device) override;
 	};
 	using MeshPtr = std::shared_ptr<VkRHIMesh>;
 }

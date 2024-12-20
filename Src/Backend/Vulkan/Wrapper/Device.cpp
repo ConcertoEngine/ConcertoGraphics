@@ -15,7 +15,7 @@
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Instance.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/ObjectDebug.hpp"
 
-namespace Concerto::Graphics::Vk
+namespace cct::gfx::vk
 {
 	std::vector<const char*> deviceExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME, VK_EXT_DEBUG_MARKER_EXTENSION_NAME };
 	Device::Device(PhysicalDevice& physicalDevice, Instance& instance) :
@@ -63,7 +63,7 @@ namespace Concerto::Graphics::Vk
 		createInfo.enabledExtensionCount = static_cast<UInt32>(deviceExtensions.size());
 		createInfo.ppEnabledExtensionNames = deviceExtensions.data();
 		const VkResult result = instance.vkCreateDevice(*_physicalDevice->Get(), &createInfo, nullptr, &_device);
-		CONCERTO_ASSERT(result == VK_SUCCESS, "Error cannot create logical device: VkResult={}", static_cast<int>(result));
+		CCT_ASSERT(result == VK_SUCCESS, "Error cannot create logical device: VkResult={}", static_cast<int>(result));
 
 		for (auto& ext : deviceExtensions)
 			_extensions.emplace(ext);
@@ -79,7 +79,7 @@ namespace Concerto::Graphics::Vk
 						CONCERTO_VULKAN_BACKEND_DEVICE_FUNCTION(func)							\
 						if (this->func == nullptr)												\
 						{																		\
-							CONCERTO_ASSERT_FALSE("ConcertoGraphics: Function: "				\
+							CCT_ASSERT_FALSE("ConcertoGraphics: Function: "				\
 								#func															\
 								" is null but the extension has been reported has supported");	\
 						}
@@ -104,7 +104,7 @@ namespace Concerto::Graphics::Vk
 				return i;
 			i++;
 		}
-		CONCERTO_ASSERT_FALSE("No queue family found");
+		CCT_ASSERT_FALSE("No queue family found");
 		return std::numeric_limits<UInt32>::max();
 	}
 
@@ -122,7 +122,7 @@ namespace Concerto::Graphics::Vk
 				return i;
 			++i;
 		}
-		CONCERTO_ASSERT_FALSE("No queue family found");;
+		CCT_ASSERT_FALSE("No queue family found");;
 		return std::numeric_limits<UInt32>::max();
 	}
 
@@ -137,14 +137,14 @@ namespace Concerto::Graphics::Vk
 
 	VkDevice* Device::Get()
 	{
-		CONCERTO_ASSERT(_device != VK_NULL_HANDLE, "ConcertoGraphics: device handle is null");
+		CCT_ASSERT(_device != VK_NULL_HANDLE, "ConcertoGraphics: device handle is null");
 		return &_device;
 	}
 
 	void Device::WaitIdle() const
 	{
 		const VkResult result = this->vkDeviceWaitIdle(_device);
-		CONCERTO_ASSERT(result == VK_SUCCESS, "ConcertoGraphics: Failed to Wait for device idle VkResult={}", static_cast<int>(result));
+		CCT_ASSERT(result == VK_SUCCESS, "ConcertoGraphics: Failed to Wait for device idle VkResult={}", static_cast<int>(result));
 	}
 
 	void Device::UpdateDescriptorSetsWrite(std::span<VkWriteDescriptorSet> descriptorWrites) const
@@ -159,19 +159,19 @@ namespace Concerto::Graphics::Vk
 
 	PhysicalDevice& Device::GetPhysicalDevice() const
 	{
-		CONCERTO_ASSERT(_physicalDevice, "ConcertoGraphics: Invalid physical device handle");
+		CCT_ASSERT(_physicalDevice, "ConcertoGraphics: Invalid physical device handle");
 		return *_physicalDevice;
 	}
 
 	Allocator& Device::GetAllocator() const
 	{
-		CONCERTO_ASSERT(_allocator != nullptr, "ConcertoGraphics: Allocator handle is null");
+		CCT_ASSERT(_allocator != nullptr, "ConcertoGraphics: Allocator handle is null");
 		return *_allocator;
 	}
 
 	Instance& Device::GetInstance()
 	{
-		CONCERTO_ASSERT(_instance, "ConcertoGraphics: Invalid Vulkan instance.");
+		CCT_ASSERT(_instance, "ConcertoGraphics: Invalid Vulkan instance.");
 		return *_instance;
 	}
 
@@ -183,7 +183,7 @@ namespace Concerto::Graphics::Vk
 	void Device::CreateAllocator(Instance& instance)
 	{
 		_allocator = std::make_unique<Allocator>(*_physicalDevice, *this, instance);
-		CONCERTO_ASSERT(_allocator != nullptr, "ConcertoGraphics: Cannot create allocator");
+		CCT_ASSERT(_allocator != nullptr, "ConcertoGraphics: Cannot create allocator");
 	}
 
-} // Concerto::Graphics::Vk
+} // cct::gfx::vk

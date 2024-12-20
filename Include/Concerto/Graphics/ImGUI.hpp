@@ -11,12 +11,12 @@
 #include "Concerto/Graphics/Backend/Vulkan/RenderingContext.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/DescriptorPool.hpp"
 
-namespace Concerto::Graphics
+namespace cct::gfx
 {
 	class Window;
 }
 
-namespace Concerto::Graphics::Vk
+namespace cct::gfx::vk
 {
 	class CommandBuffer;
 
@@ -70,6 +70,6 @@ namespace Concerto::Graphics::Vk
 		ImGuiContext* _imGuiContext;
 	};
 
-} // Concerto::Graphics
+} // cct::gfx
 
 #endif //CONCERTO_GRAPHICS_IMGUI_HPP

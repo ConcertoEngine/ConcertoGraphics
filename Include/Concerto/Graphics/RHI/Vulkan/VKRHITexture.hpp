@@ -5,12 +5,14 @@
 #ifndef CONCERTO_GRAPHICS_RHI_VULKAN_VKRHITEXTURE_HPP
 #define CONCERTO_GRAPHICS_RHI_VULKAN_VKRHITEXTURE_HPP
 
+#include <memory>
+
 #include "Concerto/Graphics/RHI/Defines.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Image.hpp"
 #include "Concerto/Graphics/RHI/Texture.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/ImageView.hpp"
 
-namespace Concerto::Graphics::Vk
+namespace cct::gfx::vk
 {
 	class Device;
 	class CommandBuffer;
@@ -18,34 +20,34 @@ namespace Concerto::Graphics::Vk
 	class Queue;
 }
 
-namespace Concerto::Graphics::RHI
+namespace cct::gfx::rhi
 {
-	class CONCERTO_GRAPHICS_RHI_BASE_API VkRHITexture : public RHI::Texture
+	class CONCERTO_GRAPHICS_RHI_BASE_API VkRHITexture : public rhi::Texture
 	{
 	public:
-		VkRHITexture(Vk::Device& device,
+		VkRHITexture(vk::Device& device,
 			const std::string& file,
-			Vk::CommandBuffer& commandBuffer,
-			Vk::UploadContext& uploadContext,
-			Vk::Queue& queue,
+			vk::CommandBuffer& commandBuffer,
+			vk::UploadContext& uploadContext,
+			vk::Queue& queue,
 			VkImageAspectFlags aspectFlags);
 
-		const Vk::Image& GetImage() const;
-		const Vk::ImageView& GetImageView() const;
+		const vk::Image& GetImage() const;
+		const vk::ImageView& GetImageView() const;
 
 	private:
-		Vk::Image _image;
-		Vk::ImageView _imageView;
+		vk::Image _image;
+		vk::ImageView _imageView;
 	};
 	using VkRHITexturePtr = std::shared_ptr<VkRHITexture>;
 
-	class CONCERTO_GRAPHICS_RHI_BASE_API VkRHITextureView : public RHI::TextureView
+	class CONCERTO_GRAPHICS_RHI_BASE_API VkRHITextureView : public rhi::TextureView
 	{
 	public:
-		VkRHITextureView(const Vk::ImageView& image);
-		const Vk::ImageView& GetImageView() const;
+		VkRHITextureView(const vk::ImageView& image);
+		const vk::ImageView& GetImageView() const;
 	private:
-		const Vk::ImageView* _imageView;
+		const vk::ImageView* _imageView;
 	};
 }
 

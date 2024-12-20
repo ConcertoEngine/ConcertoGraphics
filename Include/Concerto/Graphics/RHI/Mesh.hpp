@@ -16,7 +16,7 @@
 #include "Concerto/Graphics/Vertex.hpp"
 #include "Concerto/Graphics/RHI/Material.hpp"
 
-namespace Concerto::Graphics::RHI
+namespace cct::gfx::rhi
 {
 	class RenderPass;
 	class Device;
@@ -32,16 +32,16 @@ namespace Concerto::Graphics::RHI
 		virtual ~Mesh() = default;
 
 		[[nodiscard]] const std::string& GetPath() const;
-		[[nodiscard]] std::vector<std::shared_ptr<RHI::SubMesh>>& GetSubMeshes();
-		[[nodiscard]] std::unordered_map<std::string, std::shared_ptr<RHI::MaterialInfo>>& GetMaterials();
+		[[nodiscard]] std::vector<std::shared_ptr<rhi::SubMesh>>& GetSubMeshes();
+		[[nodiscard]] std::unordered_map<std::string, std::shared_ptr<rhi::MaterialInfo>>& GetMaterials();
 
 		[[nodiscard]] bool LoadFromFile(const std::string& fileName);
 
-		[[nodiscard]] virtual std::shared_ptr<GpuMesh> BuildGpuMesh(RHI::MaterialBuilder& materialBuilder, const RHI::RenderPass& renderPass, RHI::Device& device) = 0;
+		[[nodiscard]] virtual std::shared_ptr<GpuMesh> BuildGpuMesh(rhi::MaterialBuilder& materialBuilder, const rhi::RenderPass& renderPass, rhi::Device& device) = 0;
 	private:
 		std::string _path;
-		std::vector<std::shared_ptr<RHI::SubMesh>> _subMeshes;
-		std::unordered_map<std::string, std::shared_ptr<RHI::MaterialInfo>> _materials;
+		std::vector<std::shared_ptr<rhi::SubMesh>> _subMeshes;
+		std::unordered_map<std::string, std::shared_ptr<rhi::MaterialInfo>> _materials;
 	};
 }
 
