@@ -16,6 +16,7 @@ namespace cct::gfx::rhi
 {
 	class Device;
 	class APIImpl;
+	class DisplayManager;
 
 	class CONCERTO_GRAPHICS_RHI_BASE_API Instance
 	{
@@ -38,6 +39,7 @@ namespace cct::gfx::rhi
 		inline APIImpl* GetImpl();
 	private:
 		std::unique_ptr<APIImpl> _apiImpl;
+		Backend _backend;
 	};
 }
 

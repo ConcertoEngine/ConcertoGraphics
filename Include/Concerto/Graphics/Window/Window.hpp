@@ -7,14 +7,12 @@
 
 #include <string>
 #include <functional>
-#include <optional>
-#include <vulkan/vulkan_core.h>
 
 #include "Concerto/Graphics/Defines.hpp"
 #include "Concerto/Graphics/Window/Key.hpp"
 #include "Concerto/Graphics/Window/Input.hpp"
-
-struct GLFWwindow;
+#include "Concerto/Graphics/Window/NativeWindow.hpp"
+struct SDL_Window;
 
 namespace cct::gfx
 {
@@ -22,7 +20,7 @@ namespace cct::gfx
 	class CONCERTO_GRAPHICS_API Window
 	{
 	public:
-		Window(const std::string& title, int width, int height);
+		Window(Int32 displayIndex, const std::string& title, Int32 width, Int32 height);
 
 		Window() = delete;
 
@@ -37,24 +35,10 @@ namespace cct::gfx
 		~Window();
 
 		/**
-		 * @brief Check if Vulkan is supported
-		 * @return True if Vulkan is supported, false otherwise
-		 */
-		bool IsVulkanSupported();
-		
-		/**
-		 * @brief Create a Vulkan surface
-		 * @param instance The Vulkan instance
-		 * @param surface The surface to draw on
-		 * @return True if the surface is successfully created, false otherwise
-		 */
-		bool CreateVulkanSurface(VkInstance instance, VkSurfaceKHR& surface) const;
-
-		/**
 		* @brief Get the raw Window
 		* @return The raw Window as a void pointer
 		*/
-		void* GetRawWindow();
+		NativeWindow GetNativeWindow() const;
 		/**
 		 * @return The cursor position in the Window
 		 */
@@ -62,12 +46,12 @@ namespace cct::gfx
 		/**
 		 * @return The width of the Window
 		 */
-		UInt32 GetWidth();
+		UInt32 GetWidth() const;
 
 		/**
 		 * @return The height of the Window
 		 */
-		UInt32 GetHeight();
+		UInt32 GetHeight() const;
 
 		/**
 		 * @bried Set the Window title
@@ -76,23 +60,10 @@ namespace cct::gfx
 		void SetTitle(const std::string& title);
 
 		/**
-		 * @brief Set the Window icon
-		 * @param path The path to the icon
-		 */
-		void SetIcon(const std::string& path);
-
-		/**
 		 * @brief Set the cursor visibility
 		 * @param visible True if the cursor should be visible, false otherwise
 		 */
 		void SetCursorVisible(bool visible);
-
-		/**
-		 * @brief Set the cursor position
-		 * @param x The x position of the cursor
-		 * @param y The y position of the cursor
-		 */
-		void SetCursorPosition(int x, int y);
 
 		/**
 		 * @brief Set the cursor icon
@@ -107,16 +78,10 @@ namespace cct::gfx
 		void SetCursorDisabled(bool disabled);
 
 		/**
-		 * @brief Get an event
-		 * @return an empty optional if the key is not pressed, a filled optional otherwise
-		 */
-		std::optional<Key> PopEvent();
-
-		/**
 		 * @brief Check if the Window should close
 		 * @return True if the Window should close, false otherwise
 		 */
-		bool ShouldClose();
+		bool ShouldClose() const;
 
 		/**
 		 * @brief Register a callback function that will be called when the Window is resized
@@ -143,17 +108,24 @@ namespace cct::gfx
 		void RegisterCursorPosCallback(std::function<void(Window& window, double xpos, double ypos)> callback);
 
 		Input& GetInputManager();
-	protected:
+
+		UInt32 GetId() const;
+
+		void SetShouldQuit(bool value);
+		void TriggerResize();
+	private:
 		void RegisterInputCallbacks();
 		std::string _title;
 		std::size_t _width;
 		std::size_t _height;
-		GLFWwindow* _window;
+		SDL_Window* _window;
 		Input _input;
 		std::function<void(Window& window)> _resizeCallback;
 		std::function<void(Window& window, Key key, int scancode, int action, int mods)> _keyCallback;
 		std::function<void(Window& window, int button, int action, int mods)> _mouseButtonCallback;
 		std::function<void(Window& window, double xpos, double ypos)> _cursorPosCallback;
+		UInt32 _windowID;
+		bool _shouldQuit;
 	};
 }
 

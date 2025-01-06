@@ -117,8 +117,26 @@ namespace cct::gfx::vk
 			_device->vkDestroySwapchainKHR(*_device->Get(), _handle, nullptr);
 		if (_surface)
 			_device->GetInstance().vkDestroySurfaceKHR(*GetDevice()->GetInstance().Get(), _surface, nullptr);
-		if (!_window.CreateVulkanSurface(*GetDevice()->GetInstance().Get(), _surface))
+		NativeWindow nativeWindow = _window.GetNativeWindow();
+#if defined(CCT_PLATFORM_WINDOWS)
+		const VkWin32SurfaceCreateInfoKHR createInfo = {
+			.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR,
+			.pNext = nullptr,
+			.flags = 0,
+			.hinstance = static_cast<HINSTANCE>(nativeWindow.hinstance),
+			.hwnd = static_cast<HWND>(nativeWindow.window)
+		};
+		VkResult result = _device->GetInstance().vkCreateWin32SurfaceKHR(*_device->GetInstance().Get(), &createInfo, nullptr, &_surface);
+#elif defined(CCT_PLATFORM_MACOS))
+		CCT_ASSERT_FALSE("Not implemented");
+#elif defined(CCT_PLATFORM_LINUX)
+		CCT_ASSERT_FALSE("Not implemented");
+#endif
+		if (result != VK_SUCCESS)
+		{
+			CCT_ASSERT_FALSE("ConcertoGraphics: could not create vulkan window surface");
 			return false;
+		}
 		_swapChainImageViews.reset();
 		_swapChainImages.reset();
 		_depthImage = Image(*GetDevice(), _windowExtent, depthFormat);

@@ -9,9 +9,11 @@
 
 namespace cct::gfx::rhi
 {
-	Instance::Instance(Backend backend, ValidationLevel validationLevel)
+	Instance::Instance(Backend backend, ValidationLevel validationLevel) :
+		_backend(backend)
 	{
-		switch (backend) {
+		switch (backend)
+		{
 		case Backend::ConcertoVulkan:
 			_apiImpl = std::make_unique<VkRHI>();
 			_apiImpl->Create(validationLevel);

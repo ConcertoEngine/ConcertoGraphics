@@ -5,10 +5,12 @@
 #include <stdexcept>
 #define VMA_IMPLEMENTATION
 #define VMA_STATIC_VULKAN_FUNCTIONS 0
-#include "Concerto/Graphics/Backend/Vulkan/Wrapper/Allocator.hpp"
+
 
 #include <Concerto/Core/Assert.hpp>
+#include <vk_mem_alloc.h>
 
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/Allocator.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Instance.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/PhysicalDevice.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Device.hpp"

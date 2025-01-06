@@ -5,7 +5,6 @@
 #ifndef CONCERTO_GRAPHICS_RHI_VULKAN_VKRHIGPUSUBMESH_HPP
 #define CONCERTO_GRAPHICS_RHI_VULKAN_VKRHIGPUSUBMESH_HPP
 
-#include <vk_mem_alloc.h>
 #include "Concerto/Graphics/RHI/Defines.hpp"
 #include "Concerto/Graphics/RHI/GpuSubMesh.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Buffer.hpp"

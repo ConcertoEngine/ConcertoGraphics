@@ -16,7 +16,6 @@ namespace cct
 	{
 		Released = 0,
 		Pressed = 1,
-		Held = 2
 	};
 
 	struct KeyEvent
@@ -29,7 +28,6 @@ namespace cct
 	{
 		enum class Button
 		{
-			// GLFW buttons
 			Button1 = 0,
 			Button2 = 1,
 			Button3 = 2,
