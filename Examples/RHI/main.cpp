@@ -93,22 +93,22 @@ int main()
 			camera.Rotate(e.mouseMove.deltaX, -e.mouseMove.deltaY);
 		});
 
-		inputManager.Register("Forward", Key::Z, TriggerType::Held, [&camera, &speed, &deltaTime]()
+		inputManager.Register("Forward", Key::Z, TriggerType::Pressed, [&camera, &speed, &deltaTime]()
 		{
 			camera.Move(Camera::CameraMovement::Forward, deltaTime * speed);
 		});
 
-		inputManager.Register("Backward", Key::S, TriggerType::Held, [&camera, &speed, &deltaTime]()
+		inputManager.Register("Backward", Key::S, TriggerType::Pressed, [&camera, &speed, &deltaTime]()
 		{
 			camera.Move(Camera::CameraMovement::Backward, deltaTime * speed);
 		});
 
-		inputManager.Register("Left", Key::Q, TriggerType::Held, [&camera, &speed, &deltaTime]()
+		inputManager.Register("Left", Key::Q, TriggerType::Pressed, [&camera, &speed, &deltaTime]()
 		{
 			camera.Move(Camera::CameraMovement::Left, deltaTime * speed);
 		});
 
-		inputManager.Register("Right", Key::D, TriggerType::Held, [&camera, &speed, &deltaTime]()
+		inputManager.Register("Right", Key::D, TriggerType::Pressed, [&camera, &speed, &deltaTime]()
 		{
 			camera.Move(Camera::CameraMovement::Right, deltaTime * speed);
 		});

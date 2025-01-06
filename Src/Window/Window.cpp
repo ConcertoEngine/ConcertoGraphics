@@ -254,19 +254,19 @@ namespace cct::gfx
 			case SDL_SCANCODE_KP_EQUALS:
 				return Key::LeftShift;
 			case SDL_SCANCODE_LSHIFT:
-				return Key::LeftControl;
+				return Key::LeftShift;
 			case SDL_SCANCODE_LCTRL:
-				return Key::LeftAlt;
+				return Key::LeftControl;
 			case SDL_SCANCODE_LALT:
-				return Key::LeftSuper;
+				return Key::LeftAlt;
 			case SDL_SCANCODE_LGUI:
 				return Key::RightShift;
 			case SDL_SCANCODE_RSHIFT:
-				return Key::RightControl;
+				return Key::RightShift;
 			case SDL_SCANCODE_RCTRL:
-				return Key::RightAlt;
+				return Key::RightControl;
 			case SDL_SCANCODE_RALT:
-				return Key::RightSuper;
+				return Key::RightAlt;
 			case SDL_SCANCODE_RGUI:
 				return Key::Menu;
 			default:
