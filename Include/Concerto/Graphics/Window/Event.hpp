@@ -16,7 +16,6 @@ namespace cct
 	{
 		Released = 0,
 		Pressed = 1,
-		Held = 2
 	};
 
 	struct KeyEvent

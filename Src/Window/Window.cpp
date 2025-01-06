@@ -343,7 +343,6 @@ namespace cct::gfx
 			}
 			case SDL_KEYUP:
 			{
-
 				if (event->window.windowID != window->GetId())
 					return 0;
 				KeyEvent keyEvent = {};
