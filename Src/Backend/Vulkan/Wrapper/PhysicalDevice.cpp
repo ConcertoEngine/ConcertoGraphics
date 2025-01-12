@@ -44,6 +44,7 @@ namespace cct::gfx::vk
 		_formats = std::exchange(other._formats, std::nullopt);
 		_presentModes = std::exchange(other._presentModes, std::nullopt);
 		_physicalDevice = std::exchange(other._physicalDevice, nullptr);
+		_instance = other._instance;
 	}
 
 	PhysicalDevice& PhysicalDevice::operator=(PhysicalDevice&& other) noexcept
@@ -58,6 +59,7 @@ namespace cct::gfx::vk
 		_formats = std::exchange(other._formats, std::nullopt);
 		_presentModes = std::exchange(other._presentModes, std::nullopt);
 		_physicalDevice = std::exchange(other._physicalDevice, nullptr);
+		_instance = other._instance;
 		return *this;
 	}
 
