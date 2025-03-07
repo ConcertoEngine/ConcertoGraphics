@@ -74,7 +74,7 @@ namespace cct::gfx::vk
 		 * @param timeout The timeout.
 		 * @return The index of the acquired image.
 		 */
-		UInt32 AcquireNextImage(Semaphore& semaphore, Fence& fence, std::uint64_t timeout);
+		UInt32 AcquireNextImage(const Semaphore& semaphore, const Fence* fence = nullptr, UInt64 timeout = std::numeric_limits<UInt64>::max());
 
 		bool ReCreate(VkFormat pixelFormat = VK_FORMAT_B8G8R8A8_SRGB, VkFormat depthFormat = VK_FORMAT_D32_SFLOAT);
 

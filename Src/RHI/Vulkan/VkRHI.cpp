@@ -12,7 +12,7 @@ namespace cct::gfx
 {
 	bool VkRHI::Create(rhi::ValidationLevel validationLevel)
 	{
-		std::vector<const char*> extensions = {VK_KHR_SURFACE_EXTENSION_NAME};
+		std::vector<const char*> extensions = {VK_KHR_SURFACE_EXTENSION_NAME, VK_EXT_DEBUG_UTILS_EXTENSION_NAME };
 #ifdef VK_USE_PLATFORM_XCB_KHR
 		extensions.push_back(VK_KHR_XCB_SURFACE_EXTENSION_NAME);
 #endif
@@ -37,7 +37,7 @@ namespace cct::gfx
 			extensions.push_back(VK_EXT_DEBUG_REPORT_EXTENSION_NAME);
 		}
 #ifdef CCT_DEBUG
-		std::vector<const char*> layers = { "VK_LAYER_KHRONOS_validation" /*, "VK_LAYER_LUNARG_api_dump"*/ };
+		std::vector<const char*> layers = { "VK_LAYER_KHRONOS_validation", /*, "VK_LAYER_LUNARG_api_dump"*/ };
 #else
 		std::vector<const char*> layers = {};
 #endif

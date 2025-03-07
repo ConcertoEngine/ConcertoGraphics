@@ -61,6 +61,12 @@ int main()
 			}
 			++deviceIndex;
 		}
+
+		if (!device)
+		{
+			CCT_ASSERT_FALSE("Could not find a device");
+			return EXIT_FAILURE;
+		}
 		std::size_t minimumAlignment = device->GetMinimumUniformBufferOffsetAlignment();
 		std::unique_ptr<rhi::SwapChain> swapChain = device->CreateSwapChain(*window);
 		rhi::RenderPass& renderPass = swapChain->GetRenderPass();

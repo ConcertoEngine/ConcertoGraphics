@@ -99,9 +99,9 @@ namespace cct::gfx::vk
 		return _currentImageIndex;
 	}
 
-	UInt32 SwapChain::AcquireNextImage(Semaphore& semaphore, Fence& fence, std::uint64_t timeout)
+	UInt32 SwapChain::AcquireNextImage(const Semaphore& semaphore, const Fence* fence, UInt64 timeout)
 	{
-		_lastResult = _device->vkAcquireNextImageKHR(*_device->Get(), _handle, timeout, *semaphore.Get(), VK_NULL_HANDLE, &_currentImageIndex);
+		_lastResult = _device->vkAcquireNextImageKHR(*_device->Get(), _handle, timeout, *semaphore.Get(), fence ? *fence->Get() : nullptr, &_currentImageIndex);
 		if (_lastResult != VK_SUCCESS)
 		{
 			CCT_ASSERT_FALSE("ConcertoGraphics: vkCreateSemaphore failed VKResult={}", static_cast<int>(_lastResult));

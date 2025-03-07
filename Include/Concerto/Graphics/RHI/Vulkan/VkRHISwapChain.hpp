@@ -81,6 +81,7 @@ namespace cct::gfx::rhi
 		std::vector<SwapChainFrame> _frames;
 
 		UInt32 _currentFrameIndex = 0;
+		UInt32 _lastFrameIndex = 0;
 		bool _needResize = false;
 	};
 }

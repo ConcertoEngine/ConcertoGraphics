@@ -63,11 +63,15 @@ namespace cct::gfx::rhi
 			CreateFrameBuffers(GetRHIDevice());
 			_needResize = false;
 		}
-		SwapChainFrame& frame = _frames[_currentFrameIndex];
-		frame.Wait();
-		const UInt32 nextImageIndex = vk::SwapChain::AcquireNextImage(frame.GetPresentSemaphore(), frame.GetRenderFence(), -1);
-		frame.SetNextImageIndex(nextImageIndex);
-		return frame;
+		if (_currentFrameIndex != _lastFrameIndex)
+		{
+			SwapChainFrame& frame = _frames[_lastFrameIndex];
+			frame.GetRenderFence().Wait(-1);
+		}
+		SwapChainFrame& currentFrame = _frames[_currentFrameIndex];
+		const UInt32 nextImageIndex = vk::SwapChain::AcquireNextImage(currentFrame.GetPresentSemaphore(), nullptr);
+		currentFrame.SetNextImageIndex(nextImageIndex);
+		return currentFrame;
 	}
 
 	VkRHICommandPool& VkRHISwapChain::GetCommandPool() const
@@ -100,6 +104,7 @@ namespace cct::gfx::rhi
 
 	void VkRHISwapChain::Present(UInt32 imageIndex)
 	{
+		_lastFrameIndex = _currentFrameIndex;
 		_currentFrameIndex = (_currentFrameIndex + 1) % GetImageCount();
 		SwapChainFrame& currentFrame = _frames[imageIndex];
 		if (!_presentQueue->Present(currentFrame.GetRenderSemaphore(), *this, imageIndex))
@@ -213,6 +218,9 @@ namespace cct::gfx::rhi
 	{
 #ifdef CCT_DEBUG
 		Cast<VkRHICommandBuffer&>(*_commandBuffer).SetDebugName("SwapChainFrameCommandBuffer");
+		_renderFence.SetDebugName("SwapChainFrameRenderFence");
+		_presentSemaphore.SetDebugName("SwapChainFramePresentSemaphore");
+		_renderSemaphore.SetDebugName("SwapChainFrameRenderSemaphore");
 #endif
 	}
 
@@ -220,6 +228,8 @@ namespace cct::gfx::rhi
 	{
 		const vk::Queue& presentQueue = _owner->GetPresentQueue();
 
+		_renderFence.Wait(-1);
+		_renderFence.Reset();
 		presentQueue.Submit(Cast<VkRHICommandBuffer&>(*_commandBuffer), &_presentSemaphore, &_renderSemaphore, _renderFence);
 		_owner->Present(_imageIndex);
 	}
@@ -244,6 +254,9 @@ namespace cct::gfx::rhi
 		_imageIndex = imageIndex;
 #ifdef CCT_DEBUG
 		Cast<VkRHICommandBuffer&>(*_commandBuffer).SetDebugName(std::format("SwapChainFrameCommandBuffer[{}]", imageIndex));
+		_renderFence.SetDebugName(std::format("SwapChainFrameRenderFence {}", imageIndex));
+		_presentSemaphore.SetDebugName(std::format("SwapChainFramePresentSemaphore {}", imageIndex));
+		_renderSemaphore.SetDebugName(std::format("SwapChainFrameRenderSemaphore {}", imageIndex));
 #endif
 	}
 

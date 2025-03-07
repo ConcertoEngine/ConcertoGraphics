@@ -14,6 +14,7 @@
 #include <volk.h> // must be under this ^ include
 
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Instance.hpp"
+
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/PhysicalDevice.hpp"
 
 namespace cct::gfx::vk
@@ -133,7 +134,8 @@ namespace cct::gfx::vk
 		_lastResult = vkEnumeratePhysicalDevices(_instance, &deviceCount, devices.data());
 		CCT_ASSERT(_lastResult == VK_SUCCESS, "ConcertoGraphics: vkEnumeratePhysicalDevices failed VKResult={}", static_cast<int>(_lastResult));
 		std::vector<PhysicalDevice> physicalDevices;
-		for(VkPhysicalDevice device : devices)
+		physicalDevices.reserve(devices.size());
+		for (VkPhysicalDevice device : devices)
 		{
 			physicalDevices.emplace_back(const_cast<Instance&>(*this), device);
 		}
