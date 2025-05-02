@@ -6,6 +6,7 @@ add_requires("volk", {configs = {header_only = true}})
 add_requires("concerto-core", "vulkan-headers", "vulkan-memory-allocator", "stb", "libsdl2", "nzsl")
 
 option("override_runtime", { description = "Override vs runtime to MD in release and MDd in debug", default = true })
+option("examples", { description = "Build examples", default = false })
 
 if is_plat("windows") and has_config("override_runtime") then
     set_runtimes(is_mode("debug") and "MDd" or "MD")
@@ -25,7 +26,7 @@ target("concerto-graphics")
     if is_mode("debug") then
         set_symbols("debug")
     end
-    add_defines("CONCERTO_GRAPHICS_BUILD")
+    add_defines("CONCERTO_GRAPHICS_BUILD", { public = false })
     add_files("Src/Camera.cpp", "Src/Primitives.cpp", "Src/Camera.cpp", "Src/Window/**.cpp", "Src/DisplayManager.cpp")
     add_includedirs("Include/", { public = true })
     add_headerfiles("Include/(Concerto/Graphics/*.hpp)", "Include/(Concerto/Graphics/*.hpp)", "Include/(Concerto/Graphics/Window/*.hpp)")
@@ -38,7 +39,7 @@ target("concerto-vulkan-backend")
     if is_mode("debug") then
         set_symbols("debug")
     end
-    add_defines("CONCERTO_GRAPHICS_VULKAN_BACKEND_BUILD")
+    add_defines("CONCERTO_GRAPHICS_VULKAN_BACKEND_BUILD", { public = false })
     add_defines("VK_NO_PROTOTYPES", { public = true })
     add_files("Src/Backend/Vulkan/**.cpp")
     add_includedirs("Include/", { public = true })
@@ -56,7 +57,7 @@ target("concerto-rhi-module")
     if is_mode("debug") then
         set_symbols("debug")
     end
-    add_defines("CONCERTO_GRAPHICS_RHI_MODULE_BUILD")
+    add_defines("CONCERTO_GRAPHICS_RHI_MODULE_BUILD", { public = false })
     add_files("Src/RHI/**.cpp")
     add_includedirs("Include/", { public = true })
     add_headerfiles("Include/(Concerto/Graphics/RHI/*.hpp)",
@@ -68,4 +69,7 @@ target("concerto-rhi-module")
 
 
 includes("Xmake/Rules/*.lua")
-includes("Examples/xmake.lua")
+
+if has_config("examples") then
+    includes("Examples/xmake.lua")
+end
