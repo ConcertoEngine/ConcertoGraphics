@@ -1,5 +1,5 @@
-target('RHI')
-    add_deps('RHIModule')
+target('concerto-rhi-sample')
+    add_deps('concerto-rhi-module')
     add_files('main.cpp')
     set_languages('cxx20')
     set_warnings('allextra')
