@@ -40,6 +40,7 @@ namespace cct::gfx::vk
 		_physicalDeviceMemoryProperties = std::exchange(other._physicalDeviceMemoryProperties, std::nullopt);
 		_extensionProperties = std::exchange(other._extensionProperties, std::nullopt);
 		_extensionPropertiesNames = std::exchange(other._extensionPropertiesNames, std::nullopt);
+		_formatProperties = std::exchange(other._formatProperties, std::nullopt);
 		_capabilities = std::exchange(other._capabilities, std::nullopt);
 		_formats = std::exchange(other._formats, std::nullopt);
 		_presentModes = std::exchange(other._presentModes, std::nullopt);
@@ -49,17 +50,18 @@ namespace cct::gfx::vk
 
 	PhysicalDevice& PhysicalDevice::operator=(PhysicalDevice&& other) noexcept
 	{
-		_queueFamilyProperties = std::exchange(other._queueFamilyProperties, std::nullopt);
-		_physicalDeviceProperties = std::exchange(other._physicalDeviceProperties, std::nullopt);
-		_physicalDeviceFeatures = std::exchange(other._physicalDeviceFeatures, std::nullopt);
-		_physicalDeviceMemoryProperties = std::exchange(other._physicalDeviceMemoryProperties, std::nullopt);
-		_extensionProperties = std::exchange(other._extensionProperties, std::nullopt);
-		_extensionPropertiesNames = std::exchange(other._extensionPropertiesNames, std::nullopt);
-		_capabilities = std::exchange(other._capabilities, std::nullopt);
-		_formats = std::exchange(other._formats, std::nullopt);
-		_presentModes = std::exchange(other._presentModes, std::nullopt);
-		_physicalDevice = std::exchange(other._physicalDevice, nullptr);
-		_instance = other._instance;
+		std::swap(_queueFamilyProperties, other._queueFamilyProperties);
+		std::swap(_physicalDeviceProperties, other._physicalDeviceProperties);
+		std::swap(_physicalDeviceFeatures, other._physicalDeviceFeatures);
+		std::swap(_physicalDeviceMemoryProperties, other._physicalDeviceMemoryProperties);
+		std::swap(_extensionProperties, other._extensionProperties);
+		std::swap(_extensionPropertiesNames, other._extensionPropertiesNames);
+		std::swap(_formatProperties, other._formatProperties);
+		std::swap(_capabilities, other._capabilities);
+		std::swap(_formats, other._formats);
+		std::swap(_presentModes, other._presentModes);
+		std::swap(_physicalDevice, other._physicalDevice);
+		std::swap(_instance,  other._instance);
 		return *this;
 	}
 
@@ -127,6 +129,25 @@ namespace cct::gfx::vk
 			extensionsNames.push_back(extension.extensionName);
 		_extensionPropertiesNames = extensionsNames;
 		return _extensionPropertiesNames.value();
+	}
+
+	const std::unordered_map<VkFormat, VkFormatProperties>& PhysicalDevice::GetFormatProperties() const
+	{
+		if (_formatProperties)
+			return _formatProperties.value();
+		_formatProperties.emplace();
+		using VkFormatUnderlyingType = std::underlying_type_t<VkFormat>;
+
+		constexpr VkFormatUnderlyingType firstFormat = VK_FORMAT_R4G4_UNORM_PACK8;
+		constexpr VkFormatUnderlyingType lastFormat = VK_FORMAT_ASTC_12x12_SRGB_BLOCK;
+
+		for (VkFormatUnderlyingType format = firstFormat; format < lastFormat; format++)
+		{
+			VkFormatProperties formatProperties = {};
+			_instance->vkGetPhysicalDeviceFormatProperties(_physicalDevice, static_cast<VkFormat>(format), &formatProperties);
+			_formatProperties->emplace(static_cast<VkFormat>(format), formatProperties);
+		}
+		return _formatProperties.value();
 	}
 
 	VkSurfaceCapabilitiesKHR PhysicalDevice::GetCapabilities(VkSurfaceKHR surface) const

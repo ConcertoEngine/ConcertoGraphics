@@ -8,6 +8,7 @@
 #include <span>
 #include <optional>
 #include <vector>
+#include <unordered_map>
 
 #include "Concerto/Graphics/Backend/Vulkan/Defines.hpp"
 
@@ -91,6 +92,8 @@ namespace cct::gfx::vk
 		*/
 		[[nodiscard]] std::span<const char*> GetExtensionPropertiesNames() const;
 
+		[[nodiscard]] const std::unordered_map<VkFormat, VkFormatProperties>& GetFormatProperties() const;
+
 		VkSurfaceCapabilitiesKHR GetCapabilities(VkSurfaceKHR surface) const;
 
 		std::span<VkSurfaceFormatKHR> GetFormats(VkSurfaceKHR surface) const;
@@ -110,6 +113,7 @@ namespace cct::gfx::vk
 		mutable std::optional<VkPhysicalDeviceMemoryProperties> _physicalDeviceMemoryProperties;
 		mutable std::optional<std::vector<VkExtensionProperties>> _extensionProperties;
 		mutable std::optional<std::vector<const char*>> _extensionPropertiesNames;
+		mutable std::optional<std::unordered_map<VkFormat, VkFormatProperties>> _formatProperties;
 		mutable std::optional<VkSurfaceCapabilitiesKHR> _capabilities;
 		mutable std::optional<std::vector<VkSurfaceFormatKHR>> _formats;
 		mutable std::optional<std::vector<VkPresentModeKHR>> _presentModes;
