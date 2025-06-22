@@ -15,12 +15,12 @@ namespace cct
 		{
 			auto pair = std::make_pair(SparseVector<bool>(), TriggerTypeCallbacks());
 			pair.first.Emplace(static_cast<std::size_t>(key), true);
-			pair.second[triggerType].push_back(std::move(callback));
+			pair.second[triggerType].push_back(callback);
 			_keyCallbacks.emplace(name, std::move(pair));
 			return;
 		}
 		it->second.first.Emplace(static_cast<std::size_t>(key), true);
-		it->second.second[triggerType].push_back(std::move(callback));
+		it->second.second[triggerType].push_back(callback);
 	}
 
 	void Input::Register(const std::string& name, MouseEvent::Type key, MouseEventCallback&& callback)
@@ -28,12 +28,12 @@ namespace cct
 		const auto it = _mouseCallback.find(name);
 		if (it == _mouseCallback.end())
 		{
-			std::vector<MouseEventCallback> vec = { std::move(callback) };
+			std::vector<MouseEventCallback> vec = { callback };
 			auto pair = std::make_pair(key, std::move(vec));
 			_mouseCallback.emplace(name, std::move(pair));
 			return;
 		}
-		it->second.second.push_back(std::move(callback));
+		it->second.second.push_back(callback);
 	}
 
 	void Input::Trigger(const std::vector<Event>& events)
@@ -69,7 +69,10 @@ namespace cct
 			if (callbacks.first != mouseEvent.type)
 				continue;
 			for (auto& callback: callbacks.second)
-				callback(mouseEvent);
+			{
+				if (callback)
+					callback(mouseEvent);
+			}
 		}
 	}
 }

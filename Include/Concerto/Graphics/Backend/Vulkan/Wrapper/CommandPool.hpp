@@ -54,7 +54,7 @@ namespace cct::gfx::vk
 	    */
 		void Reset() const;
 
-		vk::CommandBuffer AllocateCommandBuffer();
+		vk::CommandBuffer AllocateCommandBuffer(VkCommandBufferLevel level);
 
 	private:
 		UInt32 _queueFamily;

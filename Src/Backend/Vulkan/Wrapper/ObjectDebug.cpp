@@ -123,6 +123,26 @@ namespace cct::gfx::vk
 		CCT_ASSERT(!_debugName.empty(), "ConcertoGraphics: ObjectDebug::GetDebugName() has been called but ObjectDebug::SetDebugName was never called");
 		return _debugName;
 	}
+
+	ObjectDebug::ObjectDebug(ObjectDebug&& other) noexcept
+	{
+		_device = std::exchange(other._device, VK_NULL_HANDLE);
+		_typeName = std::exchange(other._typeName, {});
+		_debugReportObjectType = std::exchange(other._debugReportObjectType, VK_DEBUG_REPORT_OBJECT_TYPE_UNKNOWN_EXT);
+		_vkHandle = std::exchange(other._vkHandle, VK_NULL_HANDLE);
+		_debugName = std::exchange(other._debugName, {});
+	}
+
+	ObjectDebug& ObjectDebug::operator=(ObjectDebug&& other)
+	{
+		std::swap(_device, other._device);
+		std::swap(_typeName, other._typeName);
+		std::swap(_debugReportObjectType, other._debugReportObjectType);
+		std::swap(_vkHandle, other._vkHandle);
+		std::swap(_debugName, other._debugName);
+
+		return *this;
+	}
 }
 
 #endif

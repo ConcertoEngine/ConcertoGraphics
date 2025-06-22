@@ -23,23 +23,10 @@ namespace cct::gfx::vk
 	class MeshPushConstants;
 	class DescriptorSet;
 
-	/**
-	 * @class CommandBuffer
-	 * @brief The CommandBuffer class represents a command buffer in the Vulkan graphics and compute API.
-	 *
-	 * This class is used to record and submit commands to the GPU for execution, such as rendering commands,
-	 * memory management commands, and compute commands.
-	 */
 	class CONCERTO_GRAPHICS_VULKAN_BACKEND_API CommandBuffer : public Object<VkCommandBuffer>
 	{
 	public:
-		/**
-		 * @brief Constructs a CommandBuffer object.
-		 *
-		 * @param device The Device object to associate with this command buffer.
-		 * @param commandPool The VkCommandPool to associate with this command buffer.
-		 */
-		explicit CommandBuffer(Device& device, vk::CommandPool& owner, VkCommandBuffer commandBuffer);
+		CommandBuffer(CommandPool& owner, VkCommandBufferLevel level);
 
 		~CommandBuffer();
 
@@ -178,8 +165,12 @@ namespace cct::gfx::vk
 		 * @param queue The Queue object to submit the command buffer to.
 		 * @param function The function to call before submitting the command buffer.
 		 */
-		void ImmediateSubmit(Fence& fence, CommandPool& commandPool, const Queue& queue,
+		void ImmediateSubmit(const Fence& fence, const CommandPool& commandPool, const Queue& queue,
 				std::function<void(CommandBuffer&)>&& function);
+
+		void Submit(const Fence& fence, const CommandPool& commandPool, const Queue& queue);
+
+		void ExecuteCommands(std::span<CommandBuffer> commandBuffers);
 
 		/**
 	     * @brief Copies data from one buffer to another.
@@ -205,6 +196,7 @@ namespace cct::gfx::vk
 
 	private:
 		vk::CommandPool* _commandPool;
+		VkCommandBufferLevel _level;
 	};
 } // namespace cct::gfx::vk
 

@@ -64,6 +64,10 @@ namespace cct::gfx::vk
 		createInfo.ppEnabledExtensionNames = deviceExtensions.data();
 		const VkResult result = instance.vkCreateDevice(*_physicalDevice->Get(), &createInfo, nullptr, &_device);
 		CCT_ASSERT(result == VK_SUCCESS, "Error cannot create logical device: VkResult={}", static_cast<int>(result));
+		if (result != VK_SUCCESS)
+		{
+			return;
+		}
 
 		for (auto& ext : deviceExtensions)
 			_extensions.emplace(ext);

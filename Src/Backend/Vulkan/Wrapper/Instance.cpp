@@ -52,6 +52,8 @@ namespace cct::gfx::vk
 		_apiVersion(apiVersion),
 		_lastResult(VK_SUCCESS)
 	{
+		CCT_GFX_AUTO_PROFILER_SCOPE();
+
 		VkApplicationInfo appInfo = {};
 		appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
 		appInfo.pApplicationName = appName.c_str();

@@ -6,6 +6,7 @@
 #define CONCERTO_GRAPHICS_RHI_DEFINES_HPP
 
 #include <Concerto/Core/Types.hpp>
+#include <Concerto/Core/Assert.hpp>
 
 #ifdef CCT_COMPILER_MSVC
 #pragma warning(disable: 4251) // Disable warning about DLL interface needed
@@ -17,4 +18,5 @@
 #define CONCERTO_GRAPHICS_RHI_BASE_API CCT_IMPORT
 #endif // CONCERTO_GRAPHICS_RHI_MODULE_BUILD
 
+#include "Concerto/Graphics/Profiler/Profiler.hpp"
 #endif //CONCERTO_GRAPHICS_RHI_DEFINES_HPP

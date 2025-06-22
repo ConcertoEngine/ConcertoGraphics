@@ -10,6 +10,9 @@
 #include "Concerto/Graphics/RHI/Vulkan/VkRHIDevice.hpp"
 #include "Concerto/Graphics/RHI/GpuMesh.hpp"
 #include "Concerto/Graphics/RHI/Vulkan/VkRHIBuffer.hpp"
+#include "Concerto/Graphics/RHI/Vulkan/VkRHITextureBuilder.hpp"
+
+#include <Nazara/Core/TaskScheduler.hpp>
 
 namespace cct::gfx::rhi
 {
@@ -25,27 +28,40 @@ namespace cct::gfx::rhi
 
 	std::shared_ptr<rhi::GpuMesh> VkRHIMesh::BuildGpuMesh(rhi::MaterialBuilder& materialBuilder, const rhi::RenderPass& renderPass, rhi::Device& device)
 	{
+		CCT_GFX_AUTO_PROFILER_SCOPE();
+
 		auto gpuMesh = std::make_shared<rhi::GpuMesh>();
 
 		auto& meshes = this->GetSubMeshes();
 		rhi::VkRHIDevice& rhiDevice = Cast<rhi::VkRHIDevice&>(device);
 		vk::UploadContext& uploadContext = rhiDevice.GetUploadContext();
 
+		uploadContext.ReserveSecondaryCommandBuffers(meshes.size());
+
+		Nz::TaskScheduler taskScheduler;
+
 		std::size_t totalVertices = 0;
-		for (auto& subMesh : meshes)
 		{
-			totalVertices += subMesh->GetVertices().size();
-			auto& materialInfo = *subMesh->GetMaterial();
-			materialInfo.vertexShaderPath = "./Shaders/tri_mesh_ssbo.nzsl";
-			materialInfo.fragmentShaderPath = materialInfo.diffuseTexturePath.empty() ? "./Shaders/default_lit.nzsl" : "./Shaders/textured_lit.nzsl";
+			CCT_GFX_PROFILER_SCOPE("Load all submeshes");
+			for (auto& subMesh : meshes)
+			{
+				totalVertices += subMesh->GetVertices().size();
+				taskScheduler.AddTask([&](){
+					auto& materialInfo = *subMesh->GetMaterial();
+					materialInfo.vertexShaderPath = "./Shaders/tri_mesh_ssbo.nzsl";
+					materialInfo.fragmentShaderPath = materialInfo.diffuseTexturePath.empty() ? "./Shaders/default_lit.nzsl" : "./Shaders/textured_lit.nzsl";
 
-			rhi::MaterialPtr litMaterial = materialBuilder.BuildMaterial(materialInfo, renderPass);
+					rhi::MaterialPtr litMaterial = materialBuilder.BuildMaterial(materialInfo, renderPass);
 
-			auto vkSubMesh = std::make_shared<VkRHIGpuSubMesh>(subMesh, litMaterial, rhiDevice);
-			gpuMesh->subMeshes.push_back(vkSubMesh);
+					auto vkSubMesh = std::make_shared<VkRHIGpuSubMesh>(subMesh, litMaterial, rhiDevice);
+					gpuMesh->subMeshes.push_back(vkSubMesh);
+				});
+			}
 		}
 
 		vk::Buffer stagingBuffer(vk::MakeBuffer<Vertex>(rhiDevice.GetAllocator(), totalVertices * sizeof(Vertex), VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VMA_MEMORY_USAGE_CPU_ONLY, true));
+
+		VkRHITextureBuilder::Instance()->Commit();
 
 		uploadContext._commandBuffer.Begin();
 		{

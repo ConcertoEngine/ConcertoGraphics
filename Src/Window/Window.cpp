@@ -10,6 +10,8 @@
 #include <SDL2/SDL_syswm.h>
 
 #include "Concerto/Graphics/Window/Window.hpp"
+
+#include "Concerto/Graphics/Profiler/Profiler.hpp"
 #include "Concerto/Graphics/Window/Event.hpp"
 
 namespace cct::gfx
@@ -380,6 +382,7 @@ namespace cct::gfx
 		_windowID(0),
 		_shouldQuit(false)
 	{
+		CCT_GFX_AUTO_PROFILER_SCOPE();
 		Uint32 flags = 0;
 		flags |= SDL_WINDOW_RESIZABLE;
 		_window = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED_DISPLAY(displayIndex), SDL_WINDOWPOS_CENTERED_DISPLAY(displayIndex), width, height, flags);
@@ -400,6 +403,7 @@ namespace cct::gfx
 	}
 	Window::~Window()
 	{
+		CCT_GFX_AUTO_PROFILER_SCOPE();
 		SDL_DelEventWatch(EventHandler, this);
 		SDL_DestroyWindow(_window);
 		_window = nullptr;

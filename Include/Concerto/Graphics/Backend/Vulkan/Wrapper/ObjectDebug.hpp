@@ -24,6 +24,11 @@ namespace cct::gfx::vk
 
 		void SetDebugName(std::string_view name);
 		std::string_view GetDebugName() const;
+
+		ObjectDebug(ObjectDebug&& other) noexcept;
+		ObjectDebug(const ObjectDebug& other) = delete;
+		ObjectDebug& operator=(ObjectDebug&& other);
+		ObjectDebug& operator==(const ObjectDebug& other) = delete;
 	private:
 		Device* _device;
 		std::string_view _typeName;

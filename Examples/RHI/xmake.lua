@@ -5,3 +5,6 @@ target('concerto-rhi-sample')
     set_warnings('allextra')
     add_rules('download.assets', 'compile.shaders')
     add_packages("concerto-core", { public = true })
+    if has_config("profiling") then
+        add_deps("concerto-profiler", { public = false })
+    end

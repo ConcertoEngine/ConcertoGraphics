@@ -15,24 +15,9 @@
 
 namespace cct::gfx::vk
 {
-	/**
-	 * @class Buffer
-	 * @brief Represents a VkBuffer object with its allocation.
-	 *
-	 * Buffer class is a Wrapper for VkBuffer, it encapsulate the VkBuffer object and its corresponding allocation
-	 */
 	class CONCERTO_GRAPHICS_VULKAN_BACKEND_API Buffer : public Object<VkBuffer>
 	{
 	 public:
-		/**
-		* @brief Constructs a new AllocatedBuffer object.
-		*
-		* @param allocator The Allocator object used to allocate the memory.
-		* @param allocSize The size of the allocation.
-		* @param usage The usage flags for the buffer.
-		* @param memoryUsage The memory usage for the allocation.
-		* @param allowBufferMapping Used to map the memory
-		*/
 		Buffer(Allocator& allocator, std::size_t allocSize, VkBufferUsageFlags usage, VmaMemoryUsage memoryUsage, bool allowBufferMapping);
 
 		Buffer(Buffer&&) noexcept;
@@ -60,21 +45,9 @@ namespace cct::gfx::vk
 
 		void UnMap();
 
-		/**
-		 * @return The allocation object.
-		 */
 		[[nodiscard]] VmaAllocation GetAllocation() const;
-
-		/**
-		 * @return The allocator which allocated the memory.
-		 */
 		[[nodiscard]] Allocator& GetAllocator() const;
-
-		/**
-		 * @return The allocated size
-		 */
 		[[nodiscard]] std::size_t GetAllocatedSize() const;
-
 		[[nodiscard]] VkBufferUsageFlags GetUsage() const;
 
 	private:
@@ -94,9 +67,9 @@ namespace cct::gfx::vk
 	* @return A new AllocatedBuffer object with the size of T.
 	*/
 	template<typename T>
-	Buffer MakeBuffer(Allocator& allocator, VkBufferUsageFlags usage, VmaMemoryUsage memoryUsage)
+	Buffer MakeBuffer(Allocator& allocator, VkBufferUsageFlags usage, VmaMemoryUsage memoryUsage, bool allowBufferMapping)
 	{
-		return Buffer { allocator, sizeof(T), usage, memoryUsage };
+		return Buffer { allocator, sizeof(T), usage, memoryUsage, allowBufferMapping };
 	}
 
 	/**

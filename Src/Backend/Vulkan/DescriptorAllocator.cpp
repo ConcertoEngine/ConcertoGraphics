@@ -44,6 +44,7 @@ namespace cct::gfx::vk
 
 	DescriptorPoolPtr DescriptorAllocator::CreatePool(VkDescriptorPoolCreateFlags)
 	{
+		CCT_GFX_AUTO_PROFILER_SCOPE();
 		std::vector<VkDescriptorPoolSize> sizes;
 		sizes.reserve(_poolSizes.sizes.size());
 		for (const auto& [descriptorType, number] : _poolSizes.sizes)
@@ -62,6 +63,8 @@ namespace cct::gfx::vk
 
 	DescriptorSetPtr DescriptorAllocator::TryAllocate(const DescriptorSetLayout& layout)
 	{
+		CCT_GFX_AUTO_PROFILER_SCOPE();
+
 		if (_currentPool == VK_NULL_HANDLE)
 		{
 			_currentPool = GetPool();

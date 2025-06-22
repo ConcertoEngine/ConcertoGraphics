@@ -33,21 +33,25 @@ namespace cct::gfx::vk
 	}
 
 	Buffer::Buffer(Buffer&& other) noexcept :
-		Object(other._allocator->GetDevice()),
-		_allocatedSize(other._allocatedSize),
-		_allocator(other._allocator),
-		_usage(other._usage)
+		Object(std::move(other)),
+		_mapCount(std::exchange(other._mapCount, 0)),
+		_allocatedSize(std::exchange(other._allocatedSize, 0)),
+		_allocator(std::exchange(other._allocator, nullptr)),
+		_allocation(std::exchange(other._allocation, nullptr)),
+		_usage(std::exchange(other._usage, 0))
 	{
-		_allocator = std::exchange(other._allocator, nullptr);
-		_handle = std::exchange(other._handle, VK_NULL_HANDLE);
-		_allocation = std::exchange(other._allocation, nullptr);
 	}
 
 	Buffer& Buffer::operator=(Buffer&& other) noexcept
 	{
-		_allocator = std::exchange(other._allocator, nullptr);
-		_handle = std::exchange(other._handle, VK_NULL_HANDLE);
-		_allocation = std::exchange(other._allocation, nullptr);
+		std::swap(_mapCount, other._mapCount);
+		std::swap(_allocatedSize, other._allocatedSize);
+		std::swap(_allocator, other._allocator);
+		std::swap(_allocation, other._allocation);
+		std::swap(_usage, other._usage);
+
+		Object::operator=(std::move(other));
+
 		return *this;
 	}
 

@@ -18,7 +18,7 @@
 namespace cct::gfx::rhi
 {
 	VkRHICommandBuffer::VkRHICommandBuffer(VkRHIDevice& device, vk::CommandPool& commandPool) :
-		vk::CommandBuffer(commandPool.AllocateCommandBuffer())
+		vk::CommandBuffer(commandPool.AllocateCommandBuffer(VK_COMMAND_BUFFER_LEVEL_PRIMARY))
 	{
 	}
 

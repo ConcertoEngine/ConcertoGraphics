@@ -2,6 +2,7 @@
 // Created by arthur on 12/07/2022.
 //
 
+#pragma optimize( "", off )
 
 #include <chrono>
 #include <Concerto/Core/Math/Algorithm.hpp>
@@ -56,6 +57,7 @@ int main()
 		{
 			if (type == rhi::DeviceType::Dedicated)
 			{
+				cct::Logger::Info("Using device: {}", name);
 				device = rInstance.CreateDevice(deviceIndex);
 				break;
 			}

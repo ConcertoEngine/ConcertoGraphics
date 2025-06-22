@@ -32,6 +32,8 @@ namespace cct::gfx::vk
 
 	void Fence::Wait(UInt64 timeout) const
 	{
+		CCT_GFX_AUTO_PROFILER_SCOPE();
+
 		const VkResult result = _device->vkWaitForFences(*_device->Get(), 1, &_handle, true, timeout);
 		CCT_ASSERT(result == VK_SUCCESS, "ConcertoGraphics: vkWaitForFences failed VKResult={}", static_cast<int>(result));
 	}
