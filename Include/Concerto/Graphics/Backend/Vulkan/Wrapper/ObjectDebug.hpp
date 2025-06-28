@@ -24,6 +24,7 @@ namespace cct::gfx::vk
 
 		void SetDebugName(std::string_view name);
 		std::string_view GetDebugName() const;
+		std::thread::id GetCreatedOnThread() const;
 
 		ObjectDebug(ObjectDebug&& other) noexcept;
 		ObjectDebug(const ObjectDebug& other) = delete;
@@ -35,6 +36,7 @@ namespace cct::gfx::vk
 		VkDebugReportObjectTypeEXT _debugReportObjectType;
 		void** _vkHandle;
 		std::string _debugName;
+		std::thread::id _createdOnThread;
 	};
 
 #endif

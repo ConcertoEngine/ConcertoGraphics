@@ -5,7 +5,7 @@ add_repositories("nazara-repo https://github.com/NazaraEngine/xmake-repo")
 add_requires("imgui", {configs = {vulkan = true, sdl2 = true, debug = is_mode("debug"), with_symbols = true}})
 add_requires("volk", {configs = {header_only = true}})
 add_requires("concerto-core", { debug = true, configs = { asserts = true, shared = true }})
-add_requires("vulkan-headers", "vulkan-memory-allocator", "stb", "libsdl2", "nzsl", "vulkan-utility-libraries")
+add_requires("vulkan-headers", "vulkan-memory-allocator", "stb", "libsdl2", "nzsl", "vulkan-utility-libraries", "parallel-hashmap")
 add_requires("nazaraengine", { debug = is_mode("debug"), configs = { graphics = false, textrenderer = false, renderer = false, widgets = false, plugin_assimp = false, plugin_ffmpeg = false, plugin_imgui = false, entt = false, audio = false, physics2d = false, physics3d  = false, platform = false }})
 
 option("override_runtime", { description = "Override vs runtime to MD in release and MDd in debug", default = true })
@@ -34,7 +34,7 @@ if has_config("examples") then
     add_requires("glslang", {configs = {binaryonly = true}})
     add_rules("utils.glsl2spv", {outputdir = "$(buildir)/$(plat)/$(arch)/$(mode)/Shaders"})
     add_files("Shaders/*.vert", "Shaders/*.frag")
-    add_rules("download.assets", "compile.shaders")
+    --add_rules("download.assets", "compile.shaders")
 end
 
 target("concerto-graphics")
@@ -89,7 +89,7 @@ target("concerto-rhi-module")
                     "Include/(Concerto/Graphics/RHI/*.inl)",
                     "Include/(Concerto/Graphics/RHI/Vulkan/*.hpp)",
                     "Include/(Concerto/Graphics/RHI/Vulkan/*.inl)")
-    add_packages("concerto-core", { public = true })
+    add_packages("concerto-core", "parallel-hashmap", { public = true })
     add_packages("nazaraengine", { public = false })
     add_deps("concerto-vulkan-backend")
     if has_config("profiling") then

@@ -37,8 +37,8 @@ namespace cct::gfx::rhi
 		virtual void InternalCommit() = 0;
 	private:
 		Device& _device;
-		std::unordered_map<std::string, std::shared_ptr<Texture>> _texturesCache;
-		std::unordered_map<std::shared_ptr<Texture>, std::unique_ptr<Buffer>> _buffersToUpload;
+		ThreadSafeHashMap<std::string, std::shared_ptr<Texture>> _texturesCache;
+		ThreadSafeHashMap<std::shared_ptr<Texture>, std::unique_ptr<Buffer>> _buffersToUpload;
 	};
 }
 

@@ -24,7 +24,7 @@ struct ObjectBuffer
 external
 {
   [set(0), binding(0)] cameraBuffer: uniform[CameraBuffer],
-  [set(1), binding(0)] objectBuffer: storage[ObjectBuffer]
+  [set(1), binding(0)] objectBuffer: storage[ObjectBuffer, readonly]
 }
 
 struct VertIn

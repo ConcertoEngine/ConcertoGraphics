@@ -84,7 +84,8 @@ namespace cct::gfx::vk
 		_device(&device),
 		_typeName(typeName),
 		_debugReportObjectType(TypeNameToVkDebugReportObjectTypeEXT(typeName)),
-		_vkHandle(vkHandle)
+		_vkHandle(vkHandle),
+		_createdOnThread(std::this_thread::get_id())
 	{
 	}
 
@@ -122,6 +123,11 @@ namespace cct::gfx::vk
 	{
 		CCT_ASSERT(!_debugName.empty(), "ConcertoGraphics: ObjectDebug::GetDebugName() has been called but ObjectDebug::SetDebugName was never called");
 		return _debugName;
+	}
+
+	std::thread::id ObjectDebug::GetCreatedOnThread() const
+	{
+		return _createdOnThread;
 	}
 
 	ObjectDebug::ObjectDebug(ObjectDebug&& other) noexcept

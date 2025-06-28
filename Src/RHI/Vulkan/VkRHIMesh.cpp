@@ -38,9 +38,10 @@ namespace cct::gfx::rhi
 
 		uploadContext.ReserveSecondaryCommandBuffers(meshes.size());
 
-		Nz::TaskScheduler taskScheduler;
+		Nz::TaskScheduler taskScheduler(std::thread::hardware_concurrency());
 
-		std::size_t totalVertices = 0;
+		std::mutex subMeshesMutex;
+		std::atomic<std::size_t> totalVertices = 0;
 		{
 			CCT_GFX_PROFILER_SCOPE("Load all submeshes");
 			for (auto& subMesh : meshes)
@@ -54,10 +55,14 @@ namespace cct::gfx::rhi
 					rhi::MaterialPtr litMaterial = materialBuilder.BuildMaterial(materialInfo, renderPass);
 
 					auto vkSubMesh = std::make_shared<VkRHIGpuSubMesh>(subMesh, litMaterial, rhiDevice);
+					std::lock_guard _(subMeshesMutex);
 					gpuMesh->subMeshes.push_back(vkSubMesh);
 				});
 			}
 		}
+
+		taskScheduler.WaitForTasks();
+
 
 		vk::Buffer stagingBuffer(vk::MakeBuffer<Vertex>(rhiDevice.GetAllocator(), totalVertices * sizeof(Vertex), VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VMA_MEMORY_USAGE_CPU_ONLY, true));
 

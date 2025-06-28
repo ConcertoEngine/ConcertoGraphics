@@ -7,7 +7,6 @@
 
 #include <set>
 #include <string>
-#include <unordered_map>
 
 #include "Concerto/Graphics/RHI/Defines.hpp"
 #include "Concerto/Graphics/RHI/MaterialBuilder.hpp"
@@ -38,17 +37,17 @@ namespace cct::gfx::rhi
 
 		[[nodiscard]] std::vector<VkPipelineShaderStageCreateInfo> GetShaderStages() const;
 		[[nodiscard]] std::vector<std::shared_ptr<vk::DescriptorSetLayout>> GetDescriptorSetLayouts() const;
-		std::set<vk::VkMaterialPtr> GetMaterials();
-	 private:
+		ThreadSafeHashSet<vk::VkMaterialPtr> GetMaterials();
+	private:
 		std::shared_ptr<vk::DescriptorSetLayout> GeDescriptorSetLayout(const std::vector<VkDescriptorSetLayoutBinding>& bindings);
 
 		vk::DescriptorAllocator _allocator;
 		vk::Device& _device;
-		std::set<vk::VkMaterialPtr> _materialsCache;
-		std::unordered_map<UInt64 /*hash*/, std::shared_ptr<vk::Pipeline>> _pipelinesCache;
-		std::unordered_map<std::string, vk::ShaderModuleInfo> _shaderModuleInfos;
+		ThreadSafeHashSet<vk::VkMaterialPtr> _materialsCache;
+		ThreadSafeHashMap<UInt64 /*hash*/, std::shared_ptr<vk::Pipeline>> _pipelinesCache;
+		ThreadSafeHashMap<std::string, vk::ShaderModuleInfo> _shaderModuleInfos;
 		vk::DescriptorPool _descriptorPool;
-		std::unordered_map<UInt64 /*hash*/, std::shared_ptr<vk::DescriptorSetLayout>> _descriptorSetLayoutsCache;
+		ThreadSafeHashMap<UInt64 /*hash*/, std::shared_ptr<vk::DescriptorSetLayout>> _descriptorSetLayoutsCache;
 		std::vector<vk::Pipeline> _pipelines;
 		vk::Sampler _sampler;
 		VkExtent2D _windowExtent;

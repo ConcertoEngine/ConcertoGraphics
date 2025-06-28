@@ -216,7 +216,7 @@ namespace cct::gfx::rhi
 		return descriptorSetLayouts;
 	}
 
-	std::set<vk::VkMaterialPtr> VkRHIMaterialBuilder::GetMaterials()
+	ThreadSafeHashSet<vk::VkMaterialPtr> VkRHIMaterialBuilder::GetMaterials()
 	{
 		return _materialsCache;
 	}

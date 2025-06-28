@@ -53,8 +53,8 @@ namespace cct::gfx::vk
 		DescriptorSetPtr TryAllocate(const DescriptorSetLayout& layout);
 		Device *_device;
 		PoolSizes _poolSizes;
-		DescriptorPoolPtr _currentPool;
-		std::vector<DescriptorPoolPtr> _usedPools;
+		std::mutex _usedPoolMutex;
+		std::unordered_map<std::thread::id, std::vector<DescriptorPoolPtr>> _usedPools;
 		std::vector<DescriptorPoolPtr> _freePools;
 		std::unordered_map<UInt64 /*Hash of bindings*/, DescriptorSetPtr> _cache;
 	};
