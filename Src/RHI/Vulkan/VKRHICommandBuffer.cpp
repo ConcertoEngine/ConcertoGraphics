@@ -18,7 +18,7 @@
 namespace cct::gfx::rhi
 {
 	VkRHICommandBuffer::VkRHICommandBuffer(VkRHIDevice& device, vk::CommandPool& commandPool) :
-		vk::CommandBuffer(commandPool.AllocateCommandBuffer())
+		vk::CommandBuffer(commandPool.AllocateCommandBuffer(VK_COMMAND_BUFFER_LEVEL_PRIMARY))
 	{
 	}
 
@@ -71,6 +71,8 @@ namespace cct::gfx::rhi
 
 	void VkRHICommandBuffer::BeginRenderPass(const rhi::RenderPass& renderPass, const rhi::FrameBuffer& frameBuffer, const Vector3f& clearColor)
 	{
+		CCT_GFX_AUTO_PROFILER_SCOPE();
+
 		const VkRHIRenderPass& vkRenderPass = Cast<const VkRHIRenderPass&>(renderPass);
 		const VkRHIFrameBuffer& vkRhiFrameBuffer = Cast<const VkRHIFrameBuffer&>(frameBuffer);
 
@@ -98,11 +100,15 @@ namespace cct::gfx::rhi
 
 	void VkRHICommandBuffer::EndRenderPass()
 	{
+		CCT_GFX_AUTO_PROFILER_SCOPE();
+
 		vk::CommandBuffer::EndRenderPass();
 	}
 
 	void VkRHICommandBuffer::BindMaterial(const MaterialInfo& material)
 	{
+		CCT_GFX_AUTO_PROFILER_SCOPE();
+
 		const vk::VkMaterial& vkMaterial = Cast<const vk::VkMaterial&>(material);
 		const VkPipeline pipeline = *vkMaterial.pipeline->Get();
 		//if (_lastBoundedPipeline == pipeline)
@@ -115,12 +121,16 @@ namespace cct::gfx::rhi
 
 	void VkRHICommandBuffer::BindVertexBuffer(const rhi::Buffer& buffer)
 	{
+		CCT_GFX_AUTO_PROFILER_SCOPE();
+
 		const VkRHIBuffer& vkBuffer = Cast<const VkRHIBuffer&>(buffer);
 		vk::CommandBuffer::BindVertexBuffers(vkBuffer);
 	}
 
 	void VkRHICommandBuffer::Draw(UInt32 vertexCount, UInt32 instanceCount, UInt32 firstVertex, UInt32 firstInstance)
 	{
+		CCT_GFX_AUTO_PROFILER_SCOPE();
+
 		vk::CommandBuffer::Draw(vertexCount, instanceCount, firstVertex, firstInstance);
 	}
 }

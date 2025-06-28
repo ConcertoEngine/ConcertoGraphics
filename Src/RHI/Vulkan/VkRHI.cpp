@@ -36,11 +36,9 @@ namespace cct::gfx
 		{
 			extensions.push_back(VK_EXT_DEBUG_REPORT_EXTENSION_NAME);
 		}
-#ifdef CCT_DEBUG
+
 		std::vector<const char*> layers = { "VK_LAYER_KHRONOS_validation", /*, "VK_LAYER_LUNARG_api_dump"*/ };
-#else
-		std::vector<const char*> layers = {};
-#endif
+
 		_instance = std::make_unique<vk::Instance>("", "", Version{ 1, 3, 0 }, Version{}, Version{}, extensions, layers);
 		if (_instance->GetLastError() != VK_SUCCESS)
 		{

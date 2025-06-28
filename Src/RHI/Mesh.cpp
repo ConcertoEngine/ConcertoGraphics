@@ -17,7 +17,8 @@ namespace cct::gfx::rhi
 {
 	Mesh::Mesh(std::string filePath) : _path(std::move(filePath))
 	{
-		CCT_ASSERT(LoadFromFile(_path), "ConcertoGraphics: LoadFromFile failed");
+		bool loaded = LoadFromFile(_path);
+		CCT_ASSERT(loaded, "LoadFromFile failed");
 	}
 
 	Mesh::Mesh(Vertices vertices)
@@ -34,6 +35,8 @@ namespace cct::gfx::rhi
 
 	bool Mesh::LoadFromFile(const std::string& fileName)
 	{
+		CCT_GFX_AUTO_PROFILER_SCOPE();
+
 		std::string err;
 		tinyobj::ObjReaderConfig readerConfig;
 		tinyobj::ObjReader reader;

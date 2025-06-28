@@ -1,5 +1,5 @@
 rule('download.assets')
-    after_build(function (target)
+    on_config(function (target)
         import('net.http')
         import('utils.archive')
 

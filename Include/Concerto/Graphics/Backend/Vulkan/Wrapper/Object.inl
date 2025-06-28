@@ -30,7 +30,7 @@ namespace cct::gfx::vk
 	Object<VkType>::Object(Object&& other) noexcept
 #ifdef CCT_DEBUG
 		:
-	ObjectDebug(*other.GetDevice(), TypeName<std::remove_pointer_t<std::remove_cvref_t<VkType>>>(), reinterpret_cast<void**>(&other._handle))
+	ObjectDebug(std::move(other))
 #endif
 	{
 		_handle = std::exchange(other._handle, nullptr);
@@ -43,6 +43,9 @@ namespace cct::gfx::vk
 	{
 		std::swap(_handle, other._handle);
 		std::swap(_device, other._device);
+#ifdef CCT_DEBUG
+		ObjectDebug::operator=(std::move(other));
+#endif
 		return *this;
 	}
 

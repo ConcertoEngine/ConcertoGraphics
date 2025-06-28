@@ -2,6 +2,7 @@
 // Created by arthur on 12/07/2022.
 //
 
+#pragma optimize( "", off )
 
 #include <chrono>
 #include <Concerto/Core/Math/Algorithm.hpp>
@@ -56,6 +57,7 @@ int main()
 		{
 			if (type == rhi::DeviceType::Dedicated)
 			{
+				cct::Logger::Info("Using device: {}", name);
 				device = rInstance.CreateDevice(deviceIndex);
 				break;
 			}
@@ -191,6 +193,7 @@ int main()
 							lastBoundMaterial = material.get();
 							commandBuffer.BindMaterial(*material);
 						}
+						else CCT_ASSERT_FALSE("tt");
 						commandBuffer.BindVertexBuffer(subMesh->GetVertexBuffer());
 						commandBuffer.Draw(static_cast<UInt32>(subMesh->GetVertices().size()), 1, 0, 0);
 					}

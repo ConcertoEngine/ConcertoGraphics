@@ -14,44 +14,48 @@
 #include <volk.h> // must be under this ^ include
 
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Instance.hpp"
-
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/PhysicalDevice.hpp"
 
 namespace cct::gfx::vk
 {
 	PFN_vkGetInstanceProcAddr Instance::vkGetInstanceProcAddr = nullptr;
 
-	VKAPI_ATTR VkBool32 VKAPI_CALL DebugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
+	namespace
+	{
+		VKAPI_ATTR VkBool32 VKAPI_CALL DebugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
 			[[maybe_unused]] VkDebugUtilsMessageTypeFlagsEXT messageType,
 			[[maybe_unused]] const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
 			[[maybe_unused]] void* pUserData)
-	{
-		if (messageSeverity == VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT)
 		{
-			//Logger::Info(pCallbackData->pMessage);
+			if (messageSeverity == VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT)
+			{
+				//Logger::Info(pCallbackData->pMessage);
+			}
+			else if (messageSeverity == VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT)
+			{
+				//Logger::Info(pCallbackData->pMessage);
+			}
+			else if (messageSeverity == VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT)
+			{
+				//Logger::Warning(pCallbackData->pMessage);
+			}
+			else if (messageSeverity == VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT)
+			{
+				//Logger::Warning(pCallbackData->pMessage);
+			}
+			return VK_FALSE;
 		}
-		else if (messageSeverity == VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT)
-		{
-			//Logger::Info(pCallbackData->pMessage);
-		}
-		else if (messageSeverity == VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT)
-		{
-			//Logger::Warning(pCallbackData->pMessage);
-		}
-		else if (messageSeverity == VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT)
-		{
-			//Logger::Warning(pCallbackData->pMessage);
-		}
-		return VK_FALSE;
 	}
 
 	Instance::Instance(const std::string& appName, const std::string& engineName, const Version& apiVersion,
-			const Version& appVersion, const Version& engineVersion, std::span<const char*> extensions,
-			std::span<const char*> layers) :
+		const Version& appVersion, const Version& engineVersion, std::span<const char*> extensions,
+		std::span<const char*> layers) :
 		_instance(VK_NULL_HANDLE),
 		_apiVersion(apiVersion),
 		_lastResult(VK_SUCCESS)
 	{
+		CCT_GFX_AUTO_PROFILER_SCOPE();
+
 		VkApplicationInfo appInfo = {};
 		appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
 		appInfo.pApplicationName = appName.c_str();
@@ -63,11 +67,11 @@ namespace cct::gfx::vk
 		VkDebugUtilsMessengerCreateInfoEXT debugCreateInfo = {};
 		debugCreateInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
 		debugCreateInfo.messageSeverity =
-				VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT |
-				VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
+			VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT |
+			VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
 		debugCreateInfo.messageType =
-				VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT |
-				VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
+			VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT |
+			VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
 		debugCreateInfo.pfnUserCallback = DebugCallback;
 		debugCreateInfo.pUserData = nullptr;
 
@@ -79,6 +83,22 @@ namespace cct::gfx::vk
 		createInfo.enabledLayerCount = static_cast<UInt32>(layers.size());
 		createInfo.ppEnabledLayerNames = layers.empty() ? VK_NULL_HANDLE : layers.data();
 		createInfo.pNext = &debugCreateInfo;
+
+		//std::array enables = { VK_VALIDATION_FEATURE_ENABLE_SYNCHRONIZATION_VALIDATION_EXT };
+		//VkValidationFeaturesEXT features = {};
+		//features.sType = VK_STRUCTURE_TYPE_VALIDATION_FEATURES_EXT;
+		//features.enabledValidationFeatureCount = enables.size();
+		//features.pEnabledValidationFeatures = enables.data();
+
+		//if (createInfo.pNext)
+		//{
+		//	features.pNext = createInfo.pNext;
+		//	createInfo.pNext = &features;
+		//}
+		//else
+		//{
+		//	createInfo.pNext = &features;
+		//}
 
 		for (auto& ext : extensions)
 			_loadedExtensions.emplace(ext);
@@ -96,20 +116,20 @@ namespace cct::gfx::vk
 		CCT_ASSERT(_lastResult == VK_SUCCESS, "ConcertoGraphics: vkCreateInstance failed VKResult={}", static_cast<int>(_lastResult));
 		volkLoadInstanceOnly(_instance);
 		Instance::vkGetInstanceProcAddr = ::vkGetInstanceProcAddr;
-		#define CONCERTO_VULKAN_BACKEND_INSTANCE_FUNCTION(func) this->func = ::func;
+#define CONCERTO_VULKAN_BACKEND_INSTANCE_FUNCTION(func) this->func = ::func;
 
-		#define CONCERTO_VULKAN_BACKEND_INSTANCE_EXT_BEGIN(ext)				\
+#define CONCERTO_VULKAN_BACKEND_INSTANCE_EXT_BEGIN(ext)				\
 					if(IsExtensionEnabled(#ext))							\
 					{
-		#define CONCERTO_VULKAN_BACKEND_INSTANCE_EXT_FUNCTION(func, ...)	\
+#define CONCERTO_VULKAN_BACKEND_INSTANCE_EXT_FUNCTION(func, ...)	\
 						CONCERTO_VULKAN_BACKEND_INSTANCE_FUNCTION(func)		\
 						if (this->func == nullptr)							\
 						{													\
 							CCT_ASSERT_FALSE("ConcertoGraphics: Function: " #func " is null but the extension has been reported has supported");\
 						}
-		#define CONCERTO_VULKAN_BACKEND_INSTANCE_EXT_END }
+#define CONCERTO_VULKAN_BACKEND_INSTANCE_EXT_END }
 
-		#include "Concerto/Graphics/Backend/Vulkan/Wrapper/InstanceFunction.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/InstanceFunction.hpp"
 	}
 
 	Version Instance::GetApiVersion() const

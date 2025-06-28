@@ -33,6 +33,8 @@ namespace cct::gfx::vk
 
 	VkPipeline Pipeline::BuildPipeline(VkRenderPass renderPass)
 	{
+		CCT_GFX_AUTO_PROFILER_SCOPE();
+
 		VkGraphicsPipelineCreateInfo pipelineInfo{};
 		VkPipelineColorBlendStateCreateInfo colorBlending{};
 		VkPipelineViewportStateCreateInfo viewportState{};

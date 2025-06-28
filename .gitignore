@@ -1,4 +1,5 @@
 .xmake
+.vscode
 vsxmake2022
 build
 CMakeLists.txt

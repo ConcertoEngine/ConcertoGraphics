@@ -12,6 +12,7 @@ namespace cct::gfx::rhi
 	Instance::Instance(Backend backend, ValidationLevel validationLevel) :
 		_backend(backend)
 	{
+		CCT_GFX_AUTO_PROFILER_SCOPE();
 		switch (backend)
 		{
 		case Backend::ConcertoVulkan:

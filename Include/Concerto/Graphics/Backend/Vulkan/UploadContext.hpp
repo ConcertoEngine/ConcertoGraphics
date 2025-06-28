@@ -29,9 +29,17 @@ namespace cct::gfx::vk
 
 		UploadContext& operator=(const UploadContext&) = delete;
 
+		void ReserveSecondaryCommandBuffers(UInt32 count);
+		CommandBuffer* AcquireSecondaryCommandBuffer();
+
+		void ExecuteSecondaryCommandBuffers();
+
 		Fence _uploadFence;
 		CommandPool _commandPool;
 		CommandBuffer _commandBuffer;
+	private:
+		std::size_t _nextSecondaryCommandBuffer;
+		std::vector<CommandBuffer> _secondCommandBuffers;
 	};
 }
 

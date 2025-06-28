@@ -36,9 +36,12 @@ namespace cct::gfx::rhi
 
 	MaterialPtr VkRHIMaterialBuilder::BuildMaterial(rhi::MaterialInfo& material, const rhi::RenderPass& renderPass)
 	{
+		CCT_GFX_AUTO_PROFILER_SCOPE();
+
 		vk::ShaderModuleInfo* vertexShaderModuleInfo = nullptr;
 		vk::ShaderModuleInfo* fragShaderModuleInfo = nullptr;
 		{
+			CCT_GFX_PROFILER_SCOPE("Find or create ShaderModule");
 			auto it = _shaderModuleInfos.find(material.vertexShaderPath);
 			if (it == _shaderModuleInfos.end())
 				vertexShaderModuleInfo = &_shaderModuleInfos.emplace(material.vertexShaderPath, vk::ShaderModuleInfo(_device, material.vertexShaderPath)).first->second;
@@ -167,6 +170,8 @@ namespace cct::gfx::rhi
 
 	void VkRHIMaterialBuilder::Update(const rhi::Buffer& buffer, UInt32 setIndex, UInt32 bindingIndex)
 	{
+		CCT_GFX_AUTO_PROFILER_SCOPE();
+
 		const VkRHIBuffer& vkBuffer = Cast<const VkRHIBuffer&>(buffer);
 		VkDescriptorBufferInfo bufferInfo;
 		bufferInfo.buffer = *vkBuffer.Get();
@@ -211,13 +216,15 @@ namespace cct::gfx::rhi
 		return descriptorSetLayouts;
 	}
 
-	std::set<vk::VkMaterialPtr> VkRHIMaterialBuilder::GetMaterials()
+	ThreadSafeHashSet<vk::VkMaterialPtr> VkRHIMaterialBuilder::GetMaterials()
 	{
 		return _materialsCache;
 	}
 
 	std::shared_ptr<vk::DescriptorSetLayout> VkRHIMaterialBuilder::GeDescriptorSetLayout(const std::vector<VkDescriptorSetLayoutBinding>& bindings)
 	{
+		CCT_GFX_AUTO_PROFILER_SCOPE();
+
 		UInt64 hash = vk::DescriptorSetLayout::GetHash(bindings);
 
 		const auto it = _descriptorSetLayoutsCache.find(hash);

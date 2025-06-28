@@ -38,17 +38,8 @@ namespace cct::gfx::vk
 		CCT_ASSERT(_lastResult == VK_SUCCESS, "ConcertoGraphics: Error cannot reset command pool: VkResult={}", static_cast<int>(_lastResult));
 	}
 
-	vk::CommandBuffer CommandPool::AllocateCommandBuffer()
+	vk::CommandBuffer CommandPool::AllocateCommandBuffer(VkCommandBufferLevel level)
 	{
-		VkCommandBufferAllocateInfo info = {};
-		info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-		info.pNext = nullptr;
-		info.commandPool = *Get();
-		info.commandBufferCount = 1;
-		info.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-		VkCommandBuffer commandBuffer;
-		const VkResult result = _device->vkAllocateCommandBuffers(*_device->Get(), &info, &commandBuffer);
-		CCT_ASSERT(result == VK_SUCCESS, "ConcertoGraphics: vkAllocateCommandBuffers failed VkResult={}", static_cast<int>(result));
-		return vk::CommandBuffer(*_device, *this, commandBuffer);
+		return vk::CommandBuffer(*this, level);
 	}
 }

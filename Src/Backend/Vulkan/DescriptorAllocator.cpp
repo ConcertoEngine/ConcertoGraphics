@@ -5,16 +5,17 @@
 #define DESCRIPTOR_POOL_SIZE 1000
 
 #include "Concerto/Graphics/Backend/Vulkan/DescriptorAllocator.hpp"
+
+#include <sstream>
+
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/DescriptorSet.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/DescriptorSetLayout.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Device.hpp"
 
 namespace cct::gfx::vk
 {
-
 	DescriptorAllocator::DescriptorAllocator(Device& device) :
-		_device(&device),
-		_currentPool(VK_NULL_HANDLE)
+		_device(&device)
 	{
 
 	}
@@ -44,6 +45,7 @@ namespace cct::gfx::vk
 
 	DescriptorPoolPtr DescriptorAllocator::CreatePool(VkDescriptorPoolCreateFlags)
 	{
+		CCT_GFX_AUTO_PROFILER_SCOPE();
 		std::vector<VkDescriptorPoolSize> sizes;
 		sizes.reserve(_poolSizes.sizes.size());
 		for (const auto& [descriptorType, number] : _poolSizes.sizes)
@@ -62,42 +64,71 @@ namespace cct::gfx::vk
 
 	DescriptorSetPtr DescriptorAllocator::TryAllocate(const DescriptorSetLayout& layout)
 	{
-		if (_currentPool == VK_NULL_HANDLE)
+		CCT_GFX_AUTO_PROFILER_SCOPE();
+		std::lock_guard _(_usedPoolMutex);
+		DescriptorPoolPtr currentPool;
+		std::shared_ptr<DescriptorSet> descriptorSet;
+		auto createDescriptorSet = [&]() -> std::shared_ptr<DescriptorSet>
 		{
-			_currentPool = GetPool();
-			_usedPools.push_back(_currentPool);
+			return std::make_shared<DescriptorSet>(*_device, *currentPool, layout);
+		};
+
+		auto it = _usedPools.find(std::this_thread::get_id());
+		if (it == _usedPools.end())
+		{
+			currentPool = GetPool();
+			descriptorSet = createDescriptorSet();
+			_usedPools.emplace(std::this_thread::get_id(), std::vector{currentPool});
 		}
-		auto descriptorSet = std::make_shared<DescriptorSet>(*_device, *_currentPool, layout);
-		switch (descriptorSet->GetLastResult())
+		else
 		{
-		case VK_SUCCESS:
-			return descriptorSet;
-		case VK_ERROR_FRAGMENTED_POOL:
-		case VK_ERROR_OUT_OF_POOL_MEMORY:
-			_currentPool = GetPool();
-			_usedPools.push_back(_currentPool);
-			descriptorSet = std::make_shared<DescriptorSet>(*_device, *_currentPool, layout);
-			if (descriptorSet->GetLastResult() == VK_SUCCESS)
+			// Try to create a descriptor set from an existing pool
+			bool succeed = false;
+			for (auto& pool : it->second)
 			{
-				_cache.emplace(layout.GetHash(), descriptorSet);
-				return descriptorSet;
+				currentPool = pool;
+				descriptorSet = createDescriptorSet();
+				succeed = descriptorSet && descriptorSet->GetLastResult() == VK_SUCCESS;
+				if (succeed)
+					break;
 			}
-			break;
-		default:
-			return nullptr;
+
+			// Create a new pool and allocate a descriptor set within
+			if (succeed == false)
+			{
+				currentPool = GetPool();
+				descriptorSet = createDescriptorSet();
+				succeed = descriptorSet && descriptorSet->GetLastResult() == VK_SUCCESS;
+				if (succeed == false)
+				{
+					CCT_ASSERT_FALSE("Failed to allocate descriptor set in a newly created pool"); // FIXME
+					return nullptr;
+				}
+				it->second.emplace_back(currentPool);
+			}
+		}
+
+		if (descriptorSet && descriptorSet->GetLastResult() == VK_SUCCESS)
+		{
+			_cache.emplace(layout.GetHash(), descriptorSet);
+			return descriptorSet;
 		}
 		return nullptr;
 	}
 
 	void DescriptorAllocator::Reset()
 	{
-		for (auto& pool : _usedPools)
+		std::lock_guard _(_usedPoolMutex);
+		auto it = _usedPools.find(std::this_thread::get_id());
+		if (it != _usedPools.end())
 		{
-			pool->Reset();
-			_freePools.push_back(pool);
+			for (auto& pool : it->second)
+			{
+				pool->Reset();
+				_freePools.push_back(pool);
+			}
+			_usedPools.erase(it);
 		}
-		_usedPools.clear();
-		_currentPool = VK_NULL_HANDLE;
 	}
 
 	Device& DescriptorAllocator::GetDevice() const
@@ -108,6 +139,12 @@ namespace cct::gfx::vk
 
 	DescriptorPoolPtr DescriptorAllocator::GetDescriptorPool()
 	{
-		return _currentPool;
+		/*std::lock_guard _(_usedPoolMutex);
+		auto it = _usedPools.find(std::this_thread::get_id());
+		if (it == _usedPools.end())
+			return GetPool();
+		return it->second;*/
+		CCT_ASSERT_FALSE("FIXME");
+		return nullptr;
 	}
 }

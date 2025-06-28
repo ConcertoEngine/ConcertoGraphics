@@ -25,12 +25,7 @@ namespace cct::gfx::rhi
 	class CONCERTO_GRAPHICS_RHI_BASE_API VkRHITexture : public rhi::Texture
 	{
 	public:
-		VkRHITexture(vk::Device& device,
-			const std::string& file,
-			vk::CommandBuffer& commandBuffer,
-			vk::UploadContext& uploadContext,
-			vk::Queue& queue,
-			VkImageAspectFlags aspectFlags);
+		VkRHITexture(vk::Device& device, PixelFormat format, Int32 width, Int32 height, VkImageAspectFlags aspectFlags);
 
 		const vk::Image& GetImage() const;
 		const vk::ImageView& GetImageView() const;

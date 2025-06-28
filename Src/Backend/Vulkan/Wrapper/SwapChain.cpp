@@ -22,7 +22,7 @@ namespace cct::gfx::vk
 		_swapChainImageViews(),
 		_windowExtent({window.GetWidth(), window.GetHeight()}),
 		_swapChainImageFormat(colorFormat),
-		_depthImage(device, _windowExtent, depthFormat),
+		_depthImage(device, _windowExtent, depthFormat, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT),
 		_depthImageView(device, _depthImage, VK_IMAGE_ASPECT_DEPTH_BIT),
 		_physicalDevice(device.GetPhysicalDevice()),
 		_window(window),
@@ -112,6 +112,8 @@ namespace cct::gfx::vk
 
 	bool SwapChain::ReCreate(VkFormat pixelFormat, VkFormat depthFormat)
 	{
+		CCT_GFX_AUTO_PROFILER_SCOPE();
+
 		_windowExtent = { _window.GetWidth(), _window.GetHeight() };
 		if (_handle)
 			_device->vkDestroySwapchainKHR(*_device->Get(), _handle, nullptr);
@@ -139,7 +141,7 @@ namespace cct::gfx::vk
 		}
 		_swapChainImageViews.reset();
 		_swapChainImages.reset();
-		_depthImage = Image(*GetDevice(), _windowExtent, depthFormat);
+		_depthImage = Image(*GetDevice(), _windowExtent, depthFormat, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT);
 		_depthImageView = ImageView(*GetDevice(), _depthImage, VK_IMAGE_ASPECT_DEPTH_BIT);
 		PhysicalDevice::SurfaceSupportDetails surfaceSupportDetails = _physicalDevice.GetSurfaceSupportDetails(_surface);
 		VkSwapchainCreateInfoKHR swapChainCreateInfo = {};

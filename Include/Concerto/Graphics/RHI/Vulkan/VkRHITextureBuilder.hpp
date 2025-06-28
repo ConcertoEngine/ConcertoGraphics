@@ -31,10 +31,11 @@ namespace cct::gfx::rhi
 
 		static VkRHITextureBuilder* Instance();
 
-		std::shared_ptr<rhi::Texture> BuildTexture(const std::string& path) override;
+	protected:
+		std::shared_ptr<Texture> BuildApiTexture(PixelFormat format, Int32 width, Int32 height) override;
+		void InternalCommit() override;
 	 private:
 		static VkRHITextureBuilder* _instance;
-		std::unordered_map<std::string, std::shared_ptr<Texture>> _texturesCache;
 		rhi::Device& _device;
 		vk::UploadContext& _uploadContext;
 		vk::Queue& _queue;
