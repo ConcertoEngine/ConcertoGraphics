@@ -64,6 +64,8 @@ namespace cct::gfx::vk
 
 	void CommandBuffer::Reset() const
 	{
+		CCT_GFX_AUTO_PROFILER_SCOPE();
+
 		const VkResult result = _device->vkResetCommandBuffer(_handle, 0);
 		CCT_ASSERT(result == VK_SUCCESS, "ConcertoGraphics: vkResetCommandBuffer VKResult={}", static_cast<int>(result));
 	}
@@ -118,47 +120,65 @@ namespace cct::gfx::vk
 
 	void CommandBuffer::BeginRenderPass(const VkRenderPassBeginInfo& info) const
 	{
+		CCT_GFX_AUTO_PROFILER_SCOPE();
+
 		_device->vkCmdBeginRenderPass(_handle, &info, VK_SUBPASS_CONTENTS_INLINE);
 	}
 
 	void CommandBuffer::EndRenderPass() const
 	{
+		CCT_GFX_AUTO_PROFILER_SCOPE();
+
 		_device->vkCmdEndRenderPass(_handle);
 	}
 
 	void CommandBuffer::BindPipeline(const VkPipelineBindPoint pipelineBindPoint, const Pipeline& pipeline) const
 	{
+		CCT_GFX_AUTO_PROFILER_SCOPE();
+
 		_device->vkCmdBindPipeline(_handle, pipelineBindPoint, *pipeline.Get());
 	}
 
 	void CommandBuffer::BindPipeline(const VkPipelineBindPoint pipelineBindPoint, const VkPipeline pipeline) const
 	{
+		CCT_GFX_AUTO_PROFILER_SCOPE();
+
 		_device->vkCmdBindPipeline(_handle, pipelineBindPoint, pipeline);
 	}
 
 	void CommandBuffer::Draw(const UInt32 vertexCount, const UInt32 instanceCount, const UInt32 firstVertex, const UInt32 firstInstance) const
 	{
+		CCT_GFX_AUTO_PROFILER_SCOPE();
+
 		_device->vkCmdDraw(_handle, vertexCount, instanceCount, firstVertex, firstInstance);
 	}
 
 	void CommandBuffer::DrawIndirect(const Buffer& buffer, const UInt32 offset, const UInt32 drawCount, const UInt32 stride) const
 	{
+		CCT_GFX_AUTO_PROFILER_SCOPE();
+
 		_device->vkCmdDrawIndirect(_handle, *buffer.Get(), offset, drawCount, stride);
 	}
 
 	void CommandBuffer::BindVertexBuffers(const Buffer& buffer) const
 	{
+		CCT_GFX_AUTO_PROFILER_SCOPE();
+
 		VkDeviceSize offset = 0;
 		_device->vkCmdBindVertexBuffers(_handle, 0, 1,  buffer.Get(), &offset);
 	}
 
 	void CommandBuffer::UpdatePushConstants(const PipelineLayout& pipelineLayout, const MeshPushConstants& meshPushConstants) const
 	{
+		CCT_GFX_AUTO_PROFILER_SCOPE();
+
 		_device->vkCmdPushConstants(_handle, *pipelineLayout.Get(), VK_SHADER_STAGE_VERTEX_BIT, 0,sizeof(MeshPushConstants), &meshPushConstants);
 	}
 
 	void CommandBuffer::UpdatePushConstants(const VkPipelineLayout pipelineLayout, const MeshPushConstants& meshPushConstants) const
 	{
+		CCT_GFX_AUTO_PROFILER_SCOPE();
+
 		_device->vkCmdPushConstants(_handle, pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(MeshPushConstants), &meshPushConstants);
 	}
 
@@ -166,18 +186,24 @@ namespace cct::gfx::vk
 	                                       const UInt32 firstSet, const UInt32 descriptorSetCount, const DescriptorSet& descriptorSet,
 	                                       const UInt32 dynamicOffsets) const
 	{
+		CCT_GFX_AUTO_PROFILER_SCOPE();
+
 		_device->vkCmdBindDescriptorSets(_handle, pipelineBindPoint, pipelineLayout, firstSet, descriptorSetCount, descriptorSet.Get(), 1, &dynamicOffsets);
 	}
 
 	void CommandBuffer::BindDescriptorSets(const VkPipelineBindPoint pipelineBindPoint, const VkPipelineLayout pipelineLayout,
 	                                       const UInt32 firstSet, const UInt32 descriptorSetCount, const DescriptorSet& descriptorSet) const
 	{
+		CCT_GFX_AUTO_PROFILER_SCOPE();
+
 		_device->vkCmdBindDescriptorSets(_handle, pipelineBindPoint, pipelineLayout, firstSet, descriptorSetCount, descriptorSet.Get(), 0, nullptr);
 	}
 
 	void CommandBuffer::BindDescriptorSets(const VkPipelineBindPoint pipelineBindPoint, const VkPipelineLayout pipelineLayout,
 	                                       const std::span<DescriptorSet> descriptorSets) const
 	{
+		CCT_GFX_AUTO_PROFILER_SCOPE();
+
 		std::vector<VkDescriptorSet> vkDescriptorSets;
 		vkDescriptorSets.reserve(descriptorSets.size());
 		for (const auto& descriptorSet : descriptorSets)
@@ -188,6 +214,8 @@ namespace cct::gfx::vk
 	void CommandBuffer::BindDescriptorSets(const VkPipelineBindPoint pipelineBindPoint, const VkPipelineLayout pipelineLayout,
 	                                       const std::span<DescriptorSetPtr> descriptorSets) const
 	{
+		CCT_GFX_AUTO_PROFILER_SCOPE();
+
 		std::vector<VkDescriptorSet> vkDescriptorSets;
 		vkDescriptorSets.reserve(descriptorSets.size());
 		for (const auto& descriptorSet : descriptorSets)
@@ -220,8 +248,10 @@ namespace cct::gfx::vk
 		commandPool.Reset();
 	}
 
-	void CommandBuffer::ExecuteCommands(std::span<CommandBuffer> commandBuffers)
+	void CommandBuffer::ExecuteCommands(std::span<CommandBuffer> commandBuffers) const
 	{
+		CCT_GFX_AUTO_PROFILER_SCOPE();
+
 		std::vector<VkCommandBuffer> vkCommandBuffers;
 		vkCommandBuffers.reserve(commandBuffers.size());
 

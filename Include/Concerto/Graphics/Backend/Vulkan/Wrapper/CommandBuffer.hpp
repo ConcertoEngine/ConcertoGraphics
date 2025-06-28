@@ -170,7 +170,7 @@ namespace cct::gfx::vk
 
 		void Submit(const Fence& fence, const CommandPool& commandPool, const Queue& queue);
 
-		void ExecuteCommands(std::span<CommandBuffer> commandBuffers);
+		void ExecuteCommands(std::span<CommandBuffer> commandBuffers) const;
 
 		/**
 	     * @brief Copies data from one buffer to another.

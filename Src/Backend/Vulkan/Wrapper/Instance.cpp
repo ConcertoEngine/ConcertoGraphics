@@ -84,21 +84,21 @@ namespace cct::gfx::vk
 		createInfo.ppEnabledLayerNames = layers.empty() ? VK_NULL_HANDLE : layers.data();
 		createInfo.pNext = &debugCreateInfo;
 
-		std::array enables = { VK_VALIDATION_FEATURE_ENABLE_SYNCHRONIZATION_VALIDATION_EXT };
-		VkValidationFeaturesEXT features = {};
-		features.sType = VK_STRUCTURE_TYPE_VALIDATION_FEATURES_EXT;
-		features.enabledValidationFeatureCount = enables.size();
-		features.pEnabledValidationFeatures = enables.data();
+		//std::array enables = { VK_VALIDATION_FEATURE_ENABLE_SYNCHRONIZATION_VALIDATION_EXT };
+		//VkValidationFeaturesEXT features = {};
+		//features.sType = VK_STRUCTURE_TYPE_VALIDATION_FEATURES_EXT;
+		//features.enabledValidationFeatureCount = enables.size();
+		//features.pEnabledValidationFeatures = enables.data();
 
-		if (createInfo.pNext)
-		{
-			features.pNext = createInfo.pNext;
-			createInfo.pNext = &features;
-		}
-		else
-		{
-			createInfo.pNext = &features;
-		}
+		//if (createInfo.pNext)
+		//{
+		//	features.pNext = createInfo.pNext;
+		//	createInfo.pNext = &features;
+		//}
+		//else
+		//{
+		//	createInfo.pNext = &features;
+		//}
 
 		for (auto& ext : extensions)
 			_loadedExtensions.emplace(ext);

@@ -193,6 +193,7 @@ int main()
 							lastBoundMaterial = material.get();
 							commandBuffer.BindMaterial(*material);
 						}
+						else CCT_ASSERT_FALSE("tt");
 						commandBuffer.BindVertexBuffer(subMesh->GetVertexBuffer());
 						commandBuffer.Draw(static_cast<UInt32>(subMesh->GetVertices().size()), 1, 0, 0);
 					}
