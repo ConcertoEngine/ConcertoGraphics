@@ -46,8 +46,8 @@ namespace cct::gfx::rhi
 			CCT_GFX_PROFILER_SCOPE("Load all submeshes");
 			for (auto& subMesh : meshes)
 			{
-				totalVertices += subMesh->GetVertices().size();
 				taskScheduler.AddTask([&](){
+					totalVertices += subMesh->GetVertices().size();
 					auto& materialInfo = *subMesh->GetMaterial();
 					materialInfo.vertexShaderPath = "./Shaders/tri_mesh_ssbo.nzsl";
 					materialInfo.fragmentShaderPath = materialInfo.diffuseTexturePath.empty() ? "./Shaders/default_lit.nzsl" : "./Shaders/textured_lit.nzsl";
@@ -63,6 +63,33 @@ namespace cct::gfx::rhi
 
 		taskScheduler.WaitForTasks();
 
+		{
+			CCT_GFX_PROFILER_SCOPE("Sort sub meshes by material");
+			phmap::flat_hash_map<std::size_t, std::vector<GpuSubMeshPtr>> subMeshesByMaterial;
+			for (auto& subMesh : gpuMesh->subMeshes)
+			{
+				auto hash = MaterialInfo::Hash()(*subMesh->GetMaterial());
+				auto it = subMeshesByMaterial.find(hash);
+				if (it == subMeshesByMaterial.end())
+				{
+					subMeshesByMaterial.emplace(hash, std::vector{subMesh});
+				}
+				else
+				{
+					it->second.emplace_back(subMesh);
+				}
+			}
+
+			gpuMesh->subMeshes.clear();
+
+			for (auto& [hash, subMeshes] : subMeshesByMaterial)
+			{
+				for (auto& subMesh : subMeshes)
+				{
+					gpuMesh->subMeshes.emplace_back(subMesh);
+				}
+			}
+		}
 
 		vk::Buffer stagingBuffer(vk::MakeBuffer<Vertex>(rhiDevice.GetAllocator(), totalVertices * sizeof(Vertex), VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VMA_MEMORY_USAGE_CPU_ONLY, true));
 
@@ -70,6 +97,7 @@ namespace cct::gfx::rhi
 
 		uploadContext._commandBuffer.Begin();
 		{
+			CCT_GFX_PROFILER_SCOPE("Copy vertices");
 			std::size_t padding = 0;
 
 			for (auto& gpuMeshSubMesh : gpuMesh->subMeshes)

@@ -104,6 +104,8 @@ namespace cct::gfx::rhi
 
 	void VkRHISwapChain::Present(UInt32 imageIndex)
 	{
+		CCT_GFX_AUTO_PROFILER_SCOPE();
+
 		_lastFrameIndex = _currentFrameIndex;
 		_currentFrameIndex = (_currentFrameIndex + 1) % GetImageCount();
 		SwapChainFrame& currentFrame = _frames[imageIndex];
@@ -127,6 +129,8 @@ namespace cct::gfx::rhi
 
 	void VkRHISwapChain::CreateFrameBuffers(rhi::VkRHIDevice& device)
 	{
+		CCT_GFX_AUTO_PROFILER_SCOPE();
+
 		const std::span<vk::ImageView> imagesViews = vk::SwapChain::GetImageViews();
 
 		_frameBuffers.reserve(imagesViews.size());
@@ -147,6 +151,8 @@ namespace cct::gfx::rhi
 
 	void VkRHISwapChain::CreateRenderPass()
 	{
+		CCT_GFX_AUTO_PROFILER_SCOPE();
+
 		std::vector<rhi::RenderPass::Attachment> attachment;
 		auto& colorAttachment = attachment.emplace_back();
 		colorAttachment.pixelFormat = GetPixelFormat();
@@ -226,6 +232,8 @@ namespace cct::gfx::rhi
 
 	void VkRHISwapChain::SwapChainFrame::Present()
 	{
+		CCT_GFX_AUTO_PROFILER_SCOPE();
+
 		const vk::Queue& presentQueue = _owner->GetPresentQueue();
 
 		_renderFence.Wait(-1);
@@ -263,6 +271,8 @@ namespace cct::gfx::rhi
 
 	void VkRHISwapChain::SwapChainFrame::Wait()
 	{
+		CCT_GFX_AUTO_PROFILER_SCOPE();
+
 		_renderFence.Wait(-1);
 		_renderFence.Reset();
 	}

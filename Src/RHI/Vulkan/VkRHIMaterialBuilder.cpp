@@ -90,6 +90,7 @@ namespace cct::gfx::rhi
 		}
 
 		auto vkMaterialPtr = std::make_shared<vk::VkMaterial>();
+		*static_cast<MaterialInfo*>(vkMaterialPtr.get()) = material; // burk
 		_materialsCache.emplace(vkMaterialPtr);
 		vkMaterialPtr->descriptorSets.reserve(descriptorSetLayouts.size());
 

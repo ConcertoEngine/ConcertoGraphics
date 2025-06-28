@@ -182,18 +182,18 @@ int main()
 				commandBuffer.SetScissor(dynamicScissor);
 				commandBuffer.BeginRenderPass(renderPass, currentFrame.GetFrameBuffer(), Vector3f{ 1.f, 0.f, 0.f });
 				{
-					rhi::MaterialInfo* lastBoundMaterial = nullptr;
+					std::size_t lastBoundMaterial = 0;
 					for (const auto& subMesh : gpuMesh->subMeshes)
 					{
 						const auto& material = subMesh->GetMaterial();
 						if (material == nullptr)
 							continue;
-						if (lastBoundMaterial != material.get())
+						std::size_t materialHash = rhi::MaterialInfo::Hash()(*material);
+						if (lastBoundMaterial != materialHash)
 						{
-							lastBoundMaterial = material.get();
+							lastBoundMaterial = materialHash;
 							commandBuffer.BindMaterial(*material);
 						}
-						else CCT_ASSERT_FALSE("tt");
 						commandBuffer.BindVertexBuffer(subMesh->GetVertexBuffer());
 						commandBuffer.Draw(static_cast<UInt32>(subMesh->GetVertices().size()), 1, 0, 0);
 					}

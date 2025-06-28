@@ -27,6 +27,8 @@ namespace cct::gfx::vk
 
 	void Queue::Submit(const CommandBuffer& commandBuffer, const Semaphore* presentSemaphore, const Semaphore* renderSemaphore, const Fence& renderFence) const
 	{
+		CCT_GFX_AUTO_PROFILER_SCOPE();
+
 		constexpr VkPipelineStageFlags waitStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
 		VkSubmitInfo submit = {};
 		submit.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -44,6 +46,8 @@ namespace cct::gfx::vk
 
 	bool Queue::Present(const Semaphore& renderSemaphore, SwapChain& swapchain, UInt32 swapchainImageIndex) const
 	{
+		CCT_GFX_AUTO_PROFILER_SCOPE();
+
 		VkPresentInfoKHR present = {};
 		present.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
 		present.pNext = nullptr;
