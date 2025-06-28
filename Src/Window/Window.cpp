@@ -289,14 +289,16 @@ namespace cct::gfx
 			switch (event->type)
 			{
 			case SDL_WINDOWEVENT:
+			{
+
 				if (event->window.windowID != window->GetId())
 					return 0;
 				else if (event->window.event == SDL_WINDOWEVENT_SIZE_CHANGED)
 					window->TriggerResize();
 				else if (event->window.event == SDL_WINDOWEVENT_CLOSE)
 					window->SetShouldQuit(true);
-				else return 0; // Do not trigger event
-				break;
+				return 0;
+			}
 			case SDL_MOUSEMOTION:
 			{
 				if (event->window.windowID != window->GetId())
@@ -473,7 +475,7 @@ namespace cct::gfx
 		CCT_ASSERT(_window, "ConcertoGraphics: invalid window pointer");
 		SDL_SysWMinfo wmInfo;
 		SDL_VERSION(&wmInfo.version)
-		NativeWindow nativeWindow;
+			NativeWindow nativeWindow;
 		if (SDL_GetWindowWMInfo(_window, &wmInfo)) {
 #if defined(CCT_PLATFORM_WINDOWS)
 			nativeWindow.window = wmInfo.info.win.window;
@@ -537,7 +539,7 @@ namespace cct::gfx
 
 	void Window::TriggerResize()
 	{
-		if(_resizeCallback)
+		if (_resizeCallback)
 			_resizeCallback(*this);
 	}
 }
