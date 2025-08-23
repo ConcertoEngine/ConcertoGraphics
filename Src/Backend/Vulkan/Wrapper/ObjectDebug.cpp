@@ -5,7 +5,8 @@
 
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/ObjectDebug.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Device.hpp"
-#ifdef CCT_DEBUG
+
+#ifdef CCT_ENABLE_OBJECT_DEBUG
 
 namespace
 {
@@ -151,4 +152,4 @@ namespace cct::gfx::vk
 	}
 }
 
-#endif
+#endif // CCT_ENABLE_OBJECT_DEBUG

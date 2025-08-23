@@ -11,10 +11,16 @@ add_requires("nazaraengine", { debug = is_mode("debug"), configs = { graphics = 
 option("override_runtime", { description = "Override vs runtime to MD in release and MDd in debug", default = true })
 option("examples", { description = "Build examples", default = false })
 option("profiling", { description = "Build with tracy profiler", default = false })
+option("object_debug", { description = "Build with graphics object debugging", default = is_mode("debug") })
+
 add_defines("CCT_ENABLE_ASSERTS")
 
 if is_plat("windows") and has_config("override_runtime") then
     set_runtimes(is_mode("debug") and "MDd" or "MD")
+end
+
+if has_config("object_debug") then
+    add_defines("CCT_ENABLE_OBJECT_DEBUG")
 end
 
 if has_config("profiling") then

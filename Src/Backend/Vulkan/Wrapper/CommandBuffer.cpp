@@ -91,7 +91,7 @@ namespace cct::gfx::vk
 
 		const VkResult result = _device->vkBeginCommandBuffer(_handle, &cmdBeginInfo);
 		CCT_ASSERT(result == VK_SUCCESS, "ConcertoGraphics: vkBeginCommandBuffer failed VKResult={}", static_cast<int>(result));
-#ifdef CCT_DEBUG
+#ifdef CCT_ENABLE_OBJECT_DEBUG
 		if (_device->IsExtensionEnabled(VK_EXT_DEBUG_MARKER_EXTENSION_NAME))
 		{
 			VkDebugMarkerMarkerInfoEXT markerInfo = {

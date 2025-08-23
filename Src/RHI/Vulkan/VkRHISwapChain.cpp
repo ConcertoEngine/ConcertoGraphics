@@ -222,7 +222,7 @@ namespace cct::gfx::rhi
 		_owner(&owner),
 		_imageIndex(0)
 	{
-#ifdef CCT_DEBUG
+#ifdef CCT_ENABLE_OBJECT_DEBUG
 		Cast<VkRHICommandBuffer&>(*_commandBuffer).SetDebugName("SwapChainFrameCommandBuffer");
 		_renderFence.SetDebugName("SwapChainFrameRenderFence");
 		_presentSemaphore.SetDebugName("SwapChainFramePresentSemaphore");
@@ -261,7 +261,7 @@ namespace cct::gfx::rhi
 	void VkRHISwapChain::SwapChainFrame::SetNextImageIndex(UInt32 imageIndex)
 	{
 		_imageIndex = imageIndex;
-#ifdef CCT_DEBUG
+#ifdef CCT_ENABLE_OBJECT_DEBUG
 		Cast<VkRHICommandBuffer&>(*_commandBuffer).SetDebugName(std::format("SwapChainFrameCommandBuffer[{}]", imageIndex));
 		_renderFence.SetDebugName(std::format("SwapChainFrameRenderFence {}", imageIndex));
 		_presentSemaphore.SetDebugName(std::format("SwapChainFramePresentSemaphore {}", imageIndex));

@@ -16,7 +16,7 @@ namespace cct::gfx::vk
 {
 	template<typename VkType>
 	Object<VkType>::Object(Device& device) :
-#ifdef CCT_DEBUG
+#ifdef CCT_ENABLE_OBJECT_DEBUG
 	ObjectDebug(device, TypeName<std::remove_pointer_t<std::remove_cvref_t<VkType>>>(), reinterpret_cast<void**>(&this->_handle)),
 #endif
 		_handle(nullptr),
@@ -28,7 +28,7 @@ namespace cct::gfx::vk
 
 	template<typename VkType>
 	Object<VkType>::Object(Object&& other) noexcept
-#ifdef CCT_DEBUG
+#ifdef CCT_ENABLE_OBJECT_DEBUG
 		:
 	ObjectDebug(std::move(other))
 #endif
@@ -43,7 +43,7 @@ namespace cct::gfx::vk
 	{
 		std::swap(_handle, other._handle);
 		std::swap(_device, other._device);
-#ifdef CCT_DEBUG
+#ifdef CCT_ENABLE_OBJECT_DEBUG
 		ObjectDebug::operator=(std::move(other));
 #endif
 		return *this;

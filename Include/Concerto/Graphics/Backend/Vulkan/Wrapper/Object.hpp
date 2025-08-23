@@ -14,7 +14,7 @@ namespace cct::gfx::vk
 
 	template<typename VkType>
 	class Object
-#ifdef CCT_DEBUG
+#ifdef CCT_ENABLE_OBJECT_DEBUG
 		:
 		public ObjectDebug
 #endif

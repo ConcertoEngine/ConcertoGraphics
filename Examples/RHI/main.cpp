@@ -125,6 +125,7 @@ int main()
 			cursorDisabled = !cursorDisabled;
 			window->SetCursorDisabled(cursorDisabled);
 		});
+
 		Scene sceneParameters = {};
 		sceneParameters.gpuSceneData.sunlightDirection = Vector4f{ 3.1f, 1.f, -1.f, 0 };
 		sceneParameters.gpuSceneData.ambientColor = Vector4f{ 0.f, 0.f, 0.f, 1.f };

@@ -8,7 +8,7 @@
 
 #include "Concerto/Graphics/Backend/Vulkan/Defines.hpp"
 
-#ifdef CCT_DEBUG
+#ifdef CCT_ENABLE_OBJECT_DEBUG
 
 #include <string>
 #include <string_view>
@@ -44,6 +44,6 @@ namespace cct::gfx::vk
 	};
 
 }
-#endif // CCT_DEBUG
+#endif // CCT_ENABLE_OBJECT_DEBUG
 
 #endif //CONCERTO_GRAPHICS_BACKEND_VULKAN_OBJECTDEBUG_HPP

@@ -13,7 +13,7 @@ namespace cct::gfx::vk
 		_commandBuffer(_commandPool.AllocateCommandBuffer(VK_COMMAND_BUFFER_LEVEL_PRIMARY)),
 		_nextSecondaryCommandBuffer(0)
 	{
-#ifdef CCT_DEBUG
+#ifdef CCT_ENABLE_OBJECT_DEBUG
 		_commandBuffer.SetDebugName("UploadContextCommandBuffer");
 #endif
 	}
@@ -27,7 +27,7 @@ namespace cct::gfx::vk
 		for (UInt32 i = 0; i < count - 1; ++i)
 		{
 			auto cb = _commandPool.AllocateCommandBuffer(VK_COMMAND_BUFFER_LEVEL_SECONDARY);
-#ifdef CCT_DEBUG
+#ifdef CCT_ENABLE_OBJECT_DEBUG
 			cb.SetDebugName(std::format("UploadContext::_secondCommandBuffers[{}]", i));
 #endif
 			_secondCommandBuffers.emplace_back(std::move(cb));
