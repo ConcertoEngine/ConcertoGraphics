@@ -26,6 +26,14 @@ namespace cct::gfx::vk
 
 	}
 
+	template <typename VkType>
+	Object<VkType>::~Object()
+	{
+#ifdef CCT_ENABLE_OBJECT_DEBUG
+		_handle = 0xDDDDDDDD;
+#endif // CCT_ENABLE_OBJECT_DEBUG
+	}
+
 	template<typename VkType>
 	Object<VkType>::Object(Object&& other) noexcept
 #ifdef CCT_ENABLE_OBJECT_DEBUG

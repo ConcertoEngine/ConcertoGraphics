@@ -24,7 +24,11 @@ namespace cct::gfx::vk
 
 		Object(const Object&) = delete;
 
-		virtual ~Object() = default;
+		virtual ~Object()
+#ifdef CCT_ENABLE_OBJECT_DEBUG
+		override
+#endif // CCT_ENABLE_OBJECT_DEBUG
+		;
 
 		Object(Object&&) noexcept;
 
