@@ -188,7 +188,7 @@ int main()
 						const auto& material = subMesh->GetMaterial();
 						if (material == nullptr)
 							continue;
-						std::size_t materialHash = rhi::MaterialInfo::Hash()(*material);
+						std::size_t materialHash = material->GetHash();
 						if (lastBoundMaterial != materialHash)
 						{
 							lastBoundMaterial = materialHash;

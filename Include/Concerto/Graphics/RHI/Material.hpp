@@ -16,7 +16,7 @@ namespace cct::gfx::rhi
 {
 	class CONCERTO_GRAPHICS_RHI_BASE_API MaterialInfo
 	{
-	 public:
+	public:
 		struct CONCERTO_GRAPHICS_RHI_BASE_API Hash
 		{
 			std::size_t operator()(const MaterialInfo& material) const
@@ -33,6 +33,11 @@ namespace cct::gfx::rhi
 				&& metallic == other.metallic && specular == other.specular && roughness == other.roughness
 				&& anisotropy == other.anisotropy && emissiveColor == other.emissiveColor
 				&& normalTexture == other.normalTexture;
+		}
+
+		[[nodiscard]] std::size_t GetHash() const
+		{
+			return Hash()(*this);
 		}
 
 		std::shared_ptr<Texture> diffuseTexture;
