@@ -71,11 +71,11 @@ int main()
 		}
 		std::size_t minimumAlignment = device->GetMinimumUniformBufferOffsetAlignment();
 		std::unique_ptr<rhi::SwapChain> swapChain = device->CreateSwapChain(*window);
-		rhi::RenderPass& renderPass = swapChain->GetRenderPass();
+		rhi::RenderPass* renderPass = swapChain->GetRenderPass();
 
 		std::unique_ptr<rhi::MaterialBuilder> materialBuilder = device->CreateMaterialBuilder(swapChain->GetExtent());
 		std::unique_ptr<rhi::TextureBuilder> textureBuilder = device->CreateTextureBuilder();
-		std::shared_ptr<rhi::GpuMesh> gpuMesh = device->CreateMesh("./assets/sponza/sponza.obj", *materialBuilder, renderPass);
+		std::shared_ptr<rhi::GpuMesh> gpuMesh = device->CreateMesh("./assets/sponza/sponza.obj", *materialBuilder, *renderPass);
 				
 		//GraphicPass& pbrPass = graphBuilder.AddPass("pbr", rhi::PipelineStage::AllGraphics);
 		//pbrPass.AddColorOutput("albedo", ??);
@@ -180,7 +180,7 @@ int main()
 				dynamicScissor.height = window->GetHeight();
 				commandBuffer.SetViewport(viewport);
 				commandBuffer.SetScissor(dynamicScissor);
-				commandBuffer.BeginRenderPass(renderPass, currentFrame.GetFrameBuffer(), Vector3f{ 1.f, 0.f, 0.f });
+				commandBuffer.BeginRenderPass(*renderPass, currentFrame.GetFrameBuffer(), Vector3f{ 1.f, 0.f, 0.f });
 				{
 					std::size_t lastBoundMaterial = 0;
 					for (const auto& subMesh : gpuMesh->subMeshes)

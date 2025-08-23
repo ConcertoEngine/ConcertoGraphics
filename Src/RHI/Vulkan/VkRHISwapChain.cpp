@@ -32,10 +32,10 @@ namespace cct::gfx::rhi
 		CreateFrames();
 	}
 
-	rhi::RenderPass& VkRHISwapChain::GetRenderPass()
+	rhi::RenderPass* VkRHISwapChain::GetRenderPass()
 	{
 		CCT_ASSERT(_renderPass, "ConcertoGraphics: Invalid renderpass");
-		return *_renderPass;
+		return _renderPass.get();
 	}
 
 	Vector2u VkRHISwapChain::GetExtent() const

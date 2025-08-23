@@ -22,7 +22,7 @@ namespace cct::gfx::rhi
 		inline SwapChain(PixelFormat pixelFormat, PixelFormat depthPixelFormat);
 		virtual ~SwapChain() = default;
 
-		virtual RenderPass& GetRenderPass() = 0;
+		virtual RenderPass* GetRenderPass() = 0;
 		virtual Vector2u GetExtent() const = 0;
 		virtual UInt32 GetImageCount() const = 0;
 		virtual rhi::Frame& AcquireFrame() = 0;

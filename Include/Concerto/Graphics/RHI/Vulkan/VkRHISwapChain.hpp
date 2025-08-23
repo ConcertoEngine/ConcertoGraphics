@@ -29,7 +29,7 @@ namespace cct::gfx::rhi
 	{
 	public:
 		VkRHISwapChain(rhi::VkRHIDevice& device, Window& window, PixelFormat pixelFormat, PixelFormat depthPixelFormat);
-		rhi::RenderPass& GetRenderPass() override;
+		rhi::RenderPass* GetRenderPass() override;
 		Vector2u GetExtent() const override;
 		UInt32 GetImageCount() const override;
 		Frame& AcquireFrame() override;
