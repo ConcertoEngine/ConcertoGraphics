@@ -19,11 +19,6 @@ namespace cct::gfx::rhi
 	{
 	public:
 		VkRHIRenderPass(VkRHIDevice& device, std::span<VkAttachmentDescription> attachmentDescriptions, std::span<VkSubpassDescription> subPassDescriptions, std::span<VkSubpassDependency> subPassDependencies);
-
-		~VkRHIRenderPass() override
-		{
-			CCT_BREAK_IN_DEBUGGER;
-		}
 	};
 }
 
