@@ -107,7 +107,7 @@ namespace cct::gfx::vk
 	{
 		if (!_device->IsExtensionEnabled(VK_EXT_DEBUG_MARKER_EXTENSION_NAME))
 		{
-			CCT_ASSERT_FALSE("ObjectDebug::SetDebugName is called but extension " VK_EXT_DEBUG_MARKER_EXTENSION_NAME " is not enabled");
+			//CCT_ASSERT_FALSE("ObjectDebug::SetDebugName is called but extension " VK_EXT_DEBUG_MARKER_EXTENSION_NAME " is not enabled");
 			return;
 		}
 		_debugName = name;

@@ -26,11 +26,11 @@ namespace cct::gfx::rhi
 	{
 	}
 
-	std::shared_ptr<rhi::GpuMesh> VkRHIMesh::BuildGpuMesh(rhi::MaterialBuilder& materialBuilder, const rhi::RenderPass& renderPass, rhi::Device& device)
+	std::unique_ptr<rhi::GpuMesh> VkRHIMesh::BuildGpuMesh(rhi::MaterialBuilder& materialBuilder, const rhi::RenderPass& renderPass, rhi::Device& device)
 	{
 		CCT_GFX_AUTO_PROFILER_SCOPE();
 
-		auto gpuMesh = std::make_shared<rhi::GpuMesh>();
+		auto gpuMesh = std::make_unique<rhi::GpuMesh>();
 
 		auto& meshes = this->GetSubMeshes();
 		rhi::VkRHIDevice& rhiDevice = Cast<rhi::VkRHIDevice&>(device);
@@ -40,9 +40,9 @@ namespace cct::gfx::rhi
 
 		Nz::TaskScheduler taskScheduler(std::thread::hardware_concurrency());
 
-		std::mutex subMeshesMutex;
 		std::atomic<std::size_t> totalVertices = 0;
 		{
+			std::mutex subMeshesMutex;
 			CCT_GFX_PROFILER_SCOPE("Load all submeshes");
 			for (auto& subMesh : meshes)
 			{

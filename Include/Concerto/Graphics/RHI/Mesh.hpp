@@ -37,7 +37,7 @@ namespace cct::gfx::rhi
 
 		[[nodiscard]] bool LoadFromFile(const std::string& fileName);
 
-		[[nodiscard]] virtual std::shared_ptr<GpuMesh> BuildGpuMesh(rhi::MaterialBuilder& materialBuilder, const rhi::RenderPass& renderPass, rhi::Device& device) = 0;
+		[[nodiscard]] virtual std::unique_ptr<GpuMesh> BuildGpuMesh(rhi::MaterialBuilder& materialBuilder, const rhi::RenderPass& renderPass, rhi::Device& device) = 0;
 	private:
 		std::string _path;
 		std::vector<std::shared_ptr<rhi::SubMesh>> _subMeshes;

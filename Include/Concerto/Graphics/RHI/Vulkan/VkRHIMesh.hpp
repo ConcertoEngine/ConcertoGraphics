@@ -28,7 +28,7 @@ namespace cct::gfx::rhi
 		explicit VkRHIMesh(std::string filePath);
 		explicit VkRHIMesh(Vertices vertices);
 
-		std::shared_ptr<rhi::GpuMesh> BuildGpuMesh(rhi::MaterialBuilder& materialBuilder, const rhi::RenderPass& renderPass, rhi::Device& device) override;
+		std::unique_ptr<rhi::GpuMesh> BuildGpuMesh(rhi::MaterialBuilder& materialBuilder, const rhi::RenderPass& renderPass, rhi::Device& device) override;
 	};
 	using MeshPtr = std::shared_ptr<VkRHIMesh>;
 }

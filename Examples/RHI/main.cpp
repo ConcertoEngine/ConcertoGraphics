@@ -75,9 +75,8 @@ int main()
 
 		std::unique_ptr<rhi::MaterialBuilder> materialBuilder = device->CreateMaterialBuilder(swapChain->GetExtent());
 		std::unique_ptr<rhi::TextureBuilder> textureBuilder = device->CreateTextureBuilder();
-		rhi::VkRHIMesh mesh("./assets/sponza/sponza.obj"); //fixme
-		std::shared_ptr<rhi::GpuMesh> gpuMesh = mesh.BuildGpuMesh(*materialBuilder, renderPass, *device);
-		
+		std::shared_ptr<rhi::GpuMesh> gpuMesh = device->CreateMesh("./assets/sponza/sponza.obj", *materialBuilder, renderPass);
+				
 		//GraphicPass& pbrPass = graphBuilder.AddPass("pbr", rhi::PipelineStage::AllGraphics);
 		//pbrPass.AddColorOutput("albedo", ??);
 		//pbrPass.AddColorOutput("normal", ??);
@@ -162,6 +161,7 @@ int main()
 			cameraBuffer->Write<GPUCamera>(camera, rhi::PadUniformBuffer(sizeof(GPUCamera), minimumAlignment * currentFrame.GetCurrentFrameIndex()));
 			sceneBuffer->Write(sceneParameters.gpuSceneData);
 			objectsBuffer->Write(modelMatrix);
+			renderPass = swapChain->GetRenderPass();
 			commandBuffer.Reset();
 			commandBuffer.Begin();
 			{

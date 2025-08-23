@@ -148,6 +148,12 @@ namespace cct::gfx::rhi
 		return vk::Device::GetPhysicalDevice().GetProperties().limits.minUniformBufferOffsetAlignment;
 	}
 
+	std::unique_ptr<GpuMesh> VkRHIDevice::CreateMesh(const std::string& meshPath, rhi::MaterialBuilder& materialBuilder, const RenderPass& renderPass)
+	{
+		VkRHIMesh mesh(meshPath);
+		return mesh.BuildGpuMesh(materialBuilder, renderPass, *this);
+	}
+
 	vk::UploadContext& VkRHIDevice::GetUploadContext()
 	{
 		if (_uploadContext.has_value() == false)

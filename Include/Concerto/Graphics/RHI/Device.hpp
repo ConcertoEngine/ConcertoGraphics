@@ -19,6 +19,7 @@
 #include "Concerto/Graphics/RHI/MaterialBuilder.hpp"
 #include "Concerto/Graphics/RHI/CommandPool.hpp"
 #include "Concerto/Graphics/RHI/Buffer.hpp"
+#include "Concerto/Graphics/RHI/GpuMesh.hpp"
 
 namespace cct::gfx
 {
@@ -50,6 +51,7 @@ namespace cct::gfx::rhi
 		virtual std::unique_ptr<CommandPool> CreateCommandPool(rhi::QueueFamily family) = 0;
 		virtual std::unique_ptr<Buffer> CreateBuffer(rhi::BufferUsageFlags usage, UInt32 allocationSize, bool allowBufferMapping) = 0;
 		virtual std::size_t GetMinimumUniformBufferOffsetAlignment() const = 0;
+		virtual std::unique_ptr<GpuMesh> CreateMesh(const std::string& meshPath, rhi::MaterialBuilder& materialBuilder, const RenderPass& renderPass) = 0;
 	};
 }
 
