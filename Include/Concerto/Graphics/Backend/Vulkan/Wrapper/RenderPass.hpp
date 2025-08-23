@@ -32,7 +32,7 @@ namespace cct::gfx::vk
 		 */
 		RenderPass(Device& device, std::span<VkAttachmentDescription> attachmentDescriptions, std::span<VkSubpassDescription> subPassDescriptions, std::span<VkSubpassDependency> subPassDependencies);
 
-		~RenderPass();
+		~RenderPass() override;
 
 		RenderPass(RenderPass&&) = default;
 

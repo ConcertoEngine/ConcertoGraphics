@@ -5,20 +5,24 @@
 #ifndef CONCERTO_GRAPHICS_BACKEND_VULKAN_OBJECTDEBUG_HPP
 #define CONCERTO_GRAPHICS_BACKEND_VULKAN_OBJECTDEBUG_HPP
 
-#include <string_view>
-#include <string>
 
 #include "Concerto/Graphics/Backend/Vulkan/Defines.hpp"
 
+#ifdef CCT_DEBUG
+
+#include <string>
+#include <string_view>
+#include <thread>
+
 namespace cct::gfx::vk
 {
-#ifdef CCT_DEBUG
 
 	class Device;
 	class CONCERTO_GRAPHICS_VULKAN_BACKEND_API ObjectDebug
 	{
 	public:
 		ObjectDebug(Device& device, std::string_view typeName, void** vkHandle);
+		virtual ~ObjectDebug() = default;
 		VkDebugReportObjectTypeEXT GetDebugReportObjectType() const;
 		UInt64 GetObject() const;
 
@@ -39,7 +43,7 @@ namespace cct::gfx::vk
 		std::thread::id _createdOnThread;
 	};
 
-#endif
 }
+#endif // CCT_DEBUG
 
 #endif //CONCERTO_GRAPHICS_BACKEND_VULKAN_OBJECTDEBUG_HPP

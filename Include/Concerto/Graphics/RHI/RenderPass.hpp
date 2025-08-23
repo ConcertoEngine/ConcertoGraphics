@@ -16,6 +16,7 @@ namespace cct::gfx::rhi
 	class CONCERTO_GRAPHICS_RHI_BASE_API RenderPass
 	{
 	public:
+		virtual ~RenderPass() = default;
 		struct Attachment
 		{
 			PixelFormat pixelFormat;

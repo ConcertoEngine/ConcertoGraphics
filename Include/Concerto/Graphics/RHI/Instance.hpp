@@ -18,7 +18,7 @@ namespace cct::gfx::rhi
 	class APIImpl;
 	class DisplayManager;
 
-	class CONCERTO_GRAPHICS_RHI_BASE_API Instance
+	class CONCERTO_GRAPHICS_RHI_BASE_API final Instance
 	{
 	public:
 		enum class Backend

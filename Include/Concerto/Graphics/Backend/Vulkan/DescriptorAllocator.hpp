@@ -7,6 +7,7 @@
 
 #include <vector>
 #include <unordered_map>
+#include <mutex>
 
 #include "Concerto/Graphics/Backend/Vulkan/Defines.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/DescriptorPool.hpp"

@@ -24,7 +24,7 @@ namespace cct::gfx::vk
 
 		Object(const Object&) = delete;
 
-		~Object() = default;
+		virtual ~Object() = default;
 
 		Object(Object&&) noexcept;
 

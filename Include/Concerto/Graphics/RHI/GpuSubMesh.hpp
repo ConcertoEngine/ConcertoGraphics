@@ -19,6 +19,7 @@ namespace cct::gfx::rhi
 	{
 	public:
 		GpuSubMesh(rhi::SubMeshPtr meshPtr, rhi::MaterialPtr material);
+		virtual ~GpuSubMesh() = default;
 
 		[[nodiscard]] const Vertices& GetVertices() const;
 		[[nodiscard]] const rhi::MaterialPtr& GetMaterial() const;
