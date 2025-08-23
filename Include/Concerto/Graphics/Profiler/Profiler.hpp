@@ -10,9 +10,11 @@
 #include <source_location>
 #define CCT_GFX_PROFILER_SCOPE(name) ZoneScopedN(name)
 #define CCT_GFX_AUTO_PROFILER_SCOPE() ZoneScoped
+#define CCT_GFX_FRAME_MARK FrameMark
 #else
 #define CCT_GFX_PROFILER_SCOPE(name)
 #define CCT_GFX_AUTO_PROFILER_SCOPE()
+#define CCT_GFX_FRAME_MARK
 #endif
 
 

@@ -240,7 +240,7 @@ namespace cct::gfx::rhi
 		_renderFence.Reset();
 		presentQueue.Submit(Cast<VkRHICommandBuffer&>(*_commandBuffer), &_presentSemaphore, &_renderSemaphore, _renderFence);
 		_owner->Present(_imageIndex);
-		FrameMark;
+		CCT_GFX_FRAME_MARK;
 	}
 
 	rhi::CommandBuffer& VkRHISwapChain::SwapChainFrame::GetCommandBuffer()
