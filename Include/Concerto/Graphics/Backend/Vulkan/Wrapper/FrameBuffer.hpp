@@ -13,40 +13,20 @@
 namespace cct::gfx::vk
 {
 	class Device;
-
 	class RenderPass;
-
 	class ImageView;
 
-	/**
-	* @class FrameBuffer
-	* @brief This class represents a VkFramebuffer.
-	* A frame buffer is a collection of images that are used as the destination for rendering.
-	*
-	* This class is a Wrapper around the VkFramebuffer handle and provides
-	* a simpler interface for interacting with frame buffers.
-	*/
+
 	class CONCERTO_GRAPHICS_VULKAN_BACKEND_API FrameBuffer : public Object<VkFramebuffer>
 	{
 	public:
-		/**
-		* @brief Constructs a new frame buffer.
-		*
-		* @param device The device to create the frame buffer on.
-		* @param renderPass The render pass the frame buffer will be used with.
-		* @param attachments
-		* @param extent The dimensions of the frame buffer.
-		*/
 		FrameBuffer(Device& device, const RenderPass& renderPass, const std::vector<VkImageView>& attachments, VkExtent2D extent);
-
-		~FrameBuffer();
+		~FrameBuffer() override;
 
 		FrameBuffer(FrameBuffer&&) noexcept = default;
-
 		FrameBuffer(const FrameBuffer&) = delete;
 
 		FrameBuffer& operator=(FrameBuffer&&) noexcept = default;
-
 		FrameBuffer& operator=(const FrameBuffer&) = delete;
 
 		VkExtent2D GetExtent2D() const;

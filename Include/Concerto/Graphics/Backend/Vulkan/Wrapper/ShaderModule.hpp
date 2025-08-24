@@ -17,34 +17,18 @@ namespace cct::gfx::vk
 {
 	class Device;
 
-	/**
-	 * @class ShaderModule
-	 * @brief A class representing a ShaderModule.
-	 *
-	 * A ShaderModule is a class that encapsulate the creation, loading and handling of a VkShaderModule object.
-	 */
 	class CONCERTO_GRAPHICS_VULKAN_BACKEND_API ShaderModule : public Object<VkShaderModule>
 	{
 	public:
-		/**
-		 * @brief Constructs a ShaderModule object.
-		 * @param device The Device object associated with the ShaderModule.
-		 * @param shaderPath The path to the shader source file.
-		 * @param stageFlags The stage flags of the shader.
-		 * @param entryPoint The entry point name of the shader.
-		 */
 		ShaderModule(Device& device, const std::string& shaderPath, VkShaderStageFlagBits stageFlags, std::string entryPoint = "main");
-
 		ShaderModule(Device& device, const std::vector<UInt32>& bytes, VkShaderStageFlagBits stageFlags, std::string entryPoint = "main");
 
-		~ShaderModule();
+		~ShaderModule() override;
 
 		ShaderModule(ShaderModule&&) = default;
-
 		ShaderModule(const ShaderModule&) = delete;
 
 		ShaderModule& operator=(ShaderModule&&) = default;
-
 		ShaderModule& operator=(const ShaderModule&) = delete;
 
 		[[nodiscard]] VkPipelineShaderStageCreateInfo GetPipelineShaderStageCreateInfo() const;

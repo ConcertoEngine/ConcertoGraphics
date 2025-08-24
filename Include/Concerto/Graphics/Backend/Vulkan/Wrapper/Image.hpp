@@ -25,25 +25,16 @@ namespace cct::gfx::vk
 		Image(Device& device, VkExtent2D extent, VkImage image, VkFormat imageFormat);
 		Image(Device& device, VkExtent2D extent, VkFormat format, VkImageUsageFlags usageFlags);
 
-		~Image();
+		~Image() override;
 
 		Image(Image&&) noexcept;
-
 		Image(const Image&) = delete;
 
 		Image& operator=(Image&&) noexcept;
-
 		Image& operator=(const Image&) = delete;
 
-		/**
-		* @brief Gets the format of the image.
-		*
-		* @return The format of the image.
-		*/
 		[[nodiscard]] VkFormat GetFormat() const;
-
 		VkExtent2D GetExtent() const;
-
 	private:
 		bool _isAllocated;
 		VkFormat _imageFormat = {};

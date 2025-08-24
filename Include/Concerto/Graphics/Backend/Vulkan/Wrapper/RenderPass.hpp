@@ -16,30 +16,16 @@ namespace cct::gfx::vk
 {
 	class Device;
 
-	/**
-	 * @class RenderPass
-	 * @brief A class representing a render pass.
-	 *
-	 * A render pass defines a set of attachments, subpasses and dependencies that describe the rendering operations that will be performed.
-	 */
 	class CONCERTO_GRAPHICS_VULKAN_BACKEND_API RenderPass : public Object<VkRenderPass>
 	{
 	public:
-		/**
-		 * @brief Constructs a RenderPass object.
-		 * @param device The Device object associated with the render pass.
-		 * @param swapchain The Swapchain object associated with the render pass.
-		 */
 		RenderPass(Device& device, std::span<VkAttachmentDescription> attachmentDescriptions, std::span<VkSubpassDescription> subPassDescriptions, std::span<VkSubpassDependency> subPassDependencies);
-
 		~RenderPass() override;
 
 		RenderPass(RenderPass&&) = default;
-
 		RenderPass(const RenderPass&) = delete;
 
 		RenderPass& operator=(RenderPass&&) = default;
-
 		RenderPass& operator=(const RenderPass&) = delete;
 
 	private:

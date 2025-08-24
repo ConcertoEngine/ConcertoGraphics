@@ -18,25 +18,17 @@ namespace cct::gfx::vk
 {
 	class Device;
 
-	/**
-	* @class DescriptorSetLayout
-	* @brief This class represents a VkDescriptorSetLayout.
-	* A descriptor set layout defines the layout of the descriptors within a descriptor set.
-	*
-	* @note This class is not copyable, but it is movable.
-	*/
 	class CONCERTO_GRAPHICS_VULKAN_BACKEND_API DescriptorSetLayout : public Object<VkDescriptorSetLayout>
 	{
 	public:
 		DescriptorSetLayout(Device& device, std::vector<VkDescriptorSetLayoutBinding> bindings);
+		~DescriptorSetLayout() override;
 
 		DescriptorSetLayout(DescriptorSetLayout&&) = default;
-
 		DescriptorSetLayout(const DescriptorSetLayout&) = delete;
 
 		DescriptorSetLayout& operator=(DescriptorSetLayout&&) = default;
 
-		~DescriptorSetLayout();
 
 		[[nodiscard]] const std::vector<VkDescriptorSetLayoutBinding>& GetBindings() const;
 

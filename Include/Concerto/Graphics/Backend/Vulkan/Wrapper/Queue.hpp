@@ -17,16 +17,6 @@ namespace cct::gfx::vk
 	class Semaphore;
 	class Fence;
 
-	/**
-	* @class Queue
-	* @brief Represents a queue for a specific queue family on a device.
-	*
-	*  A queue is a representation of a queue on a device, which can be used to submit commands to the device.
-	*  Queue objects are associated with a specific queue family on the device, which determines the types of operations that can be performed on the queue.
-	*
-	*  The Queue class provides an interface to submit commands to the device and present images to the swapchain.
-	*
-	*/
 	class CONCERTO_GRAPHICS_VULKAN_BACKEND_API Queue : public Object<VkQueue>
 	{
 	 public:
@@ -38,15 +28,12 @@ namespace cct::gfx::vk
 		};
 
 		explicit Queue(Device& device, UInt32 queueFamilyIndex);
-
-		~Queue() = default;
+		~Queue() override = default;
 
 		Queue(Queue&&) = default;
-
 		Queue(const Queue&) = delete;
 
 		Queue& operator=(Queue&&) = default;
-
 		Queue& operator=(const Queue&) = delete;
 		
 		[[nodiscard]] UInt32 GetFamilyIndex() const;

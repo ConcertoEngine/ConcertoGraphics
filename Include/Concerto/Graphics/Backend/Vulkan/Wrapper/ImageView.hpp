@@ -19,15 +19,12 @@ namespace cct::gfx::vk
 	{
 	 public:
 		ImageView(Device& device, Image& image, VkImageAspectFlags aspectFlags);
-
-		~ImageView();
+		~ImageView() override;
 
 		ImageView(const ImageView&) = delete;
-
 		ImageView(ImageView&&) noexcept = default;
 
 		ImageView& operator=(const ImageView&) = delete;
-
 		ImageView& operator=(ImageView&&) noexcept = default;
 	private:
 		Image* _image;
