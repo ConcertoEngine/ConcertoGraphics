@@ -57,15 +57,4 @@ namespace cct::gfx::vk
 			return;
 		vmaDestroyAllocator(_handle);
 	}
-
-	Device& Allocator::GetDevice() const
-	{
-		CCT_ASSERT(_device != nullptr, "ConcertoGraphics: device is null");
-		return *_device;
-	}
-
-	void Allocator::SetDevice(Device* device)
-	{
-		_device = device;
-	}
 }

@@ -44,15 +44,7 @@ namespace cct::gfx::vk
 
 		Allocator& operator=(Allocator&&) = default;
 
-		~Allocator();
-
-		/**
-		* @brief Returns the device used to create the allocator
-		* @return Reference to the Device object used to create the allocator.
-		*/
-		[[nodiscard]] Device& GetDevice() const;
-
-		void SetDevice(Device* device);
+		~Allocator() override;
 	};
 }
 

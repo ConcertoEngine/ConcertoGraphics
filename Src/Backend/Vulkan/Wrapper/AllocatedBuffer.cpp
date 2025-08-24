@@ -13,7 +13,7 @@ namespace cct::gfx::vk
 {
 
 	Buffer::Buffer(Allocator& allocator, std::size_t allocSize, VkBufferUsageFlags usage, VmaMemoryUsage memoryUsage, bool allowBufferMapping) :
-		Object(allocator.GetDevice()),
+		Object(*allocator.GetDevice()),
 		_allocatedSize(allocSize),
 		_allocator(&allocator),
 		_usage(usage)
@@ -64,7 +64,7 @@ namespace cct::gfx::vk
 			CCT_ASSERT_FALSE("ConcertoGraphics: Trying to destroy a buffer that is mapped");
 			return;
 		}
-		_allocator->GetDevice().WaitIdle();
+		_allocator->GetDevice()->WaitIdle();
 		vmaDestroyBuffer(*_allocator->Get(), _handle, _allocation);
 	}
 
