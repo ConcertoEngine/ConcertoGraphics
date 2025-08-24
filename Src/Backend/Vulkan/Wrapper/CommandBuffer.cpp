@@ -108,7 +108,7 @@ namespace cct::gfx::vk
 	void CommandBuffer::End() const
 	{
 		CCT_GFX_AUTO_PROFILER_SCOPE();
-#ifdef CCT_DEBUG
+#ifdef CCT_ENABLE_OBJECT_DEBUG
 		if (_device->IsExtensionEnabled(VK_EXT_DEBUG_MARKER_EXTENSION_NAME))
 		{
 			_device->vkCmdDebugMarkerEndEXT(_handle);
