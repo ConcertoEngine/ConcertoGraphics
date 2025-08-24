@@ -118,6 +118,12 @@ namespace cct::gfx::vk
 		return _physicalDevice;
 	}
 
+	Instance& PhysicalDevice::GetInstance() const
+	{
+		CCT_ASSERT(_instance != VK_NULL_HANDLE, "ConcertoGraphics: instance handle is null");
+		return *_instance;
+	}
+
 	std::span<const char*> PhysicalDevice::GetExtensionPropertiesNames() const
 	{
 		if (_extensionPropertiesNames)
