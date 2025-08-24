@@ -19,6 +19,9 @@ namespace cct::gfx::vk
 	class CONCERTO_GRAPHICS_VULKAN_BACKEND_API Image : public Object<VkImage>
 	{
 	public:
+		/**
+		 * @brief Create an Image from an existing VkImage eg: from SwapChain
+		 */
 		Image(Allocator& allocator, VkExtent2D extent, VkImage image, VkFormat imageFormat);
 		Image(Allocator& allocator, VkExtent2D extent, VkFormat format, VkImageUsageFlags usageFlags);
 
