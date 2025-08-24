@@ -16,24 +16,9 @@ namespace cct::gfx::vk
 	class PhysicalDevice;
 	class Device;
 
-	/**
-	* @class Allocator
-	* @brief Represents a VmaAllocator object.
-	*
-	*  Allocator class is a Wrapper for VmaAllocator, it encapsulate the VmaAllocator object,
-	*  it also provide some utility functions for creating the VmaAllocator.
-	*
-	*/
 	class CONCERTO_GRAPHICS_VULKAN_BACKEND_API Allocator : public Object<VmaAllocator>
 	{
 	public:
-		/**
-		* @brief Constructs a new Allocator object.
-		*
-		* @param physicalDevice The PhysicalDevice object used to create the allocator.
-		* @param device The Device object used to create the allocator.
-		* @param instance The Instance object used to create the allocator.
-		*/
 		Allocator(PhysicalDevice& physicalDevice, Device& device, Instance& instance);
 
 		Allocator(const Allocator&) = delete;
