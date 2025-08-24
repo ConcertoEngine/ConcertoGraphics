@@ -18,11 +18,11 @@
 namespace cct::gfx::vk
 {
 	std::vector<const char*> deviceExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME, VK_EXT_DEBUG_MARKER_EXTENSION_NAME };
-	Device::Device(PhysicalDevice& physicalDevice, Instance& instance) :
+
+	Device::Device(PhysicalDevice& physicalDevice) :
 		_physicalDevice(&physicalDevice),
 		_device(VK_NULL_HANDLE),
-		_allocator(nullptr),
-		_instance(&instance)
+		_allocator(nullptr)
 	{
 		std::span<VkQueueFamilyProperties> queueFamilyProperties = _physicalDevice->GetQueueFamilyProperties();
 		std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
@@ -62,7 +62,7 @@ namespace cct::gfx::vk
 		createInfo.pNext = &shader_draw_parameters_features;
 		createInfo.enabledExtensionCount = static_cast<UInt32>(deviceExtensions.size());
 		createInfo.ppEnabledExtensionNames = deviceExtensions.data();
-		const VkResult result = instance.vkCreateDevice(*_physicalDevice->Get(), &createInfo, nullptr, &_device);
+		const VkResult result = physicalDevice.GetInstance().vkCreateDevice(*_physicalDevice->Get(), &createInfo, nullptr, &_device);
 		CCT_ASSERT(result == VK_SUCCESS, "Error cannot create logical device: VkResult={}", static_cast<int>(result));
 		if (result != VK_SUCCESS)
 		{
@@ -91,7 +91,7 @@ namespace cct::gfx::vk
 
 		#include "Concerto/Graphics/Backend/Vulkan/Wrapper/DeviceFunction.hpp"
 
-		CreateAllocator(instance);
+		CreateAllocator();
 	}
 
 	UInt32 Device::GetQueueFamilyIndex(Queue::Type queueType) const
@@ -175,8 +175,8 @@ namespace cct::gfx::vk
 
 	Instance& Device::GetInstance() const
 	{
-		CCT_ASSERT(_instance, "ConcertoGraphics: Invalid Vulkan instance.");
-		return *_instance;
+		CCT_ASSERT(_physicalDevice, "ConcertoGraphics: Invalid physical device.");
+		return _physicalDevice->GetInstance();
 	}
 
 	bool Device::IsExtensionEnabled(const std::string& ext) const
@@ -184,9 +184,9 @@ namespace cct::gfx::vk
 		return _extensions.contains(ext);
 	}
 
-	void Device::CreateAllocator(Instance& instance)
+	void Device::CreateAllocator()
 	{
-		_allocator = std::make_unique<Allocator>(*_physicalDevice, *this, instance);
+		_allocator = std::make_unique<Allocator>(*this);
 		CCT_ASSERT(_allocator != nullptr, "ConcertoGraphics: Cannot create allocator");
 	}
 

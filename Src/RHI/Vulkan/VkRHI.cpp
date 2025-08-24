@@ -81,7 +81,7 @@ namespace cct::gfx
 		{
 			if (i != index)
 				continue;
-			device = std::make_unique<rhi::VkRHIDevice>(physicalDevices[i], *_instance);
+			device = std::make_unique<rhi::VkRHIDevice>(physicalDevices[i]);
 		}
 		CCT_ASSERT(device, "ConcertoGraphics: Unable to create Vulkan device");
 		return std::move(device);

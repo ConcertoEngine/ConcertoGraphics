@@ -56,7 +56,7 @@ namespace cct::gfx::vk
 			rhi::DeviceType deviceType = static_cast<rhi::DeviceType>(properties.deviceType);
 			if (deviceType != type)
 				continue;
-			it = _devices.emplace(deviceType, Device(physicalDevice, _vkInstance));
+			it = _devices.emplace(deviceType, Device(physicalDevice));
 			return &it->second;
 		}
 		return nullptr;

@@ -17,9 +17,12 @@
 
 namespace cct::gfx::vk
 {
-	Allocator::Allocator(PhysicalDevice& physicalDevice, Device& device, Instance& instance) :
+	Allocator::Allocator(Device& device) :
 		Object<VmaAllocator>(device)
 	{
+		PhysicalDevice& physicalDevice = device.GetPhysicalDevice();
+		Instance& instance = physicalDevice.GetInstance();
+
 		VmaVulkanFunctions vulkanFunctions {
 			.vkGetInstanceProcAddr = Instance::vkGetInstanceProcAddr,
 			.vkGetDeviceProcAddr = instance.vkGetDeviceProcAddr,

@@ -17,7 +17,7 @@ namespace cct::gfx::rhi
 	class CONCERTO_GRAPHICS_RHI_BASE_API VkRHIDevice final : public rhi::Device, public vk::Device
 	{
 	public:
-		VkRHIDevice(vk::PhysicalDevice& physicalDevice, vk::Instance& instance);
+		VkRHIDevice(vk::PhysicalDevice& physicalDevice);
 
 		// overrides
 		std::unique_ptr<SwapChain> CreateSwapChain(Window& window, PixelFormat pixelFormat = PixelFormat::BGRA8_SRGB, PixelFormat depthPixelFormat = PixelFormat::D32f) override;
@@ -32,11 +32,10 @@ namespace cct::gfx::rhi
 		std::unique_ptr<GpuMesh> CreateMesh(const std::string& meshPath, rhi::MaterialBuilder& materialBuilder, const RenderPass& renderPass) override;
 
 		vk::UploadContext& GetUploadContext();
-		vk::Instance& GetVkInstance();
+		vk::Instance& GetVkInstance() const;
 
 	private:
 		VkSurfaceKHR _surface;
-		vk::Instance* _vkInstance;
 		std::optional<vk::UploadContext> _uploadContext;
 	};
 }

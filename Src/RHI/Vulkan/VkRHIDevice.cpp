@@ -21,16 +21,14 @@
 
 namespace cct::gfx::rhi
 {
-	VkRHIDevice::VkRHIDevice(vk::PhysicalDevice& physicalDevice, vk::Instance& instance) :
-		vk::Device(physicalDevice, instance),
-		_surface(nullptr),
-		_vkInstance(&instance)
+	VkRHIDevice::VkRHIDevice(vk::PhysicalDevice& physicalDevice) :
+		vk::Device(physicalDevice),
+		_surface(nullptr)
 	{
 	}
 
 	std::unique_ptr<SwapChain> VkRHIDevice::CreateSwapChain(Window& window, PixelFormat pixelFormat, PixelFormat depthPixelFormat)
 	{
-		CCT_ASSERT(_vkInstance, "ConcertoGraphics: Invalid Vulkan instance");
 		auto swapChain = std::make_unique<VkRHISwapChain>(*this, window, pixelFormat, depthPixelFormat);
 		if (swapChain->GetLastResult() != VK_SUCCESS)
 		{
@@ -161,9 +159,8 @@ namespace cct::gfx::rhi
 		return _uploadContext.value();
 	}
 
-	vk::Instance& VkRHIDevice::GetVkInstance()
+	vk::Instance& VkRHIDevice::GetVkInstance() const
 	{
-		CCT_ASSERT(_vkInstance, "ConcertoGraphics: Invalid Vulkan instance.");
-		return *_vkInstance;
+		return vk::Device::GetInstance();
 	}
 } //cct::Graphics::RHI

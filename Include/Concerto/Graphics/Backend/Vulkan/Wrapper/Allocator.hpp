@@ -19,7 +19,7 @@ namespace cct::gfx::vk
 	class CONCERTO_GRAPHICS_VULKAN_BACKEND_API Allocator : public Object<VmaAllocator>
 	{
 	public:
-		Allocator(PhysicalDevice& physicalDevice, Device& device, Instance& instance);
+		Allocator(Device& device);
 
 		Allocator(const Allocator&) = delete;
 

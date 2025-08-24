@@ -28,7 +28,7 @@ namespace cct::gfx::vk
 	public:
 		Device() = delete;
 
-		Device(PhysicalDevice& physicalDevice, Instance& instance);
+		Device(PhysicalDevice& physicalDevice);
 
 		[[nodiscard]] UInt32 GetQueueFamilyIndex(Queue::Type queueType) const;
 		[[nodiscard]] UInt32 GetQueueFamilyIndex(UInt32 queueFlag) const;
@@ -52,13 +52,12 @@ namespace cct::gfx::vk
 
 		#include "Concerto/Graphics/Backend/Vulkan/Wrapper/DeviceFunction.hpp"
 	private:
-		void CreateAllocator(Instance& instance);
+		void CreateAllocator();
 
 		PhysicalDevice* _physicalDevice;
 		VkDevice _device;
 		std::unique_ptr<Allocator> _allocator;
 		std::unordered_map<Queue::Type, Queue> _queues;
-		Instance* _instance;
 		std::unordered_set<std::string> _extensions;
 	};
 
