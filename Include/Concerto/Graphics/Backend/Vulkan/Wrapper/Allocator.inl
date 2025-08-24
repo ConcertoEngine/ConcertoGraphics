@@ -27,6 +27,11 @@ namespace cct::gfx::vk
 	{
 		return { *this, sizeof(T) * objNumber, usage, memoryUsage, allowBufferMapping };
 	}
+
+	inline Image Allocator::AllocateImage(VkExtent2D extent, VkFormat format, VkImageUsageFlags usageFlags)
+	{
+		return { *this, extent, format, usageFlags };
+	}
 }
 
 #endif //CONCERTO_GRAPHICS_ALLOCATOR_INL

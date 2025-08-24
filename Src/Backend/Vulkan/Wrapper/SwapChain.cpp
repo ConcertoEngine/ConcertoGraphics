@@ -22,7 +22,7 @@ namespace cct::gfx::vk
 		m_swapChainImageViews(),
 		m_windowExtent({window.GetWidth(), window.GetHeight()}),
 		m_swapChainImageFormat(colorFormat),
-		m_depthImage(device, m_windowExtent, depthFormat, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT),
+		m_depthImage(device.GetAllocator().AllocateImage(m_windowExtent, depthFormat, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT)),
 		m_depthImageView(device, m_depthImage, VK_IMAGE_ASPECT_DEPTH_BIT),
 		m_physicalDevice(device.GetPhysicalDevice()),
 		m_window(window),
@@ -51,7 +51,7 @@ namespace cct::gfx::vk
 		std::vector<Image> images;
 		images.reserve(imageCount);
 		for (auto& image: swapChainImages)
-			images.emplace_back(*m_device, m_windowExtent, image, m_swapChainImageFormat);
+			images.emplace_back(m_device->GetAllocator(), m_windowExtent, image, m_swapChainImageFormat);
 		m_swapChainImages = std::move(images);
 		return m_swapChainImages.value();
 	}
@@ -141,7 +141,7 @@ namespace cct::gfx::vk
 		}
 		m_swapChainImageViews.reset();
 		m_swapChainImages.reset();
-		m_depthImage = Image(*GetDevice(), m_windowExtent, depthFormat, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT);
+		m_depthImage = GetDevice()->GetAllocator().AllocateImage(m_windowExtent, depthFormat, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT);
 		m_depthImageView = ImageView(*GetDevice(), m_depthImage, VK_IMAGE_ASPECT_DEPTH_BIT);
 		PhysicalDevice::SurfaceSupportDetails surfaceSupportDetails = m_physicalDevice.GetSurfaceSupportDetails(m_surface);
 		VkSwapchainCreateInfoKHR swapChainCreateInfo = {};

@@ -10,6 +10,7 @@
 #include "Concerto/Graphics/Backend/Vulkan/Defines.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Object.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Buffer.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/Image.hpp"
 
 namespace cct::gfx::vk
 {
@@ -31,6 +32,8 @@ namespace cct::gfx::vk
 		Buffer AllocateBuffer(VkBufferUsageFlags usage, VmaMemoryUsage memoryUsage, bool allowBufferMapping);
 		template<typename T>
 		Buffer AllocateBuffer(std::size_t objNumber, VkBufferUsageFlags usage, VmaMemoryUsage memoryUsage, bool allowBufferMapping);
+
+		inline Image AllocateImage(VkExtent2D extent, VkFormat format, VkImageUsageFlags usageFlags);
 	};
 }
 

@@ -14,16 +14,13 @@
 
 namespace cct::gfx::vk
 {
-	class UploadContext;
-	class CommandBuffer;
-	class Queue;
-	class Device;
+	class Allocator;
 
 	class CONCERTO_GRAPHICS_VULKAN_BACKEND_API Image : public Object<VkImage>
 	{
 	public:
-		Image(Device& device, VkExtent2D extent, VkImage image, VkFormat imageFormat);
-		Image(Device& device, VkExtent2D extent, VkFormat format, VkImageUsageFlags usageFlags);
+		Image(Allocator& allocator, VkExtent2D extent, VkImage image, VkFormat imageFormat);
+		Image(Allocator& allocator, VkExtent2D extent, VkFormat format, VkImageUsageFlags usageFlags);
 
 		~Image() override;
 

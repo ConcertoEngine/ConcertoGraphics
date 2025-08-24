@@ -4,18 +4,16 @@
 
 #include <format>
 
-#include "Concerto/Graphics/Backend/Vulkan/Wrapper/Device.hpp"
-#include "Concerto/Graphics/Backend/Vulkan/Wrapper/Buffer.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/Allocator.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Image.hpp"
-#include "Concerto/Graphics/Backend/Vulkan/Wrapper/CommandBuffer.hpp"
-#include "Concerto/Graphics/Backend/Vulkan/Wrapper/Queue.hpp"
+
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/Device.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/VulkanInitializer.hpp"
-#include "Concerto/Graphics/Backend/Vulkan/UploadContext.hpp"
 
 namespace cct::gfx::vk
 {
-	Image::Image(Device& device, VkExtent2D extent, VkFormat format, VkImageUsageFlags usageFlags) :
-		Object(device),
+	Image::Image(Allocator& allocator, VkExtent2D extent, VkFormat format, VkImageUsageFlags usageFlags) :
+		Object(*allocator.GetDevice()),
 		m_isAllocated(true),
 		m_imageFormat(format),
 		m_extent(extent)
@@ -30,7 +28,7 @@ namespace cct::gfx::vk
 		imageAllocInfo.usage = VMA_MEMORY_USAGE_GPU_ONLY;
 		imageAllocInfo.requiredFlags = static_cast<VkMemoryPropertyFlags>(VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
 
-		m_lastResult = vmaCreateImage(*device.GetAllocator().Get(), &imageCreateInfo, &imageAllocInfo, &m_handle, &m_allocation, nullptr);
+		m_lastResult = vmaCreateImage(*allocator.Get(), &imageCreateInfo, &imageAllocInfo, &m_handle, &m_allocation, nullptr);
 		CCT_ASSERT(m_lastResult == VK_SUCCESS, "ConcertoGraphics: vmaCreateImage failed VkResult={}", static_cast<int>(m_lastResult));
 	}
 
@@ -40,7 +38,7 @@ namespace cct::gfx::vk
 			return;
 		if (!m_isAllocated)
 			return;
-		vmaDestroyImage(*m_device->GetAllocator().Get(), m_handle, m_allocation);
+		vmaDestroyImage(*GetDevice()->GetAllocator().Get(), m_handle, m_allocation);
 	}
 
 	Image::Image(Image&& image) noexcept :
@@ -62,8 +60,8 @@ namespace cct::gfx::vk
 		return *this;
 	}
 
-	Image::Image(Device& device, VkExtent2D extent, VkImage image, VkFormat imageFormat) :
-		Object(device),
+	Image::Image(Allocator& allocator, VkExtent2D extent, VkImage image, VkFormat imageFormat) :
+		Object(*allocator.GetDevice()),
 		m_isAllocated(false),
 		m_imageFormat(imageFormat),
 		m_extent(extent)

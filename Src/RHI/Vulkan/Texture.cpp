@@ -10,7 +10,7 @@
 namespace cct::gfx::rhi
 {
 	VkRHITexture::VkRHITexture(vk::Device& device, PixelFormat format, Int32 width, Int32 height, VkImageAspectFlags aspectFlags) :
-		m_image(device, VkExtent2D{ static_cast<UInt32>(width), static_cast<UInt32>(height)}, Converters::ToVulkan(format), VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT),
+		m_image(device.GetAllocator().AllocateImage(VkExtent2D{ static_cast<UInt32>(width), static_cast<UInt32>(height)}, Converters::ToVulkan(format), VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT)),
 		m_imageView(device, m_image, aspectFlags)
 	{
 	}
