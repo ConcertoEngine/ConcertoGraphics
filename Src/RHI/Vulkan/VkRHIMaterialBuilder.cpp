@@ -24,12 +24,12 @@
 namespace cct::gfx::rhi
 {
 	VkRHIMaterialBuilder::VkRHIMaterialBuilder(vk::Device& device, VkExtent2D windowExtent) :
-		_allocator(device),
-		_device(device),
-		_materialsCache(),
-		_descriptorPool(device),
-		_sampler(device, VK_FILTER_NEAREST),
-		_windowExtent(windowExtent)
+		m_allocator(device),
+		m_device(device),
+		m_materialsCache(),
+		m_descriptorPool(device),
+		m_sampler(device, VK_FILTER_NEAREST),
+		m_windowExtent(windowExtent)
 	{
 
 	}
@@ -42,13 +42,13 @@ namespace cct::gfx::rhi
 		vk::ShaderModuleInfo* fragShaderModuleInfo = nullptr;
 		{
 			CCT_GFX_PROFILER_SCOPE("Find or create ShaderModule");
-			auto it = _shaderModuleInfos.find(material.vertexShaderPath);
-			if (it == _shaderModuleInfos.end())
-				vertexShaderModuleInfo = &_shaderModuleInfos.emplace(material.vertexShaderPath, vk::ShaderModuleInfo(_device, material.vertexShaderPath)).first->second;
+			auto it = m_shaderModuleInfos.find(material.vertexShaderPath);
+			if (it == m_shaderModuleInfos.end())
+				vertexShaderModuleInfo = &m_shaderModuleInfos.emplace(material.vertexShaderPath, vk::ShaderModuleInfo(m_device, material.vertexShaderPath)).first->second;
 			else vertexShaderModuleInfo = &it->second;
-			it = _shaderModuleInfos.find(material.fragmentShaderPath);
-			if (it == _shaderModuleInfos.end())
-				fragShaderModuleInfo = &_shaderModuleInfos.emplace(material.fragmentShaderPath, vk::ShaderModuleInfo(_device, material.fragmentShaderPath)).first->second;
+			it = m_shaderModuleInfos.find(material.fragmentShaderPath);
+			if (it == m_shaderModuleInfos.end())
+				fragShaderModuleInfo = &m_shaderModuleInfos.emplace(material.fragmentShaderPath, vk::ShaderModuleInfo(m_device, material.fragmentShaderPath)).first->second;
 			else fragShaderModuleInfo = &it->second;
 		}
 
@@ -77,7 +77,7 @@ namespace cct::gfx::rhi
 						if (binding.descriptorType == VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER)
 							destinationBinding = binding.binding;
 					}
-					texture = vk::MakeDescriptorSetLayout(_device, setBindings);
+					texture = vk::MakeDescriptorSetLayout(m_device, setBindings);
 					descriptorSetLayouts.push_back(texture);
 				}
 				else
@@ -91,7 +91,7 @@ namespace cct::gfx::rhi
 
 		auto vkMaterialPtr = std::make_shared<vk::VkMaterial>();
 		*static_cast<MaterialInfo*>(vkMaterialPtr.get()) = material; // burk
-		_materialsCache.emplace(vkMaterialPtr);
+		m_materialsCache.emplace(vkMaterialPtr);
 		vkMaterialPtr->descriptorSets.reserve(descriptorSetLayouts.size());
 
 		vk::PipelinePtr pipeline;
@@ -100,8 +100,8 @@ namespace cct::gfx::rhi
 		hash ^= hasher(material.vertexShaderPath) + 0x9e3779b9 + (hash << 6) + (hash >> 2);
 		hash ^= hasher(material.fragmentShaderPath) + 0x9e3779b9 + (hash << 6) + (hash >> 2);
 		{
-			auto it = _pipelinesCache.find(hash);
-			if (it != _pipelinesCache.end())
+			auto it = m_pipelinesCache.find(hash);
+			if (it != m_pipelinesCache.end())
 				pipeline = it->second;
 			else
 			{
@@ -109,12 +109,12 @@ namespace cct::gfx::rhi
 					VulkanInitializer::PipelineShaderStageCreateInfo(VK_SHADER_STAGE_VERTEX_BIT, *vertexShaderModuleInfo->shaderModule->Get()),
 					VulkanInitializer::PipelineShaderStageCreateInfo(VK_SHADER_STAGE_FRAGMENT_BIT, *fragShaderModuleInfo->shaderModule->Get())
 				};
-				auto pl = std::make_shared<vk::PipelineLayout>(_device, descriptorSetLayouts);
+				auto pl = std::make_shared<vk::PipelineLayout>(m_device, descriptorSetLayouts);
 				const VkRHIRenderPass& vkRenderPass = Cast<const VkRHIRenderPass&>(renderPass);
-				vk::PipelineInfo pipelineInfo(std::move(shaderStages), _windowExtent, pl);
-				pipeline = std::make_shared<vk::Pipeline>(_device, std::move(pipelineInfo));
+				vk::PipelineInfo pipelineInfo(std::move(shaderStages), m_windowExtent, pl);
+				pipeline = std::make_shared<vk::Pipeline>(m_device, std::move(pipelineInfo));
 				pipeline->BuildPipeline(*vkRenderPass.Get());
-				_pipelinesCache.emplace(hash, pipeline);
+				m_pipelinesCache.emplace(hash, pipeline);
 			}
 		}
 		vkMaterialPtr->pipeline = pipeline;
@@ -130,7 +130,7 @@ namespace cct::gfx::rhi
 			}
 			if (needNewDescriptor)
 			{
-				if (!_allocator.AllocateWithoutCache(descriptorSet, *descriptorSetLayout))
+				if (!m_allocator.AllocateWithoutCache(descriptorSet, *descriptorSetLayout))
 				{
 					CCT_ASSERT_FALSE("ConcertoGraphics: Cannot allocate descriptor set");
 				}
@@ -138,7 +138,7 @@ namespace cct::gfx::rhi
 			}
 			else
 			{
-				if (!_allocator.Allocate(descriptorSet, *descriptorSetLayout))
+				if (!m_allocator.Allocate(descriptorSet, *descriptorSetLayout))
 				{
 					CCT_ASSERT_FALSE("ConcertoGraphics: Cannot allocate descriptor set");
 				}
@@ -152,7 +152,7 @@ namespace cct::gfx::rhi
 			VkDescriptorImageInfo imageInfo = {};
 			imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 			imageInfo.imageView = *vkTexture.GetImageView().Get();
-			imageInfo.sampler = *_sampler.Get();
+			imageInfo.sampler = *m_sampler.Get();
 
 			VkWriteDescriptorSet newWrite = {};
 			newWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
@@ -163,8 +163,8 @@ namespace cct::gfx::rhi
 			newWrite.dstBinding = destinationBinding;
 			newWrite.dstSet = *textureDescriptorSet->Get();
 
-			_device.UpdateDescriptorSetWrite(newWrite);
-			textureDescriptorSet->WriteImageSamplerDescriptor(_sampler, vkTexture.GetImageView());
+			m_device.UpdateDescriptorSetWrite(newWrite);
+			textureDescriptorSet->WriteImageSamplerDescriptor(m_sampler, vkTexture.GetImageView());
 		}
 		return vkMaterialPtr;
 	}
@@ -192,18 +192,18 @@ namespace cct::gfx::rhi
 			//CCT_ASSERT("ConcertoGraphics: enum value not handled");
 			return {};
 		}();
-		for (const auto& material : _materialsCache)
+		for (const auto& material : m_materialsCache)
 		{
 			const VkWriteDescriptorSet cameraWrite = VulkanInitializer::WriteDescriptorBuffer(
 				descriptorType, *material->descriptorSets[setIndex]->Get(), &bufferInfo, bindingIndex);
-			_device.UpdateDescriptorSetWrite(cameraWrite);
+			m_device.UpdateDescriptorSetWrite(cameraWrite);
 		}
 	}
 
 	std::vector<VkPipelineShaderStageCreateInfo> VkRHIMaterialBuilder::GetShaderStages() const
 	{
 		std::vector<VkPipelineShaderStageCreateInfo> shaderStages;
-		for (const auto& shaderModuleInfo : _shaderModuleInfos | std::views::values)
+		for (const auto& shaderModuleInfo : m_shaderModuleInfos | std::views::values)
 			shaderStages.push_back(shaderModuleInfo.shaderModule->GetPipelineShaderStageCreateInfo());
 		return shaderStages;
 	}
@@ -212,14 +212,14 @@ namespace cct::gfx::rhi
 	{
 		std::vector<std::shared_ptr<vk::DescriptorSetLayout>> descriptorSetLayouts;
 
-		for (const auto& layout : _descriptorSetLayoutsCache | std::views::values)
+		for (const auto& layout : m_descriptorSetLayoutsCache | std::views::values)
 			descriptorSetLayouts.push_back(layout);
 		return descriptorSetLayouts;
 	}
 
 	ThreadSafeHashSet<vk::VkMaterialPtr> VkRHIMaterialBuilder::GetMaterials()
 	{
-		return _materialsCache;
+		return m_materialsCache;
 	}
 
 	std::shared_ptr<vk::DescriptorSetLayout> VkRHIMaterialBuilder::GeDescriptorSetLayout(const std::vector<VkDescriptorSetLayoutBinding>& bindings)
@@ -228,12 +228,12 @@ namespace cct::gfx::rhi
 
 		UInt64 hash = vk::DescriptorSetLayout::GetHash(bindings);
 
-		const auto it = _descriptorSetLayoutsCache.find(hash);
-		if (it != _descriptorSetLayoutsCache.end())
+		const auto it = m_descriptorSetLayoutsCache.find(hash);
+		if (it != m_descriptorSetLayoutsCache.end())
 			return it->second;
 
-		std::shared_ptr<vk::DescriptorSetLayout> descriptorSetLayout = MakeDescriptorSetLayout(_device, bindings);
-		_descriptorSetLayoutsCache.emplace(hash, descriptorSetLayout);
+		std::shared_ptr<vk::DescriptorSetLayout> descriptorSetLayout = MakeDescriptorSetLayout(m_device, bindings);
+		m_descriptorSetLayoutsCache.emplace(hash, descriptorSetLayout);
 		return descriptorSetLayout;
 	}
 }

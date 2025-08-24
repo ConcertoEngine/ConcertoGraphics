@@ -43,7 +43,7 @@ namespace cct::gfx::vk
 		bool Present(const Semaphore& renderSemaphore, SwapChain& swapchain, UInt32 swapchainImageIndex) const;
 
 	 private:
-		UInt32 _queueFamilyIndex;
+		UInt32 m_queueFamilyIndex;
 	};
 } // namespace cct::gfx::vk
 

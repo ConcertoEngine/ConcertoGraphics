@@ -52,12 +52,12 @@ namespace cct::gfx::vk
 		DescriptorPoolPtr GetPool();
 
 		DescriptorSetPtr TryAllocate(const DescriptorSetLayout& layout);
-		Device *_device;
-		PoolSizes _poolSizes;
-		std::mutex _usedPoolMutex;
-		std::unordered_map<std::thread::id, std::vector<DescriptorPoolPtr>> _usedPools;
-		std::vector<DescriptorPoolPtr> _freePools;
-		std::unordered_map<UInt64 /*Hash of bindings*/, DescriptorSetPtr> _cache;
+		Device *m_device;
+		PoolSizes m_poolSizes;
+		std::mutex m_usedPoolMutex;
+		std::unordered_map<std::thread::id, std::vector<DescriptorPoolPtr>> m_usedPools;
+		std::vector<DescriptorPoolPtr> m_freePools;
+		std::unordered_map<UInt64 /*Hash of bindings*/, DescriptorSetPtr> m_cache;
 	};
 }
 

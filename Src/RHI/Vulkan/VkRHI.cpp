@@ -39,10 +39,10 @@ namespace cct::gfx
 
 		std::vector<const char*> layers = { "VK_LAYER_KHRONOS_validation", /*, "VK_LAYER_LUNARG_api_dump"*/ };
 
-		_instance = std::make_unique<vk::Instance>("", "", Version{ 1, 3, 0 }, Version{}, Version{}, extensions, layers);
-		if (_instance->GetLastError() != VK_SUCCESS)
+		m_instance = std::make_unique<vk::Instance>("", "", Version{ 1, 3, 0 }, Version{}, Version{}, extensions, layers);
+		if (m_instance->GetLastError() != VK_SUCCESS)
 		{
-			CCT_ASSERT_FALSE("ConcertoGraphics: Failed to initialize Vulkan instance, VkResult={}", static_cast<Int32>(_instance->GetLastError()));
+			CCT_ASSERT_FALSE("ConcertoGraphics: Failed to initialize Vulkan instance, VkResult={}", static_cast<Int32>(m_instance->GetLastError()));
 			return false;
 		}
 		return true;
@@ -50,33 +50,33 @@ namespace cct::gfx
 
 	std::span<const rhi::DeviceInfo> VkRHI::EnumerateDevices()
 	{
-		if (!_instance)
+		if (!m_instance)
 		{
 			CCT_ASSERT_FALSE("ConcertoGraphics: Invalid Vulkan instance, please call VkRHI::Create before");
-			return _devicesInfo;
+			return m_devicesInfo;
 		}
-		const auto devices = _instance->EnumeratePhysicalDevices();
+		const auto devices = m_instance->EnumeratePhysicalDevices();
 		for (auto& device : devices)
 		{
-			_devicesInfo.emplace_back(
+			m_devicesInfo.emplace_back(
 				device.GetProperties().deviceName,
 				device.GetProperties().vendorID,
 				FromVulkan(device.GetProperties().deviceType)
 			);
 		}
-		return _devicesInfo;
+		return m_devicesInfo;
 	}
 
 	std::unique_ptr<rhi::Device> VkRHI::CreateDevice(std::size_t index)
 	{
-		CCT_ASSERT(index <= _devicesInfo.size(), "ConcertoGraphics: Device index out of range");
-		if (!_instance)
+		CCT_ASSERT(index <= m_devicesInfo.size(), "ConcertoGraphics: Device index out of range");
+		if (!m_instance)
 		{
 			CCT_ASSERT_FALSE("ConcertoGraphics: Invalid Vulkan instance, please call VkRHI::Create before");
 			return nullptr;
 		}
 		std::unique_ptr<rhi::Device> device;
-		const auto physicalDevices = _instance->EnumeratePhysicalDevices();
+		const auto physicalDevices = m_instance->EnumeratePhysicalDevices();
 		for (std::size_t i = 0; i < physicalDevices.size(); ++i)
 		{
 			if (i != index)

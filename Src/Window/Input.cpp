@@ -10,13 +10,13 @@ namespace cct
 {
 	void Input::Register(const std::string& name, Key key, TriggerType triggerType, FunctionRef<void()>&& callback)
 	{
-		auto it = _keyCallbacks.find(name);
-		if (it == _keyCallbacks.end())
+		auto it = m_keyCallbacks.find(name);
+		if (it == m_keyCallbacks.end())
 		{
 			auto pair = std::make_pair(SparseVector<bool>(), TriggerTypeCallbacks());
 			pair.first.Emplace(static_cast<std::size_t>(key), true);
 			pair.second[triggerType].push_back(callback);
-			_keyCallbacks.emplace(name, std::move(pair));
+			m_keyCallbacks.emplace(name, std::move(pair));
 			return;
 		}
 		it->second.first.Emplace(static_cast<std::size_t>(key), true);
@@ -25,12 +25,12 @@ namespace cct
 
 	void Input::Register(const std::string& name, MouseEvent::Type key, MouseEventCallback&& callback)
 	{
-		const auto it = _mouseCallback.find(name);
-		if (it == _mouseCallback.end())
+		const auto it = m_mouseCallback.find(name);
+		if (it == m_mouseCallback.end())
 		{
 			std::vector<MouseEventCallback> vec = { callback };
 			auto pair = std::make_pair(key, std::move(vec));
-			_mouseCallback.emplace(name, std::move(pair));
+			m_mouseCallback.emplace(name, std::move(pair));
 			return;
 		}
 		it->second.second.push_back(callback);
@@ -49,7 +49,7 @@ namespace cct
 
 	void Input::TriggerKeyEvent(const KeyEvent& keyEvent)
 	{
-		for (auto& [key, bindingCallback]: _keyCallbacks)
+		for (auto& [key, bindingCallback]: m_keyCallbacks)
 		{
 			const auto keyIndex = static_cast<std::size_t>(keyEvent.key);
 			if (!bindingCallback.first.Has(keyIndex) || !bindingCallback.first[keyIndex])
@@ -64,7 +64,7 @@ namespace cct
 
 	void Input::TriggerMouseEvent(const MouseEvent& mouseEvent)
 	{
-		for (const auto& [key, callbacks]: _mouseCallback)
+		for (const auto& [key, callbacks]: m_mouseCallback)
 		{
 			if (callbacks.first != mouseEvent.type)
 				continue;

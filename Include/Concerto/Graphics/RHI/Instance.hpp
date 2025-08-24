@@ -38,8 +38,8 @@ namespace cct::gfx::rhi
 		std::unique_ptr<Device> CreateDevice(std::size_t index);
 		inline APIImpl* GetImpl();
 	private:
-		std::unique_ptr<APIImpl> _apiImpl;
-		Backend _backend;
+		std::unique_ptr<APIImpl> m_apiImpl;
+		Backend m_backend;
 	};
 }
 

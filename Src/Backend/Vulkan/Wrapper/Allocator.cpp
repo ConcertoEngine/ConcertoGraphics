@@ -51,14 +51,14 @@ namespace cct::gfx::vk
 		allocatorInfo.instance = *instance.Get();
 		allocatorInfo.pVulkanFunctions = &vulkanFunctions;
 
-		_lastResult = vmaCreateAllocator(&allocatorInfo, &_handle);
-		CCT_ASSERT(_lastResult == VK_SUCCESS, "ConcertoGraphics: Unable to create vma allocator VkResult={}", static_cast<int>(_lastResult));
+		m_lastResult = vmaCreateAllocator(&allocatorInfo, &m_handle);
+		CCT_ASSERT(m_lastResult == VK_SUCCESS, "ConcertoGraphics: Unable to create vma allocator VkResult={}", static_cast<int>(m_lastResult));
 	}
 
 	Allocator::~Allocator()
 	{
 		if (IsNull())
 			return;
-		vmaDestroyAllocator(_handle);
+		vmaDestroyAllocator(m_handle);
 	}
 }

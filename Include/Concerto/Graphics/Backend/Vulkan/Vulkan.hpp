@@ -41,11 +41,11 @@ namespace cct::gfx::vk
 		Instance& GetVkInstance();
 
 	private:
-		static Vulkan* _instance;
-		RendererInfo _info;
-		Instance _vkInstance;
-		std::span<PhysicalDevice> _physicalDevices;
-		std::multimap<rhi::DeviceType, Device> _devices;
+		static Vulkan* m_instance;
+		RendererInfo m_info;
+		Instance m_vkInstance;
+		std::span<PhysicalDevice> m_physicalDevices;
+		std::multimap<rhi::DeviceType, Device> m_devices;
 	};
 }
 

@@ -20,8 +20,8 @@ namespace cct::gfx::rhi
 		bool Map(Byte** data) override;
 		void UnMap() override;
 	private:
-		VkRHIDevice& _device;
-		bool _allowBufferMapping;
+		VkRHIDevice& m_device;
+		bool m_allowBufferMapping;
 	};
 }
 

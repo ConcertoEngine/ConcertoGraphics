@@ -37,7 +37,7 @@ namespace cct::gfx::vk
 		static UInt64 GetHash(const std::vector<VkDescriptorSetLayoutBinding>& bindings);
 
 	private:
-		std::vector<VkDescriptorSetLayoutBinding> _bindings;
+		std::vector<VkDescriptorSetLayoutBinding> m_bindings;
 	};
 	using DescriptorSetLayoutPtr = std::shared_ptr<DescriptorSetLayout>;
 

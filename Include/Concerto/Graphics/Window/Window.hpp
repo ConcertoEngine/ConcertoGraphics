@@ -115,17 +115,17 @@ namespace cct::gfx
 		void TriggerResize();
 	private:
 		void RegisterInputCallbacks();
-		std::string _title;
-		std::size_t _width;
-		std::size_t _height;
-		SDL_Window* _window;
-		Input _input;
-		std::function<void(Window& window)> _resizeCallback;
-		std::function<void(Window& window, Key key, int scancode, int action, int mods)> _keyCallback;
-		std::function<void(Window& window, int button, int action, int mods)> _mouseButtonCallback;
-		std::function<void(Window& window, double xpos, double ypos)> _cursorPosCallback;
-		UInt32 _windowID;
-		bool _shouldQuit;
+		std::string m_title;
+		std::size_t m_width;
+		std::size_t m_height;
+		SDL_Window* m_window;
+		Input m_input;
+		std::function<void(Window& window)> m_resizeCallback;
+		std::function<void(Window& window, Key key, int scancode, int action, int mods)> m_keyCallback;
+		std::function<void(Window& window, int button, int action, int mods)> m_mouseButtonCallback;
+		std::function<void(Window& window, double xpos, double ypos)> m_cursorPosCallback;
+		UInt32 m_windowID;
+		bool m_shouldQuit;
 	};
 }
 

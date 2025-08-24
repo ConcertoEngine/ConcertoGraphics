@@ -22,20 +22,20 @@ namespace cct::gfx::rhi
 	VkRHISwapChain::VkRHISwapChain(rhi::VkRHIDevice& device, Window& window, PixelFormat pixelFormat, PixelFormat depthPixelFormat) :
 		rhi::SwapChain(pixelFormat, depthPixelFormat),
 		vk::SwapChain(device, window, Converters::ToVulkan(pixelFormat), Converters::ToVulkan(depthPixelFormat)),
-		_pixelFormat(pixelFormat),
-		_depthPixelFormat(depthPixelFormat)
+		m_pixelFormat(pixelFormat),
+		m_depthPixelFormat(depthPixelFormat)
 	{
 		CreateRenderPass();
 		CreateFrameBuffers(device);
-		_commandPool = device.CreateCommandPool(QueueFamily::Graphics);
-		_presentQueue = std::make_unique<vk::Queue>(device, device.GetQueueFamilyIndex(vk::Queue::Type::Graphics));
+		m_commandPool = device.CreateCommandPool(QueueFamily::Graphics);
+		m_presentQueue = std::make_unique<vk::Queue>(device, device.GetQueueFamilyIndex(vk::Queue::Type::Graphics));
 		CreateFrames();
 	}
 
 	rhi::RenderPass* VkRHISwapChain::GetRenderPass()
 	{
-		CCT_ASSERT(_renderPass, "ConcertoGraphics: Invalid renderpass");
-		return _renderPass.get();
+		CCT_ASSERT(m_renderPass, "ConcertoGraphics: Invalid renderpass");
+		return m_renderPass.get();
 	}
 
 	Vector2u VkRHISwapChain::GetExtent() const
@@ -50,25 +50,25 @@ namespace cct::gfx::rhi
 
 	Frame& VkRHISwapChain::AcquireFrame()
 	{
-		if (_needResize)
+		if (m_needResize)
 		{
 			GetDevice()->WaitIdle();
-			SwapChainFrame& frame = _frames[_currentFrameIndex];
+			SwapChainFrame& frame = m_frames[m_currentFrameIndex];
 			frame.Wait();
-			vk::SwapChain::ReCreate(Converters::ToVulkan(_pixelFormat), Converters::ToVulkan(_depthPixelFormat));
-			_frameBuffers.clear();
-			_frames.clear();
+			vk::SwapChain::ReCreate(Converters::ToVulkan(m_pixelFormat), Converters::ToVulkan(m_depthPixelFormat));
+			m_frameBuffers.clear();
+			m_frames.clear();
 			CreateRenderPass();
 			CreateFrames();
 			CreateFrameBuffers(GetRHIDevice());
-			_needResize = false;
+			m_needResize = false;
 		}
-		if (_currentFrameIndex != _lastFrameIndex)
+		if (m_currentFrameIndex != m_lastFrameIndex)
 		{
-			SwapChainFrame& frame = _frames[_lastFrameIndex];
+			SwapChainFrame& frame = m_frames[m_lastFrameIndex];
 			frame.GetRenderFence().Wait(-1);
 		}
-		SwapChainFrame& currentFrame = _frames[_currentFrameIndex];
+		SwapChainFrame& currentFrame = m_frames[m_currentFrameIndex];
 		const UInt32 nextImageIndex = vk::SwapChain::AcquireNextImage(currentFrame.GetPresentSemaphore(), nullptr);
 		currentFrame.SetNextImageIndex(nextImageIndex);
 		return currentFrame;
@@ -76,8 +76,8 @@ namespace cct::gfx::rhi
 
 	VkRHICommandPool& VkRHISwapChain::GetCommandPool() const
 	{
-		CCT_ASSERT(_commandPool, "ConcertoGraphics: Invalid command pool");
-		return Cast<VkRHICommandPool&>(*_commandPool);
+		CCT_ASSERT(m_commandPool, "ConcertoGraphics: Invalid command pool");
+		return Cast<VkRHICommandPool&>(*m_commandPool);
 	}
 
 	VkRHIDevice& VkRHISwapChain::GetRHIDevice() const
@@ -88,40 +88,40 @@ namespace cct::gfx::rhi
 
 	vk::Queue& VkRHISwapChain::GetPresentQueue() const
 	{
-		CCT_ASSERT(_presentQueue, "ConcertoGraphics: Invalid present queue");
-		return *_presentQueue;
+		CCT_ASSERT(m_presentQueue, "ConcertoGraphics: Invalid present queue");
+		return *m_presentQueue;
 	}
 
 	rhi::FrameBuffer& VkRHISwapChain::GetCurrentFrameBuffer()
 	{
-		return *_frameBuffers[_currentFrameIndex];
+		return *m_frameBuffers[m_currentFrameIndex];
 	}
 
 	const rhi::FrameBuffer& VkRHISwapChain::GetCurrentFrameBuffer() const
 	{
-		return *_frameBuffers[_currentFrameIndex];
+		return *m_frameBuffers[m_currentFrameIndex];
 	}
 
 	void VkRHISwapChain::Present(UInt32 imageIndex)
 	{
 		CCT_GFX_AUTO_PROFILER_SCOPE();
 
-		_lastFrameIndex = _currentFrameIndex;
-		_currentFrameIndex = (_currentFrameIndex + 1) % GetImageCount();
-		SwapChainFrame& currentFrame = _frames[imageIndex];
-		if (!_presentQueue->Present(currentFrame.GetRenderSemaphore(), *this, imageIndex))
+		m_lastFrameIndex = m_currentFrameIndex;
+		m_currentFrameIndex = (m_currentFrameIndex + 1) % GetImageCount();
+		SwapChainFrame& currentFrame = m_frames[imageIndex];
+		if (!m_presentQueue->Present(currentFrame.GetRenderSemaphore(), *this, imageIndex))
 		{
-			switch (_presentQueue->GetLastResult())
+			switch (m_presentQueue->GetLastResult())
 			{
 			case VK_ERROR_OUT_OF_DATE_KHR:
 			case VK_SUBOPTIMAL_KHR:
 			{
-				_needResize = true;
+				m_needResize = true;
 				break;
 			}
 			default:
 				{
-					CCT_ASSERT_FALSE("ConcertoGraphics: Present failed VKResult={}", static_cast<int>(_presentQueue->GetLastResult()));
+					CCT_ASSERT_FALSE("ConcertoGraphics: Present failed VKResult={}", static_cast<int>(m_presentQueue->GetLastResult()));
 				}
 			}
 		}
@@ -133,7 +133,7 @@ namespace cct::gfx::rhi
 
 		const std::span<vk::ImageView> imagesViews = vk::SwapChain::GetImageViews();
 
-		_frameBuffers.reserve(imagesViews.size());
+		m_frameBuffers.reserve(imagesViews.size());
 		for (const vk::ImageView& imageView : imagesViews)
 		{
 			std::vector<std::unique_ptr<rhi::TextureView>> attachments;
@@ -142,10 +142,10 @@ namespace cct::gfx::rhi
 			CCT_ASSERT(imageView.Get() != VK_NULL_HANDLE && GetDepthImageView().Get() != VK_NULL_HANDLE, "ConcertoGraphics: iInvalid attachment");
 
 			auto extent = vk::SwapChain::GetExtent();
-			auto fb = device.CreateFrameBuffer(extent.width, extent.height, Cast<VkRHIRenderPass&>(*_renderPass), attachments);
+			auto fb = device.CreateFrameBuffer(extent.width, extent.height, Cast<VkRHIRenderPass&>(*m_renderPass), attachments);
 			CCT_ASSERT(fb, "ConcertoGraphics: Could not create frame buffer");
 
-			_frameBuffers.emplace_back(std::move(fb));
+			m_frameBuffers.emplace_back(std::move(fb));
 		}
 	}
 
@@ -196,37 +196,37 @@ namespace cct::gfx::rhi
 		depthDependency.dstStageMask = static_cast<rhi::PipelineStageFlags>(rhi::PipelineStage::EarlyFragmentTests) | static_cast<rhi::PipelineStageFlags>(rhi::PipelineStage::LateFragmentTests);
 		depthDependency.dstAccessFlags = static_cast<rhi::MemoryAccessFlags>(rhi::MemoryAccess::DepthStencilAttachmentWrite);
 
-		_renderPass = Cast<VkRHIDevice&>(*_device).CreateRenderPass(attachment, subPassDescriptions, subPassDependencies);
-		CCT_ASSERT(_renderPass && Cast<VkRHIRenderPass&>(*_renderPass).GetLastResult() == VK_SUCCESS, "ConcertoGraphics: Could not create render pass");
+		m_renderPass = Cast<VkRHIDevice&>(*m_device).CreateRenderPass(attachment, subPassDescriptions, subPassDependencies);
+		CCT_ASSERT(m_renderPass && Cast<VkRHIRenderPass&>(*m_renderPass).GetLastResult() == VK_SUCCESS, "ConcertoGraphics: Could not create render pass");
 	}
 
 	void VkRHISwapChain::CreateFrames()
 	{
 		const UInt32 imageCount = GetImageCount();
-		if (_frames.size() != imageCount)
+		if (m_frames.size() != imageCount)
 		{
-			_frames.clear();
-			_frames.reserve(imageCount);
+			m_frames.clear();
+			m_frames.reserve(imageCount);
 			for (UInt32 i = 0; i < imageCount; ++i)
 			{
-				_frames.emplace_back(*this);
+				m_frames.emplace_back(*this);
 			}
 		}
 	}
 
 	VkRHISwapChain::SwapChainFrame::SwapChainFrame(VkRHISwapChain& owner) :
-		_commandBuffer(owner.GetCommandPool().AllocateCommandBuffer(CommandBufferUasge::Primary)),
-		_renderFence(*owner.GetDevice()),
-		_presentSemaphore(*owner.GetDevice()),
-		_renderSemaphore(*owner.GetDevice()),
-		_owner(&owner),
-		_imageIndex(0)
+		m_commandBuffer(owner.GetCommandPool().AllocateCommandBuffer(CommandBufferUasge::Primary)),
+		m_renderFence(*owner.GetDevice()),
+		m_presentSemaphore(*owner.GetDevice()),
+		m_renderSemaphore(*owner.GetDevice()),
+		m_owner(&owner),
+		m_imageIndex(0)
 	{
 #ifdef CCT_ENABLE_OBJECT_DEBUG
-		Cast<VkRHICommandBuffer&>(*_commandBuffer).SetDebugName("SwapChainFrameCommandBuffer");
-		_renderFence.SetDebugName("SwapChainFrameRenderFence");
-		_presentSemaphore.SetDebugName("SwapChainFramePresentSemaphore");
-		_renderSemaphore.SetDebugName("SwapChainFrameRenderSemaphore");
+		Cast<VkRHICommandBuffer&>(*m_commandBuffer).SetDebugName("SwapChainFrameCommandBuffer");
+		m_renderFence.SetDebugName("SwapChainFrameRenderFence");
+		m_presentSemaphore.SetDebugName("SwapChainFramePresentSemaphore");
+		m_renderSemaphore.SetDebugName("SwapChainFrameRenderSemaphore");
 #endif
 	}
 
@@ -234,38 +234,38 @@ namespace cct::gfx::rhi
 	{
 		CCT_GFX_AUTO_PROFILER_SCOPE();
 
-		const vk::Queue& presentQueue = _owner->GetPresentQueue();
+		const vk::Queue& presentQueue = m_owner->GetPresentQueue();
 
-		_renderFence.Wait(-1);
-		_renderFence.Reset();
-		presentQueue.Submit(Cast<VkRHICommandBuffer&>(*_commandBuffer), &_presentSemaphore, &_renderSemaphore, _renderFence);
-		_owner->Present(_imageIndex);
+		m_renderFence.Wait(-1);
+		m_renderFence.Reset();
+		presentQueue.Submit(Cast<VkRHICommandBuffer&>(*m_commandBuffer), &m_presentSemaphore, &m_renderSemaphore, m_renderFence);
+		m_owner->Present(m_imageIndex);
 		CCT_GFX_FRAME_MARK;
 	}
 
 	rhi::CommandBuffer& VkRHISwapChain::SwapChainFrame::GetCommandBuffer()
 	{
-		return *_commandBuffer;
+		return *m_commandBuffer;
 	}
 
 	std::size_t VkRHISwapChain::SwapChainFrame::GetCurrentFrameIndex()
 	{
-		return _imageIndex;
+		return m_imageIndex;
 	}
 
 	rhi::FrameBuffer& VkRHISwapChain::SwapChainFrame::GetFrameBuffer()
 	{
-		return _owner->GetCurrentFrameBuffer();
+		return m_owner->GetCurrentFrameBuffer();
 	}
 
 	void VkRHISwapChain::SwapChainFrame::SetNextImageIndex(UInt32 imageIndex)
 	{
-		_imageIndex = imageIndex;
+		m_imageIndex = imageIndex;
 #ifdef CCT_ENABLE_OBJECT_DEBUG
-		Cast<VkRHICommandBuffer&>(*_commandBuffer).SetDebugName(std::format("SwapChainFrameCommandBuffer[{}]", imageIndex));
-		_renderFence.SetDebugName(std::format("SwapChainFrameRenderFence {}", imageIndex));
-		_presentSemaphore.SetDebugName(std::format("SwapChainFramePresentSemaphore {}", imageIndex));
-		_renderSemaphore.SetDebugName(std::format("SwapChainFrameRenderSemaphore {}", imageIndex));
+		Cast<VkRHICommandBuffer&>(*m_commandBuffer).SetDebugName(std::format("SwapChainFrameCommandBuffer[{}]", imageIndex));
+		m_renderFence.SetDebugName(std::format("SwapChainFrameRenderFence {}", imageIndex));
+		m_presentSemaphore.SetDebugName(std::format("SwapChainFramePresentSemaphore {}", imageIndex));
+		m_renderSemaphore.SetDebugName(std::format("SwapChainFrameRenderSemaphore {}", imageIndex));
 #endif
 	}
 
@@ -273,22 +273,22 @@ namespace cct::gfx::rhi
 	{
 		CCT_GFX_AUTO_PROFILER_SCOPE();
 
-		_renderFence.Wait(-1);
-		_renderFence.Reset();
+		m_renderFence.Wait(-1);
+		m_renderFence.Reset();
 	}
 
 	vk::Semaphore& VkRHISwapChain::SwapChainFrame::GetPresentSemaphore()
 	{
-		return _presentSemaphore;
+		return m_presentSemaphore;
 	}
 
 	vk::Semaphore& VkRHISwapChain::SwapChainFrame::GetRenderSemaphore()
 	{
-		return _renderSemaphore;
+		return m_renderSemaphore;
 	}
 
 	vk::Fence& VkRHISwapChain::SwapChainFrame::GetRenderFence()
 	{
-		return _renderFence;
+		return m_renderFence;
 	}
 }

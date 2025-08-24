@@ -20,8 +20,8 @@ namespace cct::gfx::vk
 {
 	CommandBuffer::CommandBuffer(CommandPool& owner, VkCommandBufferLevel level) :
 		Object(*owner.GetDevice()),
-		_commandPool(&owner),
-		_level(level)
+		m_commandPool(&owner),
+		m_level(level)
 	{
 		VkCommandBufferAllocateInfo info = {};
 		info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
@@ -30,33 +30,33 @@ namespace cct::gfx::vk
 		info.commandBufferCount = 1;
 		info.level = level;
 
-		const VkResult result = _device->vkAllocateCommandBuffers(*_device->Get(), &info, &_handle);
+		const VkResult result = m_device->vkAllocateCommandBuffers(*m_device->Get(), &info, &m_handle);
 		CCT_ASSERT(result == VK_SUCCESS, "ConcertoGraphics: vkAllocateCommandBuffers failed VkResult={}", static_cast<int>(result));
 	}
 
 	CommandBuffer::~CommandBuffer()
 	{
-		if(_handle == VK_NULL_HANDLE)
+		if(m_handle == VK_NULL_HANDLE)
 			return;
-		if (_device)
+		if (m_device)
 		{
-			_device->WaitIdle();
-			_device->vkFreeCommandBuffers(*_device->Get(), *_commandPool->Get(), 1, &_handle);
+			m_device->WaitIdle();
+			m_device->vkFreeCommandBuffers(*m_device->Get(), *m_commandPool->Get(), 1, &m_handle);
 		}
 	}
 
 	CommandBuffer::CommandBuffer(CommandBuffer&& other) noexcept :
 		Object(std::move(other)),
-		_commandPool(std::exchange(other._commandPool, VK_NULL_HANDLE)),
-		_level(std::exchange(other._level, VK_COMMAND_BUFFER_LEVEL_MAX_ENUM))
+		m_commandPool(std::exchange(other.m_commandPool, VK_NULL_HANDLE)),
+		m_level(std::exchange(other.m_level, VK_COMMAND_BUFFER_LEVEL_MAX_ENUM))
 	{
 	}
 
 	CommandBuffer& CommandBuffer::operator=(CommandBuffer&& other) noexcept
 	{
-		std::swap(_device, other._device);
-		std::swap(_commandPool, other._commandPool);
-		std::swap(_handle, other._handle);
+		std::swap(m_device, other.m_device);
+		std::swap(m_commandPool, other.m_commandPool);
+		std::swap(m_handle, other.m_handle);
 
 		Object::operator=(std::move(other));
 		return *this;
@@ -66,7 +66,7 @@ namespace cct::gfx::vk
 	{
 		CCT_GFX_AUTO_PROFILER_SCOPE();
 
-		const VkResult result = _device->vkResetCommandBuffer(_handle, 0);
+		const VkResult result = m_device->vkResetCommandBuffer(m_handle, 0);
 		CCT_ASSERT(result == VK_SUCCESS, "ConcertoGraphics: vkResetCommandBuffer VKResult={}", static_cast<int>(result));
 	}
 
@@ -82,17 +82,17 @@ namespace cct::gfx::vk
 		cmdBeginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
 
 		VkCommandBufferInheritanceInfo commandBufferInheritanceInfo;
-		if (_level == VK_COMMAND_BUFFER_LEVEL_SECONDARY)
+		if (m_level == VK_COMMAND_BUFFER_LEVEL_SECONDARY)
 		{
 			commandBufferInheritanceInfo = {};
 			commandBufferInheritanceInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO;
 			cmdBeginInfo.pInheritanceInfo = &commandBufferInheritanceInfo;
 		}
 
-		const VkResult result = _device->vkBeginCommandBuffer(_handle, &cmdBeginInfo);
+		const VkResult result = m_device->vkBeginCommandBuffer(m_handle, &cmdBeginInfo);
 		CCT_ASSERT(result == VK_SUCCESS, "ConcertoGraphics: vkBeginCommandBuffer failed VKResult={}", static_cast<int>(result));
 #ifdef CCT_ENABLE_OBJECT_DEBUG
-		if (_device->IsExtensionEnabled(VK_EXT_DEBUG_MARKER_EXTENSION_NAME))
+		if (m_device->IsExtensionEnabled(VK_EXT_DEBUG_MARKER_EXTENSION_NAME))
 		{
 			VkDebugMarkerMarkerInfoEXT markerInfo = {
 				.sType = VK_STRUCTURE_TYPE_DEBUG_MARKER_MARKER_INFO_EXT,
@@ -100,7 +100,7 @@ namespace cct::gfx::vk
 				.pMarkerName = ObjectDebug::GetDebugName().data(),
 				.color = {1.f, 1.f, 0.f}
 			};
-			_device->vkCmdDebugMarkerBeginEXT(_handle, &markerInfo);
+			m_device->vkCmdDebugMarkerBeginEXT(m_handle, &markerInfo);
 		}
 #endif
 	}
@@ -109,12 +109,12 @@ namespace cct::gfx::vk
 	{
 		CCT_GFX_AUTO_PROFILER_SCOPE();
 #ifdef CCT_ENABLE_OBJECT_DEBUG
-		if (_device->IsExtensionEnabled(VK_EXT_DEBUG_MARKER_EXTENSION_NAME))
+		if (m_device->IsExtensionEnabled(VK_EXT_DEBUG_MARKER_EXTENSION_NAME))
 		{
-			_device->vkCmdDebugMarkerEndEXT(_handle);
+			m_device->vkCmdDebugMarkerEndEXT(m_handle);
 		}
 #endif
-		const VkResult result = _device->vkEndCommandBuffer(_handle);
+		const VkResult result = m_device->vkEndCommandBuffer(m_handle);
 		CCT_ASSERT(result == VK_SUCCESS, "ConcertoGraphics: vkEndCommandBuffer failed VKResult={}", static_cast<int>(result));
 	}
 
@@ -122,42 +122,42 @@ namespace cct::gfx::vk
 	{
 		CCT_GFX_AUTO_PROFILER_SCOPE();
 
-		_device->vkCmdBeginRenderPass(_handle, &info, VK_SUBPASS_CONTENTS_INLINE);
+		m_device->vkCmdBeginRenderPass(m_handle, &info, VK_SUBPASS_CONTENTS_INLINE);
 	}
 
 	void CommandBuffer::EndRenderPass() const
 	{
 		CCT_GFX_AUTO_PROFILER_SCOPE();
 
-		_device->vkCmdEndRenderPass(_handle);
+		m_device->vkCmdEndRenderPass(m_handle);
 	}
 
 	void CommandBuffer::BindPipeline(const VkPipelineBindPoint pipelineBindPoint, const Pipeline& pipeline) const
 	{
 		CCT_GFX_AUTO_PROFILER_SCOPE();
 
-		_device->vkCmdBindPipeline(_handle, pipelineBindPoint, *pipeline.Get());
+		m_device->vkCmdBindPipeline(m_handle, pipelineBindPoint, *pipeline.Get());
 	}
 
 	void CommandBuffer::BindPipeline(const VkPipelineBindPoint pipelineBindPoint, const VkPipeline pipeline) const
 	{
 		CCT_GFX_AUTO_PROFILER_SCOPE();
 
-		_device->vkCmdBindPipeline(_handle, pipelineBindPoint, pipeline);
+		m_device->vkCmdBindPipeline(m_handle, pipelineBindPoint, pipeline);
 	}
 
 	void CommandBuffer::Draw(const UInt32 vertexCount, const UInt32 instanceCount, const UInt32 firstVertex, const UInt32 firstInstance) const
 	{
 		CCT_GFX_AUTO_PROFILER_SCOPE();
 
-		_device->vkCmdDraw(_handle, vertexCount, instanceCount, firstVertex, firstInstance);
+		m_device->vkCmdDraw(m_handle, vertexCount, instanceCount, firstVertex, firstInstance);
 	}
 
 	void CommandBuffer::DrawIndirect(const Buffer& buffer, const UInt32 offset, const UInt32 drawCount, const UInt32 stride) const
 	{
 		CCT_GFX_AUTO_PROFILER_SCOPE();
 
-		_device->vkCmdDrawIndirect(_handle, *buffer.Get(), offset, drawCount, stride);
+		m_device->vkCmdDrawIndirect(m_handle, *buffer.Get(), offset, drawCount, stride);
 	}
 
 	void CommandBuffer::BindVertexBuffers(const Buffer& buffer) const
@@ -165,21 +165,21 @@ namespace cct::gfx::vk
 		CCT_GFX_AUTO_PROFILER_SCOPE();
 
 		VkDeviceSize offset = 0;
-		_device->vkCmdBindVertexBuffers(_handle, 0, 1,  buffer.Get(), &offset);
+		m_device->vkCmdBindVertexBuffers(m_handle, 0, 1,  buffer.Get(), &offset);
 	}
 
 	void CommandBuffer::UpdatePushConstants(const PipelineLayout& pipelineLayout, const MeshPushConstants& meshPushConstants) const
 	{
 		CCT_GFX_AUTO_PROFILER_SCOPE();
 
-		_device->vkCmdPushConstants(_handle, *pipelineLayout.Get(), VK_SHADER_STAGE_VERTEX_BIT, 0,sizeof(MeshPushConstants), &meshPushConstants);
+		m_device->vkCmdPushConstants(m_handle, *pipelineLayout.Get(), VK_SHADER_STAGE_VERTEX_BIT, 0,sizeof(MeshPushConstants), &meshPushConstants);
 	}
 
 	void CommandBuffer::UpdatePushConstants(const VkPipelineLayout pipelineLayout, const MeshPushConstants& meshPushConstants) const
 	{
 		CCT_GFX_AUTO_PROFILER_SCOPE();
 
-		_device->vkCmdPushConstants(_handle, pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(MeshPushConstants), &meshPushConstants);
+		m_device->vkCmdPushConstants(m_handle, pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(MeshPushConstants), &meshPushConstants);
 	}
 
 	void CommandBuffer::BindDescriptorSets(const VkPipelineBindPoint pipelineBindPoint, const VkPipelineLayout pipelineLayout,
@@ -188,7 +188,7 @@ namespace cct::gfx::vk
 	{
 		CCT_GFX_AUTO_PROFILER_SCOPE();
 
-		_device->vkCmdBindDescriptorSets(_handle, pipelineBindPoint, pipelineLayout, firstSet, descriptorSetCount, descriptorSet.Get(), 1, &dynamicOffsets);
+		m_device->vkCmdBindDescriptorSets(m_handle, pipelineBindPoint, pipelineLayout, firstSet, descriptorSetCount, descriptorSet.Get(), 1, &dynamicOffsets);
 	}
 
 	void CommandBuffer::BindDescriptorSets(const VkPipelineBindPoint pipelineBindPoint, const VkPipelineLayout pipelineLayout,
@@ -196,7 +196,7 @@ namespace cct::gfx::vk
 	{
 		CCT_GFX_AUTO_PROFILER_SCOPE();
 
-		_device->vkCmdBindDescriptorSets(_handle, pipelineBindPoint, pipelineLayout, firstSet, descriptorSetCount, descriptorSet.Get(), 0, nullptr);
+		m_device->vkCmdBindDescriptorSets(m_handle, pipelineBindPoint, pipelineLayout, firstSet, descriptorSetCount, descriptorSet.Get(), 0, nullptr);
 	}
 
 	void CommandBuffer::BindDescriptorSets(const VkPipelineBindPoint pipelineBindPoint, const VkPipelineLayout pipelineLayout,
@@ -208,7 +208,7 @@ namespace cct::gfx::vk
 		vkDescriptorSets.reserve(descriptorSets.size());
 		for (const auto& descriptorSet : descriptorSets)
 			vkDescriptorSets.push_back(*descriptorSet.Get());
-		_device->vkCmdBindDescriptorSets(_handle, pipelineBindPoint, pipelineLayout, 0, static_cast<UInt32>(vkDescriptorSets.size()), vkDescriptorSets.data(), 0, nullptr);
+		m_device->vkCmdBindDescriptorSets(m_handle, pipelineBindPoint, pipelineLayout, 0, static_cast<UInt32>(vkDescriptorSets.size()), vkDescriptorSets.data(), 0, nullptr);
 	}
 
 	void CommandBuffer::BindDescriptorSets(const VkPipelineBindPoint pipelineBindPoint, const VkPipelineLayout pipelineLayout,
@@ -220,7 +220,7 @@ namespace cct::gfx::vk
 		vkDescriptorSets.reserve(descriptorSets.size());
 		for (const auto& descriptorSet : descriptorSets)
 			vkDescriptorSets.push_back(*descriptorSet->Get());
-		_device->vkCmdBindDescriptorSets(_handle, pipelineBindPoint, pipelineLayout, 0, static_cast<UInt32>(vkDescriptorSets.size()), vkDescriptorSets.data(), 0, nullptr);
+		m_device->vkCmdBindDescriptorSets(m_handle, pipelineBindPoint, pipelineLayout, 0, static_cast<UInt32>(vkDescriptorSets.size()), vkDescriptorSets.data(), 0, nullptr);
 	}
 
 	void CommandBuffer::ImmediateSubmit(const Fence& fence, const CommandPool& commandPool, const Queue& queue, std::function<void(CommandBuffer&)>&& function)
@@ -239,8 +239,8 @@ namespace cct::gfx::vk
 	void CommandBuffer::Submit(const Fence& fence, const CommandPool& commandPool, const Queue& queue)
 	{
 		CCT_GFX_AUTO_PROFILER_SCOPE();
-		const VkSubmitInfo submitInfo = VulkanInitializer::SubmitInfo(&_handle);
-		const VkResult result = _device->vkQueueSubmit(*queue.Get(), 1, &submitInfo, *fence.Get());
+		const VkSubmitInfo submitInfo = VulkanInitializer::SubmitInfo(&m_handle);
+		const VkResult result = m_device->vkQueueSubmit(*queue.Get(), 1, &submitInfo, *fence.Get());
 		CCT_ASSERT(result == VK_SUCCESS, "ConcertoGraphics: vkQueueSubmit failed VKResult={}", static_cast<int>(result));
 
 		fence.Wait(9999999999);
@@ -258,7 +258,7 @@ namespace cct::gfx::vk
 		for (auto& cb : commandBuffers)
 			vkCommandBuffers.push_back(*cb.Get());
 
-		_device->vkCmdExecuteCommands(*Get(), vkCommandBuffers.size(), vkCommandBuffers.data());
+		m_device->vkCmdExecuteCommands(*Get(), vkCommandBuffers.size(), vkCommandBuffers.data());
 	}
 
 	void CommandBuffer::CopyBuffer(const Buffer& src, const Buffer& dest, const std::size_t size, std::size_t srcOffset, std::size_t dstOffset) const
@@ -268,16 +268,16 @@ namespace cct::gfx::vk
 			.dstOffset = dstOffset,
 			.size = size
 		};
-		_device->vkCmdCopyBuffer(_handle, *src.Get(), *dest.Get(), 1, &copyRegion);
+		m_device->vkCmdCopyBuffer(m_handle, *src.Get(), *dest.Get(), 1, &copyRegion);
 	}
 
 	void CommandBuffer::SetViewport(const VkViewport& viewport) const
 	{
-		_device->vkCmdSetViewport(_handle, 0, 1, &viewport);
+		m_device->vkCmdSetViewport(m_handle, 0, 1, &viewport);
 	}
 
 	void CommandBuffer::SetScissor(const VkRect2D scissor) const
 	{
-		_device->vkCmdSetScissor(_handle, 0, 1, &scissor);
+		m_device->vkCmdSetScissor(m_handle, 0, 1, &scissor);
 	}
 }

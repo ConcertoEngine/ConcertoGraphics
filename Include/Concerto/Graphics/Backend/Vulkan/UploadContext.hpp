@@ -34,12 +34,12 @@ namespace cct::gfx::vk
 
 		void ExecuteSecondaryCommandBuffers();
 
-		Fence _uploadFence;
-		CommandPool _commandPool;
-		CommandBuffer _commandBuffer;
+		Fence m_uploadFence;
+		CommandPool m_commandPool;
+		CommandBuffer m_commandBuffer;
 	private:
-		std::size_t _nextSecondaryCommandBuffer;
-		std::vector<CommandBuffer> _secondCommandBuffers;
+		std::size_t m_nextSecondaryCommandBuffer;
+		std::vector<CommandBuffer> m_secondCommandBuffers;
 	};
 }
 

@@ -82,11 +82,11 @@ namespace
 namespace cct::gfx::vk
 {
 	ObjectDebug::ObjectDebug(Device& device, std::string_view typeName, void** vkHandle) :
-		_device(&device),
-		_typeName(typeName),
-		_debugReportObjectType(TypeNameToVkDebugReportObjectTypeEXT(typeName)),
-		_vkHandle(vkHandle),
-		_createdOnThread(std::this_thread::get_id())
+		m_device(&device),
+		m_typeName(typeName),
+		m_debugReportObjectType(TypeNameToVkDebugReportObjectTypeEXT(typeName)),
+		m_vkHandle(vkHandle),
+		m_createdOnThread(std::this_thread::get_id())
 	{
 	}
 
@@ -96,12 +96,12 @@ namespace cct::gfx::vk
 		{
 			CCT_ASSERT_FALSE("ObjectDebug::GetDebugReportObjectType() is called but extension " VK_EXT_DEBUG_REPORT_EXTENSION_NAME " is not enabled");
 		}
-		return _debugReportObjectType;
+		return m_debugReportObjectType;
 	}
 
 	UInt64 ObjectDebug::GetObject() const
 	{
-		return reinterpret_cast<UInt64>(*_vkHandle);
+		return reinterpret_cast<UInt64>(*m_vkHandle);
 	}
 
 	void ObjectDebug::SetDebugName(std::string_view name)
@@ -111,42 +111,42 @@ namespace cct::gfx::vk
 			//CCT_ASSERT_FALSE("ObjectDebug::SetDebugName is called but extension " VK_EXT_DEBUG_MARKER_EXTENSION_NAME " is not enabled");
 			return;
 		}
-		_debugName = name;
+		m_debugName = name;
 		VkDebugMarkerObjectNameInfoEXT nameInfo = {};
 		nameInfo.sType = VK_STRUCTURE_TYPE_DEBUG_MARKER_OBJECT_NAME_INFO_EXT;
-		nameInfo.objectType = _debugReportObjectType;
+		nameInfo.objectType = m_debugReportObjectType;
 		nameInfo.object = GetObject();
 		nameInfo.pObjectName = name.data();
-		_device->vkDebugMarkerSetObjectNameEXT(*_device->Get(), &nameInfo);
+		m_device->vkDebugMarkerSetObjectNameEXT(*m_device->Get(), &nameInfo);
 	}
 
 	std::string_view ObjectDebug::GetDebugName() const
 	{
 		CCT_ASSERT(!_debugName.empty(), "ConcertoGraphics: ObjectDebug::GetDebugName() has been called but ObjectDebug::SetDebugName was never called");
-		return _debugName;
+		return m_debugName;
 	}
 
 	std::thread::id ObjectDebug::GetCreatedOnThread() const
 	{
-		return _createdOnThread;
+		return m_createdOnThread;
 	}
 
 	ObjectDebug::ObjectDebug(ObjectDebug&& other) noexcept
 	{
-		_device = std::exchange(other._device, VK_NULL_HANDLE);
-		_typeName = std::exchange(other._typeName, {});
-		_debugReportObjectType = std::exchange(other._debugReportObjectType, VK_DEBUG_REPORT_OBJECT_TYPE_UNKNOWN_EXT);
-		_vkHandle = std::exchange(other._vkHandle, VK_NULL_HANDLE);
-		_debugName = std::exchange(other._debugName, {});
+		m_device = std::exchange(other.m_device, VK_NULL_HANDLE);
+		m_typeName = std::exchange(other.m_typeName, {});
+		m_debugReportObjectType = std::exchange(other.m_debugReportObjectType, VK_DEBUG_REPORT_OBJECT_TYPE_UNKNOWN_EXT);
+		m_vkHandle = std::exchange(other.m_vkHandle, VK_NULL_HANDLE);
+		m_debugName = std::exchange(other.m_debugName, {});
 	}
 
 	ObjectDebug& ObjectDebug::operator=(ObjectDebug&& other)
 	{
-		std::swap(_device, other._device);
-		std::swap(_typeName, other._typeName);
-		std::swap(_debugReportObjectType, other._debugReportObjectType);
-		std::swap(_vkHandle, other._vkHandle);
-		std::swap(_debugName, other._debugName);
+		std::swap(m_device, other.m_device);
+		std::swap(m_typeName, other.m_typeName);
+		std::swap(m_debugReportObjectType, other.m_debugReportObjectType);
+		std::swap(m_vkHandle, other.m_vkHandle);
+		std::swap(m_debugName, other.m_debugName);
 
 		return *this;
 	}

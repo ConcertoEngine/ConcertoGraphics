@@ -12,8 +12,8 @@ namespace cct::gfx::vk
 {
 	class MeshPushConstants
 	{
-		Vector4f _data = {};
-		Matrix4f _renderMatrix = {};
+		Vector4f m_data = {};
+		Matrix4f m_renderMatrix = {};
 	};
 }
 

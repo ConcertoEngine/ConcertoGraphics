@@ -13,7 +13,7 @@ namespace cct::gfx::vk
 {
 
 	DescriptorBuilder::DescriptorBuilder(DescriptorLayoutCache& layoutCache, DescriptorAllocator& allocator) :
-		_cache(layoutCache), _alloc(allocator)
+		m_cache(layoutCache), m_alloc(allocator)
 	{
 
 	}
@@ -31,7 +31,7 @@ namespace cct::gfx::vk
 		newBinding.stageFlags = stageFlags;
 		newBinding.binding = binding;
 
-		_bindings.push_back(newBinding);
+		m_bindings.push_back(newBinding);
 
 		VkWriteDescriptorSet newWrite{};
 		newWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
@@ -42,7 +42,7 @@ namespace cct::gfx::vk
 		newWrite.pBufferInfo = bufferInfo;
 		newWrite.dstBinding = binding;
 
-		_writes.push_back(newWrite);
+		m_writes.push_back(newWrite);
 		return *this;
 	}
 
@@ -59,7 +59,7 @@ namespace cct::gfx::vk
 		newBinding.stageFlags = stageFlags;
 		newBinding.binding = binding;
 
-		_bindings.push_back(newBinding);
+		m_bindings.push_back(newBinding);
 
 		VkWriteDescriptorSet newWrite{};
 		newWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
@@ -70,7 +70,7 @@ namespace cct::gfx::vk
 		newWrite.pImageInfo = imageInfo;
 		newWrite.dstBinding = binding;
 
-		_writes.push_back(newWrite);
+		m_writes.push_back(newWrite);
 		return *this;
 	}
 
@@ -80,21 +80,21 @@ namespace cct::gfx::vk
 		layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
 		layoutInfo.pNext = nullptr;
 
-		layoutInfo.pBindings = _bindings.data();
-		layoutInfo.bindingCount = static_cast<UInt32>(_bindings.size());
+		layoutInfo.pBindings = m_bindings.data();
+		layoutInfo.bindingCount = static_cast<UInt32>(m_bindings.size());
 
-		layout = _cache.GetLayout(layoutInfo);
+		layout = m_cache.GetLayout(layoutInfo);
 
-		const bool success = _alloc.Allocate(set, *layout);
+		const bool success = m_alloc.Allocate(set, *layout);
 		if (!success)
 			return false;
 
-		for (VkWriteDescriptorSet& w : _writes)
+		for (VkWriteDescriptorSet& w : m_writes)
 			w.dstSet = *set->Get();
 
-		_alloc.GetDevice().vkUpdateDescriptorSets(*_alloc.GetDevice().Get(), static_cast<UInt32>(_writes.size()), _writes.data(), 0, nullptr);
-		_bindings.clear();
-		_writes.clear();
+		m_alloc.GetDevice().vkUpdateDescriptorSets(*m_alloc.GetDevice().Get(), static_cast<UInt32>(m_writes.size()), m_writes.data(), 0, nullptr);
+		m_bindings.clear();
+		m_writes.clear();
 		return true;
 	}
 

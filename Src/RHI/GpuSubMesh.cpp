@@ -7,30 +7,30 @@
 namespace cct::gfx::rhi
 {
 	GpuSubMesh::GpuSubMesh(rhi::SubMeshPtr meshPtr, rhi::MaterialPtr material) :
-		_subMesh(std::move(meshPtr)),
-		_material(std::move(material))
+		m_subMesh(std::move(meshPtr)),
+		m_material(std::move(material))
 	{
 
 	}
 
 	const Vertices& GpuSubMesh::GetVertices() const
 	{
-		return _subMesh->GetVertices();
+		return m_subMesh->GetVertices();
 	}
 
 	const rhi::MaterialPtr& GpuSubMesh::GetMaterial() const
 	{
-		return _material;
+		return m_material;
 	}
 
 	const rhi::SubMeshPtr& GpuSubMesh::GetSubMesh() const
 	{
-		return _subMesh;
+		return m_subMesh;
 	}
 
 	const rhi::Buffer& GpuSubMesh::GetVertexBuffer() const
 	{
-		CCT_ASSERT(_vertexBuffer, "ConcertoGraphics: invalid vertex buffer");
-		return *_vertexBuffer;
+		CCT_ASSERT(m_vertexBuffer, "ConcertoGraphics: invalid vertex buffer");
+		return *m_vertexBuffer;
 	}
 } // cct::gfx::RHI

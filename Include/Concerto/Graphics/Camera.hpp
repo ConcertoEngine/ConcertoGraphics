@@ -52,16 +52,16 @@ namespace cct::gfx
 		void Move(CameraMovement direction, float x);
 
 	private:
-		EulerAnglesf _eulerAngles;
-		Vector3f _velocity;
-		Vector3f _position;
-		float _movementSpeed;
-		float _mouseSensitivity;
-		float _fov;
-		float _near;
-		float _far;
-		float _aspectRatio;
-		Vector4f _clearColor;
+		EulerAnglesf m_eulerAngles;
+		Vector3f m_velocity;
+		Vector3f m_position;
+		float m_movementSpeed;
+		float m_mouseSensitivity;
+		float m_fov;
+		float m_near;
+		float m_far;
+		float m_aspectRatio;
+		Vector4f m_clearColor;
 	};
 }
 

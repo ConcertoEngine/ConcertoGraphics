@@ -27,7 +27,7 @@ namespace cct::gfx::vk
 		ImageView& operator=(const ImageView&) = delete;
 		ImageView& operator=(ImageView&&) noexcept = default;
 	private:
-		Image* _image;
+		Image* m_image;
 	};
 }
 

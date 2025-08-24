@@ -41,16 +41,16 @@ namespace cct::gfx::rhi
 	private:
 		std::shared_ptr<vk::DescriptorSetLayout> GeDescriptorSetLayout(const std::vector<VkDescriptorSetLayoutBinding>& bindings);
 
-		vk::DescriptorAllocator _allocator;
-		vk::Device& _device;
-		ThreadSafeHashSet<vk::VkMaterialPtr> _materialsCache;
-		ThreadSafeHashMap<UInt64 /*hash*/, std::shared_ptr<vk::Pipeline>> _pipelinesCache;
-		ThreadSafeHashMap<std::string, vk::ShaderModuleInfo> _shaderModuleInfos;
-		vk::DescriptorPool _descriptorPool;
-		ThreadSafeHashMap<UInt64 /*hash*/, std::shared_ptr<vk::DescriptorSetLayout>> _descriptorSetLayoutsCache;
-		std::vector<vk::Pipeline> _pipelines;
-		vk::Sampler _sampler;
-		VkExtent2D _windowExtent;
+		vk::DescriptorAllocator m_allocator;
+		vk::Device& m_device;
+		ThreadSafeHashSet<vk::VkMaterialPtr> m_materialsCache;
+		ThreadSafeHashMap<UInt64 /*hash*/, std::shared_ptr<vk::Pipeline>> m_pipelinesCache;
+		ThreadSafeHashMap<std::string, vk::ShaderModuleInfo> m_shaderModuleInfos;
+		vk::DescriptorPool m_descriptorPool;
+		ThreadSafeHashMap<UInt64 /*hash*/, std::shared_ptr<vk::DescriptorSetLayout>> m_descriptorSetLayoutsCache;
+		std::vector<vk::Pipeline> m_pipelines;
+		vk::Sampler m_sampler;
+		VkExtent2D m_windowExtent;
 	};
 }
 #endif //CONCERTO_GRAPHICS_RHI_VULKAN_VKRHIMATERIALBUILDER_HPP

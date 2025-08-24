@@ -14,9 +14,9 @@ namespace cct::gfx::vk
 {
 	Buffer::Buffer(Allocator& allocator, std::size_t allocSize, VkBufferUsageFlags usage, VmaMemoryUsage memoryUsage, bool allowBufferMapping) :
 		Object(*allocator.GetDevice()),
-		_allocatedSize(allocSize),
-		_allocator(&allocator),
-		_usage(usage)
+		m_allocatedSize(allocSize),
+		m_allocator(&allocator),
+		m_usage(usage)
 	{
 		VkBufferCreateInfo bufferInfo = {};
 		bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
@@ -28,27 +28,27 @@ namespace cct::gfx::vk
 		VmaAllocationCreateInfo vmaAllocInfo = {};
 		vmaAllocInfo.usage = memoryUsage;
 		vmaAllocInfo.flags = allowBufferMapping ? VMA_ALLOCATION_CREATE_HOST_ACCESS_SEQUENTIAL_WRITE_BIT | VMA_ALLOCATION_CREATE_MAPPED_BIT : 0;
-		_lastResult = vmaCreateBuffer(*allocator.Get(), &bufferInfo, &vmaAllocInfo, &_handle, &_allocation, nullptr);
-		CCT_ASSERT(_lastResult == VK_SUCCESS, "ConcertoGraphics: vmaCreateBuffer failed VkResult={}", static_cast<int>(_lastResult));
+		m_lastResult = vmaCreateBuffer(*allocator.Get(), &bufferInfo, &vmaAllocInfo, &m_handle, &m_allocation, nullptr);
+		CCT_ASSERT(m_lastResult == VK_SUCCESS, "ConcertoGraphics: vmaCreateBuffer failed VkResult={}", static_cast<int>(m_lastResult));
 	}
 
 	Buffer::Buffer(Buffer&& other) noexcept :
 		Object(std::move(other)),
-		_mapCount(std::exchange(other._mapCount, 0)),
-		_allocatedSize(std::exchange(other._allocatedSize, 0)),
-		_allocator(std::exchange(other._allocator, nullptr)),
-		_allocation(std::exchange(other._allocation, nullptr)),
-		_usage(std::exchange(other._usage, 0))
+		m_mapCount(std::exchange(other.m_mapCount, 0)),
+		m_allocatedSize(std::exchange(other.m_allocatedSize, 0)),
+		m_allocator(std::exchange(other.m_allocator, nullptr)),
+		m_allocation(std::exchange(other.m_allocation, nullptr)),
+		m_usage(std::exchange(other.m_usage, 0))
 	{
 	}
 
 	Buffer& Buffer::operator=(Buffer&& other) noexcept
 	{
-		std::swap(_mapCount, other._mapCount);
-		std::swap(_allocatedSize, other._allocatedSize);
-		std::swap(_allocator, other._allocator);
-		std::swap(_allocation, other._allocation);
-		std::swap(_usage, other._usage);
+		std::swap(m_mapCount, other.m_mapCount);
+		std::swap(m_allocatedSize, other.m_allocatedSize);
+		std::swap(m_allocator, other.m_allocator);
+		std::swap(m_allocation, other.m_allocation);
+		std::swap(m_usage, other.m_usage);
 
 		Object::operator=(std::move(other));
 
@@ -59,13 +59,13 @@ namespace cct::gfx::vk
 	{
 		if (IsNull())
 			return;
-		if (_mapCount != 0)
+		if (m_mapCount != 0)
 		{
 			CCT_ASSERT_FALSE("ConcertoGraphics: Trying to destroy a buffer that is mapped");
 			return;
 		}
-		_allocator->GetDevice()->WaitIdle();
-		vmaDestroyBuffer(*_allocator->Get(), _handle, _allocation);
+		m_allocator->GetDevice()->WaitIdle();
+		vmaDestroyBuffer(*m_allocator->Get(), m_handle, m_allocation);
 	}
 
 	void Buffer::Copy(const void* object, std::size_t size, std::size_t padding)
@@ -80,45 +80,45 @@ namespace cct::gfx::vk
 
 	bool Buffer::Map(Byte** data)
 	{
-		const auto res = vmaMapMemory(*_allocator->Get(), _allocation, reinterpret_cast<void**>(data));
+		const auto res = vmaMapMemory(*m_allocator->Get(), m_allocation, reinterpret_cast<void**>(data));
 		if (res != VK_SUCCESS)
 		{
 			CCT_ASSERT_FALSE("ConcertoGraphics: Cannot map buffer");
 			return false;
 		}
-		_mapCount++;
+		m_mapCount++;
 		return true;
 	}
 
 	void Buffer::UnMap()
 	{
-		if (_mapCount == 0)
+		if (m_mapCount == 0)
 		{
 			CCT_ASSERT_FALSE("ConcertoGraphics: Trying to destroy a buffer that is mapped");
 			return;
 		}
-		_mapCount--;
-		vmaUnmapMemory(*_allocator->Get(), _allocation);
+		m_mapCount--;
+		vmaUnmapMemory(*m_allocator->Get(), m_allocation);
 	}
 
 	VmaAllocation Buffer::GetAllocation() const
 	{
-		return _allocation;
+		return m_allocation;
 	}
 
 	Allocator& Buffer::GetAllocator() const
 	{
-		CCT_ASSERT(_allocator, "ConcertoGraphics: allocator is null");
-		return *_allocator;
+		CCT_ASSERT(m_allocator, "ConcertoGraphics: allocator is null");
+		return *m_allocator;
 	}
 
 	std::size_t Buffer::GetAllocatedSize() const
 	{
-		return _allocatedSize;
+		return m_allocatedSize;
 	}
 
 	VkBufferUsageFlags Buffer::GetUsage() const
 	{
-		return _usage;
+		return m_usage;
 	}
 }

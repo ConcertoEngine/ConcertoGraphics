@@ -16,10 +16,10 @@ namespace cct::gfx::vk
 	Sampler::Sampler(Device& device, VkFilter filter, VkSamplerAddressMode samplerAddressMode) : Object(device)
 	{
 		VkSamplerCreateInfo samplerInfo = VulkanInitializer::SamplerCreateInfo(filter, samplerAddressMode);
-		_lastResult = _device->vkCreateSampler(*_device->Get(), &samplerInfo, nullptr, &_handle);
-		if (_lastResult != VK_SUCCESS)
+		m_lastResult = m_device->vkCreateSampler(*m_device->Get(), &samplerInfo, nullptr, &m_handle);
+		if (m_lastResult != VK_SUCCESS)
 		{
-			CCT_ASSERT_FALSE("ConcertoGraphics: vkCreateSampler failed VKResult={}", static_cast<int>(_lastResult));
+			CCT_ASSERT_FALSE("ConcertoGraphics: vkCreateSampler failed VKResult={}", static_cast<int>(m_lastResult));
 			return;
 		}
 	}
@@ -28,6 +28,6 @@ namespace cct::gfx::vk
 	{
 		if (IsNull())
 			return;
-		_device->vkDestroySampler(*_device->Get(), _handle, nullptr);
+		m_device->vkDestroySampler(*m_device->Get(), m_handle, nullptr);
 	}
 }

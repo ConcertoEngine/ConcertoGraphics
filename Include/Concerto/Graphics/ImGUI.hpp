@@ -64,10 +64,10 @@ namespace cct::gfx::vk
 		void UpdateMouseButton(int button, bool pressed);
 
 	private:
-		RenderingContext& _context;
-		DescriptorPool _descriptorPool;
-		Window &_window;
-		ImGuiContext* _imGuiContext;
+		RenderingContext& m_context;
+		DescriptorPool m_descriptorPool;
+		Window& m_window;
+		ImGuiContext* m_imGuiContext;
 	};
 
 } // cct::gfx

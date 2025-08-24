@@ -51,8 +51,8 @@ namespace cct
 		void TriggerMouseEvent(const MouseEvent& mouseEvent);
 
 	private:
-		std::unordered_map<std::string, BindingCallback> _keyCallbacks;
-		std::unordered_map<std::string, std::pair<MouseEvent::Type, std::vector<MouseEventCallback>>> _mouseCallback;
+		std::unordered_map<std::string, BindingCallback> m_keyCallbacks;
+		std::unordered_map<std::string, std::pair<MouseEvent::Type, std::vector<MouseEventCallback>>> m_mouseCallback;
 	};
 }
 #endif //CONCERTO_INPUT_HPP

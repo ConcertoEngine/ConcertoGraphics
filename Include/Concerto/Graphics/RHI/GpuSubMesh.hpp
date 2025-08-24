@@ -27,10 +27,10 @@ namespace cct::gfx::rhi
 		const rhi::Buffer& GetVertexBuffer() const;
 
 	private:
-		rhi::SubMeshPtr _subMesh;
-		rhi::MaterialPtr _material;
+		rhi::SubMeshPtr m_subMesh;
+		rhi::MaterialPtr m_material;
 	protected:
-		std::unique_ptr<rhi::Buffer> _vertexBuffer;
+		std::unique_ptr<rhi::Buffer> m_vertexBuffer;
 	};
 	using GpuSubMeshPtr = std::shared_ptr<GpuSubMesh>;
 } // cct::gfx::vk

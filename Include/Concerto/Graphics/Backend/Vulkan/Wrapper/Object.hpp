@@ -42,9 +42,9 @@ namespace cct::gfx::vk
 		[[nodiscard]] VkResult GetLastResult() const;
 
 	protected:
-		VkType _handle;
-		Device* _device;
-		mutable VkResult _lastResult;
+		VkType m_handle;
+		Device* m_device;
+		mutable VkResult m_lastResult;
 	};
 }
 

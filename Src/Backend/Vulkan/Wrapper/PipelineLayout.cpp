@@ -13,11 +13,11 @@ namespace cct::gfx::vk
 
 	PipelineLayout::PipelineLayout(Device& device, std::vector<std::shared_ptr<DescriptorSetLayout>> descriptorSetLayouts) :
 		Object(device),
-		_descriptorSetLayouts(std::move(descriptorSetLayouts))
+		m_descriptorSetLayouts(std::move(descriptorSetLayouts))
 	{
 		std::vector<VkDescriptorSetLayout> vkDescriptorSetLayouts;
-		vkDescriptorSetLayouts.reserve(_descriptorSetLayouts.size());
-		for (const auto& descriptorSetLayout : _descriptorSetLayouts)
+		vkDescriptorSetLayouts.reserve(m_descriptorSetLayouts.size());
+		for (const auto& descriptorSetLayout : m_descriptorSetLayouts)
 		{
 			vkDescriptorSetLayouts.push_back(*descriptorSetLayout->Get());
 		}
@@ -29,7 +29,7 @@ namespace cct::gfx::vk
 		pipelineLayoutCreateInfo.pSetLayouts = vkDescriptorSetLayouts.data();
 		pipelineLayoutCreateInfo.pushConstantRangeCount = 0;
 		pipelineLayoutCreateInfo.pPushConstantRanges = nullptr;
-		const VkResult result = _device->vkCreatePipelineLayout(*_device->Get(), &pipelineLayoutCreateInfo, nullptr, &_handle);
+		const VkResult result = m_device->vkCreatePipelineLayout(*m_device->Get(), &pipelineLayoutCreateInfo, nullptr, &m_handle);
 		CCT_ASSERT(result == VK_SUCCESS, "ConcertoGraphics: vkCreatePipelineLayout failed VKResult={}", static_cast<int>(result));
 	}
 
@@ -37,11 +37,11 @@ namespace cct::gfx::vk
 	{
 		if (IsNull())
 			return;
-		_device->vkDestroyPipelineLayout(*_device->Get(), _handle, nullptr);
+		m_device->vkDestroyPipelineLayout(*m_device->Get(), m_handle, nullptr);
 	}
 
 	const std::vector<std::shared_ptr<DescriptorSetLayout>>& PipelineLayout::GetDescriptorSetLayouts() const
 	{
-		return _descriptorSetLayouts;
+		return m_descriptorSetLayouts;
 	}
 }

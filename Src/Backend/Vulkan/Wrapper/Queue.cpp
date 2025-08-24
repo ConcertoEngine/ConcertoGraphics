@@ -15,14 +15,14 @@ namespace cct::gfx::vk
 {
 	Queue::Queue(Device& device, UInt32 queueFamilyIndex) :
 		Object<VkQueue>(device),
-		_queueFamilyIndex(queueFamilyIndex)
+		m_queueFamilyIndex(queueFamilyIndex)
 	{
-		_device->vkGetDeviceQueue(*_device->Get(), _queueFamilyIndex, 0, &_handle);
+		m_device->vkGetDeviceQueue(*m_device->Get(), m_queueFamilyIndex, 0, &m_handle);
 	}
 
 	UInt32 Queue::GetFamilyIndex() const
 	{
-		return _queueFamilyIndex;
+		return m_queueFamilyIndex;
 	}
 
 	void Queue::Submit(const CommandBuffer& commandBuffer, const Semaphore* presentSemaphore, const Semaphore* renderSemaphore, const Fence& renderFence) const
@@ -40,8 +40,8 @@ namespace cct::gfx::vk
 		submit.pSignalSemaphores = renderSemaphore ? renderSemaphore->Get() : VK_NULL_HANDLE;
 		submit.commandBufferCount = 1;
 		submit.pCommandBuffers = commandBuffer.Get();
-		_lastResult = _device->vkQueueSubmit(_handle, 1, &submit, *renderFence.Get());
-		CCT_ASSERT(_lastResult == VK_SUCCESS, "ConcertoGraphics: vkQueueSubmit failed VKResult={}", static_cast<int>(_lastResult));
+		m_lastResult = m_device->vkQueueSubmit(m_handle, 1, &submit, *renderFence.Get());
+		CCT_ASSERT(m_lastResult == VK_SUCCESS, "ConcertoGraphics: vkQueueSubmit failed VKResult={}", static_cast<int>(m_lastResult));
 	}
 
 	bool Queue::Present(const Semaphore& renderSemaphore, SwapChain& swapchain, UInt32 swapchainImageIndex) const
@@ -56,14 +56,14 @@ namespace cct::gfx::vk
 		present.pWaitSemaphores = renderSemaphore.Get();
 		present.waitSemaphoreCount = 1;
 		present.pImageIndices = &swapchainImageIndex;
-		_lastResult = _device->vkQueuePresentKHR(_handle, &present);
-		if (_lastResult == VK_ERROR_OUT_OF_DATE_KHR || _lastResult == VK_SUBOPTIMAL_KHR)
+		m_lastResult = m_device->vkQueuePresentKHR(m_handle, &present);
+		if (m_lastResult == VK_ERROR_OUT_OF_DATE_KHR || m_lastResult == VK_SUBOPTIMAL_KHR)
 		{
 			return false;
 		}
-		if (_lastResult != VK_SUCCESS)
+		if (m_lastResult != VK_SUCCESS)
 		{
-			CCT_ASSERT_FALSE("ConcertoGraphics: vkQueuePresentKHR failed VKResult={}", static_cast<int>(_lastResult));
+			CCT_ASSERT_FALSE("ConcertoGraphics: vkQueuePresentKHR failed VKResult={}", static_cast<int>(m_lastResult));
 			return false;
 		}
 		return true;

@@ -15,20 +15,20 @@ namespace cct::gfx::vk
 
 	Pipeline::Pipeline(Device& device, PipelineInfo pipeLineInfo) :
 		Object(device),
-		_pipelineInfo(std::move(pipeLineInfo)),
-		_createInfo()
+		m_pipelineInfo(std::move(pipeLineInfo)),
+		m_createInfo()
 	{
-		_createInfo.viewportState = BuildViewportState();
-		_createInfo.colorBlend = BuildColorBlendState();
-		_createInfo.pipelineCreateInfo = {};
-		_createInfo.pipelineCreateInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
+		m_createInfo.viewportState = BuildViewportState();
+		m_createInfo.colorBlend = BuildColorBlendState();
+		m_createInfo.pipelineCreateInfo = {};
+		m_createInfo.pipelineCreateInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
 	}
 
 	Pipeline::~Pipeline()
 	{
 		if (IsNull())
 			return;
-		_device->vkDestroyPipeline(*_device->Get(), _handle, nullptr);
+		m_device->vkDestroyPipeline(*m_device->Get(), m_handle, nullptr);
 	}
 
 	VkPipeline Pipeline::BuildPipeline(VkRenderPass renderPass)
@@ -64,29 +64,29 @@ namespace cct::gfx::vk
 		pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
 		pipelineInfo.pNext = nullptr;
 
-		pipelineInfo.pStages = _pipelineInfo._shaderStages.data();
-		pipelineInfo.stageCount = static_cast<UInt32>(_pipelineInfo._shaderStages.size());
-		pipelineInfo.pVertexInputState = &_pipelineInfo._vertexInputInfo;
-		pipelineInfo.pInputAssemblyState = &_pipelineInfo._inputAssembly;
+		pipelineInfo.pStages = m_pipelineInfo.m_shaderStages.data();
+		pipelineInfo.stageCount = static_cast<UInt32>(m_pipelineInfo.m_shaderStages.size());
+		pipelineInfo.pVertexInputState = &m_pipelineInfo.m_vertexInputInfo;
+		pipelineInfo.pInputAssemblyState = &m_pipelineInfo.m_inputAssembly;
 		pipelineInfo.pViewportState = &viewportState;
 		pipelineInfo.pDynamicState = &dynamicStateCreateInfo;
-		pipelineInfo.pRasterizationState = &_pipelineInfo._rasterizer;
-		pipelineInfo.pMultisampleState = &_pipelineInfo._multisampling;
+		pipelineInfo.pRasterizationState = &m_pipelineInfo.m_rasterizer;
+		pipelineInfo.pMultisampleState = &m_pipelineInfo.m_multisampling;
 		pipelineInfo.pColorBlendState = &colorBlending;
-		pipelineInfo.layout = *_pipelineInfo._pipelineLayout->Get();
+		pipelineInfo.layout = *m_pipelineInfo.m_pipelineLayout->Get();
 		pipelineInfo.renderPass = renderPass;
 		pipelineInfo.subpass = 0;
 		pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
-		pipelineInfo.pDepthStencilState = &_pipelineInfo._depthStencil;
+		pipelineInfo.pDepthStencilState = &m_pipelineInfo.m_depthStencil;
 
 
-		if (_device->vkCreateGraphicsPipelines(*_device->Get(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &_handle) !=
+		if (m_device->vkCreateGraphicsPipelines(*m_device->Get(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_handle) !=
 			VK_SUCCESS)
 		{
 			std::cerr << "failed to create pipeline\n";
 			return VK_NULL_HANDLE;
 		}
-		return _handle;
+		return m_handle;
 	}
 
 	VkPipelineViewportStateCreateInfo Pipeline::BuildViewportState() const
@@ -98,7 +98,7 @@ namespace cct::gfx::vk
 		viewportState.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
 		viewportState.pNext = nullptr;
 		viewportState.viewportCount = 1;
-		//		viewportState.pViewports = &_pipelineInfo._viewport;
+		//		viewportState.pViewports = &m_pipelineInfo.m_viewport;
 		viewportState.scissorCount = 1;
 		viewportState.pScissors = &scissor;
 		return viewportState;
@@ -120,6 +120,6 @@ namespace cct::gfx::vk
 
 	std::shared_ptr<PipelineLayout> Pipeline::GetPipelineLayout() const
 	{
-		return _pipelineInfo._pipelineLayout;
+		return m_pipelineInfo.m_pipelineLayout;
 	}
 }

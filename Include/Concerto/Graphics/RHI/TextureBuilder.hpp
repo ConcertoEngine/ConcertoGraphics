@@ -36,9 +36,9 @@ namespace cct::gfx::rhi
 		virtual std::shared_ptr<Texture> BuildApiTexture(PixelFormat format, Int32 width, Int32 height) = 0;
 		virtual void InternalCommit() = 0;
 	private:
-		Device& _device;
-		ThreadSafeHashMap<std::string, std::shared_ptr<Texture>> _texturesCache;
-		ThreadSafeHashMap<std::shared_ptr<Texture>, std::unique_ptr<Buffer>> _buffersToUpload;
+		Device& m_device;
+		ThreadSafeHashMap<std::string, std::shared_ptr<Texture>> m_texturesCache;
+		ThreadSafeHashMap<std::shared_ptr<Texture>, std::unique_ptr<Buffer>> m_buffersToUpload;
 	};
 }
 

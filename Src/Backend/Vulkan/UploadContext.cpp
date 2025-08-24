@@ -8,13 +8,13 @@
 namespace cct::gfx::vk
 {
 	UploadContext::UploadContext(Device& device, UInt32 queueFamily) :
-		_uploadFence(device, false),
-		_commandPool(device, queueFamily),
-		_commandBuffer(_commandPool.AllocateCommandBuffer(VK_COMMAND_BUFFER_LEVEL_PRIMARY)),
-		_nextSecondaryCommandBuffer(0)
+		m_uploadFence(device, false),
+		m_commandPool(device, queueFamily),
+		m_commandBuffer(m_commandPool.AllocateCommandBuffer(VK_COMMAND_BUFFER_LEVEL_PRIMARY)),
+		m_nextSecondaryCommandBuffer(0)
 	{
 #ifdef CCT_ENABLE_OBJECT_DEBUG
-		_commandBuffer.SetDebugName("UploadContextCommandBuffer");
+		m_commandBuffer.SetDebugName("UploadContextCommandBuffer");
 #endif
 	}
 
@@ -22,27 +22,27 @@ namespace cct::gfx::vk
 	{
 		CCT_GFX_AUTO_PROFILER_SCOPE();
 
-		_secondCommandBuffers.reserve(count);
+		m_secondCommandBuffers.reserve(count);
 		// count - 1 because we start at 0
 		for (UInt32 i = 0; i < count - 1; ++i)
 		{
-			auto cb = _commandPool.AllocateCommandBuffer(VK_COMMAND_BUFFER_LEVEL_SECONDARY);
+			auto cb = m_commandPool.AllocateCommandBuffer(VK_COMMAND_BUFFER_LEVEL_SECONDARY);
 #ifdef CCT_ENABLE_OBJECT_DEBUG
-			cb.SetDebugName(std::format("UploadContext::_secondCommandBuffers[{}]", i));
+			cb.SetDebugName(std::format("UploadContext::m_secondCommandBuffers[{}]", i));
 #endif
-			_secondCommandBuffers.emplace_back(std::move(cb));
+			m_secondCommandBuffers.emplace_back(std::move(cb));
 		}
 	}
 
 	CommandBuffer* UploadContext::AcquireSecondaryCommandBuffer()
 	{
-		if (_nextSecondaryCommandBuffer >= _secondCommandBuffers.size())
+		if (m_nextSecondaryCommandBuffer >= m_secondCommandBuffers.size())
 			return nullptr; // Exhausted
-		return &_secondCommandBuffers[_nextSecondaryCommandBuffer++];
+		return &m_secondCommandBuffers[m_nextSecondaryCommandBuffer++];
 	}
 
 	void UploadContext::ExecuteSecondaryCommandBuffers()
 	{
-		_commandBuffer.ExecuteCommands(_secondCommandBuffers);
+		m_commandBuffer.ExecuteCommands(m_secondCommandBuffers);
 	}
 }

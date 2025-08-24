@@ -31,8 +31,8 @@ namespace cct::gfx::rhi
 		[[nodiscard]] inline PixelFormat GetDepthPixelFormat() const;
 
 	private:
-		PixelFormat _pixelFormat;
-		PixelFormat _depthPixelFormat;
+		PixelFormat m_pixelFormat;
+		PixelFormat m_depthPixelFormat;
 	};
 }
 

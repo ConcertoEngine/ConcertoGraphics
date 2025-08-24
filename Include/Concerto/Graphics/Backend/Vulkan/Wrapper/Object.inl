@@ -17,11 +17,11 @@ namespace cct::gfx::vk
 	template<typename VkType>
 	Object<VkType>::Object(Device& device) :
 #ifdef CCT_ENABLE_OBJECT_DEBUG
-	ObjectDebug(device, TypeName<std::remove_pointer_t<std::remove_cvref_t<VkType>>>(), reinterpret_cast<void**>(&this->_handle)),
+	ObjectDebug(device, TypeName<std::remove_pointer_t<std::remove_cvref_t<VkType>>>(), reinterpret_cast<void**>(&this->m_handle)),
 #endif
-		_handle(nullptr),
-		_device(&device),
-		_lastResult(VK_SUCCESS)
+		m_handle(nullptr),
+		m_device(&device),
+		m_lastResult(VK_SUCCESS)
 	{
 
 	}
@@ -30,7 +30,7 @@ namespace cct::gfx::vk
 	Object<VkType>::~Object()
 	{
 #ifdef CCT_ENABLE_OBJECT_DEBUG
-		_handle = 0xDDDDDDDD;
+		m_handle = 0xDDDDDDDD;
 #endif // CCT_ENABLE_OBJECT_DEBUG
 	}
 
@@ -41,16 +41,16 @@ namespace cct::gfx::vk
 	ObjectDebug(std::move(other))
 #endif
 	{
-		_handle = std::exchange(other._handle, nullptr);
-		_device = std::exchange(other._device, nullptr);
-		_lastResult = std::exchange(other._lastResult, VK_SUCCESS);
+		m_handle = std::exchange(other.m_handle, nullptr);
+		m_device = std::exchange(other.m_device, nullptr);
+		m_lastResult = std::exchange(other.m_lastResult, VK_SUCCESS);
 	}
 
 	template<typename VkType>
 	Object<VkType>& Object<VkType>::operator=(Object&& other) noexcept
 	{
-		std::swap(_handle, other._handle);
-		std::swap(_device, other._device);
+		std::swap(m_handle, other.m_handle);
+		std::swap(m_device, other.m_device);
 #ifdef CCT_ENABLE_OBJECT_DEBUG
 		ObjectDebug::operator=(std::move(other));
 #endif
@@ -61,26 +61,26 @@ namespace cct::gfx::vk
 	VkType* Object<VkType>::Get() const
 	{
 		CCT_ASSERT(!IsNull(), "The vulkan object handle is null");
-		return const_cast<VkType*>(&_handle);
+		return const_cast<VkType*>(&m_handle);
 	}
 
 	template<typename VkType>
 	bool Object<VkType>::IsNull() const
 	{
-		return _handle == nullptr;
+		return m_handle == nullptr;
 	}
 
 	template<typename VkType>
 	Device* Object<VkType>::GetDevice() const
 	{
-		CCT_ASSERT(_device, "Invalid device");
-		return _device;
+		CCT_ASSERT(m_device, "Invalid device");
+		return m_device;
 	}
 
 	template<typename VkType>
 	VkResult Object<VkType>::GetLastResult() const
 	{
-		return _lastResult;
+		return m_lastResult;
 	}
 }
 

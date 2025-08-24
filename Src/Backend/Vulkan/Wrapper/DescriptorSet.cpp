@@ -14,7 +14,7 @@ namespace cct::gfx::vk
 {
 	DescriptorSet::DescriptorSet(Device& device, DescriptorPool& pool, const DescriptorSetLayout& descriptorSetLayout) :
 		Object(device),
-		_pool(&pool)
+		m_pool(&pool)
 	{
 		VkDescriptorSetAllocateInfo allocInfo = {};
 		allocInfo.pNext = nullptr;
@@ -22,19 +22,19 @@ namespace cct::gfx::vk
 		allocInfo.descriptorPool = *pool.Get();
 		allocInfo.descriptorSetCount = 1;
 		allocInfo.pSetLayouts = descriptorSetLayout.Get();
-		_lastResult = _device->vkAllocateDescriptorSets(*_device->Get(), &allocInfo, &_handle);
+		m_lastResult = m_device->vkAllocateDescriptorSets(*m_device->Get(), &allocInfo, &m_handle);
 	}
 
 	DescriptorSet::~DescriptorSet()
 	{
 		if (IsNull())
 			return;
-		if (_pool == nullptr)
+		if (m_pool == nullptr)
 		{
 			CCT_ASSERT_FALSE("ConcertoGraphics: Trying to destroy a descriptor set with an invalid pool");
 			return;
 		}
-		_device->vkFreeDescriptorSets(*_device->Get(), *_pool->Get(), 1, &_handle);
+		m_device->vkFreeDescriptorSets(*m_device->Get(), *m_pool->Get(), 1, &m_handle);
 	}
 
 	void DescriptorSet::WriteImageSamplerDescriptor(const Sampler& sampler, const ImageView& imageView, VkImageLayout imageLayout) const
@@ -44,19 +44,19 @@ namespace cct::gfx::vk
 		imageBufferInfo.imageView = *imageView.Get();
 		imageBufferInfo.imageLayout = imageLayout;
 
-		const VkWriteDescriptorSet texture1 = VulkanInitializer::WriteDescriptorImage(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, _handle, &imageBufferInfo, 0);
+		const VkWriteDescriptorSet texture1 = VulkanInitializer::WriteDescriptorImage(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, m_handle, &imageBufferInfo, 0);
 
-		_device->vkUpdateDescriptorSets(*_device->Get(), 1, &texture1, 0, nullptr);
+		m_device->vkUpdateDescriptorSets(*m_device->Get(), 1, &texture1, 0, nullptr);
 	}
 
 	DescriptorSet::DescriptorSet(DescriptorSet&& other) noexcept : Object<VkDescriptorSet>(std::move(other))
 	{
-		_pool = std::exchange(other._pool, nullptr);
+		m_pool = std::exchange(other.m_pool, nullptr);
 	}
 
 	DescriptorSet& DescriptorSet::operator=(DescriptorSet&& other) noexcept
 	{
-		_pool = std::exchange(other._pool, nullptr);
+		m_pool = std::exchange(other.m_pool, nullptr);
 		return *this;
 	}
 }

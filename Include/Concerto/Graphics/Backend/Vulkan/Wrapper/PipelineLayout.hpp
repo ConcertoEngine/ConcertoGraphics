@@ -33,7 +33,7 @@ namespace cct::gfx::vk
 
 		[[nodiscard]] const std::vector<std::shared_ptr<DescriptorSetLayout>>& GetDescriptorSetLayouts() const;
 	private:
-		std::vector<std::shared_ptr<DescriptorSetLayout>> _descriptorSetLayouts;
+		std::vector<std::shared_ptr<DescriptorSetLayout>> m_descriptorSetLayouts;
 	};
 } // cct::gfx::vk
 

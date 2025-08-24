@@ -23,7 +23,7 @@ namespace cct::gfx::rhi
 {
 	VkRHIDevice::VkRHIDevice(vk::PhysicalDevice& physicalDevice) :
 		vk::Device(physicalDevice),
-		_surface(nullptr)
+		m_surface(nullptr)
 	{
 	}
 
@@ -154,9 +154,9 @@ namespace cct::gfx::rhi
 
 	vk::UploadContext& VkRHIDevice::GetUploadContext()
 	{
-		if (_uploadContext.has_value() == false)
-			_uploadContext.emplace(*this, GetQueueFamilyIndex(vk::Queue::Type::Graphics));
-		return _uploadContext.value();
+		if (m_uploadContext.has_value() == false)
+			m_uploadContext.emplace(*this, GetQueueFamilyIndex(vk::Queue::Type::Graphics));
+		return m_uploadContext.value();
 	}
 
 	vk::Instance& VkRHIDevice::GetVkInstance() const

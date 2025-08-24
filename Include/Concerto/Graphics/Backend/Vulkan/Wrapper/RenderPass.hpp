@@ -29,9 +29,9 @@ namespace cct::gfx::vk
 		RenderPass& operator=(const RenderPass&) = delete;
 
 	private:
-		std::vector<VkAttachmentDescription> _attachments;
-		std::vector<VkSubpassDescription> _subpasses;
-		std::vector<VkSubpassDependency> _dependencies;
+		std::vector<VkAttachmentDescription> m_attachments;
+		std::vector<VkSubpassDescription> m_subpasses;
+		std::vector<VkSubpassDependency> m_dependencies;
 	};
 
 } // Concerto

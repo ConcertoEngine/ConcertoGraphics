@@ -31,8 +31,8 @@ namespace cct::gfx::rhi
 		const vk::ImageView& GetImageView() const;
 
 	private:
-		vk::Image _image;
-		vk::ImageView _imageView;
+		vk::Image m_image;
+		vk::ImageView m_imageView;
 	};
 	using VkRHITexturePtr = std::shared_ptr<VkRHITexture>;
 
@@ -42,7 +42,7 @@ namespace cct::gfx::rhi
 		VkRHITextureView(const vk::ImageView& image);
 		const vk::ImageView& GetImageView() const;
 	private:
-		const vk::ImageView* _imageView;
+		const vk::ImageView* m_imageView;
 	};
 }
 

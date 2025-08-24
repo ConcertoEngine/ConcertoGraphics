@@ -25,7 +25,7 @@ namespace cct::gfx::vk
 		renderPassCreateInfo.dependencyCount = static_cast<UInt32>(subPassDependencies.size());
 		renderPassCreateInfo.pDependencies = subPassDependencies.data();
 
-		const VkResult result = _device->vkCreateRenderPass(*_device->Get(), &renderPassCreateInfo, nullptr, &_handle);
+		const VkResult result = m_device->vkCreateRenderPass(*m_device->Get(), &renderPassCreateInfo, nullptr, &m_handle);
 		CCT_ASSERT(result == VK_SUCCESS, "ConcertoGraphics: vkCreateRenderPass failed VKResult={}", static_cast<int>(result));
 	}
 
@@ -33,6 +33,6 @@ namespace cct::gfx::vk
 	{
 		if (IsNull())
 			return;
-		_device->vkDestroyRenderPass(*_device->Get(), _handle, nullptr);
+		m_device->vkDestroyRenderPass(*m_device->Get(), m_handle, nullptr);
 	}
 } // cct::gfx::vk

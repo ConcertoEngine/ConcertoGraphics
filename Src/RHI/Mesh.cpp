@@ -15,9 +15,9 @@
 
 namespace cct::gfx::rhi
 {
-	Mesh::Mesh(std::string filePath) : _path(std::move(filePath))
+	Mesh::Mesh(std::string filePath) : m_path(std::move(filePath))
 	{
-		bool loaded = LoadFromFile(_path);
+		bool loaded = LoadFromFile(m_path);
 		CCT_ASSERT(loaded, "LoadFromFile failed");
 	}
 
@@ -25,12 +25,12 @@ namespace cct::gfx::rhi
 	{
 		rhi::SubMeshPtr subMesh = std::make_shared<rhi::SubMesh>(this);
 		subMesh->GetVertices() = std::move(vertices);
-		_subMeshes.push_back(subMesh);
+		m_subMeshes.push_back(subMesh);
 	}
 
 	std::vector<rhi::SubMeshPtr>& Mesh::GetSubMeshes()
 	{
-		return _subMeshes;
+		return m_subMeshes;
 	}
 
 	bool Mesh::LoadFromFile(const std::string& fileName)
@@ -81,7 +81,7 @@ namespace cct::gfx::rhi
 			//mat->emissiveColor.y = material.emission[1];
 			//mat->emissiveColor.z = material.emission[2];
 			mat->name = material.name;
-			_materials[material.name] = std::move(mat);
+			m_materials[material.name] = std::move(mat);
 			++i;
 		}
 
@@ -94,15 +94,15 @@ namespace cct::gfx::rhi
 			{
 				const int matId = shape.mesh.material_ids[f];
 				if (currentSubMeshIndex == -1
-					|| _subMeshes[currentSubMeshIndex]->GetMaterial()->name != materials[matId].name)
+					|| m_subMeshes[currentSubMeshIndex]->GetMaterial()->name != materials[matId].name)
 				{
 					SubMeshPtr subMesh = std::make_shared<SubMesh>(this);
-					subMesh->GetMaterial() = _materials[materials[matId].name];
-					_subMeshes.push_back(subMesh);
+					subMesh->GetMaterial() = m_materials[materials[matId].name];
+					m_subMeshes.push_back(subMesh);
 					currentSubMeshIndex++;
 				}
 
-				SubMeshPtr& currentSubMesh = _subMeshes[currentSubMeshIndex];
+				SubMeshPtr& currentSubMesh = m_subMeshes[currentSubMeshIndex];
 
 				for (std::size_t v = 0; v < fv; v++)
 				{
@@ -133,11 +133,11 @@ namespace cct::gfx::rhi
 
 	const std::string& Mesh::GetPath() const
 	{
-		return _path;
+		return m_path;
 	}
 
 	std::unordered_map<std::string, std::shared_ptr<rhi::MaterialInfo>>& Mesh::GetMaterials()
 	{
-		return _materials;
+		return m_materials;
 	}
 }

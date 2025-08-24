@@ -12,25 +12,25 @@ namespace cct::gfx::vk
 	PipelineInfo::PipelineInfo(std::vector<VkPipelineShaderStageCreateInfo> shaderStages, VkExtent2D windowExtent, std::shared_ptr<PipelineLayout>& pipelineLayout)
 	{
 		static VertexInputDescription vertexDescription = GetVertexDescription(); //TODO Remove static
-		_shaderStages = std::move(shaderStages);
-		_vertexInputInfo = VulkanInitializer::VertexInputStateCreateInfo();
-		_vertexInputInfo.pVertexAttributeDescriptions = vertexDescription.attributes.data();
-		_vertexInputInfo.vertexAttributeDescriptionCount = static_cast<UInt32>(vertexDescription.attributes.size());
-		_vertexInputInfo.pVertexBindingDescriptions = vertexDescription.bindings.data();
-		_vertexInputInfo.vertexBindingDescriptionCount = static_cast<UInt32>(vertexDescription.bindings.size());
-		_inputAssembly = VulkanInitializer::InputAssemblyCreateInfo(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
-		_viewport.x = 0.0f;
-		_viewport.y = 0.0f;
-		_viewport.width = static_cast<float>(windowExtent.width);
-		_viewport.height = static_cast<float>(windowExtent.height);
-		_viewport.minDepth = 0.0f;
-		_viewport.maxDepth = 1.0f;
-		_scissor.offset = { 0, 0 };
-		_scissor.extent = windowExtent;
-		_rasterizer = VulkanInitializer::RasterizationStateCreateInfo(VK_POLYGON_MODE_FILL);
-		_multisampling = VulkanInitializer::MultisamplingStateCreateInfo();
-		_colorBlendAttachment = VulkanInitializer::ColorBlendAttachmentState();
-		_pipelineLayout = pipelineLayout;
-		_depthStencil = VulkanInitializer::DepthStencilCreateInfo(true, true, VK_COMPARE_OP_LESS_OR_EQUAL);
+		m_shaderStages = std::move(shaderStages);
+		m_vertexInputInfo = VulkanInitializer::VertexInputStateCreateInfo();
+		m_vertexInputInfo.pVertexAttributeDescriptions = vertexDescription.attributes.data();
+		m_vertexInputInfo.vertexAttributeDescriptionCount = static_cast<UInt32>(vertexDescription.attributes.size());
+		m_vertexInputInfo.pVertexBindingDescriptions = vertexDescription.bindings.data();
+		m_vertexInputInfo.vertexBindingDescriptionCount = static_cast<UInt32>(vertexDescription.bindings.size());
+		m_inputAssembly = VulkanInitializer::InputAssemblyCreateInfo(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
+		m_viewport.x = 0.0f;
+		m_viewport.y = 0.0f;
+		m_viewport.width = static_cast<float>(windowExtent.width);
+		m_viewport.height = static_cast<float>(windowExtent.height);
+		m_viewport.minDepth = 0.0f;
+		m_viewport.maxDepth = 1.0f;
+		m_scissor.offset = { 0, 0 };
+		m_scissor.extent = windowExtent;
+		m_rasterizer = VulkanInitializer::RasterizationStateCreateInfo(VK_POLYGON_MODE_FILL);
+		m_multisampling = VulkanInitializer::MultisamplingStateCreateInfo();
+		m_colorBlendAttachment = VulkanInitializer::ColorBlendAttachmentState();
+		m_pipelineLayout = pipelineLayout;
+		m_depthStencil = VulkanInitializer::DepthStencilCreateInfo(true, true, VK_COMPARE_OP_LESS_OR_EQUAL);
 	}
 } // cct::gfx::vk

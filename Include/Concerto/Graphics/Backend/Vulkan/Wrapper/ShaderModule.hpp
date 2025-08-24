@@ -37,10 +37,10 @@ namespace cct::gfx::vk
 
 		void CreateShaderModule();
 
-		VkShaderModuleCreateInfo _shaderModuleCreateInfo{};
-		std::vector<UInt32> _buffer;
-		VkShaderStageFlagBits _stageFlags;
-		std::string _entryPoint;
+		VkShaderModuleCreateInfo m_shaderModuleCreateInfo{};
+		std::vector<UInt32> m_buffer;
+		VkShaderStageFlagBits m_stageFlags;
+		std::string m_entryPoint;
 
 	};
 }

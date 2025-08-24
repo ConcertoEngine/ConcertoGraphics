@@ -20,11 +20,11 @@ namespace cct::gfx::vk
 	std::vector<const char*> deviceExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME, VK_EXT_DEBUG_MARKER_EXTENSION_NAME };
 
 	Device::Device(PhysicalDevice& physicalDevice) :
-		_physicalDevice(&physicalDevice),
-		_device(VK_NULL_HANDLE),
-		_allocator(nullptr)
+		m_physicalDevice(&physicalDevice),
+		m_device(VK_NULL_HANDLE),
+		m_allocator(nullptr)
 	{
-		std::span<VkQueueFamilyProperties> queueFamilyProperties = _physicalDevice->GetQueueFamilyProperties();
+		std::span<VkQueueFamilyProperties> queueFamilyProperties = m_physicalDevice->GetQueueFamilyProperties();
 		std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
 		queueCreateInfos.reserve(queueFamilyProperties.size());
 
@@ -62,7 +62,7 @@ namespace cct::gfx::vk
 		createInfo.pNext = &shader_draw_parameters_features;
 		createInfo.enabledExtensionCount = static_cast<UInt32>(deviceExtensions.size());
 		createInfo.ppEnabledExtensionNames = deviceExtensions.data();
-		const VkResult result = physicalDevice.GetInstance().vkCreateDevice(*_physicalDevice->Get(), &createInfo, nullptr, &_device);
+		const VkResult result = physicalDevice.GetInstance().vkCreateDevice(*m_physicalDevice->Get(), &createInfo, nullptr, &m_device);
 		CCT_ASSERT(result == VK_SUCCESS, "Error cannot create logical device: VkResult={}", static_cast<int>(result));
 		if (result != VK_SUCCESS)
 		{
@@ -70,10 +70,10 @@ namespace cct::gfx::vk
 		}
 
 		for (auto& ext : deviceExtensions)
-			_extensions.emplace(ext);
+			m_extensions.emplace(ext);
 
 		VolkDeviceTable deviceTable;
-		volkLoadDeviceTable(&deviceTable, _device);
+		volkLoadDeviceTable(&deviceTable, m_device);
 		#define CONCERTO_VULKAN_BACKEND_DEVICE_FUNCTION(func) this->func = deviceTable.func;
 
 		#define CONCERTO_VULKAN_BACKEND_DEVICE_EXT_BEGIN(ext)									\
@@ -96,7 +96,7 @@ namespace cct::gfx::vk
 
 	UInt32 Device::GetQueueFamilyIndex(Queue::Type queueType) const
 	{
-		const std::span<VkQueueFamilyProperties> queueFamilyProperties = _physicalDevice->GetQueueFamilyProperties();
+		const std::span<VkQueueFamilyProperties> queueFamilyProperties = m_physicalDevice->GetQueueFamilyProperties();
 		UInt32 i = 0;
 		for (const VkQueueFamilyProperties& properties: queueFamilyProperties)
 		{
@@ -114,7 +114,7 @@ namespace cct::gfx::vk
 
 	UInt32 Device::GetQueueFamilyIndex(UInt32 flag) const
 	{
-		const std::span<VkQueueFamilyProperties> queueFamilyProperties = _physicalDevice->GetQueueFamilyProperties();
+		const std::span<VkQueueFamilyProperties> queueFamilyProperties = m_physicalDevice->GetQueueFamilyProperties();
 		UInt32 i = 0;
 		for (const VkQueueFamilyProperties properties: queueFamilyProperties)
 		{
@@ -132,62 +132,62 @@ namespace cct::gfx::vk
 
 	Queue& Device::GetQueue(Queue::Type queueType)
 	{
-		auto it = _queues.find(queueType);
-		if (it != _queues.end())
+		auto it = m_queues.find(queueType);
+		if (it != m_queues.end())
 			return it->second;
-		auto emplace = _queues.emplace(queueType, Queue(*this, GetQueueFamilyIndex(queueType)));
+		auto emplace = m_queues.emplace(queueType, Queue(*this, GetQueueFamilyIndex(queueType)));
 		return emplace.first->second;
 	}
 
 	VkDevice* Device::Get()
 	{
-		CCT_ASSERT(_device != VK_NULL_HANDLE, "ConcertoGraphics: device handle is null");
-		return &_device;
+		CCT_ASSERT(m_device != VK_NULL_HANDLE, "ConcertoGraphics: device handle is null");
+		return &m_device;
 	}
 
 	void Device::WaitIdle() const
 	{
-		const VkResult result = this->vkDeviceWaitIdle(_device);
+		const VkResult result = this->vkDeviceWaitIdle(m_device);
 		CCT_ASSERT(result == VK_SUCCESS, "ConcertoGraphics: Failed to Wait for device idle VkResult={}", static_cast<int>(result));
 	}
 
 	void Device::UpdateDescriptorSetsWrite(std::span<VkWriteDescriptorSet> descriptorWrites) const
 	{
-		this->vkUpdateDescriptorSets(_device, static_cast<UInt32>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
+		this->vkUpdateDescriptorSets(m_device, static_cast<UInt32>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
 	}
 
 	void Device::UpdateDescriptorSetWrite(VkWriteDescriptorSet descriptorWrite)
 	{
-		this->vkUpdateDescriptorSets(_device, 1, &descriptorWrite, 0, nullptr);
+		this->vkUpdateDescriptorSets(m_device, 1, &descriptorWrite, 0, nullptr);
 	}
 
 	PhysicalDevice& Device::GetPhysicalDevice() const
 	{
-		CCT_ASSERT(_physicalDevice, "ConcertoGraphics: Invalid physical device handle");
-		return *_physicalDevice;
+		CCT_ASSERT(m_physicalDevice, "ConcertoGraphics: Invalid physical device handle");
+		return *m_physicalDevice;
 	}
 
 	Allocator& Device::GetAllocator() const
 	{
-		CCT_ASSERT(_allocator != nullptr, "ConcertoGraphics: Allocator handle is null");
-		return *_allocator;
+		CCT_ASSERT(m_allocator != nullptr, "ConcertoGraphics: Allocator handle is null");
+		return *m_allocator;
 	}
 
 	Instance& Device::GetInstance() const
 	{
-		CCT_ASSERT(_physicalDevice, "ConcertoGraphics: Invalid physical device.");
-		return _physicalDevice->GetInstance();
+		CCT_ASSERT(m_physicalDevice, "ConcertoGraphics: Invalid physical device.");
+		return m_physicalDevice->GetInstance();
 	}
 
 	bool Device::IsExtensionEnabled(const std::string& ext) const
 	{
-		return _extensions.contains(ext);
+		return m_extensions.contains(ext);
 	}
 
 	void Device::CreateAllocator()
 	{
-		_allocator = std::make_unique<Allocator>(*this);
-		CCT_ASSERT(_allocator != nullptr, "ConcertoGraphics: Cannot create allocator");
+		m_allocator = std::make_unique<Allocator>(*this);
+		CCT_ASSERT(m_allocator != nullptr, "ConcertoGraphics: Cannot create allocator");
 	}
 
 } // cct::gfx::vk

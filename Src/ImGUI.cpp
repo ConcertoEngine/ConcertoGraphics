@@ -16,8 +16,8 @@
 
 namespace cct::gfx::vk
 {
-	ImGUI::ImGUI(RenderingContext& context, Window& window) : _context(context),
-																	   _descriptorPool(*_context.device,
+	ImGUI::ImGUI(RenderingContext& context, Window& window) : m_context(context),
+																	   m_descriptorPool(*m_context.device,
 																			   {{ VK_DESCRIPTOR_TYPE_SAMPLER,                1000 },
 																				{ VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1000 },
 																				{ VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE,          1000 },
@@ -29,23 +29,23 @@ namespace cct::gfx::vk
 																				{ VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, 1000 },
 																				{ VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC, 1000 },
 																				{ VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT,       1000 }}),
-																	   _window(window)
+																	   m_window(window)
 	{
 
 		IMGUI_CHECKVERSION();
-		_imGuiContext = ImGui::CreateContext();
+		m_imGuiContext = ImGui::CreateContext();
 		ImGui::StyleColorsDark();
 		ImGui_ImplVulkan_InitInfo init_info = {};
-		init_info.Instance = *_context.instance->Get();
-		init_info.PhysicalDevice = *_context.physicalDevice->Get();
-		init_info.Device = *_context.device->Get();
-		init_info.QueueFamily = _context.queueFamilyIndex;
-		init_info.Queue = *_context.queue->Get();
-		init_info.DescriptorPool = *_descriptorPool.Get();
-		init_info.MinImageCount = _context.minImageCount;
-		init_info.ImageCount = _context.imageCount;
-		init_info.MSAASamples = _context.MSAASamples;
-		init_info.RenderPass = *_context.renderPass->Get();
+		init_info.Instance = *m_context.instance->Get();
+		init_info.PhysicalDevice = *m_context.physicalDevice->Get();
+		init_info.Device = *m_context.device->Get();
+		init_info.QueueFamily = m_context.queueFamilyIndex;
+		init_info.Queue = *m_context.queue->Get();
+		init_info.DescriptorPool = *m_descriptorPool.Get();
+		init_info.MinImageCount = m_context.minImageCount;
+		init_info.ImageCount = m_context.imageCount;
+		init_info.MSAASamples = m_context.MSAASamples;
+		init_info.RenderPass = *m_context.renderPass->Get();
 
 		ImGui_ImplVulkan_Init(&init_info);
 		const bool res = ImGui_ImplGlfw_InitForVulkan((GLFWwindow*)window.GetRawWindow(), true);
@@ -54,7 +54,7 @@ namespace cct::gfx::vk
 			CCT_ASSERT_FALSE("ConcertoGraphics: error ImGui_ImplGlfw_InitForVulkan");
 			return;
 		}
-		_context.commandBuffer->ImmediateSubmit(*_context.fence, *_context.commandPool, *_context.queue,
+		m_context.commandBuffer->ImmediateSubmit(*m_context.fence, *m_context.commandPool, *m_context.queue,
 				[](CommandBuffer&)
 				{
 					const bool res = ImGui_ImplVulkan_CreateFontsTexture();
@@ -91,7 +91,7 @@ namespace cct::gfx::vk
 
 	ImGuiContext* ImGUI::GetContext() const
 	{
-		return _imGuiContext;
+		return m_imGuiContext;
 	}
 
 	void ImGUI::UpdateMousePosition(float x, float y)

@@ -27,7 +27,7 @@
 	typedef struct HINSTANCE__* HINSTANCE;
 	typedef struct HWND__* HWND;
 	typedef struct HMONITOR__* HMONITOR;
-	typedef struct _SECURITY_ATTRIBUTES SECURITY_ATTRIBUTES;
+	typedef struct m_SECURITY_ATTRIBUTES SECURITY_ATTRIBUTES;
 	#define VK_USE_PLATFORM_WIN32_KHR
 	#include <vulkan/vulkan_win32.h>
 #else

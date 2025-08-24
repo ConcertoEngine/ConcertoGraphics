@@ -10,14 +10,14 @@
 namespace cct::gfx::rhi
 {
 	Instance::Instance(Backend backend, ValidationLevel validationLevel) :
-		_backend(backend)
+		m_backend(backend)
 	{
 		CCT_GFX_AUTO_PROFILER_SCOPE();
 		switch (backend)
 		{
 		case Backend::ConcertoVulkan:
-			_apiImpl = std::make_unique<VkRHI>();
-			_apiImpl->Create(validationLevel);
+			m_apiImpl = std::make_unique<VkRHI>();
+			m_apiImpl->Create(validationLevel);
 			break;
 		case Backend::Vulkan:
 		case Backend::DirectX11:
@@ -32,19 +32,19 @@ namespace cct::gfx::rhi
 
 	std::span<const DeviceInfo> Instance::EnumerateDevices() const
 	{
-		CCT_ASSERT(_apiImpl, "ConcertoGraphics: Tying to get an invalid ApiImpl");
-		return _apiImpl->EnumerateDevices();
+		CCT_ASSERT(m_apiImpl, "ConcertoGraphics: Tying to get an invalid ApiImpl");
+		return m_apiImpl->EnumerateDevices();
 	}
 
 	std::unique_ptr<Device> Instance::CreateDevice(std::size_t index)
 	{
-		CCT_ASSERT(_apiImpl, "ConcertoGraphics: Tying to get an invalid ApiImpl");
-		return _apiImpl->CreateDevice(index);
+		CCT_ASSERT(m_apiImpl, "ConcertoGraphics: Tying to get an invalid ApiImpl");
+		return m_apiImpl->CreateDevice(index);
 	}
 
 	APIImpl* Instance::GetImpl()
 	{
-		CCT_ASSERT(_apiImpl, "ConcertoGraphics: Tying to get an invalid ApiImpl");
-		return _apiImpl.get();
+		CCT_ASSERT(m_apiImpl, "ConcertoGraphics: Tying to get an invalid ApiImpl");
+		return m_apiImpl.get();
 	}
 }

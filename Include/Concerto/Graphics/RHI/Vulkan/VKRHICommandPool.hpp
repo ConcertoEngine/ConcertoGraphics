@@ -18,7 +18,7 @@ namespace cct::gfx::rhi
 
 		std::unique_ptr<CommandBuffer> AllocateCommandBuffer(CommandBufferUasge usage) override;
 	private:
-		VkRHIDevice& _device;
+		VkRHIDevice& m_device;
 	};
 }
 

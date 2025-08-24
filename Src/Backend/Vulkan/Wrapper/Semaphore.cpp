@@ -18,10 +18,10 @@ namespace cct::gfx::vk
 		info.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
 		info.pNext = nullptr;
 		info.flags = 0;
-		_lastResult = _device->vkCreateSemaphore(*_device->Get(), &info, nullptr, &_handle);
-		if (_lastResult != VK_SUCCESS)
+		m_lastResult = m_device->vkCreateSemaphore(*m_device->Get(), &info, nullptr, &m_handle);
+		if (m_lastResult != VK_SUCCESS)
 		{
-			CCT_ASSERT_FALSE("ConcertoGraphics: vkCreateSemaphore failed VKResult={}", static_cast<int>(_lastResult));
+			CCT_ASSERT_FALSE("ConcertoGraphics: vkCreateSemaphore failed VKResult={}", static_cast<int>(m_lastResult));
 			return;
 		}
 	}
@@ -30,6 +30,6 @@ namespace cct::gfx::vk
 	{
 		if (IsNull())
 			return;
-		_device->vkDestroySemaphore(*_device->Get(), _handle, nullptr);
+		m_device->vkDestroySemaphore(*m_device->Get(), m_handle, nullptr);
 	}
 } // namespace cct::gfx::vk

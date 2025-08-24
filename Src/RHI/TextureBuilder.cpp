@@ -13,7 +13,7 @@
 namespace cct::gfx::rhi
 {
 	TextureBuilder::TextureBuilder(Device& device) :
-		_device(device)
+		m_device(device)
 	{
 	}
 
@@ -33,7 +33,7 @@ namespace cct::gfx::rhi
 			}
 		}
 
-		DeferredExit _([&]()
+		DeferredExit m_([&]()
 		{
 			stbi_image_free(pixels);
 		});
@@ -46,7 +46,7 @@ namespace cct::gfx::rhi
 		}
 
 		UInt32 allocationSize = width * height * channels;
-		auto buffer = _device.CreateBuffer(static_cast<rhi::BufferUsageFlags>(BufferUsage::TransferSrc), allocationSize, true);
+		auto buffer = m_device.CreateBuffer(static_cast<rhi::BufferUsageFlags>(BufferUsage::TransferSrc), allocationSize, true);
 		if (buffer == nullptr)
 			return nullptr;
 
@@ -67,8 +67,8 @@ namespace cct::gfx::rhi
 		if (texture == nullptr)
 			return nullptr;
 
-		_buffersToUpload.emplace(texture, std::move(buffer));
-		_texturesCache.emplace(path, texture);
+		m_buffersToUpload.emplace(texture, std::move(buffer));
+		m_texturesCache.emplace(path, texture);
 		++i;
 		return texture;
 	}
@@ -77,11 +77,11 @@ namespace cct::gfx::rhi
 	{
 		CCT_GFX_AUTO_PROFILER_SCOPE();
 
-		for (auto& [texture, buffer] : _buffersToUpload)
+		for (auto& [texture, buffer] : m_buffersToUpload)
 			buffer->CopyTo(*texture);
 
 		InternalCommit();
 
-		_buffersToUpload.clear();
+		m_buffersToUpload.clear();
 	}
 }

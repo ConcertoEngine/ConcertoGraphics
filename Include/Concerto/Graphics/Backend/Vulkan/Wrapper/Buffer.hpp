@@ -49,11 +49,11 @@ namespace cct::gfx::vk
 		[[nodiscard]] VkBufferUsageFlags GetUsage() const;
 
 	private:
-		UInt32 _mapCount = 0;
-		std::size_t _allocatedSize;
-		Allocator* _allocator;
-		VmaAllocation _allocation{ VK_NULL_HANDLE };
-		VkBufferUsageFlags _usage;
+		UInt32 m_mapCount = 0;
+		std::size_t m_allocatedSize;
+		Allocator* m_allocator;
+		VmaAllocation m_allocation{ VK_NULL_HANDLE };
+		VkBufferUsageFlags m_usage;
 	};
 
 } // cct::gfx::vk

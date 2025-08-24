@@ -32,7 +32,7 @@ namespace cct::gfx::vk
 
 		void WriteImageSamplerDescriptor(const Sampler& sampler, const ImageView& imageView, VkImageLayout imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL) const;
 	private:
-		DescriptorPool* _pool{};
+		DescriptorPool* m_pool{};
 	};
 	using DescriptorSetPtr = std::shared_ptr<DescriptorSet>;
 }

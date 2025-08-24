@@ -54,11 +54,11 @@ namespace cct::gfx::vk
 	private:
 		void CreateAllocator();
 
-		PhysicalDevice* _physicalDevice;
-		VkDevice _device;
-		std::unique_ptr<Allocator> _allocator;
-		std::unordered_map<Queue::Type, Queue> _queues;
-		std::unordered_set<std::string> _extensions;
+		PhysicalDevice* m_physicalDevice;
+		VkDevice m_device;
+		std::unique_ptr<Allocator> m_allocator;
+		std::unordered_map<Queue::Type, Queue> m_queues;
+		std::unordered_set<std::string> m_extensions;
 	};
 
 } // cct::gfx::vk

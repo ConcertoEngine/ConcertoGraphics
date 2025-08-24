@@ -111,7 +111,7 @@ namespace cct::gfx::rhi
 
 		const vk::VkMaterial& vkMaterial = Cast<const vk::VkMaterial&>(material);
 		const VkPipeline pipeline = *vkMaterial.pipeline->Get();
-		//if (_lastBoundedPipeline == pipeline)
+		//if (m_lastBoundedPipeline == pipeline)
 		//	return;
 		vk::CommandBuffer::BindPipeline(VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
 		//_lastBoundedPipeline = pipeline;

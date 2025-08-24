@@ -27,8 +27,8 @@ namespace cct::gfx::vk
 		descriptorPoolCreateInfo.poolSizeCount = static_cast<UInt32>(sizes.size());
 		descriptorPoolCreateInfo.pPoolSizes = sizes.data();
 		descriptorPoolCreateInfo.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
-		_lastResult = device.vkCreateDescriptorPool(*device.Get(), &descriptorPoolCreateInfo, nullptr, &_handle);
-		CCT_ASSERT(_lastResult == VK_SUCCESS, "ConcertoGraphics: vkCreateDescriptorPool failed VkResult={}", static_cast<const int>(_lastResult));
+		m_lastResult = device.vkCreateDescriptorPool(*device.Get(), &descriptorPoolCreateInfo, nullptr, &m_handle);
+		CCT_ASSERT(m_lastResult == VK_SUCCESS, "ConcertoGraphics: vkCreateDescriptorPool failed VkResult={}", static_cast<const int>(m_lastResult));
 	}
 
 	DescriptorPool::DescriptorPool(Device& device, std::vector<VkDescriptorPoolSize> poolSizes) : Object<VkDescriptorPool>(device)
@@ -39,24 +39,24 @@ namespace cct::gfx::vk
 		descriptorPoolCreateInfo.poolSizeCount = static_cast<UInt32>(poolSizes.size());
 		descriptorPoolCreateInfo.pPoolSizes = poolSizes.data();
 		descriptorPoolCreateInfo.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
-		_lastResult = device.vkCreateDescriptorPool(*device.Get(), &descriptorPoolCreateInfo, nullptr, &_handle);
-		CCT_ASSERT(_lastResult == VK_SUCCESS, "ConcertoGraphics: Failed to create descriptor pool VkResult={}", static_cast<const int>(_lastResult));
+		m_lastResult = device.vkCreateDescriptorPool(*device.Get(), &descriptorPoolCreateInfo, nullptr, &m_handle);
+		CCT_ASSERT(m_lastResult == VK_SUCCESS, "ConcertoGraphics: Failed to create descriptor pool VkResult={}", static_cast<const int>(m_lastResult));
 	}
 
 	DescriptorPool::~DescriptorPool()
 	{
 		if (IsNull())
 			return;
-		_device->vkDestroyDescriptorPool(*_device->Get(), _handle, nullptr);
+		m_device->vkDestroyDescriptorPool(*m_device->Get(), m_handle, nullptr);
 	}
 
 	DescriptorSet DescriptorPool::AllocateDescriptorSet(DescriptorSetLayout& setLayout)
 	{
-		return { *_device, *this, setLayout };
+		return { *m_device, *this, setLayout };
 	}
 
 	void DescriptorPool::Reset()
 	{
-		_device->vkResetDescriptorPool(*_device->Get(), _handle, 0);
+		m_device->vkResetDescriptorPool(*m_device->Get(), m_handle, 0);
 	}
 }

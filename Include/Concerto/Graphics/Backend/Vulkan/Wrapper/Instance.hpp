@@ -45,12 +45,12 @@ namespace cct::gfx::vk
 
 		static PFN_vkGetInstanceProcAddr vkGetInstanceProcAddr;
 	private:
-		VkInstance _instance;
-		Version _apiVersion;
-		mutable VkResult _lastResult;
-		mutable std::optional<std::vector<PhysicalDevice>> _physicalDevices;
-		std::unordered_set<std::string> _loadedExtensions;
-		std::unordered_set<std::string> _loadedLayers;
+		VkInstance m_instance;
+		Version m_apiVersion;
+		mutable VkResult m_lastResult;
+		mutable std::optional<std::vector<PhysicalDevice>> m_physicalDevices;
+		std::unordered_set<std::string> m_loadedExtensions;
+		std::unordered_set<std::string> m_loadedLayers;
 	};
 } // cct::gfx::vk
 

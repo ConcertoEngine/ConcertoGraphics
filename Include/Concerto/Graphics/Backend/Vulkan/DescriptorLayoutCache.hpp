@@ -62,7 +62,7 @@ namespace cct::gfx::vk
 		};
 	 public:
 		explicit DescriptorLayoutCache(Device& device) :
-			_device(&device)
+			m_device(&device)
 		{
 		}
 
@@ -92,17 +92,17 @@ namespace cct::gfx::vk
 					});
 			}
 
-			auto it = _layoutsCache.find(layoutInfo);
-			if (it != _layoutsCache.end())
+			auto it = m_layoutsCache.find(layoutInfo);
+			if (it != m_layoutsCache.end())
 				return (*it).second;
-			auto [elementIt, _] =
-				_layoutsCache.emplace(layoutInfo, MakeDescriptorSetLayout(*_device, layoutInfo.bindings));
+			auto [elementIt, m_] =
+				m_layoutsCache.emplace(layoutInfo, MakeDescriptorSetLayout(*m_device, layoutInfo.bindings));
 			return elementIt->second;
 		}
 
 	 private:
-		Device* _device;
-		std::unordered_map<DescriptorLayoutInfo, DescriptorSetLayoutPtr, DescriptorLayoutHash> _layoutsCache;
+		Device* m_device;
+		std::unordered_map<DescriptorLayoutInfo, DescriptorSetLayoutPtr, DescriptorLayoutHash> m_layoutsCache;
 	};
 }
 #endif //CONCERTO_GRAPHICS_INCLUDE_DESCRIPTORLAYOUTCACHE_HPP_

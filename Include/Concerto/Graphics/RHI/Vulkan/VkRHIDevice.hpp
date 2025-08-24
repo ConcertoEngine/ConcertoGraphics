@@ -35,8 +35,8 @@ namespace cct::gfx::rhi
 		vk::Instance& GetVkInstance() const;
 
 	private:
-		VkSurfaceKHR _surface;
-		std::optional<vk::UploadContext> _uploadContext;
+		VkSurfaceKHR m_surface;
+		std::optional<vk::UploadContext> m_uploadContext;
 	};
 }
 

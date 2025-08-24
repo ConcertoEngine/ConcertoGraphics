@@ -44,8 +44,8 @@ namespace cct::gfx::vk
 			VkGraphicsPipelineCreateInfo pipelineCreateInfo;
 		};
 	private:
-		PipelineInfo _pipelineInfo;
-		CreateInfo _createInfo;
+		PipelineInfo m_pipelineInfo;
+		CreateInfo m_createInfo;
 	};
 
 	using PipelinePtr = std::shared_ptr<Pipeline>;

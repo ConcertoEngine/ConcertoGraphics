@@ -24,39 +24,39 @@ namespace cct::gfx::vk
 	}
 
 
-	Vulkan* Vulkan::_instance = nullptr;
+	Vulkan* Vulkan::m_instance = nullptr;
 
 	Vulkan::Vulkan(RendererInfo info) :
-		_info(std::move(info)),
-		_vkInstance(_info.applicationName,
-			_info.applicationName,
+		m_info(std::move(info)),
+		m_vkInstance(m_info.applicationName,
+			m_info.applicationName,
 			{ 1, 3, 0 },
-			_info.applicationVersion,
+			m_info.applicationVersion,
 			{ 1, 0, 0 }, extensions, layers),
-		_physicalDevices(_vkInstance.EnumeratePhysicalDevices())
+		m_physicalDevices(m_vkInstance.EnumeratePhysicalDevices())
 	{
-		CCT_ASSERT(_instance == nullptr, "Only one renderer can be created");
-		_instance = this;
+		CCT_ASSERT(m_instance == nullptr, "Only one renderer can be created");
+		m_instance = this;
 	}
 
 	Vulkan* Vulkan::GetInstance()
 	{
-		CCT_ASSERT(_instance != nullptr, "You must call the constructor of class 'Vulkan', before calling 'GetInstance'");
-		return _instance;
+		CCT_ASSERT(m_instance != nullptr, "You must call the constructor of class 'Vulkan', before calling 'GetInstance'");
+		return m_instance;
 	}
 
 	Device* Vulkan::CreateDevice(rhi::DeviceType type)
 	{
-		auto it = _devices.find(type);
-		if (it != _devices.end())
+		auto it = m_devices.find(type);
+		if (it != m_devices.end())
 			return &it->second;
-		for (auto& physicalDevice : _physicalDevices)
+		for (auto& physicalDevice : m_physicalDevices)
 		{
 			auto properties = physicalDevice.GetProperties();
 			rhi::DeviceType deviceType = static_cast<rhi::DeviceType>(properties.deviceType);
 			if (deviceType != type)
 				continue;
-			it = _devices.emplace(deviceType, Device(physicalDevice));
+			it = m_devices.emplace(deviceType, Device(physicalDevice));
 			return &it->second;
 		}
 		return nullptr;
@@ -64,6 +64,6 @@ namespace cct::gfx::vk
 
 	Instance& Vulkan::GetVkInstance()
 	{
-		return _vkInstance;
+		return m_vkInstance;
 	}
 }

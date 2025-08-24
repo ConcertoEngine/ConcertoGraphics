@@ -39,9 +39,9 @@ namespace cct::gfx::rhi
 
 		[[nodiscard]] virtual std::unique_ptr<GpuMesh> BuildGpuMesh(rhi::MaterialBuilder& materialBuilder, const rhi::RenderPass& renderPass, rhi::Device& device) = 0;
 	private:
-		std::string _path;
-		std::vector<std::shared_ptr<rhi::SubMesh>> _subMeshes;
-		std::unordered_map<std::string, std::shared_ptr<rhi::MaterialInfo>> _materials;
+		std::string m_path;
+		std::vector<std::shared_ptr<rhi::SubMesh>> m_subMeshes;
+		std::unordered_map<std::string, std::shared_ptr<rhi::MaterialInfo>> m_materials;
 	};
 }
 

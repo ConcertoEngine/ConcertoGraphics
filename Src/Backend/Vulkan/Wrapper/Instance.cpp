@@ -50,9 +50,9 @@ namespace cct::gfx::vk
 	Instance::Instance(const std::string& appName, const std::string& engineName, const Version& apiVersion,
 		const Version& appVersion, const Version& engineVersion, std::span<const char*> extensions,
 		std::span<const char*> layers) :
-		_instance(VK_NULL_HANDLE),
-		_apiVersion(apiVersion),
-		_lastResult(VK_SUCCESS)
+		m_instance(VK_NULL_HANDLE),
+		m_apiVersion(apiVersion),
+		m_lastResult(VK_SUCCESS)
 	{
 		CCT_GFX_AUTO_PROFILER_SCOPE();
 
@@ -101,20 +101,20 @@ namespace cct::gfx::vk
 		//}
 
 		for (auto& ext : extensions)
-			_loadedExtensions.emplace(ext);
+			m_loadedExtensions.emplace(ext);
 		for (auto& layer : layers)
-			_loadedLayers.emplace(layer);
+			m_loadedLayers.emplace(layer);
 
-		_lastResult = volkInitialize();
-		if (_lastResult != VK_SUCCESS)
+		m_lastResult = volkInitialize();
+		if (m_lastResult != VK_SUCCESS)
 		{
-			CCT_ASSERT_FALSE("ConcertoGraphics: volkInitialize() failed VkResult={}", static_cast<int>(_lastResult));
+			CCT_ASSERT_FALSE("ConcertoGraphics: volkInitialize() failed VkResult={}", static_cast<int>(m_lastResult));
 			throw std::runtime_error("volkInitialize Failed");
 		}
 
-		_lastResult = vkCreateInstance(&createInfo, nullptr, &_instance);
-		CCT_ASSERT(_lastResult == VK_SUCCESS, "ConcertoGraphics: vkCreateInstance failed VKResult={}", static_cast<int>(_lastResult));
-		volkLoadInstanceOnly(_instance);
+		m_lastResult = vkCreateInstance(&createInfo, nullptr, &m_instance);
+		CCT_ASSERT(m_lastResult == VK_SUCCESS, "ConcertoGraphics: vkCreateInstance failed VKResult={}", static_cast<int>(m_lastResult));
+		volkLoadInstanceOnly(m_instance);
 		Instance::vkGetInstanceProcAddr = ::vkGetInstanceProcAddr;
 #define CONCERTO_VULKAN_BACKEND_INSTANCE_FUNCTION(func) this->func = ::func;
 
@@ -134,42 +134,42 @@ namespace cct::gfx::vk
 
 	Version Instance::GetApiVersion() const
 	{
-		return _apiVersion;
+		return m_apiVersion;
 	}
 
 	VkInstance* Instance::Get()
 	{
-		assert(_instance != VK_NULL_HANDLE);
-		return &_instance;
+		assert(m_instance != VK_NULL_HANDLE);
+		return &m_instance;
 	}
 
 	std::span<PhysicalDevice> Instance::EnumeratePhysicalDevices() const
 	{
-		if (_physicalDevices)
-			return _physicalDevices.value();
+		if (m_physicalDevices)
+			return m_physicalDevices.value();
 		UInt32 deviceCount = 0;
-		_lastResult = vkEnumeratePhysicalDevices(_instance, &deviceCount, nullptr);
-		CCT_ASSERT(_lastResult == VK_SUCCESS, "ConcertoGraphics: vkEnumeratePhysicalDevices failed VKResult={}", static_cast<int>(_lastResult));
+		m_lastResult = vkEnumeratePhysicalDevices(m_instance, &deviceCount, nullptr);
+		CCT_ASSERT(m_lastResult == VK_SUCCESS, "ConcertoGraphics: vkEnumeratePhysicalDevices failed VKResult={}", static_cast<int>(m_lastResult));
 		std::vector<VkPhysicalDevice> devices(deviceCount);
-		_lastResult = vkEnumeratePhysicalDevices(_instance, &deviceCount, devices.data());
-		CCT_ASSERT(_lastResult == VK_SUCCESS, "ConcertoGraphics: vkEnumeratePhysicalDevices failed VKResult={}", static_cast<int>(_lastResult));
+		m_lastResult = vkEnumeratePhysicalDevices(m_instance, &deviceCount, devices.data());
+		CCT_ASSERT(m_lastResult == VK_SUCCESS, "ConcertoGraphics: vkEnumeratePhysicalDevices failed VKResult={}", static_cast<int>(m_lastResult));
 		std::vector<PhysicalDevice> physicalDevices;
 		physicalDevices.reserve(devices.size());
 		for (VkPhysicalDevice device : devices)
 		{
 			physicalDevices.emplace_back(const_cast<Instance&>(*this), device);
 		}
-		_physicalDevices = std::move(physicalDevices);
-		return _physicalDevices.value();
+		m_physicalDevices = std::move(physicalDevices);
+		return m_physicalDevices.value();
 	}
 
 	VkResult Instance::GetLastError() const
 	{
-		return _lastResult;
+		return m_lastResult;
 	}
 
 	bool Instance::IsExtensionEnabled(const std::string& ext) const
 	{
-		return _loadedExtensions.contains(ext);
+		return m_loadedExtensions.contains(ext);
 	}
 } // namespace cct::gfx::vk

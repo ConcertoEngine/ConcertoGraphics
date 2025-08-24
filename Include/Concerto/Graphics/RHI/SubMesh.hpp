@@ -23,9 +23,9 @@ namespace cct::gfx::rhi
 		[[nodiscard]] std::shared_ptr<rhi::MaterialInfo>& GetMaterial();
 		[[nodiscard]] Mesh* GetParent();
 	 private:
-		Vertices _vertices;
-		std::shared_ptr<rhi::MaterialInfo> _material;
-		Mesh* _parent;
+		Vertices m_vertices;
+		std::shared_ptr<rhi::MaterialInfo> m_material;
+		Mesh* m_parent;
 	};
 	using SubMeshPtr = std::shared_ptr<SubMesh>;
 }

@@ -36,10 +36,10 @@ namespace cct::gfx::vk
 		[[nodiscard]] VkFormat GetFormat() const;
 		VkExtent2D GetExtent() const;
 	private:
-		bool _isAllocated;
-		VkFormat _imageFormat = {};
-		VmaAllocation _allocation = {};
-		VkExtent2D _extent;
+		bool m_isAllocated;
+		VkFormat m_imageFormat = {};
+		VmaAllocation m_allocation = {};
+		VkExtent2D m_extent;
 	};
 }
 

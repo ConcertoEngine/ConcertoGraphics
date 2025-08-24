@@ -13,8 +13,8 @@ namespace cct::gfx::rhi
 {
 	VkRHIBuffer::VkRHIBuffer(VkRHIDevice& device, rhi::BufferUsageFlags usage, UInt32 allocationSize, bool allowBufferMapping) :
 		vk::Buffer(device.GetAllocator(), allocationSize, Converters::ToVulkan(usage), VMA_MEMORY_USAGE_AUTO, allowBufferMapping),
-		_device(device),
-		_allowBufferMapping(allowBufferMapping)
+		m_device(device),
+		m_allowBufferMapping(allowBufferMapping)
 	{
 	}
 
@@ -23,7 +23,7 @@ namespace cct::gfx::rhi
 		CCT_GFX_AUTO_PROFILER_SCOPE();
 
 		const auto& vkTexture = cct::Cast<const VkRHITexture&>(texture);
-		auto& uploadContext = _device.GetUploadContext();
+		auto& uploadContext = m_device.GetUploadContext();
 		auto* commandBuffer = uploadContext.AcquireSecondaryCommandBuffer();
 		if (!commandBuffer)
 			return false;
@@ -48,7 +48,7 @@ namespace cct::gfx::rhi
 			imageBarrier_toTransfer.srcAccessMask = 0;
 			imageBarrier_toTransfer.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
 
-			vk::Buffer::_device->vkCmdPipelineBarrier(*commandBuffer->Get(), VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT, 0,
+			vk::Buffer::m_device->vkCmdPipelineBarrier(*commandBuffer->Get(), VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT, 0,
 				0, nullptr, 0, nullptr, 1, &imageBarrier_toTransfer);
 
 			VkBufferImageCopy copyRegion = {};
@@ -67,7 +67,7 @@ namespace cct::gfx::rhi
 				.depth = 1
 			};;
 
-			vk::Buffer::_device->vkCmdCopyBufferToImage(*commandBuffer->Get(), *vk::Buffer::Get(), *vkTexture.GetImage().Get(), VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &copyRegion);
+			vk::Buffer::m_device->vkCmdCopyBufferToImage(*commandBuffer->Get(), *vk::Buffer::Get(), *vkTexture.GetImage().Get(), VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &copyRegion);
 
 			VkImageMemoryBarrier imageBarrier_toReadable = imageBarrier_toTransfer;
 
@@ -77,7 +77,7 @@ namespace cct::gfx::rhi
 			imageBarrier_toReadable.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
 			imageBarrier_toReadable.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
 
-			vk::Buffer::_device->vkCmdPipelineBarrier(*commandBuffer->Get(), VK_PIPELINE_STAGE_TRANSFER_BIT,
+			vk::Buffer::m_device->vkCmdPipelineBarrier(*commandBuffer->Get(), VK_PIPELINE_STAGE_TRANSFER_BIT,
 				VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, 0, 0, nullptr, 0, nullptr, 1,
 				&imageBarrier_toReadable);
 		}
@@ -88,7 +88,7 @@ namespace cct::gfx::rhi
 
 	bool VkRHIBuffer::Map(Byte** data)
 	{
-		if (!_allowBufferMapping)
+		if (!m_allowBufferMapping)
 		{
 			CCT_ASSERT_FALSE("ConcertoGraphics: buffer mapping is not enabled");
 			return false;
@@ -98,7 +98,7 @@ namespace cct::gfx::rhi
 
 	void VkRHIBuffer::UnMap()
 	{
-		if (!_allowBufferMapping)
+		if (!m_allowBufferMapping)
 		{
 			CCT_ASSERT_FALSE("ConcertoGraphics: buffer mapping is not enabled");
 			return;

@@ -31,7 +31,7 @@ namespace cct::gfx::vk
 		vk::CommandBuffer AllocateCommandBuffer(VkCommandBufferLevel level);
 
 	private:
-		UInt32 _queueFamily;
+		UInt32 m_queueFamily;
 	};
 }
 

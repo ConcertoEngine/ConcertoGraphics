@@ -14,48 +14,48 @@
 
 namespace cct::gfx::rhi
 {
-	VkRHITextureBuilder* VkRHITextureBuilder::_instance = nullptr;
+	VkRHITextureBuilder* VkRHITextureBuilder::m_instance = nullptr;
 
 	VkRHITextureBuilder::VkRHITextureBuilder(rhi::Device& device, vk::UploadContext& uploadContext, vk::Queue& queue) :
 		TextureBuilder(device),
-		_device(device),
-		_uploadContext(uploadContext),
-		_queue(queue)
+		m_device(device),
+		m_uploadContext(uploadContext),
+		m_queue(queue)
 	{
-		if (_instance != nullptr)
+		if (m_instance != nullptr)
 		{
 			CCT_ASSERT_FALSE("ConcertoGraphics: Texture builder instance is null");
 			return;
 		}
-		_instance = this;
+		m_instance = this;
 	}
 
 	VkRHITextureBuilder::~VkRHITextureBuilder()
 	{
-		_instance = nullptr;
+		m_instance = nullptr;
 	}
 
 	VkRHITextureBuilder* VkRHITextureBuilder::Instance()
 	{
-		CCT_ASSERT(_instance, "ConcertoGraphics: VkRHITextureBuilder instance is null");
-		return _instance;
+		CCT_ASSERT(m_instance, "ConcertoGraphics: VkRHITextureBuilder instance is null");
+		return m_instance;
 	}
 
 	std::shared_ptr<Texture> VkRHITextureBuilder::BuildApiTexture(PixelFormat format, Int32 width, Int32 height)
 	{
-		return std::make_shared<VkRHITexture>(Cast<VkRHIDevice&>(_device), format, width, height, VK_IMAGE_ASPECT_COLOR_BIT);
+		return std::make_shared<VkRHITexture>(Cast<VkRHIDevice&>(m_device), format, width, height, VK_IMAGE_ASPECT_COLOR_BIT);
 	}
 
 	void VkRHITextureBuilder::InternalCommit()
 	{
-		auto& vkDevice = cct::Cast<VkRHIDevice&>(_device);
-		_uploadContext._commandBuffer.Begin();
-		_uploadContext.ExecuteSecondaryCommandBuffers();
-		_uploadContext._commandBuffer.End();
+		auto& vkDevice = cct::Cast<VkRHIDevice&>(m_device);
+		m_uploadContext.m_commandBuffer.Begin();
+		m_uploadContext.ExecuteSecondaryCommandBuffers();
+		m_uploadContext.m_commandBuffer.End();
 
-		vkDevice.GetQueue(vk::Queue::Type::Transfer).Submit(_uploadContext._commandBuffer, nullptr, nullptr, _uploadContext._uploadFence);
-		_uploadContext._uploadFence.Wait(9999999999);
-		_uploadContext._uploadFence.Reset();
-		_uploadContext._commandPool.Reset();
+		vkDevice.GetQueue(vk::Queue::Type::Transfer).Submit(m_uploadContext.m_commandBuffer, nullptr, nullptr, m_uploadContext.m_uploadFence);
+		m_uploadContext.m_uploadFence.Wait(9999999999);
+		m_uploadContext.m_uploadFence.Reset();
+		m_uploadContext.m_commandPool.Reset();
 	}
 }

@@ -377,25 +377,25 @@ namespace cct::gfx
 	}
 
 	Window::Window(Int32 displayIndex, const std::string& title, Int32 width, Int32 height) :
-		_title(title),
-		_width(width),
-		_height(height),
-		_window(nullptr),
-		_windowID(0),
-		_shouldQuit(false)
+		m_title(title),
+		m_width(width),
+		m_height(height),
+		m_window(nullptr),
+		m_windowID(0),
+		m_shouldQuit(false)
 	{
 		CCT_GFX_AUTO_PROFILER_SCOPE();
 		Uint32 flags = 0;
 		flags |= SDL_WINDOW_RESIZABLE;
-		_window = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED_DISPLAY(displayIndex), SDL_WINDOWPOS_CENTERED_DISPLAY(displayIndex), width, height, flags);
-		if (_window == nullptr)
+		m_window = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED_DISPLAY(displayIndex), SDL_WINDOWPOS_CENTERED_DISPLAY(displayIndex), width, height, flags);
+		if (m_window == nullptr)
 		{
 			CCT_ASSERT_FALSE("ConcertoGraphics: Glfw initialization failed");
 			throw std::runtime_error("GLFW3 initialization failed");
 		}
-		_windowID = SDL_GetWindowID(_window);
+		m_windowID = SDL_GetWindowID(m_window);
 
-		if (_windowID == 0)
+		if (m_windowID == 0)
 		{
 			CCT_ASSERT_FALSE("ConcertoGraphics: Could not get window id message: {}", SDL_GetError());
 			throw std::runtime_error(std::format("ConcertoGraphics: Could not get window id message: {}", SDL_GetError()));
@@ -407,20 +407,20 @@ namespace cct::gfx
 	{
 		CCT_GFX_AUTO_PROFILER_SCOPE();
 		SDL_DelEventWatch(EventHandler, this);
-		SDL_DestroyWindow(_window);
-		_window = nullptr;
+		SDL_DestroyWindow(m_window);
+		m_window = nullptr;
 	}
 
 	void Window::SetTitle(const std::string& title)
 	{
-		CCT_ASSERT(_window, "ConcertoGraphics: invalid window pointer");
-		SDL_SetWindowTitle(_window, title.c_str());
+		CCT_ASSERT(m_window, "ConcertoGraphics: invalid window pointer");
+		SDL_SetWindowTitle(m_window, title.c_str());
 	}
 
 
 	void Window::SetCursorVisible(bool visible)
 	{
-		CCT_ASSERT(_window, "ConcertoGraphics: invalid window pointer");
+		CCT_ASSERT(m_window, "ConcertoGraphics: invalid window pointer");
 		Int32 result = SDL_ShowCursor(visible);
 		if (result < 0)
 			Logger::Warning("{}", SDL_GetError());
@@ -428,12 +428,12 @@ namespace cct::gfx
 
 	void Window::SetCursorIcon(const std::string& path)
 	{
-		CCT_ASSERT(_window, "ConcertoGraphics: invalid window pointer");
+		CCT_ASSERT(m_window, "ConcertoGraphics: invalid window pointer");
 	}
 
 	void Window::SetCursorDisabled(bool disabled)
 	{
-		CCT_ASSERT(_window, "ConcertoGraphics: invalid window pointer");
+		CCT_ASSERT(m_window, "ConcertoGraphics: invalid window pointer");
 		if (disabled)
 		{
 			Int32 result = SDL_ShowCursor(SDL_DISABLE);
@@ -456,27 +456,27 @@ namespace cct::gfx
 
 	UInt32 Window::GetHeight() const
 	{
-		CCT_ASSERT(_window, "ConcertoGraphics: invalid window pointer");
+		CCT_ASSERT(m_window, "ConcertoGraphics: invalid window pointer");
 		int w, h;
-		SDL_GetWindowSize(_window, &w, &h);
+		SDL_GetWindowSize(m_window, &w, &h);
 		return static_cast<UInt32>(h);
 	}
 
 	UInt32 Window::GetWidth() const
 	{
-		CCT_ASSERT(_window, "ConcertoGraphics: invalid window pointer");
+		CCT_ASSERT(m_window, "ConcertoGraphics: invalid window pointer");
 		int w, h;
-		SDL_GetWindowSize(_window, &w, &h);
+		SDL_GetWindowSize(m_window, &w, &h);
 		return static_cast<UInt32>(w);
 	}
 
 	NativeWindow Window::GetNativeWindow() const
 	{
-		CCT_ASSERT(_window, "ConcertoGraphics: invalid window pointer");
+		CCT_ASSERT(m_window, "ConcertoGraphics: invalid window pointer");
 		SDL_SysWMinfo wmInfo;
 		SDL_VERSION(&wmInfo.version)
 			NativeWindow nativeWindow;
-		if (SDL_GetWindowWMInfo(_window, &wmInfo)) {
+		if (SDL_GetWindowWMInfo(m_window, &wmInfo)) {
 #if defined(CCT_PLATFORM_WINDOWS)
 			nativeWindow.window = wmInfo.info.win.window;
 			nativeWindow.hinstance = wmInfo.info.win.hinstance;
@@ -495,51 +495,51 @@ namespace cct::gfx
 
 	bool Window::ShouldClose() const
 	{
-		return _shouldQuit;
+		return m_shouldQuit;
 	}
 
 	void Window::RegisterResizeCallback(std::function<void(Window& window)> callback)
 	{
-		CCT_ASSERT(_window, "ConcertoGraphics: invalid window pointer");
-		_resizeCallback = std::move(callback);
+		CCT_ASSERT(m_window, "ConcertoGraphics: invalid window pointer");
+		m_resizeCallback = std::move(callback);
 	}
 
 	void Window::RegisterKeyCallback(std::function<void(Window&, Key, int, int, int)> callback)
 	{
-		CCT_ASSERT(_window, "ConcertoGraphics: invalid window pointer");
-		_keyCallback = std::move(callback);
+		CCT_ASSERT(m_window, "ConcertoGraphics: invalid window pointer");
+		m_keyCallback = std::move(callback);
 	}
 
 	void Window::RegisterMouseButtonCallback(std::function<void(Window& window, int button, int action, int mods)> callback)
 	{
-		CCT_ASSERT(_window, "ConcertoGraphics: invalid window pointer");
-		_mouseButtonCallback = std::move(callback);
+		CCT_ASSERT(m_window, "ConcertoGraphics: invalid window pointer");
+		m_mouseButtonCallback = std::move(callback);
 	}
 
 	void Window::RegisterCursorPosCallback(std::function<void(Window& window, double xpos, double ypos)> callback)
 	{
-		CCT_ASSERT(_window, "ConcertoGraphics: invalid window pointer");
-		_cursorPosCallback = std::move(callback);
+		CCT_ASSERT(m_window, "ConcertoGraphics: invalid window pointer");
+		m_cursorPosCallback = std::move(callback);
 	}
 
 	Input& Window::GetInputManager()
 	{
-		return _input;
+		return m_input;
 	}
 
 	UInt32 Window::GetId() const
 	{
-		return _windowID;
+		return m_windowID;
 	}
 
 	void Window::SetShouldQuit(bool value)
 	{
-		_shouldQuit = value;
+		m_shouldQuit = value;
 	}
 
 	void Window::TriggerResize()
 	{
-		if (_resizeCallback)
-			_resizeCallback(*this);
+		if (m_resizeCallback)
+			m_resizeCallback(*this);
 	}
 }

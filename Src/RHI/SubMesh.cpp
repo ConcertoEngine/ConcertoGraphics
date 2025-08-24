@@ -9,33 +9,33 @@
 namespace cct::gfx::rhi
 {
 	SubMesh::SubMesh(Mesh* parent) :
-		_vertices(),
-		_material(std::make_shared<rhi::MaterialInfo>()),
-		_parent(parent)
+		m_vertices(),
+		m_material(std::make_shared<rhi::MaterialInfo>()),
+		m_parent(parent)
 	{
 
 	}
 
 	SubMesh::SubMesh(const Vertices& vertices, std::shared_ptr<rhi::MaterialInfo>& material, Mesh* parent) :
-		_vertices(vertices),
-		_material(material),
-		_parent(parent)
+		m_vertices(vertices),
+		m_material(material),
+		m_parent(parent)
 	{
 
 	}
 
 	Vertices& SubMesh::GetVertices()
 	{
-		return _vertices;
+		return m_vertices;
 	}
 
 	std::shared_ptr<rhi::MaterialInfo>& SubMesh::GetMaterial()
 	{
-		return _material;
+		return m_material;
 	}
 
 	Mesh* SubMesh::GetParent()
 	{
-		return _parent;
+		return m_parent;
 	}
 }

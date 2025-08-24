@@ -55,7 +55,7 @@ namespace cct::gfx::rhi
 					rhi::MaterialPtr litMaterial = materialBuilder.BuildMaterial(materialInfo, renderPass);
 
 					auto vkSubMesh = std::make_shared<VkRHIGpuSubMesh>(subMesh, litMaterial, rhiDevice);
-					std::lock_guard _(subMeshesMutex);
+					std::lock_guard m_(subMeshesMutex);
 					gpuMesh->subMeshes.push_back(vkSubMesh);
 				});
 			}
@@ -96,7 +96,7 @@ namespace cct::gfx::rhi
 
 		VkRHITextureBuilder::Instance()->Commit();
 
-		uploadContext._commandBuffer.Begin();
+		uploadContext.m_commandBuffer.Begin();
 		{
 			CCT_GFX_PROFILER_SCOPE("Copy vertices");
 			std::size_t padding = 0;
@@ -105,16 +105,16 @@ namespace cct::gfx::rhi
 			{
 				const auto& vertexBuffer = Cast<const VkRHIBuffer&>(gpuMeshSubMesh->GetVertexBuffer());
 				stagingBuffer.Copy(gpuMeshSubMesh->GetVertices().data(), gpuMeshSubMesh->GetVertices().size() * sizeof(Vertex), padding);
-				uploadContext._commandBuffer.CopyBuffer(stagingBuffer, vertexBuffer, gpuMeshSubMesh->GetVertices().size() * sizeof(Vertex), padding, 0);
+				uploadContext.m_commandBuffer.CopyBuffer(stagingBuffer, vertexBuffer, gpuMeshSubMesh->GetVertices().size() * sizeof(Vertex), padding, 0);
 				padding += gpuMeshSubMesh->GetVertices().size() * sizeof(Vertex);
 			}
 		}
-		uploadContext._commandBuffer.End();
+		uploadContext.m_commandBuffer.End();
 
-		rhiDevice.GetQueue(vk::Queue::Type::Graphics).Submit(uploadContext._commandBuffer, nullptr, nullptr, uploadContext._uploadFence);
-		uploadContext._uploadFence.Wait(9999999999);
-		uploadContext._uploadFence.Reset();
-		uploadContext._commandPool.Reset();
+		rhiDevice.GetQueue(vk::Queue::Type::Graphics).Submit(uploadContext.m_commandBuffer, nullptr, nullptr, uploadContext.m_uploadFence);
+		uploadContext.m_uploadFence.Wait(9999999999);
+		uploadContext.m_uploadFence.Reset();
+		uploadContext.m_commandPool.Reset();
 
 		return gpuMesh;
 	}

@@ -35,10 +35,10 @@ namespace cct::gfx::rhi
 		std::shared_ptr<Texture> BuildApiTexture(PixelFormat format, Int32 width, Int32 height) override;
 		void InternalCommit() override;
 	 private:
-		static VkRHITextureBuilder* _instance;
-		rhi::Device& _device;
-		vk::UploadContext& _uploadContext;
-		vk::Queue& _queue;
+		static VkRHITextureBuilder* m_instance;
+		rhi::Device& m_device;
+		vk::UploadContext& m_uploadContext;
+		vk::Queue& m_queue;
 	};
 }
 

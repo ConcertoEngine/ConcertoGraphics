@@ -31,7 +31,7 @@ namespace cct::gfx::vk
 
 		VkExtent2D GetExtent2D() const;
 	private:
-		VkExtent2D _extent;
+		VkExtent2D m_extent;
 	};
 
 } // cct::gfx::vk

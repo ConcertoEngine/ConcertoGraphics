@@ -14,25 +14,25 @@ namespace cct::gfx::vk
 {
 	FrameBuffer::FrameBuffer(Device& device, const RenderPass& renderPass, const std::vector<VkImageView>& attachments, VkExtent2D extent) :
 		Object(device),
-		_extent(extent)
+		m_extent(extent)
 	{
 		VkFramebufferCreateInfo frameBufferCreateInfo = VulkanInitializer::FramebufferCreateInfo(*renderPass.Get(), extent);
 
 		frameBufferCreateInfo.pAttachments = attachments.data();
 		frameBufferCreateInfo.attachmentCount = static_cast<UInt32>(attachments.size());
-		_lastResult = _device->vkCreateFramebuffer(*_device->Get(), &frameBufferCreateInfo, nullptr, &_handle);
-		CCT_ASSERT(_lastResult == VK_SUCCESS, "ConcertoGraphics: vkCreateFramebuffer failed VkResult={}", static_cast<int>(_lastResult));
+		m_lastResult = m_device->vkCreateFramebuffer(*m_device->Get(), &frameBufferCreateInfo, nullptr, &m_handle);
+		CCT_ASSERT(m_lastResult == VK_SUCCESS, "ConcertoGraphics: vkCreateFramebuffer failed VkResult={}", static_cast<int>(m_lastResult));
 	}
 
 	FrameBuffer::~FrameBuffer()
 	{
 		if (IsNull())
 			return;
-		_device->vkDestroyFramebuffer(*_device->Get(), _handle, nullptr);
+		m_device->vkDestroyFramebuffer(*m_device->Get(), m_handle, nullptr);
 	}
 
 	VkExtent2D FrameBuffer::GetExtent2D() const
 	{
-		return _extent;
+		return m_extent;
 	}
 } // cct::gfx::vk

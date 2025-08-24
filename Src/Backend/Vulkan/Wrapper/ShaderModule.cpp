@@ -17,8 +17,8 @@ namespace cct::gfx::vk
 
 	ShaderModule::ShaderModule(Device& device, const std::string& shaderPath, VkShaderStageFlagBits stageFlags, std::string entryPoint /*= "main"*/) :
 		Object(device),
-		_stageFlags(stageFlags),
-		_entryPoint(std::move(entryPoint))
+		m_stageFlags(stageFlags),
+		m_entryPoint(std::move(entryPoint))
 	{
 		LoadShaderModule(shaderPath);
 		CreateShaderModule();
@@ -26,13 +26,13 @@ namespace cct::gfx::vk
 
 	ShaderModule::ShaderModule(Device& device, const std::vector<UInt32>& bytes, VkShaderStageFlagBits stageFlags, std::string entryPoint /*= "main"*/) :
 		Object(device),
-		_stageFlags(stageFlags),
-		_entryPoint(std::move(entryPoint))
+		m_stageFlags(stageFlags),
+		m_entryPoint(std::move(entryPoint))
 	{
-		_shaderModuleCreateInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-		_shaderModuleCreateInfo.pNext = nullptr;
-		_shaderModuleCreateInfo.codeSize = bytes.size() * sizeof(UInt32);
-		_shaderModuleCreateInfo.pCode = reinterpret_cast<const UInt32*>(bytes.data());
+		m_shaderModuleCreateInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+		m_shaderModuleCreateInfo.pNext = nullptr;
+		m_shaderModuleCreateInfo.codeSize = bytes.size() * sizeof(UInt32);
+		m_shaderModuleCreateInfo.pCode = reinterpret_cast<const UInt32*>(bytes.data());
 		CreateShaderModule();
 	}
 
@@ -40,7 +40,7 @@ namespace cct::gfx::vk
 	{
 		if (IsNull())
 			return;
-		_device->vkDestroyShaderModule(*_device->Get(), _handle, nullptr);
+		m_device->vkDestroyShaderModule(*m_device->Get(), m_handle, nullptr);
 	}
 
 	VkPipelineShaderStageCreateInfo ShaderModule::GetPipelineShaderStageCreateInfo() const
@@ -49,9 +49,9 @@ namespace cct::gfx::vk
 			VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
 			nullptr,
 			{},
-			_stageFlags,
-			_handle,
-			_entryPoint.c_str(),
+			m_stageFlags,
+			m_handle,
+			m_entryPoint.c_str(),
 			nullptr
 		};
 	}
@@ -65,19 +65,19 @@ namespace cct::gfx::vk
 			return;
 		}
 		std::streamsize fileSize = file.tellg();
-		_buffer.resize(fileSize / sizeof(UInt32));
+		m_buffer.resize(fileSize / sizeof(UInt32));
 		file.seekg(0);
-		file.read(reinterpret_cast<char*>(_buffer.data()), fileSize);
+		file.read(reinterpret_cast<char*>(m_buffer.data()), fileSize);
 		file.close();
-		_shaderModuleCreateInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-		_shaderModuleCreateInfo.pNext = nullptr;
-		_shaderModuleCreateInfo.codeSize = _buffer.size() * sizeof(UInt32);
-		_shaderModuleCreateInfo.pCode = _buffer.data();
+		m_shaderModuleCreateInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+		m_shaderModuleCreateInfo.pNext = nullptr;
+		m_shaderModuleCreateInfo.codeSize = m_buffer.size() * sizeof(UInt32);
+		m_shaderModuleCreateInfo.pCode = m_buffer.data();
 	}
 
 	void ShaderModule::CreateShaderModule()
 	{
-		_lastResult = _device->vkCreateShaderModule(*_device->Get(), &_shaderModuleCreateInfo, nullptr, &_handle);
-		CCT_ASSERT(_lastResult == VK_SUCCESS, "ConcertoGraphics: vkCreateShaderModule failed VKResult={}", static_cast<int>(_lastResult));
+		m_lastResult = m_device->vkCreateShaderModule(*m_device->Get(), &m_shaderModuleCreateInfo, nullptr, &m_handle);
+		CCT_ASSERT(m_lastResult == VK_SUCCESS, "ConcertoGraphics: vkCreateShaderModule failed VKResult={}", static_cast<int>(m_lastResult));
 	}
 }

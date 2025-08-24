@@ -35,12 +35,12 @@ namespace cct::gfx::vk
 		ObjectDebug& operator=(ObjectDebug&& other);
 		ObjectDebug& operator==(const ObjectDebug& other) = delete;
 	private:
-		Device* _device;
-		std::string_view _typeName;
-		VkDebugReportObjectTypeEXT _debugReportObjectType;
-		void** _vkHandle;
-		std::string _debugName;
-		std::thread::id _createdOnThread;
+		Device* m_device;
+		std::string_view m_typeName;
+		VkDebugReportObjectTypeEXT m_debugReportObjectType;
+		void** m_vkHandle;
+		std::string m_debugName;
+		std::thread::id m_createdOnThread;
 	};
 
 }

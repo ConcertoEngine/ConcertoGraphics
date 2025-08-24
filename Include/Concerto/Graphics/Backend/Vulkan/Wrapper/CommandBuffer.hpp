@@ -83,8 +83,8 @@ namespace cct::gfx::vk
 		void SetScissor(VkRect2D scissor) const;
 
 	private:
-		vk::CommandPool* _commandPool;
-		VkCommandBufferLevel _level;
+		vk::CommandPool* m_commandPool;
+		VkCommandBufferLevel m_level;
 	};
 } // namespace cct::gfx::vk
 

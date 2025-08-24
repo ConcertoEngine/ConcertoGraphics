@@ -51,18 +51,18 @@ namespace cct::gfx::vk
 		[[nodiscard]] Instance& GetInstance() const;
 
 	private:
-		mutable std::optional<std::vector<VkQueueFamilyProperties>> _queueFamilyProperties;
-		mutable std::optional<VkPhysicalDeviceProperties> _physicalDeviceProperties;
-		mutable std::optional<VkPhysicalDeviceFeatures> _physicalDeviceFeatures;
-		mutable std::optional<VkPhysicalDeviceMemoryProperties> _physicalDeviceMemoryProperties;
-		mutable std::optional<std::vector<VkExtensionProperties>> _extensionProperties;
-		mutable std::optional<std::vector<const char*>> _extensionPropertiesNames;
-		mutable std::optional<std::unordered_map<VkFormat, VkFormatProperties>> _formatProperties;
-		mutable std::optional<VkSurfaceCapabilitiesKHR> _capabilities;
-		mutable std::optional<std::vector<VkSurfaceFormatKHR>> _formats;
-		mutable std::optional<std::vector<VkPresentModeKHR>> _presentModes;
-		VkPhysicalDevice _physicalDevice = VK_NULL_HANDLE;
-		vk::Instance* _instance;
+		mutable std::optional<std::vector<VkQueueFamilyProperties>> m_queueFamilyProperties;
+		mutable std::optional<VkPhysicalDeviceProperties> m_physicalDeviceProperties;
+		mutable std::optional<VkPhysicalDeviceFeatures> m_physicalDeviceFeatures;
+		mutable std::optional<VkPhysicalDeviceMemoryProperties> m_physicalDeviceMemoryProperties;
+		mutable std::optional<std::vector<VkExtensionProperties>> m_extensionProperties;
+		mutable std::optional<std::vector<const char*>> m_extensionPropertiesNames;
+		mutable std::optional<std::unordered_map<VkFormat, VkFormatProperties>> m_formatProperties;
+		mutable std::optional<VkSurfaceCapabilitiesKHR> m_capabilities;
+		mutable std::optional<std::vector<VkSurfaceFormatKHR>> m_formats;
+		mutable std::optional<std::vector<VkPresentModeKHR>> m_presentModes;
+		VkPhysicalDevice m_physicalDevice = VK_NULL_HANDLE;
+		vk::Instance* m_instance;
 };
 
 } // cct::gfx::vk

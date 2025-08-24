@@ -26,9 +26,9 @@ namespace cct::gfx
 		static constexpr inline rhi::DeviceType FromVulkan(VkPhysicalDeviceType deviceType);
 
 	private:
-		std::unique_ptr<vk::Instance> _instance;
-		std::vector<rhi::DeviceInfo> _devicesInfo;
-		std::vector<rhi::Device> _devices;
+		std::unique_ptr<vk::Instance> m_instance;
+		std::vector<rhi::DeviceInfo> m_devicesInfo;
+		std::vector<rhi::Device> m_devices;
 	};
 }
 

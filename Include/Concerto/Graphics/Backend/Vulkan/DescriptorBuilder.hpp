@@ -29,11 +29,11 @@ namespace cct::gfx::vk
 		bool Build(std::shared_ptr<DescriptorSet>& set);
 	 private:
 
-		std::vector<VkWriteDescriptorSet> _writes;
-		std::vector<VkDescriptorSetLayoutBinding> _bindings;
+		std::vector<VkWriteDescriptorSet> m_writes;
+		std::vector<VkDescriptorSetLayoutBinding> m_bindings;
 
-		DescriptorLayoutCache& _cache;
-		DescriptorAllocator& _alloc;
+		DescriptorLayoutCache& m_cache;
+		DescriptorAllocator& m_alloc;
 	};
 }
 #endif //CONCERTO_GRAPHICS_INCLUDE_DESCRIPTORBUILDER_HPP_

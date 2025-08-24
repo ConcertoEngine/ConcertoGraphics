@@ -63,26 +63,26 @@ namespace cct::gfx::rhi
 			vk::Fence& GetRenderFence();
 
 		private:
-			std::unique_ptr<rhi::CommandBuffer> _commandBuffer;
-			vk::Fence _renderFence;
-			vk::Semaphore _presentSemaphore;
-			vk::Semaphore _renderSemaphore;
-			VkRHISwapChain* _owner = nullptr;
-			UInt32 _imageIndex = 0;
+			std::unique_ptr<rhi::CommandBuffer> m_commandBuffer;
+			vk::Fence m_renderFence;
+			vk::Semaphore m_presentSemaphore;
+			vk::Semaphore m_renderSemaphore;
+			VkRHISwapChain* m_owner = nullptr;
+			UInt32 m_imageIndex = 0;
 		};
 
-		PixelFormat _pixelFormat;
-		PixelFormat _depthPixelFormat;
+		PixelFormat m_pixelFormat;
+		PixelFormat m_depthPixelFormat;
 
-		std::vector<std::unique_ptr<FrameBuffer>> _frameBuffers;
-		std::unique_ptr<rhi::RenderPass> _renderPass;
-		std::unique_ptr<rhi::CommandPool> _commandPool;
-		std::unique_ptr<vk::Queue> _presentQueue;
-		std::vector<SwapChainFrame> _frames;
+		std::vector<std::unique_ptr<FrameBuffer>> m_frameBuffers;
+		std::unique_ptr<rhi::RenderPass> m_renderPass;
+		std::unique_ptr<rhi::CommandPool> m_commandPool;
+		std::unique_ptr<vk::Queue> m_presentQueue;
+		std::vector<SwapChainFrame> m_frames;
 
-		UInt32 _currentFrameIndex = 0;
-		UInt32 _lastFrameIndex = 0;
-		bool _needResize = false;
+		UInt32 m_currentFrameIndex = 0;
+		UInt32 m_lastFrameIndex = 0;
+		bool m_needResize = false;
 	};
 }
 

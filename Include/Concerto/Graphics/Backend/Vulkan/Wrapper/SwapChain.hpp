@@ -57,16 +57,16 @@ namespace cct::gfx::vk
 		bool ReCreate(VkFormat pixelFormat = VK_FORMAT_B8G8R8A8_SRGB, VkFormat depthFormat = VK_FORMAT_D32_SFLOAT);
 
 	private:
-		mutable std::optional<std::vector<Image>> _swapChainImages;
-		mutable std::optional<std::vector<ImageView>> _swapChainImageViews;
-		VkExtent2D _windowExtent;
-		VkFormat _swapChainImageFormat;
-		Image _depthImage;
-		ImageView _depthImageView;
-		PhysicalDevice& _physicalDevice;
-		Window& _window;
-		UInt32 _currentImageIndex;
-		VkSurfaceKHR _surface;
+		mutable std::optional<std::vector<Image>> m_swapChainImages;
+		mutable std::optional<std::vector<ImageView>> m_swapChainImageViews;
+		VkExtent2D m_windowExtent;
+		VkFormat m_swapChainImageFormat;
+		Image m_depthImage;
+		ImageView m_depthImageView;
+		PhysicalDevice& m_physicalDevice;
+		Window& m_window;
+		UInt32 m_currentImageIndex;
+		VkSurfaceKHR m_surface;
 	};
 } // cct::gfx::vk
 

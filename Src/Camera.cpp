@@ -7,16 +7,16 @@
 namespace cct::gfx
 {
 	Camera::Camera(float fov, float near, float far, float aspectRatio) :
-		_eulerAngles(),
-		_velocity(),
-		_position(),
-		_movementSpeed(),
-		_mouseSensitivity(),
-		_fov(fov),
-		_near(near),
-		_far(far),
-		_aspectRatio(aspectRatio),
-		_clearColor(0.0f, 0.0f, 0.0f, 1.0f)
+		m_eulerAngles(),
+		m_velocity(),
+		m_position(),
+		m_movementSpeed(),
+		m_mouseSensitivity(),
+		m_fov(fov),
+		m_near(near),
+		m_far(far),
+		m_aspectRatio(aspectRatio),
+		m_clearColor(0.0f, 0.0f, 0.0f, 1.0f)
 	{
 		UpdateProjectionMatrix();
 	}
@@ -24,72 +24,72 @@ namespace cct::gfx
 
 	const EulerAnglesf& Camera::GetRotation() const
 	{
-		return _eulerAngles;
+		return m_eulerAngles;
 	}
 
 	const Vector4f& Camera::GetClearColor() const
 	{
-		return _clearColor;
+		return m_clearColor;
 	}
 
 	Vector3f Camera::GetPosition() const
 	{
-		return _position;
+		return m_position;
 	}
 
 	float Camera::GetFov() const
 	{
-		return _fov;
+		return m_fov;
 	}
 
 	float Camera::GetNear() const
 	{
-		return _near;
+		return m_near;
 	}
 
 	float Camera::GetFar() const
 	{
-		return _far;
+		return m_far;
 	}
 
 	float Camera::GetAspectRatio() const
 	{
-		return _aspectRatio;
+		return m_aspectRatio;
 	}
 
 	void Camera::SetClearColor(const Vector4f& clearColor)
 	{
-		_clearColor = clearColor;
+		m_clearColor = clearColor;
 	}
 
 	void Camera::SetPosition(const Vector3f& position)
 	{
-		_position = Vector3f(position.X(), position.Y(), position.Z());
+		m_position = Vector3f(position.X(), position.Y(), position.Z());
 	}
 
 	void Camera::SetFov(float fov)
 	{
-		_fov = fov;
+		m_fov = fov;
 		UpdateProjectionMatrix();
 
 	}
 
 	void Camera::SetNear(float near)
 	{
-		_near = near;
+		m_near = near;
 		UpdateProjectionMatrix();
 
 	}
 
 	void Camera::SetFar(float far)
 	{
-		_far = far;
+		m_far = far;
 		UpdateProjectionMatrix();
 	}
 
 	void Camera::SetAspectRatio(float aspectRatio)
 	{
-		_aspectRatio = aspectRatio;
+		m_aspectRatio = aspectRatio;
 		UpdateProjectionMatrix();
 	}
 
@@ -109,49 +109,49 @@ namespace cct::gfx
 
 	void Camera::UpdateViewProjectionMatrix()
 	{
-		const Matrix4f translation = _position.ToTranslationMatrix();
-		const Matrix4f cameraRotation = _eulerAngles.ToQuaternion().ToRotationMatrix<Matrix4f>();
+		const Matrix4f translation = m_position.ToTranslationMatrix();
+		const Matrix4f cameraRotation = m_eulerAngles.ToQuaternion().ToRotationMatrix<Matrix4f>();
 		viewMatrix = (translation * cameraRotation ).Inverse();
 		viewProjectionMatrix = projectionMatrix * viewMatrix;
 	}
 
 	void Camera::UpdateProjectionMatrix()
 	{
-		const float tanHalfFov = std::tan(_fov / 2.0f);
+		const float tanHalfFov = std::tan(m_fov / 2.0f);
 		projectionMatrix = Matrix4f();
-		projectionMatrix(0, 0) = 1.f / (_aspectRatio * tanHalfFov);
+		projectionMatrix(0, 0) = 1.f / (m_aspectRatio * tanHalfFov);
 		projectionMatrix(1, 1) = 1.f / tanHalfFov;
-		projectionMatrix(2, 2) = _far / (_near - _far);
-		projectionMatrix(2, 3) = -(2.f * _far* _near) / (_far - _near);
+		projectionMatrix(2, 2) = m_far / (m_near - m_far);
+		projectionMatrix(2, 3) = -(2.f * m_far* m_near) / (m_far - m_near);
 		projectionMatrix(3, 2) = -1.f;
 		projectionMatrix(1, 1) *= -1.f;
 	}
 
 	void Camera::Rotate(double deltaX, double deltaY)
 	{
-		_eulerAngles.Yaw() -= deltaX;
-		_eulerAngles.Pitch() += deltaY;
+		m_eulerAngles.Yaw() -= deltaX;
+		m_eulerAngles.Pitch() += deltaY;
 
-		if (_eulerAngles.Pitch() >= 89.0f)
-			_eulerAngles.Pitch() = 89.0f;
-		if (_eulerAngles.Pitch() <= -89.0f)
-			_eulerAngles.Pitch() = -89.0f;
+		if (m_eulerAngles.Pitch() >= 89.0f)
+			m_eulerAngles.Pitch() = 89.0f;
+		if (m_eulerAngles.Pitch() <= -89.0f)
+			m_eulerAngles.Pitch() = -89.0f;
 	}
 
 	void Camera::Move(CameraMovement direction, float x)
 	{
 		switch (direction) {
 		case CameraMovement::Forward:
-			_position += _eulerAngles.ToQuaternion() * Vector3f::Forward() * x;
+			m_position += m_eulerAngles.ToQuaternion() * Vector3f::Forward() * x;
 			break;
 		case CameraMovement::Backward:
-			_position += _eulerAngles.ToQuaternion() * Vector3f::Backward() * x;
+			m_position += m_eulerAngles.ToQuaternion() * Vector3f::Backward() * x;
 			break;
 		case CameraMovement::Left:
-			_position += _eulerAngles.ToQuaternion() * Vector3f::Right() * x;
+			m_position += m_eulerAngles.ToQuaternion() * Vector3f::Right() * x;
 			break;
 		case CameraMovement::Right:
-			_position += _eulerAngles.ToQuaternion() * Vector3f::Left() * x;
+			m_position += m_eulerAngles.ToQuaternion() * Vector3f::Left() * x;
 			break;
 		}
 	}

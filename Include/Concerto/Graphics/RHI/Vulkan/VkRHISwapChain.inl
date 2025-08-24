@@ -10,19 +10,19 @@
 namespace cct::gfx::rhi
 {
 	inline SwapChain::SwapChain(PixelFormat pixelFormat, PixelFormat depthPixelFormat) :
-		_pixelFormat(pixelFormat),
-		_depthPixelFormat(depthPixelFormat)
+		m_pixelFormat(pixelFormat),
+		m_depthPixelFormat(depthPixelFormat)
 	{
 	}
 
 	inline PixelFormat SwapChain::GetPixelFormat() const
 	{
-		return _pixelFormat;
+		return m_pixelFormat;
 	}
 
 	inline PixelFormat SwapChain::GetDepthPixelFormat() const
 	{
-		return _depthPixelFormat;
+		return m_depthPixelFormat;
 	}
 }
 
