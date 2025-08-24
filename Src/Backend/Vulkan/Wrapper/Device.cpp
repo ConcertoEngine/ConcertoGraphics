@@ -173,7 +173,7 @@ namespace cct::gfx::vk
 		return *_allocator;
 	}
 
-	Instance& Device::GetInstance()
+	Instance& Device::GetInstance() const
 	{
 		CCT_ASSERT(_instance, "ConcertoGraphics: Invalid Vulkan instance.");
 		return *_instance;
