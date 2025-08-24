@@ -64,7 +64,7 @@ namespace cct::gfx::vk
 			CCT_ASSERT_FALSE("ConcertoGraphics: Trying to destroy a buffer that is mapped");
 			return;
 		}
-		m_allocator->GetDevice()->WaitIdle();
+		//m_allocator->GetDevice()->WaitIdle();
 		vmaDestroyBuffer(*m_allocator->Get(), m_handle, m_allocation);
 	}
 

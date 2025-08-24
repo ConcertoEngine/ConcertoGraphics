@@ -32,6 +32,14 @@ namespace cct::gfx::rhi
 		CreateFrames();
 	}
 
+	VkRHISwapChain::~VkRHISwapChain()
+	{
+		WaitAll();
+
+		if (m_presentQueue)
+			m_presentQueue->WaitIdle();
+	}
+
 	rhi::RenderPass* VkRHISwapChain::GetRenderPass()
 	{
 		CCT_ASSERT(m_renderPass, "ConcertoGraphics: Invalid renderpass");
@@ -72,6 +80,12 @@ namespace cct::gfx::rhi
 		const UInt32 nextImageIndex = vk::SwapChain::AcquireNextImage(currentFrame.GetPresentSemaphore(), nullptr);
 		currentFrame.SetNextImageIndex(nextImageIndex);
 		return currentFrame;
+	}
+
+	void VkRHISwapChain::WaitAll() const
+	{
+		for (auto& frame : m_frames)
+			frame.GetRenderFence().Wait(std::numeric_limits<UInt64>::max());
 	}
 
 	VkRHICommandPool& VkRHISwapChain::GetCommandPool() const
@@ -277,17 +291,17 @@ namespace cct::gfx::rhi
 		m_renderFence.Reset();
 	}
 
-	vk::Semaphore& VkRHISwapChain::SwapChainFrame::GetPresentSemaphore()
+	const vk::Semaphore& VkRHISwapChain::SwapChainFrame::GetPresentSemaphore() const
 	{
 		return m_presentSemaphore;
 	}
 
-	vk::Semaphore& VkRHISwapChain::SwapChainFrame::GetRenderSemaphore()
+	const vk::Semaphore& VkRHISwapChain::SwapChainFrame::GetRenderSemaphore() const
 	{
 		return m_renderSemaphore;
 	}
 
-	vk::Fence& VkRHISwapChain::SwapChainFrame::GetRenderFence()
+	const vk::Fence& VkRHISwapChain::SwapChainFrame::GetRenderFence() const
 	{
 		return m_renderFence;
 	}

@@ -26,6 +26,7 @@ namespace cct::gfx::rhi
 		virtual Vector2u GetExtent() const = 0;
 		virtual UInt32 GetImageCount() const = 0;
 		virtual rhi::Frame& AcquireFrame() = 0;
+		virtual void WaitAll() const = 0;
 
 		[[nodiscard]] inline PixelFormat GetPixelFormat() const;
 		[[nodiscard]] inline PixelFormat GetDepthPixelFormat() const;

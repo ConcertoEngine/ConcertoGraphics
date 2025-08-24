@@ -29,10 +29,13 @@ namespace cct::gfx::rhi
 	{
 	public:
 		VkRHISwapChain(rhi::VkRHIDevice& device, Window& window, PixelFormat pixelFormat, PixelFormat depthPixelFormat);
+		~VkRHISwapChain() override;
+
 		rhi::RenderPass* GetRenderPass() override;
 		Vector2u GetExtent() const override;
 		UInt32 GetImageCount() const override;
 		Frame& AcquireFrame() override;
+		void WaitAll() const override;
 
 		inline VkRHICommandPool& GetCommandPool() const;
 		inline VkRHIDevice& GetRHIDevice() const;
@@ -58,9 +61,9 @@ namespace cct::gfx::rhi
 			void SetNextImageIndex(UInt32 imageIndex);
 			void Wait();
 
-			vk::Semaphore& GetPresentSemaphore();
-			vk::Semaphore& GetRenderSemaphore();
-			vk::Fence& GetRenderFence();
+			const vk::Semaphore& GetPresentSemaphore() const;
+			const vk::Semaphore& GetRenderSemaphore() const;
+			const vk::Fence& GetRenderFence() const;
 
 		private:
 			std::unique_ptr<rhi::CommandBuffer> m_commandBuffer;

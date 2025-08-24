@@ -68,5 +68,10 @@ namespace cct::gfx::vk
 		}
 		return true;
 	}
+
+	void Queue::WaitIdle() const
+	{
+		GetDevice()->vkQueueWaitIdle(*Get());
+	}
 }
 

@@ -76,7 +76,7 @@ int main()
 		std::unique_ptr<rhi::MaterialBuilder> materialBuilder = device->CreateMaterialBuilder(swapChain->GetExtent());
 		std::unique_ptr<rhi::TextureBuilder> textureBuilder = device->CreateTextureBuilder();
 		std::shared_ptr<rhi::GpuMesh> gpuMesh = device->CreateMesh("./assets/sponza/sponza.obj", *materialBuilder, *renderPass);
-				
+
 		//GraphicPass& pbrPass = graphBuilder.AddPass("pbr", rhi::PipelineStage::AllGraphics);
 		//pbrPass.AddColorOutput("albedo", ??);
 		//pbrPass.AddColorOutput("normal", ??);
@@ -205,6 +205,8 @@ int main()
 			currentFrame.Present();
 			window->SetTitle(std::format("ConcertoGraphics - {} fps", 1.f / deltaTime));
 		}
+
+		swapChain->WaitAll();
 	}
 	catch (const std::exception& e)
 	{
