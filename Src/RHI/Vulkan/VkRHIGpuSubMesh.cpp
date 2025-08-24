@@ -21,7 +21,7 @@ namespace cct::gfx::rhi
 
 	void VkRHIGpuSubMesh::Upload(vk::CommandBuffer& commandBuffer, vk::CommandPool& commandPool, vk::Fence& fence, const vk::Queue& queue, VkRHIDevice& device)
 	{
-		vk::Buffer stagingBuffer(MakeBuffer<Vertex>(device.GetAllocator(), GetSubMesh()->GetVertices().size() * sizeof(Vertex), VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VMA_MEMORY_USAGE_CPU_ONLY, true));
+		vk::Buffer stagingBuffer(device.GetAllocator().AllocateBuffer<Vertex>(GetSubMesh()->GetVertices().size() * sizeof(Vertex), VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VMA_MEMORY_USAGE_CPU_ONLY, true));
 		commandBuffer.ImmediateSubmit(fence, commandPool, queue, [&](vk::CommandBuffer& cb)
 		{
 			VkRHIBuffer& vkBuffer = Cast<VkRHIBuffer&>(*_vertexBuffer);

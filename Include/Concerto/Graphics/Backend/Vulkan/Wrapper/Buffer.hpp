@@ -9,26 +9,24 @@
 #include <functional>
 
 #include <Concerto/Core/Assert.hpp>
+#include <vk_mem_alloc.h>
 
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Object.hpp"
-#include "Concerto/Graphics/Backend/Vulkan/Wrapper/Allocator.hpp"
 
 namespace cct::gfx::vk
 {
+	class Allocator;
+
 	class CONCERTO_GRAPHICS_VULKAN_BACKEND_API Buffer : public Object<VkBuffer>
 	{
 	 public:
 		Buffer(Allocator& allocator, std::size_t allocSize, VkBufferUsageFlags usage, VmaMemoryUsage memoryUsage, bool allowBufferMapping);
-
 		Buffer(Buffer&&) noexcept;
-
 		Buffer(const Buffer&) = delete;
+		~Buffer() override;
 
 		Buffer& operator=(Buffer&&) noexcept;
-
 		Buffer& operator=(const Buffer&) = delete;
-
-		~Buffer();
 
 		template<typename T>
 		void Copy(T& object, std::size_t padding = 0);
@@ -58,38 +56,6 @@ namespace cct::gfx::vk
 		VkBufferUsageFlags _usage;
 	};
 
-	/**
-	* @brief Utility function to create a AllocatedBuffer object for a specific type.
-	*
-	* @param allocator The Allocator object used to allocate the memory.
-	* @param usage The usage flags for the buffer.
-	* @param memoryUsage The memory usage for the allocation.
-	* @return A new AllocatedBuffer object with the size of T.
-	*/
-	template<typename T>
-	Buffer MakeBuffer(Allocator& allocator, VkBufferUsageFlags usage, VmaMemoryUsage memoryUsage, bool allowBufferMapping)
-	{
-		return Buffer { allocator, sizeof(T), usage, memoryUsage, allowBufferMapping };
-	}
-
-	/**
-	* @brief Utility function to create a AllocatedBuffer object for an array of a specific type.
-	*
-	* @param allocator The Allocator object used to allocate the memory.
-	* @param objNumber The number of objects in the array.
-	* @param usage The usage flags for the buffer.
-	* @param memoryUsage The memory usage for the allocation.
-	* @return A new AllocatedBuffer object with the size of T*objNumber.
-	*/
-	template<typename T>
-	Buffer MakeBuffer(Allocator& allocator,
-		std::size_t objNumber,
-		VkBufferUsageFlags usage,
-		VmaMemoryUsage memoryUsage,
-		bool allowBufferMapping)
-	{
-		return { allocator, sizeof(T) * objNumber, usage, memoryUsage, allowBufferMapping };
-	}
 } // cct::gfx::vk
 
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Buffer.inl"

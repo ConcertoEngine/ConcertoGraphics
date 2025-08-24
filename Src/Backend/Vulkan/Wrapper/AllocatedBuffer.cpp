@@ -8,10 +8,10 @@
 
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Buffer.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Device.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/Allocator.hpp"
 
 namespace cct::gfx::vk
 {
-
 	Buffer::Buffer(Allocator& allocator, std::size_t allocSize, VkBufferUsageFlags usage, VmaMemoryUsage memoryUsage, bool allowBufferMapping) :
 		Object(*allocator.GetDevice()),
 		_allocatedSize(allocSize),

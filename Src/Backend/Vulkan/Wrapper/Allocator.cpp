@@ -14,6 +14,7 @@
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Instance.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/PhysicalDevice.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Device.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/Buffer.hpp"
 
 namespace cct::gfx::vk
 {
