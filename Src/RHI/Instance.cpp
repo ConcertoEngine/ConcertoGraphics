@@ -36,13 +36,13 @@ namespace cct::gfx::rhi
 		return m_apiImpl->EnumerateDevices();
 	}
 
-	std::unique_ptr<Device> Instance::CreateDevice(std::size_t index)
+	std::unique_ptr<Device> Instance::CreateDevice(std::size_t index) const
 	{
 		CCT_ASSERT(m_apiImpl, "ConcertoGraphics: Tying to get an invalid ApiImpl");
 		return m_apiImpl->CreateDevice(index);
 	}
 
-	APIImpl* Instance::GetImpl()
+	APIImpl* Instance::GetImpl() const
 	{
 		CCT_ASSERT(m_apiImpl, "ConcertoGraphics: Tying to get an invalid ApiImpl");
 		return m_apiImpl.get();

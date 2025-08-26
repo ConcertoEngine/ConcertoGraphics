@@ -92,7 +92,7 @@ namespace cct::gfx::rhi
 		}
 
 		
-		vk::Buffer stagingBuffer(rhiDevice.GetAllocator().AllocateBuffer<Vertex>(totalVertices * sizeof(Vertex), VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VMA_MEMORY_USAGE_CPU_ONLY, true));
+		vk::Buffer stagingBuffer(rhiDevice.GetAllocator().AllocateBuffer<Vertex>(totalVertices * sizeof(Vertex), VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VMA_MEMORY_USAGE_AUTO_PREFER_HOST, true));
 
 		VkRHITextureBuilder::Instance()->Commit();
 

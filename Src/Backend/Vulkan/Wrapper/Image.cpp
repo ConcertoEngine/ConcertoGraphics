@@ -25,7 +25,7 @@ namespace cct::gfx::vk
 		};
 		VkImageCreateInfo imageCreateInfo = VulkanInitializer::ImageCreateInfo(format, usageFlags, depthImageExtent);
 		VmaAllocationCreateInfo imageAllocInfo = {};
-		imageAllocInfo.usage = VMA_MEMORY_USAGE_GPU_ONLY;
+		imageAllocInfo.usage = VMA_MEMORY_USAGE_AUTO_PREFER_DEVICE;
 		imageAllocInfo.requiredFlags = static_cast<VkMemoryPropertyFlags>(VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
 
 		m_lastResult = vmaCreateImage(*allocator.Get(), &imageCreateInfo, &imageAllocInfo, &m_handle, &m_allocation, nullptr);
