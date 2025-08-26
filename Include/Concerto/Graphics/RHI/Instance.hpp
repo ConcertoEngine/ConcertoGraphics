@@ -35,8 +35,8 @@ namespace cct::gfx::rhi
 		Instance(Backend backend = Backend::ConcertoVulkan, ValidationLevel validationLevel = ValidationLevel::All);
 
 		std::span<const DeviceInfo> EnumerateDevices() const;
-		std::unique_ptr<Device> CreateDevice(std::size_t index);
-		inline APIImpl* GetImpl();
+		std::unique_ptr<Device> CreateDevice(std::size_t index) const;
+		inline APIImpl* GetImpl() const;
 	private:
 		std::unique_ptr<APIImpl> m_apiImpl;
 		Backend m_backend;
