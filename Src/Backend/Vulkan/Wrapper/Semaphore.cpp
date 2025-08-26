@@ -32,4 +32,13 @@ namespace cct::gfx::vk
 			return;
 		m_device->vkDestroySemaphore(*m_device->Get(), m_handle, nullptr);
 	}
+
+	Result<UInt64, VkResult> Semaphore::GetSemaphoreCounterValue() const
+	{
+		UInt64 value;
+		VkResult result = m_device->vkGetSemaphoreCounterValue(*m_device->Get(), *Get(), & value);
+		if (result == VK_SUCCESS)
+			return value;
+		return result;
+	}
 } // namespace cct::gfx::vk

@@ -37,5 +37,5 @@
 #define VULKAN_H_ // define VULKAN_H_ to avoid third party libraries to include <vulkan/vulkan.h>
 
 #include <Concerto/Graphics/Profiler/Profiler.hpp>
-
+#include <Concerto/Core/Result.hpp>
 #endif //CONCERTO_GRAPHICS_BACKEND_VULKAN_DEFINES_HPP

@@ -23,6 +23,8 @@ namespace cct::gfx::vk
 
 		Semaphore& operator=(Semaphore&&) = default;
 		Semaphore& operator=(const Semaphore&) = delete;
+
+		Result<UInt64, VkResult> GetSemaphoreCounterValue() const;
 	};
 } // namespace cct::gfx::vk
 
