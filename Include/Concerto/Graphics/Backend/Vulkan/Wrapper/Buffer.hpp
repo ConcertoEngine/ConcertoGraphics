@@ -20,13 +20,17 @@ namespace cct::gfx::vk
 	class CONCERTO_GRAPHICS_VULKAN_BACKEND_API Buffer : public Object<VkBuffer>
 	{
 	 public:
+		Buffer();
 		Buffer(Allocator& allocator, std::size_t allocSize, VkBufferUsageFlags usage, VmaMemoryUsage memoryUsage, bool allowBufferMapping);
+		~Buffer() override;
+
 		Buffer(Buffer&&) noexcept;
 		Buffer(const Buffer&) = delete;
-		~Buffer() override;
 
 		Buffer& operator=(Buffer&&) noexcept;
 		Buffer& operator=(const Buffer&) = delete;
+
+		VkResult Create(Allocator& allocator, std::size_t allocSize, VkBufferUsageFlags usage, VmaMemoryUsage memoryUsage, bool allowBufferMapping);
 
 		template<typename T>
 		void Copy(T& object, std::size_t padding = 0);
