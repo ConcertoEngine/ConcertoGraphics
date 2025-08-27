@@ -92,7 +92,7 @@ namespace cct::gfx::vk
 
 	VkDebugReportObjectTypeEXT ObjectDebug::GetDebugReportObjectType() const
 	{
-		if (!_device->IsExtensionEnabled(VK_EXT_DEBUG_REPORT_EXTENSION_NAME))
+		if (!m_device->IsExtensionEnabled(VK_EXT_DEBUG_REPORT_EXTENSION_NAME))
 		{
 			CCT_ASSERT_FALSE("ObjectDebug::GetDebugReportObjectType() is called but extension " VK_EXT_DEBUG_REPORT_EXTENSION_NAME " is not enabled");
 		}
@@ -106,7 +106,7 @@ namespace cct::gfx::vk
 
 	void ObjectDebug::SetDebugName(std::string_view name)
 	{
-		if (!_device->IsExtensionEnabled(VK_EXT_DEBUG_MARKER_EXTENSION_NAME))
+		if (!m_device->IsExtensionEnabled(VK_EXT_DEBUG_MARKER_EXTENSION_NAME))
 		{
 			//CCT_ASSERT_FALSE("ObjectDebug::SetDebugName is called but extension " VK_EXT_DEBUG_MARKER_EXTENSION_NAME " is not enabled");
 			return;
@@ -122,7 +122,7 @@ namespace cct::gfx::vk
 
 	std::string_view ObjectDebug::GetDebugName() const
 	{
-		CCT_ASSERT(!_debugName.empty(), "ConcertoGraphics: ObjectDebug::GetDebugName() has been called but ObjectDebug::SetDebugName was never called");
+		CCT_ASSERT(!m_debugName.empty(), "ConcertoGraphics: ObjectDebug::GetDebugName() has been called but ObjectDebug::SetDebugName was never called");
 		return m_debugName;
 	}
 
