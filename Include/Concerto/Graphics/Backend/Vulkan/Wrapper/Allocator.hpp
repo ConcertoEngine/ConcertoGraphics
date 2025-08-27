@@ -30,6 +30,8 @@ namespace cct::gfx::vk
 		Allocator& operator=(const Allocator&) = delete;
 		Allocator& operator=(Allocator&&) = default;
 
+		VkResult Create(Device& device);
+
 		inline Buffer AllocateBuffer(std::size_t allocSize, VkBufferUsageFlags usage, VmaMemoryUsage memoryUsage, bool allowBufferMapping);
 		template<typename T>
 		Buffer AllocateBuffer(VkBufferUsageFlags usage, VmaMemoryUsage memoryUsage, bool allowBufferMapping);
