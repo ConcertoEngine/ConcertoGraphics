@@ -36,6 +36,8 @@ namespace cct::gfx::vk
 
 	VkResult Allocator::Create(Device& device)
 	{
+		m_device = &device;
+
 		PhysicalDevice& physicalDevice = device.GetPhysicalDevice();
 		Instance& instance = physicalDevice.GetInstance();
 

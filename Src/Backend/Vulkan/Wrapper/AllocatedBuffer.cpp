@@ -55,6 +55,8 @@ namespace cct::gfx::vk
 
 	VkResult Buffer::Create(Allocator& allocator, std::size_t allocSize, VkBufferUsageFlags usage, VmaMemoryUsage memoryUsage, bool allowBufferMapping)
 	{
+		m_device = allocator.GetDevice();
+
 		VkBufferCreateInfo bufferInfo = {};
 		bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
 		bufferInfo.pNext = nullptr;
