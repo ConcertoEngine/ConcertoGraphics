@@ -20,7 +20,7 @@ namespace cct::gfx::vk
 	SwapChain::SwapChain(Device& device, Window& window, VkFormat colorFormat, VkFormat depthFormat) : Object(device),
 		m_swapChainImages(),
 		m_swapChainImageViews(),
-		m_windowExtent({window.GetWidth(), window.GetHeight()}),
+		m_windowExtent({.width = window.GetWidth(), .height = window.GetHeight()}),
 		m_swapChainImageFormat(colorFormat),
 		m_depthImage(device.GetAllocator().AllocateImage(m_windowExtent, depthFormat, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT)),
 		m_depthImageView(device, m_depthImage, VK_IMAGE_ASPECT_DEPTH_BIT),
@@ -56,7 +56,7 @@ namespace cct::gfx::vk
 		return m_swapChainImages.value();
 	}
 
-	std::span<ImageView> SwapChain::GetImageViews()
+	std::span<ImageView> SwapChain::GetImageViews() const
 	{
 		if (m_swapChainImageViews)
 			return m_swapChainImageViews.value();
@@ -114,7 +114,7 @@ namespace cct::gfx::vk
 	{
 		CCT_GFX_AUTO_PROFILER_SCOPE();
 
-		m_windowExtent = { m_window.GetWidth(), m_window.GetHeight() };
+		m_windowExtent = {.width = m_window.GetWidth(), .height = m_window.GetHeight() };
 		if (m_handle)
 			m_device->vkDestroySwapchainKHR(*m_device->Get(), m_handle, nullptr);
 		if (m_surface)
