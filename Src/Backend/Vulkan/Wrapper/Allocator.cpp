@@ -23,7 +23,7 @@ namespace cct::gfx::vk
 	Allocator::Allocator(Device& device) :
 		Object<VmaAllocator>(device)
 	{
-		if (!Create(device))
+		if (Create(device) != VK_SUCCESS)
 			throw VkException(GetLastResult());
 	}
 
