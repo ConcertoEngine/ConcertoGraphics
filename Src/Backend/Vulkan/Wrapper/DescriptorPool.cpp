@@ -61,7 +61,7 @@ namespace cct::gfx::vk
 	{
 		CCT_ASSERT(!IsNull(), "Invalid object state, 'Create' must be called");
 
-		return { *m_device, *this, setLayout };
+		return { *this, setLayout };
 	}
 
 	void DescriptorPool::Reset() const

@@ -3,6 +3,8 @@
 //
 
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/DescriptorSet.hpp"
+
+#include "Concerto/Graphics/Backend/Vulkan/VkException.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/DescriptorSetLayout.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/DescriptorPool.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Device.hpp"
@@ -12,17 +14,12 @@
 
 namespace cct::gfx::vk
 {
-	DescriptorSet::DescriptorSet(Device& device, DescriptorPool& pool, const DescriptorSetLayout& descriptorSetLayout) :
-		Object(device),
+	DescriptorSet::DescriptorSet(DescriptorPool& pool, const DescriptorSetLayout& descriptorSetLayout) :
+		Object(*pool.GetDevice()),
 		m_pool(&pool)
 	{
-		VkDescriptorSetAllocateInfo allocInfo = {};
-		allocInfo.pNext = nullptr;
-		allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-		allocInfo.descriptorPool = *pool.Get();
-		allocInfo.descriptorSetCount = 1;
-		allocInfo.pSetLayouts = descriptorSetLayout.Get();
-		m_lastResult = m_device->vkAllocateDescriptorSets(*m_device->Get(), &allocInfo, &m_handle);
+		if (Create(pool, descriptorSetLayout) != VK_SUCCESS)
+			throw VkException(GetLastResult());
 	}
 
 	DescriptorSet::~DescriptorSet()
@@ -35,6 +32,22 @@ namespace cct::gfx::vk
 			return;
 		}
 		m_device->vkFreeDescriptorSets(*m_device->Get(), *m_pool->Get(), 1, &m_handle);
+	}
+
+	VkResult DescriptorSet::Create(const DescriptorPool& pool, const DescriptorSetLayout& descriptorSetLayout)
+	{
+		m_device = pool.GetDevice();
+
+		VkDescriptorSetAllocateInfo allocInfo = {};
+		allocInfo.pNext = nullptr;
+		allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+		allocInfo.descriptorPool = *pool.Get();
+		allocInfo.descriptorSetCount = 1;
+		allocInfo.pSetLayouts = descriptorSetLayout.Get();
+
+		m_lastResult = m_device->vkAllocateDescriptorSets(*m_device->Get(), &allocInfo, &m_handle);
+
+		return m_lastResult;
 	}
 
 	void DescriptorSet::WriteImageSamplerDescriptor(const Sampler& sampler, const ImageView& imageView, VkImageLayout imageLayout) const

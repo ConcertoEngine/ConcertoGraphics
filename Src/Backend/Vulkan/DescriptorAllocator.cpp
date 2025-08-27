@@ -70,7 +70,7 @@ namespace cct::gfx::vk
 		std::shared_ptr<DescriptorSet> descriptorSet;
 		auto createDescriptorSet = [&]() -> std::shared_ptr<DescriptorSet>
 		{
-			return std::make_shared<DescriptorSet>(*m_device, *currentPool, layout);
+			return std::make_shared<DescriptorSet>(*currentPool, layout);
 		};
 
 		auto it = m_usedPools.find(std::this_thread::get_id());

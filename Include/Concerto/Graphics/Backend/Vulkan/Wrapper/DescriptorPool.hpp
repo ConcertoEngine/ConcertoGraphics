@@ -35,7 +35,7 @@ namespace cct::gfx::vk
 
 		DescriptorSet AllocateDescriptorSet(DescriptorSetLayout& setLayout);
 
-		void Reset();
+		void Reset() const;
 	};
 	using DescriptorPoolPtr = std::shared_ptr<DescriptorPool>;
 }
