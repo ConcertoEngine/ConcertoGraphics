@@ -81,6 +81,16 @@ namespace
 
 namespace cct::gfx::vk
 {
+	ObjectDebug::ObjectDebug() :
+		m_device(),
+		m_typeName(),
+		m_debugReportObjectType(),
+		m_vkHandle(),
+		m_debugName(),
+		m_createdOnThread()
+	{
+	}
+
 	ObjectDebug::ObjectDebug(Device& device, std::string_view typeName, void** vkHandle) :
 		m_device(&device),
 		m_typeName(typeName),
@@ -140,7 +150,7 @@ namespace cct::gfx::vk
 		m_debugName = std::exchange(other.m_debugName, {});
 	}
 
-	ObjectDebug& ObjectDebug::operator=(ObjectDebug&& other)
+	ObjectDebug& ObjectDebug::operator=(ObjectDebug&& other) noexcept
 	{
 		std::swap(m_device, other.m_device);
 		std::swap(m_typeName, other.m_typeName);

@@ -44,7 +44,7 @@ namespace cct::gfx::vk
 
 
 		[[nodiscard]] std::span<Image> GetImages() const;
-		[[nodiscard]] std::span<ImageView> GetImageViews();
+		[[nodiscard]] std::span<ImageView> GetImageViews() const;
 		[[nodiscard]] VkExtent2D GetExtent() const;
 		[[nodiscard]] const ImageView& GetDepthImageView() const;
 		[[nodiscard]] ImageView& GetDepthImageView();

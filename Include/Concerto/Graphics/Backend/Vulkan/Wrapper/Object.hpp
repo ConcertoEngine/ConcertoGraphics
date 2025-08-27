@@ -13,27 +13,17 @@ namespace cct::gfx::vk
 	class Device;
 
 	template<typename VkType>
-	class Object
-#ifdef CCT_ENABLE_OBJECT_DEBUG
-		:
-		public ObjectDebug
-#endif
+	class Object : public ObjectDebug
 	{
 	public:
+		Object();
 		explicit Object(Device& device);
+		~Object() override;
 
 		Object(const Object&) = delete;
-
-		virtual ~Object()
-#ifdef CCT_ENABLE_OBJECT_DEBUG
-		override
-#endif // CCT_ENABLE_OBJECT_DEBUG
-		;
-
 		Object(Object&&) noexcept;
 
 		Object& operator=(const Object&) = delete;
-
 		Object& operator=(Object&&) noexcept;
 
 		[[nodiscard]] VkType* Get() const;
