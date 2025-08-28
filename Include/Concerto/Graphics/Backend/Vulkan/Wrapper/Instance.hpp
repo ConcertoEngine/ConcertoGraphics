@@ -23,7 +23,7 @@ namespace cct::gfx::vk
 		Instance(const std::string& appName, const std::string& engineName, const Version& apiVersion,
 				const Version& appVersion, const Version& engineVersion, std::span<const char*> extensions,
 				std::span<const char*> layers);
-		virtual ~Instance() = default;
+		virtual ~Instance();
 
 		Instance(const Instance&) = delete;
 		Instance(Instance&&) = default;

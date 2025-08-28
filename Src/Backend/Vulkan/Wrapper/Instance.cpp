@@ -132,6 +132,11 @@ namespace cct::gfx::vk
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/InstanceFunction.hpp"
 	}
 
+	Instance::~Instance()
+	{
+		vkDestroyInstance(m_instance, nullptr);
+	}
+
 	Version Instance::GetApiVersion() const
 	{
 		return m_apiVersion;
