@@ -6,22 +6,24 @@
 #include <utility>
 
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Pipeline.hpp"
+
+#include "Concerto/Graphics/Backend/Vulkan/VkException.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/PipelineLayout.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Device.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/VulkanInitializer.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/RenderPass.hpp"
 
 namespace cct::gfx::vk
 {
 
-	Pipeline::Pipeline(Device& device, PipelineInfo pipeLineInfo) :
+	Pipeline::Pipeline(Device& device, PipelineInfo pipeLineInfo, const RenderPass& renderPass) :
 		Object(device),
 		m_pipelineInfo(std::move(pipeLineInfo)),
-		m_createInfo()
+		m_createInfo(),
+		m_renderPass(&renderPass)
 	{
-		m_createInfo.viewportState = BuildViewportState();
-		m_createInfo.colorBlend = BuildColorBlendState();
-		m_createInfo.pipelineCreateInfo = {};
-		m_createInfo.pipelineCreateInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
+		if (Create(device, m_pipelineInfo, renderPass) != VK_SUCCESS)
+			throw VkException(GetLastResult());
 	}
 
 	Pipeline::~Pipeline()
@@ -31,7 +33,56 @@ namespace cct::gfx::vk
 		m_device->vkDestroyPipeline(*m_device->Get(), m_handle, nullptr);
 	}
 
-	VkPipeline Pipeline::BuildPipeline(VkRenderPass renderPass)
+	VkResult Pipeline::Create(Device& device, const PipelineInfo& pipeLineInfo, const RenderPass& renderPass)
+	{
+		m_device = &device;
+		m_pipelineInfo = pipeLineInfo;
+		m_renderPass = &renderPass;
+
+		m_createInfo.viewportState = BuildViewportState();
+		m_createInfo.colorBlend = BuildColorBlendState();
+		m_createInfo.pipelineCreateInfo = {};
+		m_createInfo.pipelineCreateInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
+
+		return BuildPipeline();
+	}
+
+	VkPipelineViewportStateCreateInfo Pipeline::BuildViewportState()
+	{
+		VkPipelineViewportStateCreateInfo viewportState{};
+		static VkRect2D scissor = { 0, 0 }; //TODO: remove static
+		scissor.offset = {.x = 0, .y = 0 };
+		scissor.extent = {.width = 1280, .height = 720 };
+		viewportState.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
+		viewportState.pNext = nullptr;
+		viewportState.viewportCount = 1;
+		//		viewportState.pViewports = &m_pipelineInfo.m_viewport;
+		viewportState.scissorCount = 1;
+		viewportState.pScissors = &scissor;
+		return viewportState;
+	}
+
+	VkPipelineColorBlendStateCreateInfo Pipeline::BuildColorBlendState()
+	{
+		VkPipelineColorBlendStateCreateInfo colorBlending = {};
+		static VkPipelineColorBlendAttachmentState colorBlendAttachment(
+			VulkanInitializer::ColorBlendAttachmentState()); //TODO: remove static
+		colorBlending.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
+		colorBlending.pNext = nullptr;
+		colorBlending.logicOpEnable = VK_FALSE;
+		colorBlending.logicOp = VK_LOGIC_OP_COPY;
+		colorBlending.attachmentCount = 1;
+		colorBlending.pAttachments = &colorBlendAttachment;
+		return colorBlending;
+	}
+
+	std::shared_ptr<PipelineLayout> Pipeline::GetPipelineLayout() const
+	{
+		CCT_ASSERT(!IsNull(), "Invalid object state, 'Create' must be called");
+		return m_pipelineInfo.m_pipelineLayout;
+	}
+
+	VkResult Pipeline::BuildPipeline()
 	{
 		CCT_GFX_AUTO_PROFILER_SCOPE();
 
@@ -74,52 +125,15 @@ namespace cct::gfx::vk
 		pipelineInfo.pMultisampleState = &m_pipelineInfo.m_multisampling;
 		pipelineInfo.pColorBlendState = &colorBlending;
 		pipelineInfo.layout = *m_pipelineInfo.m_pipelineLayout->Get();
-		pipelineInfo.renderPass = renderPass;
+		pipelineInfo.renderPass = *m_renderPass->Get();
 		pipelineInfo.subpass = 0;
 		pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
 		pipelineInfo.pDepthStencilState = &m_pipelineInfo.m_depthStencil;
 
+		m_lastResult = m_device->vkCreateGraphicsPipelines(*m_device->Get(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_handle);
+		CCT_ASSERT(m_lastResult == VK_SUCCESS, "ConcertoGraphics: vkCreateGraphicsPipelines failed VKResult={}", static_cast<int>(m_lastResult));
 
-		if (m_device->vkCreateGraphicsPipelines(*m_device->Get(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_handle) !=
-			VK_SUCCESS)
-		{
-			std::cerr << "failed to create pipeline\n";
-			return VK_NULL_HANDLE;
-		}
-		return m_handle;
+		return m_lastResult;
 	}
 
-	VkPipelineViewportStateCreateInfo Pipeline::BuildViewportState() const
-	{
-		VkPipelineViewportStateCreateInfo viewportState{};
-		static VkRect2D scissor = { 0, 0 }; //TODO: remove static
-		scissor.offset = { 0, 0 };
-		scissor.extent = { 1280, 720 };
-		viewportState.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
-		viewportState.pNext = nullptr;
-		viewportState.viewportCount = 1;
-		//		viewportState.pViewports = &m_pipelineInfo.m_viewport;
-		viewportState.scissorCount = 1;
-		viewportState.pScissors = &scissor;
-		return viewportState;
-	}
-
-	VkPipelineColorBlendStateCreateInfo Pipeline::BuildColorBlendState() const
-	{
-		VkPipelineColorBlendStateCreateInfo colorBlending = {};
-		static VkPipelineColorBlendAttachmentState colorBlendAttachment(
-			VulkanInitializer::ColorBlendAttachmentState()); //TODO: remove static
-		colorBlending.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
-		colorBlending.pNext = nullptr;
-		colorBlending.logicOpEnable = VK_FALSE;
-		colorBlending.logicOp = VK_LOGIC_OP_COPY;
-		colorBlending.attachmentCount = 1;
-		colorBlending.pAttachments = &colorBlendAttachment;
-		return colorBlending;
-	}
-
-	std::shared_ptr<PipelineLayout> Pipeline::GetPipelineLayout() const
-	{
-		return m_pipelineInfo.m_pipelineLayout;
-	}
 }
