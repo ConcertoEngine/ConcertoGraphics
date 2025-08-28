@@ -25,14 +25,17 @@ namespace cct::gfx::vk
 			std::span<VkSurfaceFormatKHR> formats{};
 			std::span<VkPresentModeKHR> presentModes{};
 		};
-				
-		PhysicalDevice(vk::Instance& instance, VkPhysicalDevice physicalDevice);
+
+		PhysicalDevice();
+		PhysicalDevice(Instance& instance, VkPhysicalDevice physicalDevice);
 		~PhysicalDevice() = default;
 		PhysicalDevice(const PhysicalDevice&) = delete;
 		PhysicalDevice(PhysicalDevice&&) noexcept;
 
 		PhysicalDevice& operator=(const PhysicalDevice&) = delete;
 		PhysicalDevice& operator=(PhysicalDevice&&) noexcept;
+
+		VkResult Create(Instance& instance, VkPhysicalDevice physicalDevice);
 
 		[[nodiscard]] std::span<VkQueueFamilyProperties> GetQueueFamilyProperties() const;
 		[[nodiscard]] VkPhysicalDeviceProperties GetProperties() const;

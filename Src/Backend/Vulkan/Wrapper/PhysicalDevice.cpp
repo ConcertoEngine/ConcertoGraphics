@@ -13,6 +13,11 @@
 
 namespace cct::gfx::vk
 {
+	PhysicalDevice::PhysicalDevice() :
+		m_instance(nullptr)
+	{
+	}
+
 	PhysicalDevice::PhysicalDevice(vk::Instance& instance, VkPhysicalDevice physicalDevice) :
 		m_physicalDevice(physicalDevice),
 		m_instance(&instance)
@@ -63,6 +68,14 @@ namespace cct::gfx::vk
 		std::swap(m_physicalDevice, other.m_physicalDevice);
 		std::swap(m_instance,  other.m_instance);
 		return *this;
+	}
+
+	VkResult PhysicalDevice::Create(Instance& instance, VkPhysicalDevice physicalDevice)
+	{
+		m_physicalDevice = physicalDevice;
+		m_instance = &instance;
+
+		return VK_SUCCESS;
 	}
 
 	VkPhysicalDeviceProperties PhysicalDevice::GetProperties() const
