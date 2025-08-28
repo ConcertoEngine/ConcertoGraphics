@@ -15,6 +15,7 @@ namespace cct::gfx::vk
 	class CONCERTO_GRAPHICS_VULKAN_BACKEND_API Fence : public Object<VkFence>
 	{
 	public:
+		Fence() = default;
 		explicit Fence(Device& device, bool signaled = true);
 		~Fence() override;
 
@@ -23,6 +24,8 @@ namespace cct::gfx::vk
 
 		Fence& operator=(Fence&&) = default;
 		Fence& operator=(const Fence&) = delete;
+
+		VkResult Create(Device& device, bool signaled = true);
 
 		void Wait(UInt64 timeout) const;
 		void Reset() const;
