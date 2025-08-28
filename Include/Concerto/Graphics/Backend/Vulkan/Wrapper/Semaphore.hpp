@@ -15,6 +15,7 @@ namespace cct::gfx::vk
 	class CONCERTO_GRAPHICS_VULKAN_BACKEND_API Semaphore : public Object<VkSemaphore>
 	{
 	public:
+		Semaphore() = default;
 		explicit Semaphore(Device& device);
 		~Semaphore() override;
 
@@ -23,6 +24,8 @@ namespace cct::gfx::vk
 
 		Semaphore& operator=(Semaphore&&) = default;
 		Semaphore& operator=(const Semaphore&) = delete;
+
+		VkResult Create(Device& device);
 
 		Result<UInt64, VkResult> GetSemaphoreCounterValue() const;
 	};
