@@ -18,6 +18,7 @@ namespace cct::gfx::vk
 	class CONCERTO_GRAPHICS_VULKAN_BACKEND_API ImageView : public Object<VkImageView>
 	{
 	 public:
+		ImageView();
 		ImageView(Device& device, Image& image, VkImageAspectFlags aspectFlags);
 		~ImageView() override;
 
@@ -26,6 +27,10 @@ namespace cct::gfx::vk
 
 		ImageView& operator=(const ImageView&) = delete;
 		ImageView& operator=(ImageView&&) noexcept = default;
+
+		VkResult Create(Device& device, Image& image, VkImageAspectFlags aspectFlags);
+
+		Image& GetImage() const;
 	private:
 		Image* m_image;
 	};
