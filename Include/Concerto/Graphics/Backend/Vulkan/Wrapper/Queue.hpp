@@ -27,7 +27,8 @@ namespace cct::gfx::vk
 			Transfer  /**< Transfer queue for memory operations. */
 		};
 
-		explicit Queue(Device& device, UInt32 queueFamilyIndex);
+		Queue();
+		Queue(Device& device, UInt32 queueFamilyIndex);
 		~Queue() override = default;
 
 		Queue(Queue&&) = default;
@@ -35,6 +36,8 @@ namespace cct::gfx::vk
 
 		Queue& operator=(Queue&&) = default;
 		Queue& operator=(const Queue&) = delete;
+
+		VkResult Create(Device& device, UInt32 queueFamilyIndex);
 		
 		[[nodiscard]] UInt32 GetFamilyIndex() const;
 
