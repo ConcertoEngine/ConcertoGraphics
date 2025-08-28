@@ -7,6 +7,7 @@
 
 #include <stdexcept>
 #include <string>
+#include "Concerto/Graphics/Backend/Vulkan/Defines.hpp"
 
 namespace cct::gfx::vk
 {
