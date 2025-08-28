@@ -21,8 +21,8 @@ namespace cct::gfx::vk
 	class CONCERTO_GRAPHICS_VULKAN_BACKEND_API PipelineLayout : public Object<VkPipelineLayout>
 	{
 	public:
-		PipelineLayout(Device& device, std::vector<std::shared_ptr<DescriptorSetLayout>> descriptorSetLayouts);
-
+		PipelineLayout() = default;
+		PipelineLayout(Device& device, const std::vector<std::shared_ptr<DescriptorSetLayout>>& descriptorSetLayouts);
 		~PipelineLayout() override;
 
 		PipelineLayout(PipelineLayout&&) = default;
@@ -30,6 +30,8 @@ namespace cct::gfx::vk
 
 		PipelineLayout& operator=(PipelineLayout&&) = default;
 		PipelineLayout& operator=(const PipelineLayout&) = delete;
+
+		VkResult Create(Device& device, const std::vector<std::shared_ptr<DescriptorSetLayout>>& descriptorSetLayouts);
 
 		[[nodiscard]] const std::vector<std::shared_ptr<DescriptorSetLayout>>& GetDescriptorSetLayouts() const;
 	private:
