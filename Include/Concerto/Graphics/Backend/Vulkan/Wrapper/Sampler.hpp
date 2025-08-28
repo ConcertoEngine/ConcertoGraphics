@@ -17,8 +17,17 @@ namespace cct::gfx::vk
 	class CONCERTO_GRAPHICS_VULKAN_BACKEND_API Sampler : public Object<VkSampler>
 	{
 	public:
+		Sampler() = default;
 		Sampler(Device& device, VkFilter filter, VkSamplerAddressMode samplerAddressMode = VK_SAMPLER_ADDRESS_MODE_REPEAT);
 		~Sampler() override;
+
+		Sampler(Sampler&&) noexcept = default;
+		Sampler(const Sampler&) = delete;
+
+		Sampler& operator=(Sampler&&) noexcept = default;
+		Sampler& operator=(const Sampler&) = delete;
+
+		VkResult Create(Device& device, VkFilter filter, VkSamplerAddressMode samplerAddressMode = VK_SAMPLER_ADDRESS_MODE_REPEAT);
 	};
 }
 
