@@ -42,6 +42,8 @@ namespace cct::gfx::vk
 		SwapChain& operator=(SwapChain&&) noexcept = delete;
 		SwapChain& operator=(const SwapChain&) = delete;
 
+		VkResult Create(Device& device, Window& window, VkFormat colorFormat = VK_FORMAT_B8G8R8A8_SRGB, VkFormat depthFormat = VK_FORMAT_D32_SFLOAT);
+		void Destroy();
 
 		[[nodiscard]] std::span<Image> GetImages() const;
 		[[nodiscard]] std::span<ImageView> GetImageViews() const;
@@ -54,17 +56,17 @@ namespace cct::gfx::vk
 
 		UInt32 AcquireNextImage(const Semaphore& semaphore, const Fence* fence = nullptr, UInt64 timeout = std::numeric_limits<UInt64>::max());
 
-		bool ReCreate(VkFormat pixelFormat = VK_FORMAT_B8G8R8A8_SRGB, VkFormat depthFormat = VK_FORMAT_D32_SFLOAT);
-
+		Window& GetWindow() const;
 	private:
+		VkResult CreateSurface();
+
 		mutable std::optional<std::vector<Image>> m_swapChainImages;
 		mutable std::optional<std::vector<ImageView>> m_swapChainImageViews;
 		VkExtent2D m_windowExtent;
 		VkFormat m_swapChainImageFormat;
 		Image m_depthImage;
 		ImageView m_depthImageView;
-		PhysicalDevice& m_physicalDevice;
-		Window& m_window;
+		Window* m_window;
 		UInt32 m_currentImageIndex;
 		VkSurfaceKHR m_surface;
 	};

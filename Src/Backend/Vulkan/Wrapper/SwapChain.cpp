@@ -5,6 +5,7 @@
 
 #include <Concerto/Core/Assert.hpp>
 
+#include "Concerto/Graphics/Backend/Vulkan/VkException.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Swapchain.hpp"
 
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Fence.hpp"
@@ -20,23 +21,100 @@ namespace cct::gfx::vk
 	SwapChain::SwapChain(Device& device, Window& window, VkFormat colorFormat, VkFormat depthFormat) : Object(device),
 		m_swapChainImages(),
 		m_swapChainImageViews(),
-		m_windowExtent({.width = window.GetWidth(), .height = window.GetHeight()}),
-		m_swapChainImageFormat(colorFormat),
-		m_depthImage(device.GetAllocator().AllocateImage(m_windowExtent, depthFormat, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT)),
-		m_depthImageView(device, m_depthImage, VK_IMAGE_ASPECT_DEPTH_BIT),
-		m_physicalDevice(device.GetPhysicalDevice()),
-		m_window(window),
+		m_windowExtent(),
+		m_swapChainImageFormat(),
+		m_depthImage(),
+		m_depthImageView(),
+		m_window(&window),
 		m_currentImageIndex(0),
 		m_surface(VK_NULL_HANDLE)
 	{
-		this->ReCreate(colorFormat, depthFormat);
+		if (Create(device, window, colorFormat, depthFormat) != VK_SUCCESS)
+			throw VkException(GetLastResult());
 	}
 
 	SwapChain::~SwapChain()
 	{
 		if (IsNull())
 			return;
-		m_device->vkDestroySwapchainKHR(*m_device->Get(), m_handle, nullptr);
+		Destroy();
+	}
+
+	VkResult SwapChain::Create(Device& device, Window& window, VkFormat colorFormat, VkFormat depthFormat)
+	{
+		CCT_GFX_AUTO_PROFILER_SCOPE();
+
+		Destroy();
+
+		m_device = &device;
+		m_windowExtent = { .width = window.GetWidth(), .height = window.GetHeight() },
+		m_swapChainImageFormat = colorFormat;
+		m_depthImage = device.GetAllocator().AllocateImage(m_windowExtent, depthFormat, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT),
+
+		m_lastResult = m_depthImageView.Create(device, m_depthImage, VK_IMAGE_ASPECT_DEPTH_BIT);
+		if (m_lastResult != VK_SUCCESS)
+			return m_lastResult;
+
+		m_window = &window,
+		m_windowExtent = { .width = m_window->GetWidth(), .height = m_window->GetHeight() };
+
+		m_lastResult = CreateSurface();
+		if (m_lastResult != VK_SUCCESS)
+			return m_lastResult;
+
+		m_lastResult = m_depthImageView.Create(*GetDevice(), m_depthImage, VK_IMAGE_ASPECT_DEPTH_BIT);
+		if (m_lastResult != VK_SUCCESS)
+			return m_lastResult;
+
+		PhysicalDevice::SurfaceSupportDetails surfaceSupportDetails = m_device->GetPhysicalDevice().GetSurfaceSupportDetails(m_surface);
+		VkSwapchainCreateInfoKHR swapChainCreateInfo = {};
+		UInt32 imageCount = surfaceSupportDetails.capabilities.minImageCount + 1;
+		if (surfaceSupportDetails.capabilities.maxImageCount > 0 && imageCount > surfaceSupportDetails.capabilities.maxImageCount)
+			imageCount = surfaceSupportDetails.capabilities.maxImageCount;
+
+		swapChainCreateInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
+		swapChainCreateInfo.surface = m_surface;
+		swapChainCreateInfo.minImageCount = imageCount;
+		swapChainCreateInfo.imageFormat = m_swapChainImageFormat;
+		swapChainCreateInfo.imageColorSpace = VK_COLOR_SPACE_SRGB_NONLINEAR_KHR;
+		swapChainCreateInfo.imageExtent = m_windowExtent;
+		swapChainCreateInfo.imageArrayLayers = 1;
+		swapChainCreateInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+		swapChainCreateInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
+		swapChainCreateInfo.preTransform = VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR;
+		swapChainCreateInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
+		swapChainCreateInfo.presentMode = VK_PRESENT_MODE_IMMEDIATE_KHR;
+		swapChainCreateInfo.clipped = VK_TRUE;
+		swapChainCreateInfo.oldSwapchain = VK_NULL_HANDLE;
+
+		m_lastResult = m_device->vkCreateSwapchainKHR(*m_device->Get(), &swapChainCreateInfo, nullptr, &m_handle);
+		CCT_ASSERT(m_lastResult == VK_SUCCESS, "ConcertoGraphics: vkCreateSemaphore failed VkResult={}", static_cast<const int>(m_lastResult));
+		return m_lastResult;
+	}
+
+	void SwapChain::Destroy()
+	{
+		if (m_handle)
+		{
+			m_device->vkDestroySwapchainKHR(*m_device->Get(), m_handle, nullptr);
+			m_handle = nullptr;
+		}
+
+		if (m_surface)
+		{
+			m_device->GetInstance().vkDestroySurfaceKHR(*GetDevice()->GetInstance().Get(), m_surface, nullptr);
+			m_surface = nullptr;
+		}
+
+		m_swapChainImages = std::nullopt;
+		m_swapChainImageViews = std::nullopt;
+		m_windowExtent = {};
+		m_swapChainImageFormat = {};
+		m_depthImage = {};
+		m_depthImageView = {};
+		m_window = nullptr;
+		m_currentImageIndex = {};
+		m_surface = nullptr;
 	}
 
 	std::span<Image> SwapChain::GetImages() const
@@ -110,16 +188,14 @@ namespace cct::gfx::vk
 		return m_currentImageIndex;
 	}
 
-	bool SwapChain::ReCreate(VkFormat pixelFormat, VkFormat depthFormat)
+	Window& SwapChain::GetWindow() const
 	{
-		CCT_GFX_AUTO_PROFILER_SCOPE();
+		return *m_window;
+	}
 
-		m_windowExtent = {.width = m_window.GetWidth(), .height = m_window.GetHeight() };
-		if (m_handle)
-			m_device->vkDestroySwapchainKHR(*m_device->Get(), m_handle, nullptr);
-		if (m_surface)
-			m_device->GetInstance().vkDestroySurfaceKHR(*GetDevice()->GetInstance().Get(), m_surface, nullptr);
-		NativeWindow nativeWindow = m_window.GetNativeWindow();
+	VkResult SwapChain::CreateSurface()
+	{
+		NativeWindow nativeWindow = m_window->GetNativeWindow();
 #if defined(CCT_PLATFORM_WINDOWS)
 		const VkWin32SurfaceCreateInfoKHR createInfo = {
 			.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR,
@@ -128,48 +204,14 @@ namespace cct::gfx::vk
 			.hinstance = static_cast<HINSTANCE>(nativeWindow.hinstance),
 			.hwnd = static_cast<HWND>(nativeWindow.window)
 		};
-		VkResult result = m_device->GetInstance().vkCreateWin32SurfaceKHR(*m_device->GetInstance().Get(), &createInfo, nullptr, &m_surface);
+		m_lastResult = m_device->GetInstance().vkCreateWin32SurfaceKHR(*m_device->GetInstance().Get(), &createInfo, nullptr, &m_surface);
 #elif defined(CCT_PLATFORM_MACOS))
 		CCT_ASSERT_FALSE("Not implemented");
 #elif defined(CCT_PLATFORM_LINUX)
 		CCT_ASSERT_FALSE("Not implemented");
 #endif
-		if (result != VK_SUCCESS)
-		{
-			CCT_ASSERT_FALSE("ConcertoGraphics: could not create vulkan window surface");
-			return false;
-		}
-		m_swapChainImageViews.reset();
-		m_swapChainImages.reset();
-		m_depthImage = GetDevice()->GetAllocator().AllocateImage(m_windowExtent, depthFormat, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT);
-		m_depthImageView = ImageView(*GetDevice(), m_depthImage, VK_IMAGE_ASPECT_DEPTH_BIT);
-		PhysicalDevice::SurfaceSupportDetails surfaceSupportDetails = m_physicalDevice.GetSurfaceSupportDetails(m_surface);
-		VkSwapchainCreateInfoKHR swapChainCreateInfo = {};
-		UInt32 imageCount = surfaceSupportDetails.capabilities.minImageCount + 1;
-		if (surfaceSupportDetails.capabilities.maxImageCount > 0 && imageCount > surfaceSupportDetails.capabilities.maxImageCount)
-			imageCount = surfaceSupportDetails.capabilities.maxImageCount;
+		CCT_ASSERT(m_lastResult == VK_SUCCESS, "ConcertoGraphics: vkCreateWin32SurfaceKHR failed VKResult={}", static_cast<int>(m_lastResult));
 
-		swapChainCreateInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
-		swapChainCreateInfo.surface = m_surface;
-		swapChainCreateInfo.minImageCount = imageCount;
-		swapChainCreateInfo.imageFormat = pixelFormat;
-		swapChainCreateInfo.imageColorSpace = VK_COLOR_SPACE_SRGB_NONLINEAR_KHR;
-		swapChainCreateInfo.imageExtent = m_windowExtent;
-		swapChainCreateInfo.imageArrayLayers = 1;
-		swapChainCreateInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
-		swapChainCreateInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
-		swapChainCreateInfo.preTransform = VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR;
-		swapChainCreateInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
-		swapChainCreateInfo.presentMode = VK_PRESENT_MODE_IMMEDIATE_KHR;
-		swapChainCreateInfo.clipped = VK_TRUE;
-		swapChainCreateInfo.oldSwapchain = VK_NULL_HANDLE;
-		m_lastResult = m_device->vkCreateSwapchainKHR(*m_device->Get(), &swapChainCreateInfo, nullptr, &m_handle);
-		if (m_lastResult != VK_SUCCESS)
-		{
-			CCT_ASSERT_FALSE("ConcertoGraphics: vkCreateSwapchainKHR failed VKResult={}",
-								  static_cast<int>(m_lastResult));
-			return false;
-		}
-		return true;
+		return m_lastResult;
 	}
 }
