@@ -26,9 +26,17 @@ namespace cct::gfx::vk
 	class CONCERTO_GRAPHICS_VULKAN_BACKEND_API Device
 	{
 	public:
-		Device() = delete;
+		Device() = default;
+		explicit Device(PhysicalDevice& physicalDevice);
+		~Device();
 
-		Device(PhysicalDevice& physicalDevice);
+		Device(Device&&) noexcept;
+		Device(const Device&) = delete;
+
+		Device& operator=(Device&&) noexcept;
+		Device& operator=(const Device&) = delete;
+
+		VkResult Create(PhysicalDevice& physicalDevice);
 
 		[[nodiscard]] UInt32 GetQueueFamilyIndex(Queue::Type queueType) const;
 		[[nodiscard]] UInt32 GetQueueFamilyIndex(UInt32 queueFlag) const;
