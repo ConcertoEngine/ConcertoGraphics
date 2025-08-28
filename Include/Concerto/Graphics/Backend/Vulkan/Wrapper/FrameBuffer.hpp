@@ -20,7 +20,8 @@ namespace cct::gfx::vk
 	class CONCERTO_GRAPHICS_VULKAN_BACKEND_API FrameBuffer : public Object<VkFramebuffer>
 	{
 	public:
-		FrameBuffer(Device& device, const RenderPass& renderPass, const std::vector<VkImageView>& attachments, VkExtent2D extent);
+		FrameBuffer();
+		FrameBuffer(const RenderPass& renderPass, const std::vector<VkImageView>& attachments, VkExtent2D extent);
 		~FrameBuffer() override;
 
 		FrameBuffer(FrameBuffer&&) noexcept = default;
@@ -28,6 +29,8 @@ namespace cct::gfx::vk
 
 		FrameBuffer& operator=(FrameBuffer&&) noexcept = default;
 		FrameBuffer& operator=(const FrameBuffer&) = delete;
+
+		VkResult Create(const RenderPass& renderPass, const std::vector<VkImageView>& attachments, VkExtent2D extent);
 
 		VkExtent2D GetExtent2D() const;
 	private:
