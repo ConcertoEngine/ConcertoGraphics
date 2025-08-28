@@ -50,18 +50,6 @@ namespace cct::gfx::vk
 		return m_lastResult;
 	}
 
-	void DescriptorSet::WriteImageSamplerDescriptor(const Sampler& sampler, const ImageView& imageView, VkImageLayout imageLayout) const
-	{
-		VkDescriptorImageInfo imageBufferInfo;
-		imageBufferInfo.sampler = *sampler.Get();
-		imageBufferInfo.imageView = *imageView.Get();
-		imageBufferInfo.imageLayout = imageLayout;
-
-		const VkWriteDescriptorSet texture1 = VulkanInitializer::WriteDescriptorImage(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, m_handle, &imageBufferInfo, 0);
-
-		m_device->vkUpdateDescriptorSets(*m_device->Get(), 1, &texture1, 0, nullptr);
-	}
-
 	DescriptorSet::DescriptorSet(DescriptorSet&& other) noexcept : Object<VkDescriptorSet>(std::move(other))
 	{
 		m_pool = std::exchange(other.m_pool, nullptr);
@@ -71,5 +59,18 @@ namespace cct::gfx::vk
 	{
 		m_pool = std::exchange(other.m_pool, nullptr);
 		return *this;
+	}
+
+	void DescriptorSet::WriteImageSamplerDescriptor(const Sampler& sampler, const ImageView& imageView, VkImageLayout imageLayout) const
+	{
+		CCT_ASSERT(!IsNull(), "Invalid object state, 'Create' must be called");
+		VkDescriptorImageInfo imageBufferInfo;
+		imageBufferInfo.sampler = *sampler.Get();
+		imageBufferInfo.imageView = *imageView.Get();
+		imageBufferInfo.imageLayout = imageLayout;
+
+		const VkWriteDescriptorSet texture1 = VulkanInitializer::WriteDescriptorImage(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, m_handle, &imageBufferInfo, 0);
+
+		m_device->vkUpdateDescriptorSets(*m_device->Get(), 1, &texture1, 0, nullptr);
 	}
 }
