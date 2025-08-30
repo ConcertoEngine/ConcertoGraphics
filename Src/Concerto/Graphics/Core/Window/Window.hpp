@@ -8,17 +8,17 @@
 #include <string>
 #include <functional>
 
-#include "Concerto/Graphics/Defines.hpp"
-#include "Concerto/Graphics/Window/Key.hpp"
-#include "Concerto/Graphics/Input/Input.hpp"
-#include "Concerto/Graphics/Window/NativeWindow.hpp"
+#include "Concerto/Graphics/Core/Defines.hpp"
+#include "Concerto/Graphics/Core/Window/Key.hpp"
+#include "Concerto/Graphics/Core/Input/Input.hpp"
+#include "Concerto/Graphics/Core/Window/NativeWindow.hpp"
 
 struct SDL_Window;
 
 namespace cct::gfx
 {
 
-	class CONCERTO_GRAPHICS_API Window
+	class CONCERTO_GRAPHICS_CORE_API Window
 	{
 	public:
 		Window(Int32 displayIndex, const std::string& title, Int32 width, Int32 height);

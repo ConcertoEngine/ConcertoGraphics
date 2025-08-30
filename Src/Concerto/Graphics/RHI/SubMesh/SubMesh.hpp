@@ -9,7 +9,7 @@
 
 #include "Concerto/Graphics/RHI/Defines.hpp"
 #include "Concerto/Graphics/RHI/Material.hpp"
-#include "Concerto/Graphics/Vertex.hpp"
+#include "Concerto/Graphics/Core/Vertex.hpp"
 #include "Concerto/Graphics/RHI/Mesh/Mesh.hpp"
 
 namespace cct::gfx::rhi

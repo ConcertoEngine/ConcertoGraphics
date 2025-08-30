@@ -8,12 +8,12 @@
 #include <Concerto/Core/Math/Quaternion.hpp>
 #include <Concerto/Core/Math/Vector.hpp>
 
-#include "Concerto/Graphics/Defines.hpp"
-#include "Concerto/Graphics/Camera/GPUData.hpp"
+#include "Concerto/Graphics/Core/Defines.hpp"
+#include "Concerto/Graphics/Core/Camera/GPUData.hpp"
 
 namespace cct::gfx
 {
-	class CONCERTO_GRAPHICS_API Camera : public GPUCamera
+	class CONCERTO_GRAPHICS_CORE_API Camera : public GPUCamera
 	{
 	 public:
 		enum class CameraMovement

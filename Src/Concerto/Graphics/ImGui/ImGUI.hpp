@@ -6,7 +6,7 @@
 #define CONCERTO_GRAPHICS_IMGUI_HPP
 
 #include <imgui.h>
-#include "Concerto/Graphics/Defines.hpp"
+#include "Concerto/Graphics/Core/Defines.hpp"
 
 #include "Concerto/Graphics/Backend/Vulkan/RenderingContext.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/DescriptorPool.hpp"
@@ -20,7 +20,7 @@ namespace cct::gfx::vk
 {
 	class CommandBuffer;
 
-	class CONCERTO_GRAPHICS_API ImGUI
+	class CONCERTO_GRAPHICS_CORE_API ImGUI
 	{
 	public:
 		explicit ImGUI(RenderingContext &context, Window &window);

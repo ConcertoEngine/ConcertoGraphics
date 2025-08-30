@@ -7,7 +7,7 @@
 
 #include <span>
 
-#include "Concerto/Graphics/Defines.hpp"
+#include "Concerto/Graphics/Core/Defines.hpp"
 #include "Concerto/Graphics/RHI/RenderPass.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/RenderPass/RenderPass.hpp"
 

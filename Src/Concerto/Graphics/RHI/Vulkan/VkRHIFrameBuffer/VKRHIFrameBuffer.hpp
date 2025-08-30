@@ -7,7 +7,7 @@
 
 #include <memory>
 
-#include "Concerto/Graphics/Defines.hpp"
+#include "Concerto/Graphics/Core/Defines.hpp"
 #include "Concerto/Graphics/RHI/Texture.hpp"
 #include "Concerto/Graphics/RHI/FrameBuffer.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/FrameBuffer/FrameBuffer.hpp"

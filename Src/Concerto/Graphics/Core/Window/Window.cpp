@@ -9,10 +9,10 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_syswm.h>
 
-#include "Concerto/Graphics/Window/Window.hpp"
+#include "Concerto/Graphics/Core/Window/Window.hpp"
 
 #include "Concerto/Profiler/Profiler.hpp"
-#include "Concerto/Graphics/Window/Event.hpp"
+#include "Concerto/Graphics/Core/Window/Event.hpp"
 
 namespace cct::gfx
 {

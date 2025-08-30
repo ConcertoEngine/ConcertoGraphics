@@ -13,7 +13,7 @@
 #include <NZSL/Math/FieldOffsets.hpp>
 #include <NZSL/Ast/Module.hpp>
 
-#include "Concerto/Graphics/Defines.hpp"
+#include "Concerto/Graphics/Core/Defines.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/DescriptorSetLayout/DescriptorSetLayout.hpp"
 
 namespace cct::gfx
@@ -31,9 +31,9 @@ namespace cct::gfx
 		Max = UniformBuffer
 	};
 
-	struct CONCERTO_GRAPHICS_API RenderPipelineLayoutInfo
+	struct CONCERTO_GRAPHICS_CORE_API RenderPipelineLayoutInfo
 	{
-		struct CONCERTO_GRAPHICS_API Binding
+		struct CONCERTO_GRAPHICS_CORE_API Binding
 		{
 			UInt32 setIndex = 0;
 			UInt32 bindingIndex;

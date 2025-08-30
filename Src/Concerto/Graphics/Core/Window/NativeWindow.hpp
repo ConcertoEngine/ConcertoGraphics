@@ -5,7 +5,7 @@
 #ifndef CONCERTO_GRAPHICS_NATIVEWINDOW_HPP
 #define CONCERTO_GRAPHICS_NATIVEWINDOW_HPP
 
-#include "Concerto/Graphics/Defines.hpp"
+#include "Concerto/Graphics/Core/Defines.hpp"
 
 namespace cct::gfx
 {

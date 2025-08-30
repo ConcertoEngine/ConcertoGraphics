@@ -4,7 +4,7 @@
 
 #include <chrono>
 
-#include "Concerto/Graphics/Input/Input.hpp"
+#include "Concerto/Graphics/Core/Input/Input.hpp"
 
 namespace cct
 {

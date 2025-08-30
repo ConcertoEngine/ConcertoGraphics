@@ -5,12 +5,12 @@
 #ifndef CONCERTO_GRAPHICS_PRIMITIVES_HPP
 #define CONCERTO_GRAPHICS_PRIMITIVES_HPP
 
-#include "Concerto/Graphics/Defines.hpp"
-#include "Concerto/Graphics/Vertex.hpp"
+#include "Concerto/Graphics/Core/Defines.hpp"
+#include "Concerto/Graphics/Core/Vertex.hpp"
 
 namespace cct::gfx
 {
-	struct CONCERTO_GRAPHICS_API Primitive
+	struct CONCERTO_GRAPHICS_CORE_API Primitive
 	{
 		static Vertices MakeCone(float radius, float height, UInt32 slices);
 		static Vertices MakeCube(float size);

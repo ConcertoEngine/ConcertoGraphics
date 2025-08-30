@@ -6,7 +6,7 @@
 
 #include <chrono>
 #include <Concerto/Core/Math/Algorithm.hpp>
-#include <Concerto/Graphics/Window/Window.hpp>
+#include <Concerto/Graphics/Core/Window/Window.hpp>
 #include <Concerto/Graphics/RHI/Instance/APIImpl.hpp>
 #include <Concerto/Graphics/RHI/Instance/Instance.hpp>
 #include <Concerto/Graphics/RHI/SwapChain.hpp>
@@ -20,8 +20,8 @@
 #include <Concerto/Graphics/RHI/Mesh/Mesh.hpp>
 #include <Concerto/Graphics/RHI/Vulkan/VkRHIMesh/VkRHIMesh.hpp>
 
-#include "Concerto/Graphics/Camera/Camera.hpp"
-#include "Concerto/Graphics/DisplayManager/DisplayManager.hpp"
+#include "Concerto/Graphics/Core/Camera/Camera.hpp"
+#include "Concerto/Graphics/Core/DisplayManager/DisplayManager.hpp"
 #include "Concerto/Graphics/RHI/GpuMesh.hpp"
 #include "Concerto/Graphics/RHI/GpuSubMesh/GpuSubMesh.hpp"
 

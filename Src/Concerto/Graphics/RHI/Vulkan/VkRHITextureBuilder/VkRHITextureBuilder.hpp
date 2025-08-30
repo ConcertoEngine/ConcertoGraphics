@@ -9,7 +9,7 @@
 #include <memory>
 #include <string>
 
-#include "Concerto/Graphics/Defines.hpp"
+#include "Concerto/Graphics/Core/Defines.hpp"
 #include "Concerto/Graphics/RHI/TextureBuilder/TextureBuilder.hpp"
 
 namespace cct::gfx::vk

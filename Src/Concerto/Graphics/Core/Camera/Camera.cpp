@@ -2,7 +2,7 @@
 // Created by arthur on 21/03/2023.
 //
 
-#include "Concerto/Graphics/Camera/Camera.hpp"
+#include "Concerto/Graphics/Core/Camera/Camera.hpp"
 
 namespace cct::gfx
 {

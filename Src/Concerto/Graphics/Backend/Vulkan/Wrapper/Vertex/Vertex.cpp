@@ -3,7 +3,7 @@
 //
 
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Vertex/Vertex.hpp"
-#include "Concerto/Graphics/Vertex.hpp"
+#include "Concerto/Graphics/Core/Vertex.hpp"
 
 namespace cct::gfx::vk
 {

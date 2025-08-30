@@ -13,13 +13,13 @@
 
 #include <Concerto/Core/SparseVector.hpp>
 
-#include "Concerto/Graphics/Defines.hpp"
-#include "Concerto/Graphics/Window/Event.hpp"
-#include "Concerto/Graphics/Window/Key.hpp"
+#include "Concerto/Graphics/Core/Defines.hpp"
+#include "Concerto/Graphics/Core/Window/Event.hpp"
+#include "Concerto/Graphics/Core/Window/Key.hpp"
 
 namespace cct
 {
-	class CONCERTO_GRAPHICS_API Input
+	class CONCERTO_GRAPHICS_CORE_API Input
 	{
 	public:
 		using KeyCallbacks = std::vector<FunctionRef<void()>>;
@@ -28,26 +28,19 @@ namespace cct
 		using MouseEventCallback = FunctionRef<void(const MouseEvent&)>;
 
 		Input() = default;
-
 		~Input() = default;
-
 		Input(const Input&) = delete;
-
 		Input(Input&&) = default;
 
 		Input& operator=(const Input&) = delete;
-
 		Input& operator=(Input&&) = default;
 
 
 		void Register(const std::string& name, Key key, TriggerType triggerType, FunctionRef<void()>&& callback);
-
 		void Register(const std::string& name, MouseEvent::Type key, MouseEventCallback&& callback);
 
 		void Trigger(const std::vector<Event>& events);
-
 		void TriggerKeyEvent(const KeyEvent& keyEvent);
-
 		void TriggerMouseEvent(const MouseEvent& mouseEvent);
 
 	private:

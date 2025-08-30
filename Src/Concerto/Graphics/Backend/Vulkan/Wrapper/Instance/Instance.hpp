@@ -11,7 +11,7 @@
 #include <unordered_set>
 #include <vector>
 
-#include "Concerto/Graphics/Version.hpp"
+#include "Concerto/Graphics/Core/Version.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Object/Object.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Defines.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/PhysicalDevice/PhysicalDevice.hpp"

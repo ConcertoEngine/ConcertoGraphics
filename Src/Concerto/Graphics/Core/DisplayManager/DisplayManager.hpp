@@ -8,9 +8,9 @@
 #include <memory>
 #include <vector>
 
-#include "Concerto/Graphics/PixelFormat.hpp"
-#include "Concerto/Graphics/Window/Window.hpp"
-#include "Concerto/Graphics/Defines.hpp"
+#include "Concerto/Graphics/Core/PixelFormat.hpp"
+#include "Concerto/Graphics/Core/Window/Window.hpp"
+#include "Concerto/Graphics/Core/Defines.hpp"
 
 namespace cct::gfx
 {
@@ -39,7 +39,7 @@ namespace cct::gfx
 		std::vector<DisplayMode> displayModes;
 	};
 
-	class CONCERTO_GRAPHICS_API DisplayManager
+	class CONCERTO_GRAPHICS_CORE_API DisplayManager
 	{
 	public:
 		DisplayManager();

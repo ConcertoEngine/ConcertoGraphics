@@ -63,22 +63,22 @@ function add_files_to_target(p)
     end
 end
 
-target("concerto-graphics")
+target("concerto-graphics-core")
     set_kind("shared")
     set_languages("cxx20")
     set_warnings("allextra")
     if is_mode("debug") then
         set_symbols("debug")
     end
-    add_defines("CONCERTO_GRAPHICS_BUILD", { public = false })
+    add_defines("CONCERTO_GRAPHICS_CORE_BUILD", { public = false })
     
-    add_files_to_target("Src/Concerto/Graphics/Camera/*")
-    add_files_to_target("Src/Concerto/Graphics/DisplayManager/*")
-    add_files_to_target("Src/Concerto/Graphics/Window/*")
-    add_files_to_target("Src/Concerto/Graphics/Primitives/*")
-    add_files_to_target("Src/Concerto/Graphics/Input/*")
-    --add_files_to_target("Src/Concerto/Graphics/ImGui/*")
-    add_files_to_target("Src/Concerto/Graphics/*.hpp")
+    add_files_to_target("Src/Concerto/Graphics/Core/Camera/*")
+    add_files_to_target("Src/Concerto/Graphics/Core/DisplayManager/*")
+    add_files_to_target("Src/Concerto/Graphics/Core/Window/*")
+    add_files_to_target("Src/Concerto/Graphics/Core/Primitives/*")
+    add_files_to_target("Src/Concerto/Graphics/Core/Input/*")
+    --add_files_to_target("Src/Concerto/Graphics/Core/ImGui/*")
+    add_files_to_target("Src/Concerto/Graphics/Core/*.hpp")
 
     add_includedirs("Src/", { public = true })
     add_packages("concerto-core", "libsdl2", "vulkan-headers", "imgui", { public = true })
@@ -105,7 +105,7 @@ target("concerto-vulkan-backend", function()
     add_includedirs("Src/", { public = true })
     add_headerfiles("Src/(Concerto/Graphics/Backend/Vulkan/*.hpp)")
     add_packages("concerto-core", "volk", "vulkan-headers", "vulkan-utility-libraries", "vulkan-memory-allocator", "nzsl", { public = true })
-    add_deps("concerto-graphics")
+    add_deps("concerto-graphics-core")
     if has_config("profiling") then
         add_deps("concerto-profiler", { public = false })
     end

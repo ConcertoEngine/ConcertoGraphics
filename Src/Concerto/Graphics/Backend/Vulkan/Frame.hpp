@@ -7,7 +7,7 @@
 
 #include <memory>
 
-#include "Concerto/Graphics/Defines.hpp"
+#include "Concerto/Graphics/Core/Defines.hpp"
 
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Buffer/Buffer.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Fence/Fence.hpp"
@@ -21,7 +21,7 @@ namespace cct::gfx::vk
 {
 	class Device;
 
-	class CONCERTO_GRAPHICS_API FrameData
+	class CONCERTO_GRAPHICS_CORE_API FrameData
 	{
 	public:
 		FrameData() = delete;

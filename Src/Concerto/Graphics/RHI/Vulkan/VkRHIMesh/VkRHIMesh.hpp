@@ -8,8 +8,8 @@
 #include <unordered_map>
 #include <memory>
 
+#include "Concerto/Graphics/Core/Defines.hpp"
 #include "Concerto/Graphics/RHI/MaterialBuilder.hpp"
-#include "Concerto/Graphics/Defines.hpp"
 #include "Concerto/Graphics/RHI/Material.hpp"
 #include "Concerto/Graphics/RHI/Mesh/Mesh.hpp"
 #include "Concerto/Graphics/RHI/SubMesh/SubMesh.hpp"

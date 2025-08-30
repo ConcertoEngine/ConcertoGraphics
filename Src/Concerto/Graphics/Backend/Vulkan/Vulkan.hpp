@@ -9,9 +9,9 @@
 #include <string>
 #include <map>
 
-#include "Concerto/Graphics/Backend/Vulkan/Defines.hpp"
+#include "Concerto/Graphics/Core/Version.hpp"
 #include "Concerto/Graphics/RHI/Enums.hpp"
-#include "Concerto/Graphics/Version.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Defines.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Instance/Instance.hpp"
 
 namespace cct::gfx::vk

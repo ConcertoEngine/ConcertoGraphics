@@ -4,7 +4,7 @@
 
 #include <Concerto/Core/Cast.hpp>
 
-#include "Concerto/Graphics/Window/Window.hpp"
+#include "Concerto/Graphics/Core/Window/Window.hpp"
 #include "Concerto/Graphics/RHI/SwapChain.hpp"
 
 #include "Concerto/Graphics/RHI/Vulkan/VkRHIDevice/VkRHIDevice.hpp"

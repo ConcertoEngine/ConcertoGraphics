@@ -7,7 +7,7 @@
 
 #include <type_traits>
 #include <Concerto/Core/Types.hpp>
-#include <Concerto/Graphics/PixelFormat.hpp>
+#include <Concerto/Graphics/Core/PixelFormat.hpp>
 
 namespace cct::gfx::rhi
 {

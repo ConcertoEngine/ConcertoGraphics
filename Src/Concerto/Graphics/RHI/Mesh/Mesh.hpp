@@ -12,8 +12,8 @@
 
 #include <Concerto/Core/Math/Matrix.hpp>
 
+#include "Concerto/Graphics/Core/Vertex.hpp"
 #include "Concerto/Graphics/RHI/Defines.hpp"
-#include "Concerto/Graphics/Vertex.hpp"
 #include "Concerto/Graphics/RHI/Material.hpp"
 
 namespace cct::gfx::rhi

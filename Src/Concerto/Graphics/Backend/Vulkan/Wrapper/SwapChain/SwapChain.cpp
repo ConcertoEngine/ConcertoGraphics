@@ -5,7 +5,7 @@
 
 #include <Concerto/Core/Assert.hpp>
 
-#include "Concerto/Graphics/Window/Window.hpp"
+#include "Concerto/Graphics/Core/Window/Window.hpp"
 
 #include "Concerto/Graphics/Backend/Vulkan/VkException.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Swapchain/Swapchain.hpp"

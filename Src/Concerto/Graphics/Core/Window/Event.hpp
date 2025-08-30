@@ -8,7 +8,7 @@
 #include <variant>
 #include <string>
 
-#include "Concerto/Graphics/Window/Key.hpp"
+#include "Concerto/Graphics/Core/Window/Key.hpp"
 
 namespace cct
 {

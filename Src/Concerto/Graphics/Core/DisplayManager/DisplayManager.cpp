@@ -5,7 +5,7 @@
 #include <SDL2/SDL.h>
 #include <Concerto/Core/Assert.hpp>
 
-#include "Concerto/Graphics/DisplayManager/DisplayManager.hpp"
+#include "Concerto/Graphics/Core/DisplayManager/DisplayManager.hpp"
 
 #include "Concerto/Profiler/Profiler.hpp"
 

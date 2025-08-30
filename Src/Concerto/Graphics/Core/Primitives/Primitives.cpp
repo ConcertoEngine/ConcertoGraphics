@@ -6,8 +6,8 @@
 #include <Concerto/Core/Math/Vector.hpp>
 #include <Concerto/Core/Assert.hpp>
 
-#include "Concerto/Graphics/Primitives/Primitives.hpp"
-#include "Concerto/Graphics/Vertex.hpp"
+#include "Concerto/Graphics/Core/Primitives/Primitives.hpp"
+#include "Concerto/Graphics/Core/Vertex.hpp"
 
 namespace cct::gfx
 {
