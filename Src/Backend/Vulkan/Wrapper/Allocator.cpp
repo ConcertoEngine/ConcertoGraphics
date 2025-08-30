@@ -29,7 +29,7 @@ namespace cct::gfx::vk
 
 	Allocator::~Allocator()
 	{
-		if (IsNull())
+		if (!IsValid())
 			return;
 		vmaDestroyAllocator(m_handle);
 	}

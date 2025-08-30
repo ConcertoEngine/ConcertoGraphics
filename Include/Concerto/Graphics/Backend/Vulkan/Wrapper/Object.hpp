@@ -27,7 +27,7 @@ namespace cct::gfx::vk
 		Object& operator=(Object&&) noexcept;
 
 		[[nodiscard]] VkType* Get() const;
-		[[nodiscard]] bool IsNull() const;
+		[[nodiscard]] bool IsValid() const;
 		[[nodiscard]] Device* GetDevice() const;
 		[[nodiscard]] VkResult GetLastResult() const;
 

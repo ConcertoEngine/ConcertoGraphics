@@ -22,7 +22,7 @@ namespace cct::gfx::vk
 
 	Semaphore::~Semaphore()
 	{
-		if (IsNull())
+		if (!IsValid())
 			return;
 		m_device->vkDestroySemaphore(*m_device->Get(), m_handle, nullptr);
 	}
@@ -45,7 +45,7 @@ namespace cct::gfx::vk
 
 	Result<UInt64, VkResult> Semaphore::GetSemaphoreCounterValue() const
 	{
-		CCT_ASSERT(!IsNull(), "Invalid object state, 'Create' must be called");
+		CCT_ASSERT(IsValid(), "Invalid object state, 'Create' must be called");
 
 		UInt64 value;
 		VkResult result = m_device->vkGetSemaphoreCounterValue(*m_device->Get(), *Get(), & value);

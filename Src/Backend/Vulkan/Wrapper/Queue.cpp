@@ -40,13 +40,13 @@ namespace cct::gfx::vk
 
 	UInt32 Queue::GetFamilyIndex() const
 	{
-		CCT_ASSERT(!IsNull(), "Invalid object state, 'Create' must be called");
+		CCT_ASSERT(IsValid(), "Invalid object state, 'Create' must be called");
 		return m_queueFamilyIndex;
 	}
 
 	void Queue::Submit(const CommandBuffer& commandBuffer, const Semaphore* presentSemaphore, const Semaphore* renderSemaphore, const Fence& renderFence) const
 	{
-		CCT_ASSERT(!IsNull(), "Invalid object state, 'Create' must be called");
+		CCT_ASSERT(IsValid(), "Invalid object state, 'Create' must be called");
 		CCT_GFX_AUTO_PROFILER_SCOPE();
 
 		constexpr VkPipelineStageFlags waitStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
@@ -67,7 +67,7 @@ namespace cct::gfx::vk
 
 	bool Queue::Present(const Semaphore& renderSemaphore, SwapChain& swapchain, UInt32 swapchainImageIndex) const
 	{
-		CCT_ASSERT(!IsNull(), "Invalid object state, 'Create' must be called");
+		CCT_ASSERT(IsValid(), "Invalid object state, 'Create' must be called");
 		CCT_GFX_AUTO_PROFILER_SCOPE();
 
 		VkPresentInfoKHR present = {};
@@ -91,7 +91,7 @@ namespace cct::gfx::vk
 
 	void Queue::WaitIdle() const
 	{
-		CCT_ASSERT(!IsNull(), "Invalid object state, 'Create' must be called");
+		CCT_ASSERT(IsValid(), "Invalid object state, 'Create' must be called");
 		m_device->vkQueueWaitIdle(*Get());
 	}
 }

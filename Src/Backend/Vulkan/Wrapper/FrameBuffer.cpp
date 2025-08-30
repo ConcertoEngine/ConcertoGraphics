@@ -29,7 +29,7 @@ namespace cct::gfx::vk
 
 	FrameBuffer::~FrameBuffer()
 	{
-		if (IsNull())
+		if (!IsValid())
 			return;
 		m_device->vkDestroyFramebuffer(*m_device->Get(), m_handle, nullptr);
 	}

@@ -22,7 +22,7 @@ namespace cct::gfx::vk
 
 	Sampler::~Sampler()
 	{
-		if (IsNull())
+		if (!IsValid())
 			return;
 		m_device->vkDestroySampler(*m_device->Get(), m_handle, nullptr);
 	}

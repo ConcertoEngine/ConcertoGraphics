@@ -23,7 +23,7 @@ namespace cct::gfx::vk
 
 	DescriptorSetLayout::~DescriptorSetLayout()
 	{
-		if (IsNull())
+		if (!IsValid())
 			return;
 		m_device->vkDestroyDescriptorSetLayout(*m_device->Get(), m_handle, nullptr);
 	}

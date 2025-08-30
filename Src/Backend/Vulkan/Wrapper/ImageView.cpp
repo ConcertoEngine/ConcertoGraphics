@@ -30,7 +30,7 @@ namespace cct::gfx::vk
 
 	ImageView::~ImageView()
 	{
-		if (IsNull())
+		if (!IsValid())
 			return;
 		m_device->WaitIdle();
 		m_device->vkDestroyImageView(*m_device->Get(), m_handle, nullptr);
@@ -51,7 +51,7 @@ namespace cct::gfx::vk
 
 	Image& ImageView::GetImage() const
 	{
-		CCT_ASSERT(!IsNull(), "Invalid object state, 'Create' must be called");
+		CCT_ASSERT(IsValid(), "Invalid object state, 'Create' must be called");
 		return *m_image;
 	}
 }

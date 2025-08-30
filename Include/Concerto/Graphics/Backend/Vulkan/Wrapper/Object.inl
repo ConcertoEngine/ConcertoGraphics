@@ -64,14 +64,14 @@ namespace cct::gfx::vk
 	template<typename VkType>
 	VkType* Object<VkType>::Get() const
 	{
-		CCT_ASSERT(!IsNull(), "The vulkan object handle is null");
+		CCT_ASSERT(IsValid(), "The vulkan object handle is null");
 		return const_cast<VkType*>(&m_handle);
 	}
 
 	template<typename VkType>
-	bool Object<VkType>::IsNull() const
+	bool Object<VkType>::IsValid() const
 	{
-		return m_handle == nullptr;
+		return m_handle != nullptr;
 	}
 
 	template<typename VkType>

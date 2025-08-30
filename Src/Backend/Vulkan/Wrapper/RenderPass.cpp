@@ -24,7 +24,7 @@ namespace cct::gfx::vk
 
 	RenderPass::~RenderPass()
 	{
-		if (IsNull())
+		if (!IsValid())
 			return;
 		m_device->vkDestroyRenderPass(*m_device->Get(), m_handle, nullptr);
 	}

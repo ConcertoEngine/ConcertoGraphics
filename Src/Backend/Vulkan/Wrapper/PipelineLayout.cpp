@@ -23,7 +23,7 @@ namespace cct::gfx::vk
 
 	PipelineLayout::~PipelineLayout()
 	{
-		if (IsNull())
+		if (!IsValid())
 			return;
 		m_device->vkDestroyPipelineLayout(*m_device->Get(), m_handle, nullptr);
 	}

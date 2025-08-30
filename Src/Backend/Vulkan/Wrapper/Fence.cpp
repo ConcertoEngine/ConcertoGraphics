@@ -22,7 +22,7 @@ namespace cct::gfx::vk
 
 	Fence::~Fence()
 	{
-		if (IsNull())
+		if (!IsValid())
 			return;
 		m_device->vkDestroyFence(*m_device->Get(), m_handle, nullptr);
 	}
@@ -44,7 +44,7 @@ namespace cct::gfx::vk
 
 	void Fence::Wait(UInt64 timeout) const
 	{
-		CCT_ASSERT(!IsNull(), "Invalid object state, 'Create' must be called");
+		CCT_ASSERT(IsValid(), "Invalid object state, 'Create' must be called");
 		CCT_GFX_AUTO_PROFILER_SCOPE();
 
 		const VkResult result = m_device->vkWaitForFences(*m_device->Get(), 1, &m_handle, true, timeout);
@@ -53,7 +53,7 @@ namespace cct::gfx::vk
 
 	void Fence::Reset() const
 	{
-		CCT_ASSERT(!IsNull(), "Invalid object state, 'Create' must be called");
+		CCT_ASSERT(IsValid(), "Invalid object state, 'Create' must be called");
 		const VkResult result = m_device->vkResetFences(*m_device->Get(), 1, &m_handle);
 		CCT_ASSERT(result == VK_SUCCESS, "ConcertoGraphics: vkResetFences failed VKResult={}", static_cast<int>(result));
 	}

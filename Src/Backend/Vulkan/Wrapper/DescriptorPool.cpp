@@ -35,7 +35,7 @@ namespace cct::gfx::vk
 
 	DescriptorPool::~DescriptorPool()
 	{
-		if (IsNull())
+		if (!IsValid())
 			return;
 		m_device->vkDestroyDescriptorPool(*m_device->Get(), m_handle, nullptr);
 	}
@@ -59,14 +59,14 @@ namespace cct::gfx::vk
 
 	DescriptorSet DescriptorPool::AllocateDescriptorSet(DescriptorSetLayout& setLayout)
 	{
-		CCT_ASSERT(!IsNull(), "Invalid object state, 'Create' must be called");
+		CCT_ASSERT(IsValid(), "Invalid object state, 'Create' must be called");
 
 		return { *this, setLayout };
 	}
 
 	void DescriptorPool::Reset() const
 	{
-		CCT_ASSERT(!IsNull(), "Invalid object state, 'Create' must be called");
+		CCT_ASSERT(IsValid(), "Invalid object state, 'Create' must be called");
 
 		m_device->vkResetDescriptorPool(*m_device->Get(), m_handle, 0);
 	}

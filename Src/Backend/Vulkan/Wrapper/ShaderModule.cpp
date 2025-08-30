@@ -36,7 +36,7 @@ namespace cct::gfx::vk
 
 	ShaderModule::~ShaderModule()
 	{
-		if (IsNull())
+		if (!IsValid())
 			return;
 		m_device->vkDestroyShaderModule(*m_device->Get(), m_handle, nullptr);
 	}

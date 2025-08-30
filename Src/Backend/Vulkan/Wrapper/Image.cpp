@@ -41,7 +41,7 @@ namespace cct::gfx::vk
 
 	Image::~Image()
 	{
-		if (IsNull())
+		if (!IsValid())
 			return;
 		if (!m_isAllocated)
 			return;

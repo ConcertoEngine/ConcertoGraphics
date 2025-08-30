@@ -83,7 +83,7 @@ namespace cct::gfx::vk
 
 	void CommandBuffer::Reset() const
 	{
-		CCT_ASSERT(!IsNull(), "Invalid object state, 'Create' must be called");
+		CCT_ASSERT(IsValid(), "Invalid object state, 'Create' must be called");
 		CCT_GFX_AUTO_PROFILER_SCOPE();
 
 		const VkResult result = m_device->vkResetCommandBuffer(m_handle, 0);
@@ -92,7 +92,7 @@ namespace cct::gfx::vk
 
 	void CommandBuffer::Begin() const
 	{
-		CCT_ASSERT(!IsNull(), "Invalid object state, 'Create' must be called");
+		CCT_ASSERT(IsValid(), "Invalid object state, 'Create' must be called");
 		CCT_GFX_AUTO_PROFILER_SCOPE();
 
 		VkCommandBufferBeginInfo cmdBeginInfo = {};
@@ -128,7 +128,7 @@ namespace cct::gfx::vk
 
 	void CommandBuffer::End() const
 	{
-		CCT_ASSERT(!IsNull(), "Invalid object state, 'Create' must be called");
+		CCT_ASSERT(IsValid(), "Invalid object state, 'Create' must be called");
 		CCT_GFX_AUTO_PROFILER_SCOPE();
 
 #ifdef CCT_ENABLE_OBJECT_DEBUG
@@ -144,7 +144,7 @@ namespace cct::gfx::vk
 
 	void CommandBuffer::BeginRenderPass(const VkRenderPassBeginInfo& info) const
 	{
-		CCT_ASSERT(!IsNull(), "Invalid object state, 'Create' must be called");
+		CCT_ASSERT(IsValid(), "Invalid object state, 'Create' must be called");
 		CCT_GFX_AUTO_PROFILER_SCOPE();
 
 		m_device->vkCmdBeginRenderPass(m_handle, &info, VK_SUBPASS_CONTENTS_INLINE);
@@ -152,7 +152,7 @@ namespace cct::gfx::vk
 
 	void CommandBuffer::EndRenderPass() const
 	{
-		CCT_ASSERT(!IsNull(), "Invalid object state, 'Create' must be called");
+		CCT_ASSERT(IsValid(), "Invalid object state, 'Create' must be called");
 		CCT_GFX_AUTO_PROFILER_SCOPE();
 
 		m_device->vkCmdEndRenderPass(m_handle);
@@ -160,7 +160,7 @@ namespace cct::gfx::vk
 
 	void CommandBuffer::BindPipeline(const VkPipelineBindPoint pipelineBindPoint, const Pipeline& pipeline) const
 	{
-		CCT_ASSERT(!IsNull(), "Invalid object state, 'Create' must be called");
+		CCT_ASSERT(IsValid(), "Invalid object state, 'Create' must be called");
 		CCT_GFX_AUTO_PROFILER_SCOPE();
 
 		m_device->vkCmdBindPipeline(m_handle, pipelineBindPoint, *pipeline.Get());
@@ -168,7 +168,7 @@ namespace cct::gfx::vk
 
 	void CommandBuffer::BindPipeline(const VkPipelineBindPoint pipelineBindPoint, const VkPipeline pipeline) const
 	{
-		CCT_ASSERT(!IsNull(), "Invalid object state, 'Create' must be called");
+		CCT_ASSERT(IsValid(), "Invalid object state, 'Create' must be called");
 		CCT_GFX_AUTO_PROFILER_SCOPE();
 
 		m_device->vkCmdBindPipeline(m_handle, pipelineBindPoint, pipeline);
@@ -176,7 +176,7 @@ namespace cct::gfx::vk
 
 	void CommandBuffer::Draw(const UInt32 vertexCount, const UInt32 instanceCount, const UInt32 firstVertex, const UInt32 firstInstance) const
 	{
-		CCT_ASSERT(!IsNull(), "Invalid object state, 'Create' must be called");
+		CCT_ASSERT(IsValid(), "Invalid object state, 'Create' must be called");
 		CCT_GFX_AUTO_PROFILER_SCOPE();
 
 		m_device->vkCmdDraw(m_handle, vertexCount, instanceCount, firstVertex, firstInstance);
@@ -184,7 +184,7 @@ namespace cct::gfx::vk
 
 	void CommandBuffer::DrawIndirect(const Buffer& buffer, const UInt32 offset, const UInt32 drawCount, const UInt32 stride) const
 	{
-		CCT_ASSERT(!IsNull(), "Invalid object state, 'Create' must be called");
+		CCT_ASSERT(IsValid(), "Invalid object state, 'Create' must be called");
 		CCT_GFX_AUTO_PROFILER_SCOPE();
 
 		m_device->vkCmdDrawIndirect(m_handle, *buffer.Get(), offset, drawCount, stride);
@@ -192,7 +192,7 @@ namespace cct::gfx::vk
 
 	void CommandBuffer::BindVertexBuffers(const Buffer& buffer) const
 	{
-		CCT_ASSERT(!IsNull(), "Invalid object state, 'Create' must be called");
+		CCT_ASSERT(IsValid(), "Invalid object state, 'Create' must be called");
 		CCT_GFX_AUTO_PROFILER_SCOPE();
 
 		VkDeviceSize offset = 0;
@@ -201,7 +201,7 @@ namespace cct::gfx::vk
 
 	void CommandBuffer::UpdatePushConstants(const PipelineLayout& pipelineLayout, const MeshPushConstants& meshPushConstants) const
 	{
-		CCT_ASSERT(!IsNull(), "Invalid object state, 'Create' must be called");
+		CCT_ASSERT(IsValid(), "Invalid object state, 'Create' must be called");
 		CCT_GFX_AUTO_PROFILER_SCOPE();
 
 		m_device->vkCmdPushConstants(m_handle, *pipelineLayout.Get(), VK_SHADER_STAGE_VERTEX_BIT, 0,sizeof(MeshPushConstants), &meshPushConstants);
@@ -209,7 +209,7 @@ namespace cct::gfx::vk
 
 	void CommandBuffer::UpdatePushConstants(const VkPipelineLayout pipelineLayout, const MeshPushConstants& meshPushConstants) const
 	{
-		CCT_ASSERT(!IsNull(), "Invalid object state, 'Create' must be called");
+		CCT_ASSERT(IsValid(), "Invalid object state, 'Create' must be called");
 		CCT_GFX_AUTO_PROFILER_SCOPE();
 
 		m_device->vkCmdPushConstants(m_handle, pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(MeshPushConstants), &meshPushConstants);
@@ -219,7 +219,7 @@ namespace cct::gfx::vk
 	                                       const UInt32 firstSet, const UInt32 descriptorSetCount, const DescriptorSet& descriptorSet,
 	                                       const UInt32 dynamicOffsets) const
 	{
-		CCT_ASSERT(!IsNull(), "Invalid object state, 'Create' must be called");
+		CCT_ASSERT(IsValid(), "Invalid object state, 'Create' must be called");
 		CCT_GFX_AUTO_PROFILER_SCOPE();
 
 		m_device->vkCmdBindDescriptorSets(m_handle, pipelineBindPoint, pipelineLayout, firstSet, descriptorSetCount, descriptorSet.Get(), 1, &dynamicOffsets);
@@ -228,7 +228,7 @@ namespace cct::gfx::vk
 	void CommandBuffer::BindDescriptorSets(const VkPipelineBindPoint pipelineBindPoint, const VkPipelineLayout pipelineLayout,
 	                                       const UInt32 firstSet, const UInt32 descriptorSetCount, const DescriptorSet& descriptorSet) const
 	{
-		CCT_ASSERT(!IsNull(), "Invalid object state, 'Create' must be called");
+		CCT_ASSERT(IsValid(), "Invalid object state, 'Create' must be called");
 		CCT_GFX_AUTO_PROFILER_SCOPE();
 
 		m_device->vkCmdBindDescriptorSets(m_handle, pipelineBindPoint, pipelineLayout, firstSet, descriptorSetCount, descriptorSet.Get(), 0, nullptr);
@@ -237,7 +237,7 @@ namespace cct::gfx::vk
 	void CommandBuffer::BindDescriptorSets(const VkPipelineBindPoint pipelineBindPoint, const VkPipelineLayout pipelineLayout,
 	                                       const std::span<DescriptorSet> descriptorSets) const
 	{
-		CCT_ASSERT(!IsNull(), "Invalid object state, 'Create' must be called");
+		CCT_ASSERT(IsValid(), "Invalid object state, 'Create' must be called");
 		CCT_GFX_AUTO_PROFILER_SCOPE();
 
 		std::vector<VkDescriptorSet> vkDescriptorSets;
@@ -250,7 +250,7 @@ namespace cct::gfx::vk
 	void CommandBuffer::BindDescriptorSets(const VkPipelineBindPoint pipelineBindPoint, const VkPipelineLayout pipelineLayout,
 	                                       const std::span<DescriptorSetPtr> descriptorSets) const
 	{
-		CCT_ASSERT(!IsNull(), "Invalid object state, 'Create' must be called");
+		CCT_ASSERT(IsValid(), "Invalid object state, 'Create' must be called");
 		CCT_GFX_AUTO_PROFILER_SCOPE();
 
 		std::vector<VkDescriptorSet> vkDescriptorSets;
@@ -262,7 +262,7 @@ namespace cct::gfx::vk
 
 	void CommandBuffer::ImmediateSubmit(const Fence& fence, const CommandPool& commandPool, const Queue& queue, std::function<void(CommandBuffer&)>&& function)
 	{
-		CCT_ASSERT(!IsNull(), "Invalid object state, 'Create' must be called");
+		CCT_ASSERT(IsValid(), "Invalid object state, 'Create' must be called");
 		CCT_GFX_AUTO_PROFILER_SCOPE();
 
 		Begin();
@@ -276,7 +276,7 @@ namespace cct::gfx::vk
 
 	void CommandBuffer::Submit(const Fence& fence, const CommandPool& commandPool, const Queue& queue)
 	{
-		CCT_ASSERT(!IsNull(), "Invalid object state, 'Create' must be called");
+		CCT_ASSERT(IsValid(), "Invalid object state, 'Create' must be called");
 		CCT_GFX_AUTO_PROFILER_SCOPE();
 
 		const VkSubmitInfo submitInfo = VulkanInitializer::SubmitInfo(&m_handle);
@@ -290,7 +290,7 @@ namespace cct::gfx::vk
 
 	void CommandBuffer::ExecuteCommands(std::span<CommandBuffer> commandBuffers) const
 	{
-		CCT_ASSERT(!IsNull(), "Invalid object state, 'Create' must be called");
+		CCT_ASSERT(IsValid(), "Invalid object state, 'Create' must be called");
 		CCT_GFX_AUTO_PROFILER_SCOPE();
 
 		std::vector<VkCommandBuffer> vkCommandBuffers;
@@ -304,7 +304,7 @@ namespace cct::gfx::vk
 
 	void CommandBuffer::CopyBuffer(const Buffer& src, const Buffer& dest, const std::size_t size, std::size_t srcOffset, std::size_t dstOffset) const
 	{
-		CCT_ASSERT(!IsNull(), "Invalid object state, 'Create' must be called");
+		CCT_ASSERT(IsValid(), "Invalid object state, 'Create' must be called");
 
 		const VkBufferCopy copyRegion = {
 			.srcOffset = srcOffset,
@@ -316,14 +316,14 @@ namespace cct::gfx::vk
 
 	void CommandBuffer::SetViewport(const VkViewport& viewport) const
 	{
-		CCT_ASSERT(!IsNull(), "Invalid object state, 'Create' must be called");
+		CCT_ASSERT(IsValid(), "Invalid object state, 'Create' must be called");
 
 		m_device->vkCmdSetViewport(m_handle, 0, 1, &viewport);
 	}
 
 	void CommandBuffer::SetScissor(const VkRect2D scissor) const
 	{
-		CCT_ASSERT(!IsNull(), "Invalid object state, 'Create' must be called");
+		CCT_ASSERT(IsValid(), "Invalid object state, 'Create' must be called");
 
 		m_device->vkCmdSetScissor(m_handle, 0, 1, &scissor);
 	}

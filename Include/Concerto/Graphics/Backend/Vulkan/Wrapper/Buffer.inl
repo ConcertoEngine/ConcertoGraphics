@@ -16,7 +16,7 @@ namespace cct::gfx::vk
 	template <typename T>
 	void Buffer::Copy(T& object, std::size_t padding)
 	{
-		CCT_ASSERT(!IsNull(), "Invalid object state, 'Create' must be called");
+		CCT_ASSERT(IsValid(), "Invalid object state, 'Create' must be called");
 
 		Byte* data = nullptr;
 		if(Map(&data) == false)
@@ -32,7 +32,7 @@ namespace cct::gfx::vk
 	template <typename DestBuffer, typename SrcObj>
 	void Buffer::Copy(std::vector<SrcObj>& objects,	std::function<void(DestBuffer& destBuffer, SrcObj& srcObj)>&& copyFunc, std::size_t padding)
 	{
-		CCT_ASSERT(!IsNull(), "Invalid object state, 'Create' must be called");
+		CCT_ASSERT(IsValid(), "Invalid object state, 'Create' must be called");
 
 		Byte* data = nullptr;
 		if (Map(&data) == false)
@@ -52,7 +52,7 @@ namespace cct::gfx::vk
 	template <typename T>
 	T* Buffer::Map()
 	{
-		CCT_ASSERT(!IsNull(), "Invalid object state, 'Create' must be called");
+		CCT_ASSERT(IsValid(), "Invalid object state, 'Create' must be called");
 
 		Byte* data = nullptr;
 		if (Map(&data) == false)

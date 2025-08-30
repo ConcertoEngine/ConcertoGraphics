@@ -35,7 +35,7 @@ namespace cct::gfx::vk
 
 	SwapChain::~SwapChain()
 	{
-		if (IsNull())
+		if (!IsValid())
 			return;
 		Destroy();
 	}

@@ -28,7 +28,7 @@ namespace cct::gfx::vk
 
 	Pipeline::~Pipeline()
 	{
-		if (IsNull())
+		if (!IsValid())
 			return;
 		m_device->vkDestroyPipeline(*m_device->Get(), m_handle, nullptr);
 	}
@@ -78,7 +78,7 @@ namespace cct::gfx::vk
 
 	std::shared_ptr<PipelineLayout> Pipeline::GetPipelineLayout() const
 	{
-		CCT_ASSERT(!IsNull(), "Invalid object state, 'Create' must be called");
+		CCT_ASSERT(IsValid(), "Invalid object state, 'Create' must be called");
 		return m_pipelineInfo.m_pipelineLayout;
 	}
 

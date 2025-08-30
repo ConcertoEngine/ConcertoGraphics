@@ -24,7 +24,7 @@ namespace cct::gfx::vk
 
 	DescriptorSet::~DescriptorSet()
 	{
-		if (IsNull())
+		if (!IsValid())
 			return;
 		if (m_pool == nullptr)
 		{
@@ -63,7 +63,7 @@ namespace cct::gfx::vk
 
 	void DescriptorSet::WriteImageSamplerDescriptor(const Sampler& sampler, const ImageView& imageView, VkImageLayout imageLayout) const
 	{
-		CCT_ASSERT(!IsNull(), "Invalid object state, 'Create' must be called");
+		CCT_ASSERT(IsValid(), "Invalid object state, 'Create' must be called");
 		VkDescriptorImageInfo imageBufferInfo;
 		imageBufferInfo.sampler = *sampler.Get();
 		imageBufferInfo.imageView = *imageView.Get();

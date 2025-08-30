@@ -76,7 +76,7 @@ namespace cct::gfx::vk
 
 	Buffer::~Buffer()
 	{
-		if (IsNull())
+		if (!IsValid())
 			return;
 		if (m_mapCount != 0)
 		{
@@ -89,7 +89,7 @@ namespace cct::gfx::vk
 
 	void Buffer::Copy(const void* object, std::size_t size, std::size_t padding)
 	{
-		CCT_ASSERT(!IsNull(), "Invalid object state, 'Create' must be called");
+		CCT_ASSERT(IsValid(), "Invalid object state, 'Create' must be called");
 
 		Byte* data = nullptr;
 		if (Map(&data) == false)
@@ -101,7 +101,7 @@ namespace cct::gfx::vk
 
 	bool Buffer::Map(Byte** data)
 	{
-		CCT_ASSERT(!IsNull(), "Invalid object state, 'Create' must be called");
+		CCT_ASSERT(IsValid(), "Invalid object state, 'Create' must be called");
 
 		const auto res = vmaMapMemory(*m_allocator->Get(), m_allocation, reinterpret_cast<void**>(data));
 		if (res != VK_SUCCESS)
@@ -115,7 +115,7 @@ namespace cct::gfx::vk
 
 	void Buffer::UnMap()
 	{
-		CCT_ASSERT(!IsNull(), "Invalid object state, 'Create' must be called");
+		CCT_ASSERT(IsValid(), "Invalid object state, 'Create' must be called");
 
 		if (m_mapCount == 0)
 		{
