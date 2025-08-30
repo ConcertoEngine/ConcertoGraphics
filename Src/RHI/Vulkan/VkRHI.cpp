@@ -40,9 +40,9 @@ namespace cct::gfx
 		std::vector<const char*> layers = { "VK_LAYER_KHRONOS_validation", /*, "VK_LAYER_LUNARG_api_dump"*/ };
 
 		m_instance = std::make_unique<vk::Instance>("", "", Version{ 1, 3, 0 }, Version{}, Version{}, extensions, layers);
-		if (m_instance->GetLastError() != VK_SUCCESS)
+		if (m_instance->GetLastResult() != VK_SUCCESS)
 		{
-			CCT_ASSERT_FALSE("ConcertoGraphics: Failed to initialize Vulkan instance, VkResult={}", static_cast<Int32>(m_instance->GetLastError()));
+			CCT_ASSERT_FALSE("ConcertoGraphics: Failed to initialize Vulkan instance, VkResult={}", static_cast<Int32>(m_instance->GetLastResult()));
 			return false;
 		}
 		return true;
