@@ -2,7 +2,7 @@
 // Created by arthur on 17/08/2022.
 //
 
-#include "Concerto/Graphics/RHI/Vulkan/VKRHITexture/VKRHITexture.hpp"
+#include "Concerto/Graphics/RHI/Vulkan/VkRHITexture/VKRHITexture.hpp"
 #include "Concerto/Graphics/RHI/Vulkan/Utils/Utils.hpp"
 
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Device/Device.hpp"

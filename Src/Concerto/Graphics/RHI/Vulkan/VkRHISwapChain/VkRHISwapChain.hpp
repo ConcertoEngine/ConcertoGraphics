@@ -15,7 +15,7 @@
 
 #include "Concerto/Graphics/RHI/SwapChain.hpp"
 #include "Concerto/Graphics/RHI/Vulkan/VkRHIDevice/VkRHIDevice.hpp"
-#include "Concerto/Graphics/RHI/Vulkan/VKRHICommandPool/VKRHICommandPool.hpp"
+#include "Concerto/Graphics/RHI/Vulkan/VkRHICommandPool/VkRHICommandPool.hpp"
 
 namespace cct::gfx::vk
 {

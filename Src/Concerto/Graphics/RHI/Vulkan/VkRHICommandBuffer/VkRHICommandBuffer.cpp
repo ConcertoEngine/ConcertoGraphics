@@ -10,10 +10,10 @@
 #include "Concerto/Graphics/RHI/Vulkan/VkMaterial.hpp"
 #include "Concerto/Graphics/RHI/Vulkan/VkRHICommandBuffer/VkRHICommandBuffer.hpp"
 #include "Concerto/Graphics/RHI/Vulkan/VkRHIBuffer/VkRHIBuffer.hpp"
-#include "Concerto/Graphics/RHI/Vulkan/VKRHIRenderPass/VKRHIRenderPass.hpp"
+#include "Concerto/Graphics/RHI/Vulkan/VkRHIRenderPass/VkRHIRenderPass.hpp"
 #include "Concerto/Graphics/RHI/Vulkan/VkRHISwapChain/VkRHISwapChain.hpp"
 #include "Concerto/Graphics/RHI/Vulkan/VkRHIBuffer/VkRHIBuffer.hpp"
-#include "Concerto/Graphics/RHI/Vulkan/VKRHIFrameBuffer/VKRHIFrameBuffer.hpp"
+#include "Concerto/Graphics/RHI/Vulkan/VkRHIFrameBuffer/VKRHIFrameBuffer.hpp"
 
 namespace cct::gfx::rhi
 {

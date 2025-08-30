@@ -7,7 +7,7 @@
 #include <Concerto/Core/Cast.hpp>
 
 #include "Concerto/Graphics/RHI/Vulkan/Utils/Utils.hpp"
-#include "Concerto/Graphics/RHI/Vulkan/VKRHITexture/VKRHITexture.hpp"
+#include "Concerto/Graphics/RHI/Vulkan/VkRHITexture/VKRHITexture.hpp"
 
 namespace cct::gfx::rhi
 {

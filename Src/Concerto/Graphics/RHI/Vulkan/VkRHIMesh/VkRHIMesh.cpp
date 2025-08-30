@@ -7,7 +7,7 @@
 #include <Nazara/Core/TaskScheduler.hpp>
 
 #include "Concerto/Graphics/RHI/Vulkan/VkRHIMesh/VkRHIMesh.hpp"
-#include "Concerto/Graphics/Rhi/Vulkan/VkRHIGpuSubMesh/VkRHIGpuSubMesh.hpp"
+#include "Concerto/Graphics/RHI/Vulkan/VkRHIGpuSubMesh/VkRHIGpuSubMesh.hpp"
 #include "Concerto/Graphics/RHI/Vulkan/VkRHIDevice/VkRHIDevice.hpp"
 #include "Concerto/Graphics/RHI/GpuMesh.hpp"
 #include "Concerto/Graphics/RHI/Vulkan/VkRHIBuffer/VkRHIBuffer.hpp"

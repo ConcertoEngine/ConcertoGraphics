@@ -16,8 +16,8 @@
 #include "Concerto/Graphics/RHI/Vulkan/VkRHIMaterialBuilder/VkRHIMaterialBuilder.hpp"
 #include "Concerto/Graphics/RHI/Vulkan/VkRHIBuffer/VkRHIBuffer.hpp"
 #include "Concerto/Graphics/RHI/Vulkan/VkRHITextureBuilder/VkRHITextureBuilder.hpp"
-#include "Concerto/Graphics/RHI/Vulkan/VKRHIRenderPass/VKRHIRenderPass.hpp"
-#include "Concerto/Graphics/RHI/Vulkan/VKRHITexture/VKRHITexture.hpp"
+#include "Concerto/Graphics/RHI/Vulkan/VkRHIRenderPass//VkRHIRenderPass.hpp"
+#include "Concerto/Graphics/RHI/Vulkan/VkRHITexture/VKRHITexture.hpp"
 
 namespace cct::gfx::rhi
 {

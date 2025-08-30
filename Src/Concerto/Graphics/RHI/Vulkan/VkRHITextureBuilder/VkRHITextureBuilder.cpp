@@ -5,7 +5,7 @@
 #include <Concerto/Core/Cast.hpp>
 
 #include "Concerto/Graphics/RHI/Vulkan/VkRHITextureBuilder/VkRHITextureBuilder.hpp"
-#include "Concerto/Graphics/RHI/Vulkan/VKRHITexture/VKRHITexture.hpp"
+#include "Concerto/Graphics/RHI/Vulkan/VkRHITexture//VKRHITexture.hpp"
 #include "Concerto/Graphics/RHI/Vulkan/VkRHIDevice/VkRHIDevice.hpp"
 
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Device/Device.hpp"
