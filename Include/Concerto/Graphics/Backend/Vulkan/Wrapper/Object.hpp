@@ -28,7 +28,7 @@ namespace cct::gfx::vk
 
 		[[nodiscard]] VkType* Get() const;
 		[[nodiscard]] bool IsValid() const;
-		[[nodiscard]] Device* GetDevice() const;
+		[[nodiscard]] Device* GetDevice() const requires (!std::is_same_v<VkType, VkDevice> && !std::is_same_v<VkType, VkInstance>);
 		[[nodiscard]] VkResult GetLastResult() const;
 
 	protected:

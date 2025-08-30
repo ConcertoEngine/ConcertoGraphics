@@ -74,8 +74,9 @@ namespace cct::gfx::vk
 		return m_handle != nullptr;
 	}
 
-	template<typename VkType>
-	Device* Object<VkType>::GetDevice() const
+	template <typename VkType>
+	Device* Object<VkType>::GetDevice() const requires (!std::is_same_v<VkType, VkDevice> && !std::is_same_v<
+		VkType, VkInstance>)
 	{
 		CCT_ASSERT(m_device, "Invalid device");
 		return m_device;

@@ -33,7 +33,6 @@ namespace cct::gfx::vk
 		VkResult Create(Device& device, const std::vector<VkDescriptorSetLayoutBinding>& bindings);
 
 		[[nodiscard]] const std::vector<VkDescriptorSetLayoutBinding>& GetBindings() const;
-
 		[[nodiscard]] UInt64 GetHash() const;
 
 		static UInt64 GetHash(const std::vector<VkDescriptorSetLayoutBinding>& bindings);

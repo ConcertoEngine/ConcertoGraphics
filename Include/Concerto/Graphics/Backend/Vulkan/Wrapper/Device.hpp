@@ -23,12 +23,12 @@ namespace cct::gfx::vk
 	class ObjectDebug;
 #endif
 
-	class CONCERTO_GRAPHICS_VULKAN_BACKEND_API Device
+	class CONCERTO_GRAPHICS_VULKAN_BACKEND_API Device : public Object<VkDevice>
 	{
 	public:
 		Device() = default;
 		explicit Device(PhysicalDevice& physicalDevice);
-		~Device();
+		~Device() override;
 
 		Device(Device&&) noexcept;
 		Device(const Device&) = delete;
@@ -42,12 +42,10 @@ namespace cct::gfx::vk
 		[[nodiscard]] UInt32 GetQueueFamilyIndex(UInt32 queueFlag) const;
 		[[nodiscard]] Queue& GetQueue(Queue::Type queueType);
 
-		[[nodiscard]] VkDevice* Get();
-
 		void WaitIdle() const;
 
 		void UpdateDescriptorSetsWrite(std::span<VkWriteDescriptorSet> descriptorWrites) const;
-		void UpdateDescriptorSetWrite(VkWriteDescriptorSet descriptorWrite);
+		void UpdateDescriptorSetWrite(const VkWriteDescriptorSet& descriptorWrite) const;
 
 		PhysicalDevice& GetPhysicalDevice() const;
 		Allocator& GetAllocator() const;
@@ -63,7 +61,6 @@ namespace cct::gfx::vk
 		void CreateAllocator();
 
 		PhysicalDevice* m_physicalDevice;
-		VkDevice m_device;
 		std::unique_ptr<Allocator> m_allocator;
 		std::unordered_map<Queue::Type, Queue> m_queues;
 		std::unordered_set<std::string> m_extensions;
