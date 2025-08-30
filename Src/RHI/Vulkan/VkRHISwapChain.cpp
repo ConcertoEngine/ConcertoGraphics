@@ -63,7 +63,7 @@ namespace cct::gfx::rhi
 			GetDevice()->WaitIdle();
 			SwapChainFrame& frame = m_frames[m_currentFrameIndex];
 			frame.Wait();
-			vk::SwapChain::ReCreate(Converters::ToVulkan(m_pixelFormat), Converters::ToVulkan(m_depthPixelFormat));
+			vk::SwapChain::Create(*m_device, GetWindow(), Converters::ToVulkan(m_pixelFormat), Converters::ToVulkan(m_depthPixelFormat));
 			m_frameBuffers.clear();
 			m_frames.clear();
 			CreateRenderPass();
@@ -71,12 +71,9 @@ namespace cct::gfx::rhi
 			CreateFrameBuffers(GetRHIDevice());
 			m_needResize = false;
 		}
-		if (m_currentFrameIndex != m_lastFrameIndex)
-		{
-			SwapChainFrame& frame = m_frames[m_lastFrameIndex];
-			frame.GetRenderFence().Wait(-1);
-		}
+
 		SwapChainFrame& currentFrame = m_frames[m_currentFrameIndex];
+		currentFrame.Wait();
 		const UInt32 nextImageIndex = vk::SwapChain::AcquireNextImage(currentFrame.GetPresentSemaphore(), nullptr);
 		currentFrame.SetNextImageIndex(nextImageIndex);
 		return currentFrame;
@@ -122,7 +119,10 @@ namespace cct::gfx::rhi
 
 		m_lastFrameIndex = m_currentFrameIndex;
 		m_currentFrameIndex = (m_currentFrameIndex + 1) % GetImageCount();
-		SwapChainFrame& currentFrame = m_frames[imageIndex];
+
+		SwapChainFrame& currentFrame = m_frames[m_lastFrameIndex];
+		CCT_ASSERT(currentFrame.GetCurrentFrameIndex() != SwapChainFrame::InvalidFrameIndex, "The current frame has an invalid frame index. Did you forgot to call SwapChainFrame::SetNextImageIndex?");
+
 		if (!m_presentQueue->Present(currentFrame.GetRenderSemaphore(), *this, imageIndex))
 		{
 			switch (m_presentQueue->GetLastResult())
@@ -234,7 +234,7 @@ namespace cct::gfx::rhi
 		m_presentSemaphore(*owner.GetDevice()),
 		m_renderSemaphore(*owner.GetDevice()),
 		m_owner(&owner),
-		m_imageIndex(0)
+		m_imageIndex(InvalidFrameIndex)
 	{
 #ifdef CCT_ENABLE_OBJECT_DEBUG
 		Cast<VkRHICommandBuffer&>(*m_commandBuffer).SetDebugName("SwapChainFrameCommandBuffer");
@@ -250,7 +250,6 @@ namespace cct::gfx::rhi
 
 		const vk::Queue& presentQueue = m_owner->GetPresentQueue();
 
-		m_renderFence.Wait(-1);
 		m_renderFence.Reset();
 		presentQueue.Submit(Cast<VkRHICommandBuffer&>(*m_commandBuffer), &m_presentSemaphore, &m_renderSemaphore, m_renderFence);
 		m_owner->Present(m_imageIndex);
@@ -283,7 +282,7 @@ namespace cct::gfx::rhi
 #endif
 	}
 
-	void VkRHISwapChain::SwapChainFrame::Wait()
+	void VkRHISwapChain::SwapChainFrame::Wait() const
 	{
 		CCT_GFX_AUTO_PROFILER_SCOPE();
 
