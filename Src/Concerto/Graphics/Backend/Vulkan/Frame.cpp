@@ -4,7 +4,7 @@
 
 #include <vk_mem_alloc.h>
 
-#include "Concerto/Graphics/Frame.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Frame.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/CommandBuffer/CommandBuffer.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/CommandPool/CommandPool.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Device/Device.hpp"

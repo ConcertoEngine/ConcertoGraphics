@@ -9,7 +9,6 @@
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Semaphore/Semaphore.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Fence/Fence.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Device/Device.hpp"
-#include "Concerto/Graphics/Frame.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/VkException.hpp"
 
 namespace cct::gfx::vk

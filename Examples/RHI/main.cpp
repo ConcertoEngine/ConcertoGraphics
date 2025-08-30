@@ -7,8 +7,8 @@
 #include <chrono>
 #include <Concerto/Core/Math/Algorithm.hpp>
 #include <Concerto/Graphics/Window/Window.hpp>
-#include <Concerto/Graphics/RHI/APIImpl.hpp>
-#include <Concerto/Graphics/RHI/Instance.hpp>
+#include <Concerto/Graphics/RHI/Instance/APIImpl.hpp>
+#include <Concerto/Graphics/RHI/Instance/Instance.hpp>
 #include <Concerto/Graphics/RHI/SwapChain.hpp>
 #include <Concerto/Graphics/RHI/RenderPass.hpp>
 #include <Concerto/Graphics/RHI/FrameBuffer.hpp>
@@ -17,14 +17,13 @@
 #include <Concerto/Graphics/RHI/CommandBuffer.hpp>
 
 #include <Concerto/Graphics/RHI/Frame.hpp>
-#include <Concerto/Graphics/RHI/Mesh.hpp>
-#include <Concerto/Graphics/RHI/Vulkan/VkRHIMesh.hpp>
+#include <Concerto/Graphics/RHI/Mesh/Mesh.hpp>
+#include <Concerto/Graphics/RHI/Vulkan/VkRHIMesh/VkRHIMesh.hpp>
 
-#include "Concerto/Graphics/Camera.hpp"
-#include "Concerto/Graphics/GPUData.hpp"
-#include "Concerto/Graphics/DisplayManager.hpp"
+#include "Concerto/Graphics/Camera/Camera.hpp"
+#include "Concerto/Graphics/DisplayManager/DisplayManager.hpp"
 #include "Concerto/Graphics/RHI/GpuMesh.hpp"
-#include "Concerto/Graphics/RHI/GpuSubMesh.hpp"
+#include "Concerto/Graphics/RHI/GpuSubMesh/GpuSubMesh.hpp"
 
 using namespace cct;
 using namespace cct::gfx;
