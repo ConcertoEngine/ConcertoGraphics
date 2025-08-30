@@ -14,6 +14,8 @@
 #include <volk.h> // must be under this ^ include
 
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Instance.hpp"
+
+#include "Concerto/Graphics/Backend/Vulkan/VkException.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/PhysicalDevice.hpp"
 
 namespace cct::gfx::vk
@@ -52,7 +54,21 @@ namespace cct::gfx::vk
 		std::span<const char*> layers) :
 		m_apiVersion(apiVersion)
 	{
+		if (Create(appName, engineName, apiVersion, appVersion, engineVersion, extensions, layers) != VK_SUCCESS)
+			throw VkException(GetLastResult());
+	}
+
+	Instance::~Instance()
+	{
+		vkDestroyInstance(m_handle, nullptr);
+	}
+
+	VkResult Instance::Create(const std::string& appName, const std::string& engineName, const Version& apiVersion,
+		const Version& appVersion, const Version& engineVersion, std::span<const char*> extensions,
+		std::span<const char*> layers)
+	{
 		CCT_GFX_AUTO_PROFILER_SCOPE();
+		m_apiVersion = apiVersion;
 
 		VkApplicationInfo appInfo = {};
 		appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
@@ -128,11 +144,7 @@ namespace cct::gfx::vk
 #define CONCERTO_VULKAN_BACKEND_INSTANCE_EXT_END }
 
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/InstanceFunction.hpp"
-	}
-
-	Instance::~Instance()
-	{
-		vkDestroyInstance(m_handle, nullptr);
+		return m_lastResult;
 	}
 
 	Version Instance::GetApiVersion() const

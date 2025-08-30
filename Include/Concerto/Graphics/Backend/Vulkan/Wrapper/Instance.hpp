@@ -32,6 +32,9 @@ namespace cct::gfx::vk
 		Instance& operator=(const Instance&) = delete;
 		Instance& operator=(Instance&&) = default;
 
+		VkResult Create(const std::string& appName, const std::string& engineName, const Version& apiVersion,
+			const Version& appVersion, const Version& engineVersion, std::span<const char*> extensions,
+			std::span<const char*> layers);
 
 		[[nodiscard]] Version GetApiVersion() const;
 		[[nodiscard]] std::span<PhysicalDevice> EnumeratePhysicalDevices() const;
