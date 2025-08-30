@@ -5,6 +5,7 @@
 #ifndef CONCERTO_GRAPHICS_DEFINES_HPP
 #define CONCERTO_GRAPHICS_DEFINES_HPP
 
+#include <cstring>
 #include <Concerto/Core/Types.hpp>
 
 #ifdef CCT_COMPILER_MSVC

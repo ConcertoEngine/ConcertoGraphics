@@ -148,7 +148,7 @@ int main()
 		materialBuilder->Update(*objectsBuffer, 1, 0);
 
 		
-		std::chrono::steady_clock::time_point lastFrameTime = std::chrono::steady_clock::now();
+		std::chrono::high_resolution_clock::time_point lastFrameTime = std::chrono::high_resolution_clock::now();
 		while (!window->ShouldClose())
 		{
 			displayManager.DispatchEvents();

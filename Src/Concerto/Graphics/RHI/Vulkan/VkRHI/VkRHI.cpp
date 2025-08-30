@@ -84,7 +84,7 @@ namespace cct::gfx
 			device = std::make_unique<rhi::VkRHIDevice>(physicalDevices[i]);
 		}
 		CCT_ASSERT(device, "ConcertoGraphics: Unable to create Vulkan device");
-		return std::move(device);
+		return device;
 	}
 
 	constexpr rhi::DeviceType VkRHI::FromVulkan(VkPhysicalDeviceType deviceType)

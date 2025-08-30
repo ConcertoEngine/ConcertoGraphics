@@ -31,10 +31,12 @@
 	#define VK_USE_PLATFORM_WIN32_KHR
 	#include <vulkan/vulkan_win32.h>
 #else
-#include <vulkan/vuklkan.h>
+#include <vulkan/vulkan.h>
 #endif
 
+#ifndef VULKAN_H_
 #define VULKAN_H_ // define VULKAN_H_ to avoid third party libraries to include <vulkan/vulkan.h>
+#endif
 
 #include <Concerto/Profiler/Profiler.hpp>
 #include <Concerto/Core/Result.hpp>

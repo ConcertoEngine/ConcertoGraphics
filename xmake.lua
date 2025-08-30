@@ -38,10 +38,7 @@ if has_config("profiling") then
 end
 
 if has_config("examples") then
-    add_requires("glslang", {configs = {binaryonly = true}})
-    add_rules("utils.glsl2spv", {outputdir = "$(buildir)/$(plat)/$(arch)/$(mode)/Shaders"})
-    add_files("Shaders/*.vert", "Shaders/*.frag")
-    --add_rules("download.assets", "compile.shaders")
+    --add_rules("download.assets")
 end
 
 function add_files_to_target(p)
@@ -125,7 +122,7 @@ target("concerto-rhi-module")
     add_files_to_target("Src/Concerto/Graphics/RHI/Vulkan/*")
 
     add_packages("concerto-core", "parallel-hashmap", { public = true })
-    add_packages("nazaraengine", "tinyobjloader", { public = false })
+    add_packages("nazaraengine", "tinyobjloader", { public = true })
     add_deps("concerto-vulkan-backend")
     if has_config("profiling") then
         add_deps("concerto-profiler", { public = false })

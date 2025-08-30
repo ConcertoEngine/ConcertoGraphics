@@ -9,6 +9,15 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_syswm.h>
 
+#ifdef CCT_PLATFORM_POSIX
+// Because #include <SDL2/SDL_syswm.h> includes <X11/X.h>
+#undef Button1
+#undef Button2
+#undef Button3
+#undef Button4
+#undef Button5
+#endif
+
 #include "Concerto/Graphics/Core/Window/Window.hpp"
 
 #include "Concerto/Profiler/Profiler.hpp"
@@ -480,7 +489,7 @@ namespace cct::gfx
 #if defined(CCT_PLATFORM_WINDOWS)
 			nativeWindow.window = wmInfo.info.win.window;
 			nativeWindow.hinstance = wmInfo.info.win.hinstance;
-#elif defined(CCT_PLATFORM_MACOS))
+#elif defined(CCT_PLATFORM_MACOS)
 			CCT_ASSERT_FALSE("Not implemented");
 #elif defined(CCT_PLATFORM_LINUX)
 			CCT_ASSERT_FALSE("Not implemented");

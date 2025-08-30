@@ -6,7 +6,7 @@
 
 #include <fstream>
 
-#include "Concerto/Graphics/Rhi/ShaderReflection.hpp"
+#include "Concerto/Graphics/RHI/ShaderReflection.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Device/Device.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/ShaderModule/ShaderModule.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/VulkanInitializer/VulkanInitializer.hpp"

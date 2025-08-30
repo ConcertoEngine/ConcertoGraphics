@@ -8,7 +8,7 @@
 #include "Concerto/Graphics/Core/Window/Window.hpp"
 
 #include "Concerto/Graphics/Backend/Vulkan/VkException.hpp"
-#include "Concerto/Graphics/Backend/Vulkan/Wrapper/Swapchain/Swapchain.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/SwapChain/SwapChain.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Fence/Fence.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/PhysicalDevice/PhysicalDevice.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Device/Device.hpp"
@@ -206,7 +206,7 @@ namespace cct::gfx::vk
 			.hwnd = static_cast<HWND>(nativeWindow.window)
 		};
 		m_lastResult = m_device->GetInstance().vkCreateWin32SurfaceKHR(*m_device->GetInstance().Get(), &createInfo, nullptr, &m_surface);
-#elif defined(CCT_PLATFORM_MACOS))
+#elif defined(CCT_PLATFORM_MACOS)
 		CCT_ASSERT_FALSE("Not implemented");
 #elif defined(CCT_PLATFORM_LINUX)
 		CCT_ASSERT_FALSE("Not implemented");
