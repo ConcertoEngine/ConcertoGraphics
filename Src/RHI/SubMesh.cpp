@@ -4,7 +4,7 @@
 
 #include "Concerto/Graphics/RHI/SubMesh.hpp"
 #include "Concerto/Graphics/RHI/Mesh.hpp"
-#include "Concerto/Graphics/Backend/Vulkan/Wrapper/ShaderModule.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/ShaderModule/ShaderModule.hpp"
 
 namespace cct::gfx::rhi
 {

@@ -10,7 +10,7 @@
 #include "Concerto/Graphics/RHI/Vulkan/VKRHITexture.hpp"
 #include "Concerto/Graphics/RHI/Vulkan/VkRHIDevice.hpp"
 #include "Concerto/Graphics/RHI/Vulkan/VKRHIRenderPass.hpp"
-#include "Concerto/Graphics/Backend/Vulkan/Wrapper/ImageView.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/ImageView/ImageView.hpp"
 
 namespace cct::gfx::rhi
 {

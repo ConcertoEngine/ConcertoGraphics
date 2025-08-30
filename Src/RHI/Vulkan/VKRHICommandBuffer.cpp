@@ -4,8 +4,8 @@
 
 #include <Concerto/Core/Cast.hpp>
 
-#include "Concerto/Graphics/Backend/Vulkan/Wrapper/Pipeline.hpp"
-#include "Concerto/Graphics/Backend/Vulkan/Wrapper/VulkanInitializer.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/Pipeline/Pipeline.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/VulkanInitializer/VulkanInitializer.hpp"
 
 #include "Concerto/Graphics/RHI/Vulkan/VkRHICommandBuffer.hpp"
 #include "Concerto/Graphics/RHI/Vulkan/VkMaterial.hpp"

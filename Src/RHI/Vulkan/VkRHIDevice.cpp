@@ -6,8 +6,8 @@
 
 #include "Concerto/Graphics/RHI/Vulkan/VkRHIDevice.hpp"
 
-#include "Concerto/Graphics/Backend/Vulkan/Wrapper/Instance.hpp"
-#include "Concerto/Graphics/Backend/Vulkan/Wrapper/PhysicalDevice.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/Instance/Instance.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/PhysicalDevice/PhysicalDevice.hpp"
 #include "Concerto/Graphics/RHI/SwapChain.hpp"
 #include "Concerto/Graphics/Window/Window.hpp"
 #include "Concerto/Graphics/RHI/Vulkan/VkRHISwapChain.hpp"

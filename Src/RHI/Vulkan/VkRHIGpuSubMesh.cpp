@@ -2,7 +2,7 @@
 // Created by arthur on 09/06/22.
 //
 
-#include "Concerto/Graphics/Backend/Vulkan/Wrapper/CommandBuffer.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/CommandBuffer/CommandBuffer.hpp"
 #include "Concerto/Graphics/RHI/Vulkan/VkRHIGpuSubMesh.hpp"
 
 #include <Concerto/Core/Cast.hpp>

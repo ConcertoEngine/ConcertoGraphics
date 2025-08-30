@@ -7,11 +7,11 @@
 
 #include "Concerto/Graphics/RHI/Defines.hpp"
 
-#include "Concerto/Graphics/Backend/Vulkan/Wrapper/CommandBuffer.hpp"
-#include "Concerto/Graphics/Backend/Vulkan/Wrapper/Fence.hpp"
-#include "Concerto/Graphics/Backend/Vulkan/Wrapper/RenderPass.hpp"
-#include "Concerto/Graphics/Backend/Vulkan/Wrapper/Semaphore.hpp"
-#include "Concerto/Graphics/Backend/Vulkan/Wrapper/SwapChain.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/CommandBuffer/CommandBuffer.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/Fence/Fence.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/RenderPass/RenderPass.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/Semaphore/Semaphore.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/SwapChain/SwapChain.hpp"
 
 #include "Concerto/Graphics/RHI/SwapChain.hpp"
 #include "Concerto/Graphics/RHI/Vulkan/VkRHIDevice.hpp"

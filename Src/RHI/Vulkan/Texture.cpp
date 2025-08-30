@@ -3,8 +3,8 @@
 //
 
 #include "Concerto/Graphics/RHI/Vulkan/VKRHITexture.hpp"
-#include "Concerto/Graphics/Backend/Vulkan/Wrapper/Device.hpp"
-#include "Concerto/Graphics/Backend/Vulkan/UploadContext.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/Device/Device.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/UploadContext/UploadContext.hpp"
 #include "Concerto/Graphics/RHI/Vulkan/Utils.hpp"
 
 namespace cct::gfx::rhi

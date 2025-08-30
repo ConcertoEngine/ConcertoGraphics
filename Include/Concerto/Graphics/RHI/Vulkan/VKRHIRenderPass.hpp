@@ -9,7 +9,7 @@
 
 #include "Concerto/Graphics/Defines.hpp"
 #include "Concerto/Graphics/RHI/RenderPass.hpp"
-#include "Concerto/Graphics/Backend/Vulkan/Wrapper/RenderPass.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/RenderPass/RenderPass.hpp"
 
 namespace cct::gfx::rhi
 {

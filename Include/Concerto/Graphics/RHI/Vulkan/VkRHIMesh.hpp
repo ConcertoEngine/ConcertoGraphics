@@ -8,7 +8,7 @@
 #include <unordered_map>
 #include <memory>
 
-#include "Concerto/Graphics/Backend/Vulkan/UploadContext.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/UploadContext/UploadContext.hpp"
 #include "Concerto/Graphics/RHI/MaterialBuilder.hpp"
 #include "Concerto/Graphics/Defines.hpp"
 #include "Concerto/Graphics/RHI/Material.hpp"

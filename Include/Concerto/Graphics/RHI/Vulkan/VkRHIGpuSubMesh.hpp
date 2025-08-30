@@ -7,7 +7,7 @@
 
 #include "Concerto/Graphics/RHI/Defines.hpp"
 #include "Concerto/Graphics/RHI/GpuSubMesh.hpp"
-#include "Concerto/Graphics/Backend/Vulkan/Wrapper/Buffer.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/Buffer/Buffer.hpp"
 
 namespace cct::gfx::vk
 {

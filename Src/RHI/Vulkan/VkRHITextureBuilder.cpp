@@ -8,9 +8,9 @@
 
 #include "Concerto/Graphics/RHI/Vulkan/VKRHITexture.hpp"
 #include "Concerto/Graphics/RHI/Vulkan/VkRHIDevice.hpp"
-#include "Concerto/Graphics/Backend/Vulkan/Wrapper/Device.hpp"
-#include "Concerto/Graphics/Backend/Vulkan/Wrapper/CommandBuffer.hpp"
-#include "Concerto/Graphics/Backend/Vulkan/UploadContext.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/Device/Device.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/CommandBuffer/CommandBuffer.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/UploadContext/UploadContext.hpp"
 
 namespace cct::gfx::rhi
 {

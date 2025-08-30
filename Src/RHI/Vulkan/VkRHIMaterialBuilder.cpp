@@ -8,13 +8,13 @@
 
 #include "Concerto/Core/Cast.hpp"
 
-#include "Concerto/Graphics/Backend/Vulkan/Wrapper/DescriptorSetLayout.hpp"
-#include "Concerto/Graphics/Backend/Vulkan/Wrapper/Pipeline.hpp"
-#include "Concerto/Graphics/Backend/Vulkan/Wrapper/PipelineInfo.hpp"
-#include "Concerto/Graphics/Backend/Vulkan/Wrapper/VulkanInitializer.hpp"
-#include "Concerto/Graphics/Backend/Vulkan/Wrapper/Device.hpp"
-#include "Concerto/Graphics/Backend/Vulkan/Wrapper/Sampler.hpp"
-#include "Concerto/Graphics/Backend/Vulkan/Wrapper/ShaderModule.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/DescriptorSetLayout/DescriptorSetLayout.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/Pipeline/Pipeline.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/PipelineInfo/PipelineInfo.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/VulkanInitializer/VulkanInitializer.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/Device/Device.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/Sampler/Sampler.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/ShaderModule/ShaderModule.hpp"
 #include "Concerto/Graphics/RHI/Vulkan/VkRHIBuffer.hpp"
 
 #include "Concerto/Graphics/RHI/Vulkan/VkRHITextureBuilder.hpp"

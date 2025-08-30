@@ -9,7 +9,7 @@
 #include <vector>
 
 #include "Concerto/Graphics/RHI/APIImpl.hpp"
-#include "Concerto/Graphics/Backend/Vulkan/Wrapper/Instance.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/Instance/Instance.hpp"
 
 namespace cct::gfx
 {

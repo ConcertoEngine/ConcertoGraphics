@@ -60,26 +60,49 @@ target("concerto-graphics")
         add_deps("concerto-profiler", { public = false })
     end
 
-target("concerto-vulkan-backend")
+function AddFilesToTarget(p)
+    for _, dir in ipairs(os.filedirs(p)) do
+        relative_dir = path.relative(dir, "Src/")
+        --print(dir)
+        if os.isdir(dir) then
+            add_files(path.join("Src", relative_dir, "*.cpp"))
+            add_headerfiles(path.join("Src", "(" .. relative_dir .. "/*.hpp)"))
+            add_headerfiles(path.join("Src", "(" .. relative_dir .. "/*.inl)"))
+        else
+            local ext = path.extension(relative_dir)
+            if ext == ".hpp" or ext == ".inl" then
+                add_headerfiles(path.join("Src", "(" .. relative_dir .. ")"))
+            elseif ext == ".cpp" then
+                add_files(path.join("Src", relative_dir))
+            end
+        end
+    end
+end
+
+target("concerto-vulkan-backend", function()
     set_kind("shared")
     set_languages("cxx20")
     set_warnings("allextra")
+    
     if is_mode("debug") then
         set_symbols("debug")
     end
-    
+
     add_defines("CONCERTO_GRAPHICS_VULKAN_BACKEND_BUILD", { public = false })
     add_defines("VK_NO_PROTOTYPES", { public = true })
-    add_files("Src/Backend/Vulkan/**.cpp")
-    add_includedirs("Include/", { public = true })
-    add_headerfiles("Include/(Concerto/Graphics/Backend/Vulkan/*.hpp)",
-                    "Include/(Concerto/Graphics/Backend/Vulkan/Wrapper/*.hpp)",
-                    "Include/(Concerto/Graphics/Backend/Vulkan/Wrapper/*.inl)")
+    add_files("Src/Concerto/Graphics/Backend/Vulkan/*.cpp")
+
+    AddFilesToTarget("Src/Concerto/Graphics/Backend/Vulkan/*")
+    AddFilesToTarget("Src/Concerto/Graphics/Backend/Vulkan/Wrapper/*")
+
+    add_includedirs("Src/", { public = true })
+    add_headerfiles("Src/(Concerto/Graphics/Backend/Vulkan/*.hpp)")
     add_packages("concerto-core", "volk", "vulkan-headers", "vulkan-utility-libraries", "vulkan-memory-allocator", "nzsl", { public = true })
     add_deps("concerto-graphics")
     if has_config("profiling") then
         add_deps("concerto-profiler", { public = false })
     end
+end)
 
 target("concerto-rhi-module")
     set_kind("shared")

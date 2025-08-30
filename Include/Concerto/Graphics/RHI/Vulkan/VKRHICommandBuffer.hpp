@@ -7,7 +7,7 @@
 
 #include "Concerto/Graphics/RHI/CommandBuffer.hpp"
 #include "Concerto/Graphics/RHI/Vulkan/VkRHIDevice.hpp"
-#include "Concerto/Graphics/Backend/Vulkan/Wrapper/CommandBuffer.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/CommandBuffer/CommandBuffer.hpp"
 
 namespace cct::gfx::rhi
 {

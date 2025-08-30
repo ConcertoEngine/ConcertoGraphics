@@ -9,11 +9,11 @@
 
 #include "Concerto/Graphics/Defines.hpp"
 
-#include "Concerto/Graphics/Backend/Vulkan/Wrapper/Buffer.hpp"
-#include "Concerto/Graphics/Backend/Vulkan/Wrapper/Fence.hpp"
-#include "Concerto/Graphics/Backend/Vulkan/Wrapper/Semaphore.hpp"
-#include "Concerto/Graphics/Backend/Vulkan/Wrapper/CommandBuffer.hpp"
-#include "Concerto/Graphics/Backend/Vulkan/Wrapper/CommandPool.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/Buffer/Buffer.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/Fence/Fence.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/Semaphore/Semaphore.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/CommandBuffer/CommandBuffer.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/CommandPool/CommandPool.hpp"
 
 #define MAX_OBJECTS 1000
 

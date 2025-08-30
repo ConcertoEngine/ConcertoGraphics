@@ -14,10 +14,10 @@
 #include "Concerto/Graphics/RHI/Buffer.hpp"
 #include "Concerto/Graphics/RHI/Vulkan/VkMaterial.hpp"
 
-#include "Concerto/Graphics/Backend/Vulkan/DescriptorAllocator.hpp"
-#include "Concerto/Graphics/Backend/Vulkan/ShaderModuleInfo.hpp"
-#include "Concerto/Graphics/Backend/Vulkan/Wrapper/Sampler.hpp"
-#include "Concerto/Graphics/Backend/Vulkan/Wrapper/Pipeline.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/DescriptorAllocator/DescriptorAllocator.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/ShaderModuleInfo/ShaderModuleInfo.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/Sampler/Sampler.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/Pipeline/Pipeline.hpp"
 
 namespace cct::gfx::vk
 {

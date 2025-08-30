@@ -10,7 +10,7 @@
 #include "Concerto/Graphics/Defines.hpp"
 #include "Concerto/Graphics/RHI/Texture.hpp"
 #include "Concerto/Graphics/RHI/FrameBuffer.hpp"
-#include "Concerto/Graphics/Backend/Vulkan/Wrapper/FrameBuffer.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/FrameBuffer/FrameBuffer.hpp"
 
 namespace cct::gfx::rhi
 {

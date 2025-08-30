@@ -8,9 +8,9 @@
 #include <memory>
 
 #include "Concerto/Graphics/RHI/Defines.hpp"
-#include "Concerto/Graphics/Backend/Vulkan/Wrapper/Image.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/Image/Image.hpp"
 #include "Concerto/Graphics/RHI/Texture.hpp"
-#include "Concerto/Graphics/Backend/Vulkan/Wrapper/ImageView.hpp"
+#include "Concerto/Graphics/Backend/Vulkan/Wrapper/ImageView/ImageView.hpp"
 
 namespace cct::gfx::vk
 {
