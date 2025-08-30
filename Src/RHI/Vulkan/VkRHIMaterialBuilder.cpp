@@ -112,8 +112,7 @@ namespace cct::gfx::rhi
 				auto pl = std::make_shared<vk::PipelineLayout>(m_device, descriptorSetLayouts);
 				const VkRHIRenderPass& vkRenderPass = Cast<const VkRHIRenderPass&>(renderPass);
 				vk::PipelineInfo pipelineInfo(std::move(shaderStages), m_windowExtent, pl);
-				pipeline = std::make_shared<vk::Pipeline>(m_device, std::move(pipelineInfo));
-				pipeline->BuildPipeline(*vkRenderPass.Get());
+				pipeline = std::make_shared<vk::Pipeline>(m_device, std::move(pipelineInfo), vkRenderPass);
 				m_pipelinesCache.emplace(hash, pipeline);
 			}
 		}

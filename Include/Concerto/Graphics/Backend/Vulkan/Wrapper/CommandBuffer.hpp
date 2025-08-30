@@ -26,32 +26,28 @@ namespace cct::gfx::vk
 	class CONCERTO_GRAPHICS_VULKAN_BACKEND_API CommandBuffer : public Object<VkCommandBuffer>
 	{
 	public:
+		CommandBuffer();
 		CommandBuffer(CommandPool& owner, VkCommandBufferLevel level);
-
 		~CommandBuffer() override;
 
 		CommandBuffer(CommandBuffer&&) noexcept;
-
 		CommandBuffer(const CommandBuffer&) = delete;
 
 		CommandBuffer& operator=(CommandBuffer&&) noexcept;
-
 		CommandBuffer& operator=(const CommandBuffer&) = delete;
 
-		void Reset() const;
+		VkResult Create(CommandPool& owner, VkCommandBufferLevel level);
 
+		void Reset() const;
 		void Begin() const;
 		void End() const;
 
-		
 		void BeginRenderPass(const VkRenderPassBeginInfo& info) const;
 		void EndRenderPass() const;
 
-		
 		void BindPipeline(VkPipelineBindPoint pipelineBindPoint, const Pipeline& pipeline) const;
 		void BindPipeline(VkPipelineBindPoint pipelineBindPoint, VkPipeline pipeline) const;
 
-		
 		void BindDescriptorSets(VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout pipelineLayout,
 				UInt32 firstSet, UInt32 descriptorSetCount, const DescriptorSet& descriptorSet,
 				UInt32 dynamicOffsets) const;
@@ -60,7 +56,6 @@ namespace cct::gfx::vk
 		void BindDescriptorSets(VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout pipelineLayout, std::span<DescriptorSet> descriptorSets) const;
 		void BindDescriptorSets(VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout pipelineLayout, std::span<std::shared_ptr<DescriptorSet>> descriptorSets) const;
 
-		
 		void BindVertexBuffers(const Buffer& buffer) const;
 
 		void UpdatePushConstants(const PipelineLayout& pipelineLayout, const MeshPushConstants& meshPushConstants) const;

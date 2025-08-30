@@ -27,7 +27,7 @@ namespace cct::gfx::vk
 
 	CommandPool::~CommandPool()
 	{
-		if (IsNull())
+		if (!IsValid())
 			return;
 		m_device->vkDestroyCommandPool(*m_device->Get(), m_handle, nullptr);
 	}

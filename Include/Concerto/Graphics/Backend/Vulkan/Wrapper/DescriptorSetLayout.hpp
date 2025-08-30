@@ -21,17 +21,18 @@ namespace cct::gfx::vk
 	class CONCERTO_GRAPHICS_VULKAN_BACKEND_API DescriptorSetLayout : public Object<VkDescriptorSetLayout>
 	{
 	public:
-		DescriptorSetLayout(Device& device, std::vector<VkDescriptorSetLayoutBinding> bindings);
+		DescriptorSetLayout(Device& device, const std::vector<VkDescriptorSetLayoutBinding>& bindings);
 		~DescriptorSetLayout() override;
 
 		DescriptorSetLayout(DescriptorSetLayout&&) = default;
 		DescriptorSetLayout(const DescriptorSetLayout&) = delete;
 
+		DescriptorSetLayout& operator=(const DescriptorSetLayout&) = delete;
 		DescriptorSetLayout& operator=(DescriptorSetLayout&&) = default;
 
+		VkResult Create(Device& device, const std::vector<VkDescriptorSetLayoutBinding>& bindings);
 
 		[[nodiscard]] const std::vector<VkDescriptorSetLayoutBinding>& GetBindings() const;
-
 		[[nodiscard]] UInt64 GetHash() const;
 
 		static UInt64 GetHash(const std::vector<VkDescriptorSetLayoutBinding>& bindings);

@@ -14,11 +14,21 @@
 
 namespace cct::gfx::vk
 {
+	template <typename VkType>
+	Object<VkType>::Object() : ObjectDebug(),
+		m_handle(nullptr),
+		m_device(nullptr),
+		m_lastResult(VK_SUCCESS)
+	{
+	}
+
 	template<typename VkType>
 	Object<VkType>::Object(Device& device) :
 #ifdef CCT_ENABLE_OBJECT_DEBUG
-	ObjectDebug(device, TypeName<std::remove_pointer_t<std::remove_cvref_t<VkType>>>(), reinterpret_cast<void**>(&this->m_handle)),
-#endif
+		ObjectDebug(device, TypeName<std::remove_pointer_t<std::remove_cvref_t<VkType>>>(), reinterpret_cast<void**>(&this->m_handle)),
+#else
+		ObjectDebug(),
+#endif // CCT_ENABLE_OBJECT_DEBUG
 		m_handle(nullptr),
 		m_device(&device),
 		m_lastResult(VK_SUCCESS)
@@ -29,17 +39,11 @@ namespace cct::gfx::vk
 	template <typename VkType>
 	Object<VkType>::~Object()
 	{
-#ifdef CCT_ENABLE_OBJECT_DEBUG
-		m_handle = 0xDDDDDDDD;
-#endif // CCT_ENABLE_OBJECT_DEBUG
 	}
 
 	template<typename VkType>
-	Object<VkType>::Object(Object&& other) noexcept
-#ifdef CCT_ENABLE_OBJECT_DEBUG
-		:
-	ObjectDebug(std::move(other))
-#endif
+	Object<VkType>::Object(Object&& other) noexcept :
+		ObjectDebug(std::move(other))
 	{
 		m_handle = std::exchange(other.m_handle, nullptr);
 		m_device = std::exchange(other.m_device, nullptr);
@@ -51,27 +55,28 @@ namespace cct::gfx::vk
 	{
 		std::swap(m_handle, other.m_handle);
 		std::swap(m_device, other.m_device);
-#ifdef CCT_ENABLE_OBJECT_DEBUG
+
 		ObjectDebug::operator=(std::move(other));
-#endif
+
 		return *this;
 	}
 
 	template<typename VkType>
 	VkType* Object<VkType>::Get() const
 	{
-		CCT_ASSERT(!IsNull(), "The vulkan object handle is null");
+		CCT_ASSERT(IsValid(), "The vulkan object handle is null");
 		return const_cast<VkType*>(&m_handle);
 	}
 
 	template<typename VkType>
-	bool Object<VkType>::IsNull() const
+	bool Object<VkType>::IsValid() const
 	{
-		return m_handle == nullptr;
+		return m_handle != nullptr;
 	}
 
-	template<typename VkType>
-	Device* Object<VkType>::GetDevice() const
+	template <typename VkType>
+	Device* Object<VkType>::GetDevice() const requires (!std::is_same_v<VkType, VkDevice> && !std::is_same_v<
+		VkType, VkInstance>)
 	{
 		CCT_ASSERT(m_device, "Invalid device");
 		return m_device;

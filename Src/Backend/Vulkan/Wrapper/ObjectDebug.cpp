@@ -81,6 +81,16 @@ namespace
 
 namespace cct::gfx::vk
 {
+	ObjectDebug::ObjectDebug() :
+		m_device(),
+		m_typeName(),
+		m_debugReportObjectType(),
+		m_vkHandle(),
+		m_debugName(),
+		m_createdOnThread()
+	{
+	}
+
 	ObjectDebug::ObjectDebug(Device& device, std::string_view typeName, void** vkHandle) :
 		m_device(&device),
 		m_typeName(typeName),
@@ -116,8 +126,9 @@ namespace cct::gfx::vk
 		nameInfo.sType = VK_STRUCTURE_TYPE_DEBUG_MARKER_OBJECT_NAME_INFO_EXT;
 		nameInfo.objectType = m_debugReportObjectType;
 		nameInfo.object = GetObject();
-		nameInfo.pObjectName = name.data();
-		m_device->vkDebugMarkerSetObjectNameEXT(*m_device->Get(), &nameInfo);
+		nameInfo.pObjectName = m_debugName.c_str();
+		const VkResult result = m_device->vkDebugMarkerSetObjectNameEXT(*m_device->Get(), &nameInfo);
+		CCT_ASSERT(result == VK_SUCCESS, "ConcertoGraphics: vkDebugMarkerSetObjectNameEXT failed VkResult={}", static_cast<const int>(result));
 	}
 
 	std::string_view ObjectDebug::GetDebugName() const
@@ -140,7 +151,7 @@ namespace cct::gfx::vk
 		m_debugName = std::exchange(other.m_debugName, {});
 	}
 
-	ObjectDebug& ObjectDebug::operator=(ObjectDebug&& other)
+	ObjectDebug& ObjectDebug::operator=(ObjectDebug&& other) noexcept
 	{
 		std::swap(m_device, other.m_device);
 		std::swap(m_typeName, other.m_typeName);

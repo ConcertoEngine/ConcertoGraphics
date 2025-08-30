@@ -27,9 +27,7 @@ namespace cct::gfx::vk
 		CommandPool& operator=(const CommandPool&) = delete;
 
 		void Reset() const;
-
-		vk::CommandBuffer AllocateCommandBuffer(VkCommandBufferLevel level);
-
+		CommandBuffer AllocateCommandBuffer(VkCommandBufferLevel level);
 	private:
 		UInt32 m_queueFamily;
 	};

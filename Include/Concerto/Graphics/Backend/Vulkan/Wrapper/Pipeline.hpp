@@ -18,12 +18,12 @@ namespace cct::gfx::vk
 {
 	class Device;
 	class PipelineLayout;
+	class RenderPass;
 
 	class CONCERTO_GRAPHICS_VULKAN_BACKEND_API Pipeline : public Object<VkPipeline>
 	{
 	public:
-		Pipeline(Device& device, PipelineInfo pipeLineInfo);
-
+		Pipeline(Device& device, PipelineInfo pipeLineInfo, const RenderPass& renderPass);
 		~Pipeline() override;
 
 		Pipeline(Pipeline&&) = default;
@@ -32,9 +32,7 @@ namespace cct::gfx::vk
 		Pipeline& operator=(Pipeline&&) = default;
 		Pipeline& operator=(const Pipeline&) = delete;
 
-		[[nodiscard]] VkPipeline BuildPipeline(VkRenderPass renderPass);
-		[[nodiscard]] VkPipelineViewportStateCreateInfo BuildViewportState() const;
-		[[nodiscard]] VkPipelineColorBlendStateCreateInfo BuildColorBlendState() const;
+		VkResult Create(Device& device, const PipelineInfo& pipeLineInfo, const RenderPass& renderPass);
 
 		[[nodiscard]] std::shared_ptr<PipelineLayout> GetPipelineLayout() const;
 		struct CreateInfo
@@ -46,6 +44,11 @@ namespace cct::gfx::vk
 	private:
 		PipelineInfo m_pipelineInfo;
 		CreateInfo m_createInfo;
+		const RenderPass* m_renderPass;
+
+		[[nodiscard]] static VkPipelineViewportStateCreateInfo BuildViewportState();
+		[[nodiscard]] static VkPipelineColorBlendStateCreateInfo BuildColorBlendState();
+		[[nodiscard]] VkResult BuildPipeline();
 	};
 
 	using PipelinePtr = std::shared_ptr<Pipeline>;

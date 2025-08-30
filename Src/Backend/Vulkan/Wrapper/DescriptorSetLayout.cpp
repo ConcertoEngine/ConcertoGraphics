@@ -6,30 +6,44 @@
 #include <stdexcept>
 
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/DescriptorSetLayout.hpp"
+
+#include "Concerto/Graphics/Backend/Vulkan/VkException.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Device.hpp"
 
 namespace cct::gfx::vk
 {
 
-	DescriptorSetLayout::DescriptorSetLayout(Device& device, std::vector<VkDescriptorSetLayoutBinding> bindings) :
+	DescriptorSetLayout::DescriptorSetLayout(Device& device, const std::vector<VkDescriptorSetLayoutBinding>& bindings) :
 		Object(device),
-		m_bindings(std::move(bindings))
+		m_bindings(bindings)
 	{
+		if (Create(device, bindings) != VK_SUCCESS)
+			throw VkException(GetLastResult());
+	}
+
+	DescriptorSetLayout::~DescriptorSetLayout()
+	{
+		if (!IsValid())
+			return;
+		m_device->vkDestroyDescriptorSetLayout(*m_device->Get(), m_handle, nullptr);
+	}
+
+	VkResult DescriptorSetLayout::Create(Device& device, const std::vector<VkDescriptorSetLayoutBinding>& bindings)
+	{
+		m_device = &device;
+		m_bindings = bindings;
+
 		VkDescriptorSetLayoutCreateInfo createInfo = {};
 		createInfo.flags = 0;
 		createInfo.pNext = nullptr;
 		createInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
 		createInfo.pBindings = m_bindings.data();
 		createInfo.bindingCount = static_cast<UInt32>(m_bindings.size());
+
 		m_lastResult = m_device->vkCreateDescriptorSetLayout(*m_device->Get(), &createInfo, nullptr, &m_handle);
 		CCT_ASSERT(m_lastResult == VK_SUCCESS, "ConcertoGraphics: vkCreateDescriptorSetLayout failed VkResult={}", static_cast<int>(m_lastResult));
-	}
 
-	DescriptorSetLayout::~DescriptorSetLayout()
-	{
-		if (IsNull())
-			return;
-		m_device->vkDestroyDescriptorSetLayout(*m_device->Get(), m_handle, nullptr);
+		return m_lastResult;
 	}
 
 	const std::vector<VkDescriptorSetLayoutBinding>& DescriptorSetLayout::GetBindings() const

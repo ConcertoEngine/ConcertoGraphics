@@ -20,12 +20,17 @@ namespace cct::gfx::vk
 	class CONCERTO_GRAPHICS_VULKAN_BACKEND_API Allocator : public Object<VmaAllocator>
 	{
 	public:
-		Allocator(Device& device);
+		Allocator() = default;
+		explicit Allocator(Device& device);
+		~Allocator() override;
+
 		Allocator(const Allocator&) = delete;
 		Allocator(Allocator&&) = default;
+
 		Allocator& operator=(const Allocator&) = delete;
 		Allocator& operator=(Allocator&&) = default;
-		~Allocator() override;
+
+		VkResult Create(Device& device);
 
 		inline Buffer AllocateBuffer(std::size_t allocSize, VkBufferUsageFlags usage, VmaMemoryUsage memoryUsage, bool allowBufferMapping);
 		template<typename T>

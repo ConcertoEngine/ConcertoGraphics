@@ -20,8 +20,9 @@ namespace cct::gfx::vk
 	class CONCERTO_GRAPHICS_VULKAN_BACKEND_API ShaderModule : public Object<VkShaderModule>
 	{
 	public:
-		ShaderModule(Device& device, const std::string& shaderPath, VkShaderStageFlagBits stageFlags, std::string entryPoint = "main");
-		ShaderModule(Device& device, const std::vector<UInt32>& bytes, VkShaderStageFlagBits stageFlags, std::string entryPoint = "main");
+		ShaderModule() = default;
+		ShaderModule(Device& device, const std::string& shaderPath, VkShaderStageFlagBits stageFlags, const std::string& entryPoint = "main");
+		ShaderModule(Device& device, const std::vector<UInt32>& bytes, VkShaderStageFlagBits stageFlags, const std::string& entryPoint = "main");
 
 		~ShaderModule() override;
 
@@ -31,11 +32,14 @@ namespace cct::gfx::vk
 		ShaderModule& operator=(ShaderModule&&) = default;
 		ShaderModule& operator=(const ShaderModule&) = delete;
 
+		VkResult Create(Device& device, const std::string& shaderPath, VkShaderStageFlagBits stageFlags, const std::string& entryPoint = "main");
+		VkResult Create(Device& device, const std::vector<UInt32>& bytes, VkShaderStageFlagBits stageFlags, const std::string& entryPoint = "main");
+
 		[[nodiscard]] VkPipelineShaderStageCreateInfo GetPipelineShaderStageCreateInfo() const;
 	private:
 		void LoadShaderModule(const std::string& shaderPath);
 
-		void CreateShaderModule();
+		VkResult CreateShaderModule();
 
 		VkShaderModuleCreateInfo m_shaderModuleCreateInfo{};
 		std::vector<UInt32> m_buffer;

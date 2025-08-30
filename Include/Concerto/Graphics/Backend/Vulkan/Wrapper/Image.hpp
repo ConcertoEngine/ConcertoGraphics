@@ -19,11 +19,12 @@ namespace cct::gfx::vk
 	class CONCERTO_GRAPHICS_VULKAN_BACKEND_API Image : public Object<VkImage>
 	{
 	public:
+		Image();
 		/**
 		 * @brief Create an Image from an existing VkImage eg: from SwapChain
 		 */
-		Image(Allocator& allocator, VkExtent2D extent, VkImage image, VkFormat imageFormat);
-		Image(Allocator& allocator, VkExtent2D extent, VkFormat format, VkImageUsageFlags usageFlags);
+		Image(const Allocator& allocator, VkExtent2D extent, VkImage image, VkFormat imageFormat);
+		Image(const Allocator& allocator, VkExtent2D extent, VkFormat format, VkImageUsageFlags usageFlags);
 
 		~Image() override;
 
@@ -32,6 +33,9 @@ namespace cct::gfx::vk
 
 		Image& operator=(Image&&) noexcept;
 		Image& operator=(const Image&) = delete;
+
+		VkResult Create(const Allocator& allocator, VkExtent2D extent, VkImage image, VkFormat imageFormat);
+		VkResult Create(const Allocator& allocator, VkExtent2D extent, VkFormat format, VkImageUsageFlags usageFlags);
 
 		[[nodiscard]] VkFormat GetFormat() const;
 		VkExtent2D GetExtent() const;

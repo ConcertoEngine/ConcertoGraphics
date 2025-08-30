@@ -9,6 +9,8 @@
 #include <Concerto/Core/Assert.hpp>
 
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/RenderPass.hpp"
+
+#include "Concerto/Graphics/Backend/Vulkan/VkException.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Device.hpp"
 
 namespace cct::gfx::vk
@@ -16,6 +18,22 @@ namespace cct::gfx::vk
 	RenderPass::RenderPass(Device& device, std::span<VkAttachmentDescription> attachmentDescriptions, std::span<VkSubpassDescription> subPassDescriptions, std::span<VkSubpassDependency> subPassDependencies) :
 		Object(device)
 	{
+		if (Create(device, attachmentDescriptions, subPassDescriptions, subPassDependencies) != VK_SUCCESS)
+			throw VkException(GetLastResult());
+	}
+
+	RenderPass::~RenderPass()
+	{
+		if (!IsValid())
+			return;
+		m_device->vkDestroyRenderPass(*m_device->Get(), m_handle, nullptr);
+	}
+
+	VkResult RenderPass::Create(Device& device, std::span<VkAttachmentDescription> attachmentDescriptions,
+		std::span<VkSubpassDescription> subPassDescriptions, std::span<VkSubpassDependency> subPassDependencies)
+	{
+		m_device = &device;
+
 		VkRenderPassCreateInfo renderPassCreateInfo = {};
 		renderPassCreateInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
 		renderPassCreateInfo.attachmentCount = static_cast<UInt32>(attachmentDescriptions.size());
@@ -25,14 +43,9 @@ namespace cct::gfx::vk
 		renderPassCreateInfo.dependencyCount = static_cast<UInt32>(subPassDependencies.size());
 		renderPassCreateInfo.pDependencies = subPassDependencies.data();
 
-		const VkResult result = m_device->vkCreateRenderPass(*m_device->Get(), &renderPassCreateInfo, nullptr, &m_handle);
-		CCT_ASSERT(result == VK_SUCCESS, "ConcertoGraphics: vkCreateRenderPass failed VKResult={}", static_cast<int>(result));
-	}
+		m_lastResult = m_device->vkCreateRenderPass(*m_device->Get(), &renderPassCreateInfo, nullptr, &m_handle);
+		CCT_ASSERT(m_lastResult == VK_SUCCESS, "ConcertoGraphics: vkCreateRenderPass failed VKResult={}", static_cast<int>(m_lastResult));
 
-	RenderPass::~RenderPass()
-	{
-		if (IsNull())
-			return;
-		m_device->vkDestroyRenderPass(*m_device->Get(), m_handle, nullptr);
+		return m_lastResult;
 	}
 } // cct::gfx::vk

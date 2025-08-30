@@ -59,12 +59,13 @@ namespace cct::gfx::rhi
 			std::size_t GetCurrentFrameIndex() override;
 			rhi::FrameBuffer& GetFrameBuffer() override;
 			void SetNextImageIndex(UInt32 imageIndex);
-			void Wait();
+			void Wait() const;
 
 			const vk::Semaphore& GetPresentSemaphore() const;
 			const vk::Semaphore& GetRenderSemaphore() const;
 			const vk::Fence& GetRenderFence() const;
 
+			static constexpr UInt32 InvalidFrameIndex = std::numeric_limits<UInt32>::max();
 		private:
 			std::unique_ptr<rhi::CommandBuffer> m_commandBuffer;
 			vk::Fence m_renderFence;

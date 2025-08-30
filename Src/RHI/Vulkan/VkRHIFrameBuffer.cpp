@@ -35,13 +35,13 @@ namespace cct::gfx::rhi
 
 	VkRHIFrameBuffer::VkRHIFrameBuffer(VkRHIDevice& device, UInt32 width, UInt32 height, const VkRHIRenderPass& renderPass, const std::vector<std::unique_ptr<rhi::Texture>>& attachments) :
 		rhi::FrameBuffer(),
-		vk::FrameBuffer(device, renderPass, ToImageView(attachments), { width, height })
+		vk::FrameBuffer(renderPass, ToImageView(attachments), { width, height })
 	{
 	}
 
 	VkRHIFrameBuffer::VkRHIFrameBuffer(VkRHIDevice& device, UInt32 width, UInt32 height, const VkRHIRenderPass& renderPass, const std::vector<std::unique_ptr<rhi::TextureView>>& attachments) :
 		rhi::FrameBuffer(),
-		vk::FrameBuffer(device, renderPass, ToImageView(attachments), { width, height })
+		vk::FrameBuffer(renderPass, ToImageView(attachments), { width, height })
 	{
 	}
 

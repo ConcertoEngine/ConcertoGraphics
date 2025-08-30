@@ -20,8 +20,8 @@ namespace cct::gfx::vk
 	class CONCERTO_GRAPHICS_VULKAN_BACKEND_API DescriptorSet : public Object<VkDescriptorSet>
 	{
 	public:
-	
-		DescriptorSet(Device& device, DescriptorPool& pool, const DescriptorSetLayout& descriptorSetLayout);
+		DescriptorSet() = default;
+		DescriptorSet(DescriptorPool& pool, const DescriptorSetLayout& descriptorSetLayout);
 		~DescriptorSet() override;
 
 		DescriptorSet(DescriptorSet&&) noexcept;
@@ -29,6 +29,8 @@ namespace cct::gfx::vk
 
 		DescriptorSet& operator=(DescriptorSet&&) noexcept;
 		DescriptorSet& operator=(const DescriptorSet&) = delete;
+
+		VkResult Create(const DescriptorPool& pool, const DescriptorSetLayout& descriptorSetLayout);
 
 		void WriteImageSamplerDescriptor(const Sampler& sampler, const ImageView& imageView, VkImageLayout imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL) const;
 	private:

@@ -11,6 +11,8 @@
 #include <vk_mem_alloc.h>
 
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Allocator.hpp"
+
+#include "Concerto/Graphics/Backend/Vulkan/VkException.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Instance.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/PhysicalDevice.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Device.hpp"
@@ -21,10 +23,25 @@ namespace cct::gfx::vk
 	Allocator::Allocator(Device& device) :
 		Object<VmaAllocator>(device)
 	{
+		if (Create(device) != VK_SUCCESS)
+			throw VkException(GetLastResult());
+	}
+
+	Allocator::~Allocator()
+	{
+		if (!IsValid())
+			return;
+		vmaDestroyAllocator(m_handle);
+	}
+
+	VkResult Allocator::Create(Device& device)
+	{
+		m_device = &device;
+
 		PhysicalDevice& physicalDevice = device.GetPhysicalDevice();
 		Instance& instance = physicalDevice.GetInstance();
 
-		VmaVulkanFunctions vulkanFunctions {
+		VmaVulkanFunctions vulkanFunctions{
 			.vkGetInstanceProcAddr = Instance::vkGetInstanceProcAddr,
 			.vkGetDeviceProcAddr = instance.vkGetDeviceProcAddr,
 			.vkGetPhysicalDeviceProperties = instance.vkGetPhysicalDeviceProperties,
@@ -43,8 +60,17 @@ namespace cct::gfx::vk
 			.vkDestroyBuffer = device.vkDestroyBuffer,
 			.vkCreateImage = device.vkCreateImage,
 			.vkDestroyImage = device.vkDestroyImage,
-			.vkCmdCopyBuffer = device.vkCmdCopyBuffer
+			.vkCmdCopyBuffer = device.vkCmdCopyBuffer,
+			.vkGetBufferMemoryRequirements2KHR = nullptr,
+			.vkGetImageMemoryRequirements2KHR = nullptr,
+			.vkBindBufferMemory2KHR = nullptr,
+			.vkBindImageMemory2KHR = nullptr,
+			.vkGetPhysicalDeviceMemoryProperties2KHR = nullptr,
+			.vkGetDeviceBufferMemoryRequirements = nullptr,
+			.vkGetDeviceImageMemoryRequirements = nullptr,
+			.vkGetMemoryWin32HandleKHR = nullptr
 		};
+
 		VmaAllocatorCreateInfo allocatorInfo = {};
 		allocatorInfo.physicalDevice = *physicalDevice.Get();
 		allocatorInfo.device = *device.Get();
@@ -52,13 +78,8 @@ namespace cct::gfx::vk
 		allocatorInfo.pVulkanFunctions = &vulkanFunctions;
 
 		m_lastResult = vmaCreateAllocator(&allocatorInfo, &m_handle);
-		CCT_ASSERT(m_lastResult == VK_SUCCESS, "ConcertoGraphics: Unable to create vma allocator VkResult={}", static_cast<int>(m_lastResult));
-	}
+		CCT_ASSERT(m_lastResult == VK_SUCCESS, "Unable to create VmaAllocator VkResult={}", static_cast<int>(m_lastResult));
 
-	Allocator::~Allocator()
-	{
-		if (IsNull())
-			return;
-		vmaDestroyAllocator(m_handle);
+		return m_lastResult;
 	}
 }

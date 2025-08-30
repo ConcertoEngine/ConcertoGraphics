@@ -3,6 +3,8 @@
 //
 
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/DescriptorSet.hpp"
+
+#include "Concerto/Graphics/Backend/Vulkan/VkException.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/DescriptorSetLayout.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/DescriptorPool.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Device.hpp"
@@ -12,22 +14,17 @@
 
 namespace cct::gfx::vk
 {
-	DescriptorSet::DescriptorSet(Device& device, DescriptorPool& pool, const DescriptorSetLayout& descriptorSetLayout) :
-		Object(device),
+	DescriptorSet::DescriptorSet(DescriptorPool& pool, const DescriptorSetLayout& descriptorSetLayout) :
+		Object(*pool.GetDevice()),
 		m_pool(&pool)
 	{
-		VkDescriptorSetAllocateInfo allocInfo = {};
-		allocInfo.pNext = nullptr;
-		allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-		allocInfo.descriptorPool = *pool.Get();
-		allocInfo.descriptorSetCount = 1;
-		allocInfo.pSetLayouts = descriptorSetLayout.Get();
-		m_lastResult = m_device->vkAllocateDescriptorSets(*m_device->Get(), &allocInfo, &m_handle);
+		if (Create(pool, descriptorSetLayout) != VK_SUCCESS)
+			throw VkException(GetLastResult());
 	}
 
 	DescriptorSet::~DescriptorSet()
 	{
-		if (IsNull())
+		if (!IsValid())
 			return;
 		if (m_pool == nullptr)
 		{
@@ -37,16 +34,20 @@ namespace cct::gfx::vk
 		m_device->vkFreeDescriptorSets(*m_device->Get(), *m_pool->Get(), 1, &m_handle);
 	}
 
-	void DescriptorSet::WriteImageSamplerDescriptor(const Sampler& sampler, const ImageView& imageView, VkImageLayout imageLayout) const
+	VkResult DescriptorSet::Create(const DescriptorPool& pool, const DescriptorSetLayout& descriptorSetLayout)
 	{
-		VkDescriptorImageInfo imageBufferInfo;
-		imageBufferInfo.sampler = *sampler.Get();
-		imageBufferInfo.imageView = *imageView.Get();
-		imageBufferInfo.imageLayout = imageLayout;
+		m_device = pool.GetDevice();
 
-		const VkWriteDescriptorSet texture1 = VulkanInitializer::WriteDescriptorImage(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, m_handle, &imageBufferInfo, 0);
+		VkDescriptorSetAllocateInfo allocInfo = {};
+		allocInfo.pNext = nullptr;
+		allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+		allocInfo.descriptorPool = *pool.Get();
+		allocInfo.descriptorSetCount = 1;
+		allocInfo.pSetLayouts = descriptorSetLayout.Get();
 
-		m_device->vkUpdateDescriptorSets(*m_device->Get(), 1, &texture1, 0, nullptr);
+		m_lastResult = m_device->vkAllocateDescriptorSets(*m_device->Get(), &allocInfo, &m_handle);
+
+		return m_lastResult;
 	}
 
 	DescriptorSet::DescriptorSet(DescriptorSet&& other) noexcept : Object<VkDescriptorSet>(std::move(other))
@@ -58,5 +59,18 @@ namespace cct::gfx::vk
 	{
 		m_pool = std::exchange(other.m_pool, nullptr);
 		return *this;
+	}
+
+	void DescriptorSet::WriteImageSamplerDescriptor(const Sampler& sampler, const ImageView& imageView, VkImageLayout imageLayout) const
+	{
+		CCT_ASSERT(IsValid(), "Invalid object state, 'Create' must be called");
+		VkDescriptorImageInfo imageBufferInfo;
+		imageBufferInfo.sampler = *sampler.Get();
+		imageBufferInfo.imageView = *imageView.Get();
+		imageBufferInfo.imageLayout = imageLayout;
+
+		const VkWriteDescriptorSet texture1 = VulkanInitializer::WriteDescriptorImage(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, m_handle, &imageBufferInfo, 0);
+
+		m_device->vkUpdateDescriptorSets(*m_device->Get(), 1, &texture1, 0, nullptr);
 	}
 }

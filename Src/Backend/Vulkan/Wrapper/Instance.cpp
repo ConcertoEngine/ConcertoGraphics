@@ -14,6 +14,8 @@
 #include <volk.h> // must be under this ^ include
 
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/Instance.hpp"
+
+#include "Concerto/Graphics/Backend/Vulkan/VkException.hpp"
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/PhysicalDevice.hpp"
 
 namespace cct::gfx::vk
@@ -50,11 +52,23 @@ namespace cct::gfx::vk
 	Instance::Instance(const std::string& appName, const std::string& engineName, const Version& apiVersion,
 		const Version& appVersion, const Version& engineVersion, std::span<const char*> extensions,
 		std::span<const char*> layers) :
-		m_instance(VK_NULL_HANDLE),
-		m_apiVersion(apiVersion),
-		m_lastResult(VK_SUCCESS)
+		m_apiVersion(apiVersion)
+	{
+		if (Create(appName, engineName, apiVersion, appVersion, engineVersion, extensions, layers) != VK_SUCCESS)
+			throw VkException(GetLastResult());
+	}
+
+	Instance::~Instance()
+	{
+		vkDestroyInstance(m_handle, nullptr);
+	}
+
+	VkResult Instance::Create(const std::string& appName, const std::string& engineName, const Version& apiVersion,
+		const Version& appVersion, const Version& engineVersion, std::span<const char*> extensions,
+		std::span<const char*> layers)
 	{
 		CCT_GFX_AUTO_PROFILER_SCOPE();
+		m_apiVersion = apiVersion;
 
 		VkApplicationInfo appInfo = {};
 		appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
@@ -112,9 +126,9 @@ namespace cct::gfx::vk
 			throw std::runtime_error("volkInitialize Failed");
 		}
 
-		m_lastResult = vkCreateInstance(&createInfo, nullptr, &m_instance);
+		m_lastResult = vkCreateInstance(&createInfo, nullptr, &m_handle);
 		CCT_ASSERT(m_lastResult == VK_SUCCESS, "ConcertoGraphics: vkCreateInstance failed VKResult={}", static_cast<int>(m_lastResult));
-		volkLoadInstanceOnly(m_instance);
+		volkLoadInstanceOnly(m_handle);
 		Instance::vkGetInstanceProcAddr = ::vkGetInstanceProcAddr;
 #define CONCERTO_VULKAN_BACKEND_INSTANCE_FUNCTION(func) this->func = ::func;
 
@@ -130,6 +144,7 @@ namespace cct::gfx::vk
 #define CONCERTO_VULKAN_BACKEND_INSTANCE_EXT_END }
 
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/InstanceFunction.hpp"
+		return m_lastResult;
 	}
 
 	Version Instance::GetApiVersion() const
@@ -137,21 +152,15 @@ namespace cct::gfx::vk
 		return m_apiVersion;
 	}
 
-	VkInstance* Instance::Get()
-	{
-		assert(m_instance != VK_NULL_HANDLE);
-		return &m_instance;
-	}
-
 	std::span<PhysicalDevice> Instance::EnumeratePhysicalDevices() const
 	{
 		if (m_physicalDevices)
 			return m_physicalDevices.value();
 		UInt32 deviceCount = 0;
-		m_lastResult = vkEnumeratePhysicalDevices(m_instance, &deviceCount, nullptr);
+		m_lastResult = vkEnumeratePhysicalDevices(m_handle, &deviceCount, nullptr);
 		CCT_ASSERT(m_lastResult == VK_SUCCESS, "ConcertoGraphics: vkEnumeratePhysicalDevices failed VKResult={}", static_cast<int>(m_lastResult));
 		std::vector<VkPhysicalDevice> devices(deviceCount);
-		m_lastResult = vkEnumeratePhysicalDevices(m_instance, &deviceCount, devices.data());
+		m_lastResult = vkEnumeratePhysicalDevices(m_handle, &deviceCount, devices.data());
 		CCT_ASSERT(m_lastResult == VK_SUCCESS, "ConcertoGraphics: vkEnumeratePhysicalDevices failed VKResult={}", static_cast<int>(m_lastResult));
 		std::vector<PhysicalDevice> physicalDevices;
 		physicalDevices.reserve(devices.size());
@@ -161,11 +170,6 @@ namespace cct::gfx::vk
 		}
 		m_physicalDevices = std::move(physicalDevices);
 		return m_physicalDevices.value();
-	}
-
-	VkResult Instance::GetLastError() const
-	{
-		return m_lastResult;
 	}
 
 	bool Instance::IsExtensionEnabled(const std::string& ext) const

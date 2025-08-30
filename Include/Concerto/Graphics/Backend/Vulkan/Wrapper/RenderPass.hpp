@@ -19,6 +19,7 @@ namespace cct::gfx::vk
 	class CONCERTO_GRAPHICS_VULKAN_BACKEND_API RenderPass : public Object<VkRenderPass>
 	{
 	public:
+		RenderPass() = default;
 		RenderPass(Device& device, std::span<VkAttachmentDescription> attachmentDescriptions, std::span<VkSubpassDescription> subPassDescriptions, std::span<VkSubpassDependency> subPassDependencies);
 		~RenderPass() override;
 
@@ -27,6 +28,8 @@ namespace cct::gfx::vk
 
 		RenderPass& operator=(RenderPass&&) = default;
 		RenderPass& operator=(const RenderPass&) = delete;
+
+		VkResult Create(Device& device, std::span<VkAttachmentDescription> attachmentDescriptions, std::span<VkSubpassDescription> subPassDescriptions, std::span<VkSubpassDependency> subPassDependencies);
 
 	private:
 		std::vector<VkAttachmentDescription> m_attachments;
