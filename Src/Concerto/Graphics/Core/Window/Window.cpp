@@ -6,6 +6,16 @@
 
 #include <Concerto/Core/Logger.hpp>
 #include <Concerto/Core/Assert.hpp>
+
+#ifdef CCT_PLATFORM_LINUX
+	#ifdef CCT_GFX_XLIB
+		#define SDL_VIDEO_DRIVER_X11
+	#endif // CCT_GFX_XLIB
+	#ifdef CCT_GFX_WAYLAND
+		#define SDL_VIDEO_DRIVER_WAYLAND
+	#endif
+#endif // CCT_PLATFORM_LINUX
+
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_syswm.h>
 
@@ -492,7 +502,15 @@ namespace cct::gfx
 #elif defined(CCT_PLATFORM_MACOS)
 			CCT_ASSERT_FALSE("Not implemented");
 #elif defined(CCT_PLATFORM_LINUX)
-			CCT_ASSERT_FALSE("Not implemented");
+			if (wmInfo.subsystem == SDL_SYSWM_X11)
+				nativeWindow.platform = NativeWindow::X11{ wmInfo.info.x11.display, wmInfo.info.x11.window };
+			else if (wmInfo.subsystem == SDL_SYSWM_WAYLAND)
+				nativeWindow.platform = NativeWindow::Wayland{ wmInfo.info.wl.display, wmInfo.info.wl.surface };
+			else
+			{
+				CCT_ASSERT_FALSE("ConcertoGraphics: Unsupported Linux windowing system");
+				throw std::runtime_error("ConcertoGraphics: Unsupported Linux windowing system");
+			}
 #endif
 		}
 		else {

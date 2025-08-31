@@ -209,7 +209,35 @@ namespace cct::gfx::vk
 #elif defined(CCT_PLATFORM_MACOS)
 		CCT_ASSERT_FALSE("Not implemented");
 #elif defined(CCT_PLATFORM_LINUX)
-		CCT_ASSERT_FALSE("Not implemented");
+		if (std::holds_alternative<NativeWindow::X11>(nativeWindow.platform))
+		{
+			auto& x11 = std::get<NativeWindow::X11>(nativeWindow.platform);
+			const VkXlibSurfaceCreateInfoKHR createInfo = {
+				.sType = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR,
+				.pNext = nullptr,
+				.flags = 0,
+				.dpy = static_cast<Display*>(x11.display),
+				.window = static_cast<::Window>(x11.window)
+			};
+			m_lastResult = m_device->GetInstance().vkCreateXlibSurfaceKHR(*m_device->GetInstance().Get(), &createInfo, nullptr, &m_surface);
+		}
+		else if (std::holds_alternative<NativeWindow::Wayland>(nativeWindow.platform))
+		{
+			auto& wayland = std::get<NativeWindow::Wayland>(nativeWindow.platform);
+			const VkWaylandSurfaceCreateInfoKHR createInfo = {
+				.sType = VK_STRUCTURE_TYPE_WAYLAND_SURFACE_CREATE_INFO_KHR,
+				.pNext = nullptr,
+				.flags = 0,
+				.display = static_cast<struct wl_display*>(wayland.wl_display),
+				.surface = static_cast<struct wl_surface*>(wayland.wl_surface)
+			};
+			m_lastResult = m_device->GetInstance().vkCreateWaylandSurfaceKHR(*m_device->GetInstance().Get(), &createInfo, nullptr, &m_surface);
+		}
+		else
+		{
+			CCT_ASSERT_FALSE("ConcertoGraphics: Unsupported Linux windowing system");
+			return VK_ERROR_INITIALIZATION_FAILED;
+		}
 #endif
 		CCT_ASSERT(m_lastResult == VK_SUCCESS, "ConcertoGraphics: vkCreateWin32SurfaceKHR failed VKResult={}", static_cast<int>(m_lastResult));
 
