@@ -32,12 +32,13 @@ namespace cct::gfx
 #ifdef VK_USE_PLATFORM_METAL_EXT
 		extensions.push_back(VK_EXT_METAL_SURFACE_EXTENSION_NAME);
 #endif
+		std::vector<const char*> layers;
 		if (validationLevel != rhi::ValidationLevel::None)
 		{
+			layers.push_back("VK_LAYER_KHRONOS_validation");
 			extensions.push_back(VK_EXT_DEBUG_REPORT_EXTENSION_NAME);
 		}
 
-		std::vector<const char*> layers = { "VK_LAYER_KHRONOS_validation", /*, "VK_LAYER_LUNARG_api_dump"*/ };
 
 		m_instance = std::make_unique<vk::Instance>("", "", Version{ 1, 3, 0 }, Version{}, Version{}, extensions, layers);
 		if (m_instance->GetLastResult() != VK_SUCCESS)
