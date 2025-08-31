@@ -53,7 +53,7 @@ namespace cct::gfx::vk
 		[[nodiscard]] VkFormat GetDepthFormat() const;
 		[[nodiscard]] UInt32 GetCurrentImageIndex() const;
 
-		UInt32 AcquireNextImage(const Semaphore& semaphore, const Fence* fence = nullptr, UInt64 timeout = std::numeric_limits<UInt64>::max());
+		VkResult AcquireNextImage(const Semaphore& semaphore, UInt32& imageIndex, const Fence* fence = nullptr, UInt64 timeout = std::numeric_limits<UInt64>::max());
 
 		Window& GetWindow() const;
 	private:

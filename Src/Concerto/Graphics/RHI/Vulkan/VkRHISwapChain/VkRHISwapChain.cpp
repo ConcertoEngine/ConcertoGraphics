@@ -58,11 +58,15 @@ namespace cct::gfx::rhi
 
 	Frame& VkRHISwapChain::AcquireFrame()
 	{
-		if (m_needResize)
+		SwapChainFrame& currentFrame = m_frames[m_currentFrameIndex];
+		currentFrame.Wait();
+		UInt32 nextImageIndex;
+		VkResult result = vk::SwapChain::AcquireNextImage(currentFrame.GetPresentSemaphore(), nextImageIndex, nullptr);
+		currentFrame.SetNextImageIndex(nextImageIndex);
+
+		if (m_needResize || result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR)
 		{
 			GetDevice()->WaitIdle();
-			SwapChainFrame& frame = m_frames[m_currentFrameIndex];
-			frame.Wait();
 			vk::SwapChain::Create(*m_device, GetWindow(), Converters::ToVulkan(m_pixelFormat), Converters::ToVulkan(m_depthPixelFormat));
 			m_frameBuffers.clear();
 			m_frames.clear();
@@ -70,12 +74,11 @@ namespace cct::gfx::rhi
 			CreateFrames();
 			CreateFrameBuffers(GetRHIDevice());
 			m_needResize = false;
+			vk::SwapChain::AcquireNextImage(currentFrame.GetPresentSemaphore(), nextImageIndex, nullptr);
+			m_frames[m_currentFrameIndex].SetNextImageIndex(nextImageIndex);
+			return m_frames[m_currentFrameIndex];
 		}
 
-		SwapChainFrame& currentFrame = m_frames[m_currentFrameIndex];
-		currentFrame.Wait();
-		const UInt32 nextImageIndex = vk::SwapChain::AcquireNextImage(currentFrame.GetPresentSemaphore(), nullptr);
-		currentFrame.SetNextImageIndex(nextImageIndex);
 		return currentFrame;
 	}
 
