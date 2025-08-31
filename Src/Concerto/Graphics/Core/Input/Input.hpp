@@ -22,10 +22,10 @@ namespace cct
 	class CONCERTO_GRAPHICS_CORE_API Input
 	{
 	public:
-		using KeyCallbacks = std::vector<FunctionRef<void()>>;
+		using KeyCallbacks = std::vector<std::function<void()>>;
 		using TriggerTypeCallbacks = std::unordered_map<TriggerType, KeyCallbacks>;
 		using BindingCallback = std::pair<SparseVector<bool>, TriggerTypeCallbacks>;
-		using MouseEventCallback = FunctionRef<void(const MouseEvent&)>;
+		using MouseEventCallback = std::function<void(const MouseEvent&)>;
 
 		Input() = default;
 		~Input() = default;
@@ -36,7 +36,7 @@ namespace cct
 		Input& operator=(Input&&) = default;
 
 
-		void Register(const std::string& name, Key key, TriggerType triggerType, FunctionRef<void()>&& callback);
+		void Register(const std::string& name, Key key, TriggerType triggerType, std::function<void()>&& callback);
 		void Register(const std::string& name, MouseEvent::Type key, MouseEventCallback&& callback);
 
 		void Trigger(const std::vector<Event>& events);
