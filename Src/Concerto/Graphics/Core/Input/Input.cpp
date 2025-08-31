@@ -8,7 +8,7 @@
 
 namespace cct
 {
-	void Input::Register(const std::string& name, Key key, TriggerType triggerType, FunctionRef<void()>&& callback)
+	void Input::Register(const std::string& name, Key key, TriggerType triggerType, std::function<void()>&& callback)
 	{
 		auto it = m_keyCallbacks.find(name);
 		if (it == m_keyCallbacks.end())

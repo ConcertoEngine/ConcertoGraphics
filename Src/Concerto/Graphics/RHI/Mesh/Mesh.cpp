@@ -66,8 +66,19 @@ namespace cct::gfx::rhi
 		for (auto& material : materials)
 		{
 			std::shared_ptr<rhi::MaterialInfo> mat = std::make_shared<rhi::MaterialInfo>();
-			mat->diffuseTexturePath = material.diffuse_texname.empty() ? "" : (path / material.diffuse_texname).string();
-			mat->normalTexturePath = material.normal_texname.empty() ? "" : (path / material.normal_texname).string();
+			std::string diffuse_texname = material.diffuse_texname;
+			std::string normal_texname = material.normal_texname;
+			#ifdef CCT_PLATFORM_POSIX
+			auto cleanPath = [](std::string& p)
+			{
+				std::replace(p.begin(), p.end(), '\\', '/');
+			};
+			cleanPath(diffuse_texname);
+			cleanPath(normal_texname);
+			#endif // CCT_PLATFORM_POSIX
+
+			mat->diffuseTexturePath = diffuse_texname.empty() ? "" : (path / diffuse_texname).string();
+			mat->normalTexturePath = normal_texname.empty() ? "" : (path / normal_texname).string();
 			//mat->diffuseColor.x = material.diffuse[0];
 			//mat->diffuseColor.y = material.diffuse[1];
 			//mat->diffuseColor.z = material.diffuse[2];

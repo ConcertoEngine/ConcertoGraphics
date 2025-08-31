@@ -50,15 +50,24 @@ namespace cct::gfx::rhi
 			else fragShaderModuleInfo = &it->second;
 		}
 
-		std::unordered_map<UInt32 /*set*/, std::vector<VkDescriptorSetLayoutBinding>> bindings = vertexShaderModuleInfo->bindings;
+		std::unordered_map<UInt32 /*set*/, std::vector<VkDescriptorSetLayoutBinding>> merged = vertexShaderModuleInfo->bindings;
 		for (auto& [set, setBindings] : fragShaderModuleInfo->bindings)
 		{
-			auto it = bindings.find(set);
-			if (it == bindings.end())
-				bindings.emplace(set, setBindings);
+			auto it = merged.find(set);
+			if (it == merged.end())
+				merged.emplace(set, setBindings);
 			else
 				it->second.insert(it->second.end(), setBindings.begin(), setBindings.end());
 		}
+
+		// We explicitly sort by ascending UInt32 to guarantee deterministic iteration order.
+		// MSVC iterates in ascending order while GCC may iterate in descending order
+		// when using a range-based for loop over a map.
+		std::vector<std::pair<UInt32, std::vector<VkDescriptorSetLayoutBinding>>> bindings(
+			merged.begin(), merged.end()
+		);
+
+		std::sort(bindings.begin(), bindings.end(), [](auto& a, auto& b) { return a.first < b.first; });
 
 		std::vector<std::shared_ptr<vk::DescriptorSetLayout>> descriptorSetLayouts;
 		std::shared_ptr<vk::DescriptorSetLayout> texture = nullptr;
