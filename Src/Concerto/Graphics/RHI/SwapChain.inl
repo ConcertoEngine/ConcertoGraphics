@@ -2,10 +2,10 @@
 // Created by arthur on 12/05/2024.
 //
 
-#ifndef CONCERTO_GRAPHICS_BACKEND_RHI_VULKAN_SWAPCHAIN_INL
-#define CONCERTO_GRAPHICS_BACKEND_RHI_VULKAN_SWAPCHAIN_INL
+#ifndef CONCERTO_GRAPHICS_RHI_SWAPCHAIN_INL
+#define CONCERTO_GRAPHICS_RHI_SWAPCHAIN_INL
 
-#include "Concerto/Graphics/RHI/Vulkan/VkRHISwapChain/VkRHISwapChain.hpp"
+#include "Concerto/Graphics/RHI/SwapChain.hpp"
 
 namespace cct::gfx::rhi
 {
@@ -26,4 +26,4 @@ namespace cct::gfx::rhi
 	}
 }
 
-#endif //CONCERTO_GRAPHICS_BACKEND_RHI_VULKAN_SWAPCHAIN_INL
+#endif //CONCERTO_GRAPHICS_RHI_SWAPCHAIN_INL

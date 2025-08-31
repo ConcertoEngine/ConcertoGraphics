@@ -37,6 +37,6 @@ namespace cct::gfx::rhi
 	};
 }
 
-#include "Concerto/Graphics/RHI/Vulkan/VkRHISwapChain/VkRHISwapChain.inl"
+#include "Concerto/Graphics/RHI/SwapChain.inl"
 
 #endif //CONCERTO_GRAPHICS_RHI_SWAPCHAIN_HPP
