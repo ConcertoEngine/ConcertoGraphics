@@ -2,7 +2,7 @@
 // Created by arthur on 24/03/2022.
 //
 
-#include <vulkan/utility/vk_format_utils.h>
+//#include <vulkan/utility/vk_format_utils.h>
 
 #include "Concerto/Graphics/Backend/Vulkan/Wrapper/VulkanInitializer/VulkanInitializer.hpp"
 
@@ -131,7 +131,7 @@ namespace VulkanInitializer
 		info.format = format;
 		info.extent = extent;
 
-		info.mipLevels = vkuFormatComponentCount(format);
+		info.mipLevels = 1; //vkuFormatComponentCount(format);
 		info.arrayLayers = 1;
 		info.samples = VK_SAMPLE_COUNT_1_BIT;
 		info.tiling = VK_IMAGE_TILING_OPTIMAL;
