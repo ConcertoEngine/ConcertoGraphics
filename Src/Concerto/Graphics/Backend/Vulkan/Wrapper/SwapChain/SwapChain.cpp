@@ -181,6 +181,7 @@ namespace cct::gfx::vk
 	VkResult SwapChain::AcquireNextImage(const Semaphore& semaphore, UInt32& imageIndex, const Fence* fence, UInt64 timeout)
 	{
 		m_lastResult = m_device->vkAcquireNextImageKHR(*m_device->Get(), m_handle, timeout, *semaphore.Get(), fence ? *fence->Get() : nullptr, &m_currentImageIndex);
+		imageIndex = m_currentImageIndex;
 		if (m_lastResult == VK_ERROR_OUT_OF_DATE_KHR || m_lastResult == VK_SUBOPTIMAL_KHR)
 			return m_lastResult;
 		else if (m_lastResult != VK_SUCCESS)
@@ -188,7 +189,6 @@ namespace cct::gfx::vk
 			CCT_ASSERT_FALSE("ConcertoGraphics: vkCreateSemaphore failed VKResult={}", static_cast<int>(m_lastResult));
 			return m_lastResult;
 		}
-		imageIndex = m_currentImageIndex;
 		return VK_SUCCESS;
 	}
 
