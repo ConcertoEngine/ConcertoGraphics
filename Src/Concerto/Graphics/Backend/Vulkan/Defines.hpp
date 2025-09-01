@@ -30,8 +30,20 @@
 	typedef struct m_SECURITY_ATTRIBUTES SECURITY_ATTRIBUTES;
 	#define VK_USE_PLATFORM_WIN32_KHR
 	#include <vulkan/vulkan_win32.h>
-#else
-#include <vulkan/vulkan.h>
+#elif defined(CCT_PLATFORM_LINUX)
+	#if defined(CCT_GFX_XLIB)
+		typedef struct _XDisplay Display;
+		typedef unsigned long XID;
+		typedef XID Window;
+		typedef unsigned long VisualID;
+		#define VK_USE_PLATFORM_XLIB_KHR
+		#include <vulkan/vulkan_xlib.h>
+	#endif
+	#if defined(CCT_GFX_WAYLAND)
+		#define VK_USE_PLATFORM_WAYLAND_KHR
+		#include <vulkan/vulkan_wayland.h>
+	#endif
+	#undef None
 #endif
 
 #ifndef VULKAN_H_

@@ -2,16 +2,23 @@ add_rules("mode.debug", "mode.release", "mode.releasedbg")
 add_repositories("Concerto-xrepo https://github.com/ConcertoEngine/xmake-repo.git main")
 add_repositories("nazara-repo https://github.com/NazaraEngine/xmake-repo")
 
-add_requires("imgui", {configs = {vulkan = true, sdl2 = true, debug = is_mode("debug"), with_symbols = true}})
+--add_requires("imgui", {configs = {vulkan = true, sdl2 = true, debug = is_mode("debug"), with_symbols = true}})
 add_requires("volk", {configs = {header_only = true}})
 add_requires("concerto-core", { debug = true, configs = { asserts = true, shared = true }})
-add_requires("vulkan-headers", "vulkan-memory-allocator", "stb", "libsdl2", "nzsl", "vulkan-utility-libraries", "parallel-hashmap", "tinyobjloader")
+add_requires("vulkan-headers", "vulkan-memory-allocator", "stb", "nzsl", "vulkan-utility-libraries", "parallel-hashmap", "tinyobjloader")
 add_requires("nazaraengine", { debug = is_mode("debug"), configs = { graphics = false, textrenderer = false, renderer = false, widgets = false, plugin_assimp = false, plugin_ffmpeg = false, plugin_imgui = false, entt = false, audio = false, physics2d = false, physics3d  = false, platform = false }})
+add_requires("libsdl2", {configs = {wayland = is_plat("linux", "bsd"), x11 = is_plat("linux", "bsd")}})
 
 option("override_runtime", { description = "Override vs runtime to MD in release and MDd in debug", default = true })
 option("examples", { description = "Build examples", default = false })
 option("profiling", { description = "Build with tracy profiler", default = false })
 option("object_debug", { description = "Build with graphics object debugging", default = is_mode("debug") })
+
+if is_plat("linux", "bsd") then
+    add_defines("CCT_GFX_XLIB")
+    add_defines("CCT_GFX_WAYLAND")
+end
+
 
 add_defines("CCT_ENABLE_ASSERTS")
 
@@ -34,6 +41,7 @@ if has_config("profiling") then
         add_packages("concerto-core", {public = false})
         add_defines("CCT_GFX_PROFILING", {public = true})
         add_files("Src/Concerto/Profiler/**.cpp")
+        add_rpathdirs("$ORIGIN")
     target_end()
 end
 
@@ -76,6 +84,7 @@ target("concerto-graphics-core")
     add_files_to_target("Src/Concerto/Graphics/Core/Input/*")
     --add_files_to_target("Src/Concerto/Graphics/Core/ImGui/*")
     add_files_to_target("Src/Concerto/Graphics/Core/*.hpp")
+    add_rpathdirs("$ORIGIN")
 
     add_includedirs("Src/", { public = true })
     add_packages("concerto-core", "libsdl2", "vulkan-headers", "imgui", { public = true })
@@ -103,6 +112,8 @@ target("concerto-vulkan-backend", function()
     add_headerfiles("Src/(Concerto/Graphics/Backend/Vulkan/*.hpp)")
     add_packages("concerto-core", "volk", "vulkan-headers", "vulkan-utility-libraries", "vulkan-memory-allocator", "nzsl", { public = true })
     add_deps("concerto-graphics-core")
+    add_rpathdirs("$ORIGIN")
+
     if has_config("profiling") then
         add_deps("concerto-profiler", { public = false })
     end
@@ -124,12 +135,14 @@ target("concerto-rhi-module")
     add_packages("concerto-core", "parallel-hashmap", { public = true })
     add_packages("nazaraengine", "tinyobjloader", { public = true })
     add_deps("concerto-vulkan-backend")
+    add_rpathdirs("$ORIGIN")
+
     if has_config("profiling") then
         add_deps("concerto-profiler", { public = false })
     end
 
 includes("Xmake/Rules/*.lua")
 
-if has_config("examples") then
+--if has_config("examples") then
     includes("Examples/xmake.lua")
-end
+--end

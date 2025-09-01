@@ -63,6 +63,9 @@ int main()
 			++deviceIndex;
 		}
 
+		if (device == device)
+			device = rInstance.CreateDevice(0);
+
 		if (!device)
 		{
 			CCT_ASSERT_FALSE("Could not find a device");

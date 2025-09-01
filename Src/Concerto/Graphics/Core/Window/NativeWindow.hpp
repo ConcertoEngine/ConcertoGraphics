@@ -7,6 +7,10 @@
 
 #include "Concerto/Graphics/Core/Defines.hpp"
 
+#if defined(CCT_PLATFORM_LINUX)
+#include <variant>
+#endif // CCT_PLATFORM_LINUX
+
 namespace cct::gfx
 {
 
@@ -19,12 +23,24 @@ namespace cct::gfx
 #elif defined(CCT_PLATFORM_MACOS)
 	struct NativeWindow
 	{
-		//Not implemented
+
 	};
 #elif defined(CCT_PLATFORM_LINUX)
 	struct NativeWindow
 	{
-		//Not implemented
+		struct X11
+		{
+			void* display;
+			unsigned long window;
+		};
+
+		struct Wayland
+		{
+			void* wl_display;
+			void* wl_surface;
+		};
+
+		std::variant<X11, Wayland> platform;
 	};
 #endif
 }
