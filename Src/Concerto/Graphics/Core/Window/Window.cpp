@@ -6,6 +6,16 @@
 
 #include <Concerto/Core/Logger.hpp>
 #include <Concerto/Core/Assert.hpp>
+
+#ifdef CCT_PLATFORM_LINUX
+#ifdef CCT_GFX_XLIB
+#define SDL_VIDEO_DRIVER_X11
+#endif // CCT_GFX_XLIB
+#ifdef CCT_GFX_WAYLAND
+#define SDL_VIDEO_DRIVER_WAYLAND
+#endif
+#endif // CCT_PLATFORM_LINUX
+
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_syswm.h>
 
@@ -41,6 +51,73 @@ namespace cct::gfx
 				return MouseButton::Button::Button2;
 			CCT_ASSERT_FALSE("ConcertoGraphics: Invalid button value");
 			return MouseButton::Button::Button5;
+		}
+
+		PixelFormat PixelFormatFromSDL(Uint32 sdlFmt)
+		{
+			switch (sdlFmt)
+			{
+			case SDL_PIXELFORMAT_RGBA32:
+			//case SDL_PIXELFORMAT_ABGR8888:
+			case SDL_PIXELFORMAT_RGBA8888:
+				return PixelFormat::RGBA8uNorm;
+
+			case SDL_PIXELFORMAT_BGRA32:
+			//case SDL_PIXELFORMAT_ARGB8888:
+			case SDL_PIXELFORMAT_BGRA8888:
+				return PixelFormat::BGRA8uNorm;
+
+			// XRGB/RGBX/BGRX/XBGR = 8:8:8 + padding byte (alpha unused)
+			// We map to the 4-channel equivalent, assuming alpha = 255
+			case SDL_PIXELFORMAT_RGBX32:
+			case SDL_PIXELFORMAT_XRGB32:
+				return PixelFormat::RGBA8uNorm;
+
+			case SDL_PIXELFORMAT_BGRX32:
+			case SDL_PIXELFORMAT_XBGR32:
+				return PixelFormat::BGRA8uNorm;
+
+			// --- 24 bpp (3x8) ---
+			case SDL_PIXELFORMAT_RGB24:
+				return PixelFormat::RGB8uNorm;
+			case SDL_PIXELFORMAT_BGR24:
+				return PixelFormat::BGRuNorm;
+
+			// --- Unsupported formats: palettized, packed, YUV, etc. ---
+			case SDL_PIXELFORMAT_INDEX8:
+			case SDL_PIXELFORMAT_INDEX4LSB:
+			case SDL_PIXELFORMAT_INDEX4MSB:
+			case SDL_PIXELFORMAT_INDEX2LSB:
+			case SDL_PIXELFORMAT_INDEX2MSB:
+			case SDL_PIXELFORMAT_INDEX1LSB:
+			case SDL_PIXELFORMAT_INDEX1MSB:
+			case SDL_PIXELFORMAT_XRGB4444:
+			case SDL_PIXELFORMAT_XBGR4444:
+			case SDL_PIXELFORMAT_ARGB4444:
+			case SDL_PIXELFORMAT_RGBA4444:
+			case SDL_PIXELFORMAT_ABGR4444:
+			case SDL_PIXELFORMAT_BGRA4444:
+			case SDL_PIXELFORMAT_XRGB1555:
+			case SDL_PIXELFORMAT_XBGR1555:
+			case SDL_PIXELFORMAT_ARGB1555:
+			case SDL_PIXELFORMAT_RGBA5551:
+			case SDL_PIXELFORMAT_ABGR1555:
+			case SDL_PIXELFORMAT_BGRA5551:
+			case SDL_PIXELFORMAT_RGB565:
+			case SDL_PIXELFORMAT_BGR565:
+			case SDL_PIXELFORMAT_ARGB2101010:
+			case SDL_PIXELFORMAT_YV12:
+			case SDL_PIXELFORMAT_IYUV:
+			case SDL_PIXELFORMAT_YUY2:
+			case SDL_PIXELFORMAT_UYVY:
+			case SDL_PIXELFORMAT_YVYU:
+			case SDL_PIXELFORMAT_NV12:
+			case SDL_PIXELFORMAT_NV21:
+			case SDL_PIXELFORMAT_EXTERNAL_OES:
+			case SDL_PIXELFORMAT_UNKNOWN:
+			default:
+				throw std::runtime_error("Unsupported SDL pixel format: " + std::to_string(sdlFmt));
+			}
 		}
 
 		Key SDLKeyToConcerto(SDL_Scancode scancode)
@@ -550,5 +627,12 @@ namespace cct::gfx
 	{
 		if (m_resizeCallback)
 			m_resizeCallback(*this);
+	}
+
+	PixelFormat Window::GetFormat() const
+	{
+		auto format = static_cast<SDL_PixelFormatEnum>(SDL_GetWindowPixelFormat(m_window));
+
+		return PixelFormatFromSDL(format);
 	}
 }
