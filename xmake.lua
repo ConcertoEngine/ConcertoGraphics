@@ -107,9 +107,9 @@ target("concerto-vulkan-backend", function()
 
     add_files_to_target("Src/Concerto/Graphics/Backend/Vulkan/*")
     add_files_to_target("Src/Concerto/Graphics/Backend/Vulkan/Wrapper/*")
+    add_headerfiles("Src/(Concerto/Graphics/Backend/Vulkan/*.hpp)")
 
     add_includedirs("Src/", { public = true })
-    add_headerfiles("Src/(Concerto/Graphics/Backend/Vulkan/*.hpp)")
     add_packages("concerto-core", "volk", "vulkan-headers", "vulkan-utility-libraries", "vulkan-memory-allocator", "nzsl", { public = true })
     add_deps("concerto-graphics-core")
     add_rpathdirs("$ORIGIN")
@@ -118,6 +118,36 @@ target("concerto-vulkan-backend", function()
         add_deps("concerto-profiler", { public = false })
     end
 end)
+
+if is_plat("windows") then
+    target("concerto-dx12-backend", function()
+        set_kind("shared")
+        set_languages("cxx20")
+        set_warnings("allextra")
+        
+        if is_mode("debug") then
+            set_symbols("debug")
+        end
+
+        add_defines("CONCERTO_GRAPHICS_DX12_BACKEND_BUILD", { public = false })
+        
+        add_files("Src/Concerto/Graphics/Backend/Dx12/*.cpp")
+        add_files_to_target("Src/Concerto/Graphics/Backend/Dx12/*")
+        add_files_to_target("Src/Concerto/Graphics/Backend/Dx12/Wrapper/*")
+        add_headerfiles("Src/(Concerto/Graphics/Backend/Dx12/*.hpp)")
+
+        add_includedirs("Src/", { public = true })
+        add_headerfiles("Src/(Concerto/Graphics/Backend/Dx12/*.hpp)")
+        add_packages("concerto-core", "nzsl", { public = true })
+        add_deps("concerto-graphics-core")
+        add_rpathdirs("$ORIGIN")
+        add_syslinks("d3d12", "dxgi", "dxguid")
+
+        if has_config("profiling") then
+            add_deps("concerto-profiler", { public = false })
+        end
+    end)
+end
 
 target("concerto-rhi-module")
     set_kind("shared")
@@ -132,9 +162,15 @@ target("concerto-rhi-module")
     add_files_to_target("Src/Concerto/Graphics/RHI/*")
     add_files_to_target("Src/Concerto/Graphics/RHI/Vulkan/*")
 
+    if is_plat("windows") then
+        add_files_to_target("Src/Concerto/Graphics/RHI/Dx12/*")
+        add_deps("concerto-dx12-backend")
+        add_syslinks("d3d12")
+    end
+    add_deps("concerto-vulkan-backend")
+
     add_packages("concerto-core", "parallel-hashmap", { public = true })
     add_packages("nazaraengine", "tinyobjloader", { public = true })
-    add_deps("concerto-vulkan-backend")
     add_rpathdirs("$ORIGIN")
 
     if has_config("profiling") then

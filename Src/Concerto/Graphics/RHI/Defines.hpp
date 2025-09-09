@@ -21,6 +21,7 @@
 #include "Concerto/Profiler/Profiler.hpp"
 
 #include <mutex>
+#include <memory>
 #include <parallel_hashmap/phmap.h>
 
 namespace cct::gfx::rhi
