@@ -8,6 +8,8 @@
 #include "Concerto/Graphics/RHI/SwapChain.hpp"
 #include "Concerto/Graphics/Backend/Dx12/Wrapper/Fence/Fence.hpp"
 #include "Concerto/Graphics/Backend/Dx12/Wrapper/SwapChain/SwapChain.hpp"
+#include "Concerto/Graphics/RHI/Dx12/Dx12RHICommandBuffer/Dx12RHICommandBuffer.hpp"
+#include "Concerto/Graphics/RHI/Dx12/Dx12RHICommandPool/Dx12RHICommandPool.hpp"
 
 namespace cct::gfx::rhi
 {
@@ -23,30 +25,33 @@ namespace cct::gfx::rhi
 		UInt32 GetImageCount() const override;
 		rhi::Frame& AcquireFrame() override;
 		void WaitAll() const override;
+		CommandPool& GetCommandPool();
 	private:
 		class SwapChainFrame : public rhi::Frame
 		{
 		public:
-			SwapChainFrame(Dx12RHISwapChain& owner);
+			SwapChainFrame(Dx12RHISwapChain& owner, UInt32 imageIndex);
 
 			void Present() override;
 			rhi::CommandBuffer& GetCommandBuffer() override;
 			std::size_t GetCurrentFrameIndex() override;
 			rhi::FrameBuffer& GetFrameBuffer() override;
-			void SetNextImageIndex(UInt32 imageIndex);
 			void Wait() const;
 
 			const dx12::Fence& GetRenderFence() const;
 
 			static constexpr UInt32 InvalidFrameIndex = std::numeric_limits<UInt32>::max();
 		private:
-			std::unique_ptr<rhi::CommandBuffer> m_commandBuffer;
+			Dx12RHICommandBuffer m_commandBuffer;
 			dx12::Fence m_renderFence;
 			Dx12RHISwapChain* m_owner = nullptr;
 			UInt32 m_imageIndex = 0;
 		};
 
+		UInt64 m_currentFrameIndex;
 		std::unique_ptr<RenderPass> m_renderPass;
+		std::vector<SwapChainFrame> m_frames;
+		Dx12RHICommandPool m_commandPool;
 	};
 }
 
