@@ -10,10 +10,11 @@
 
 namespace cct::gfx::rhi
 {
+	class Dx12RHIDevice;
 	class CONCERTO_GRAPHICS_RHI_BASE_API Dx12RHICommandPool : public rhi::CommandPool, public dx12::CommandAllocator
 	{
 	public:
-		Dx12RHICommandPool(CommandBufferUsage usage);
+		Dx12RHICommandPool(Dx12RHIDevice& device, CommandBufferUsage usage, D3D12_COMMAND_LIST_TYPE type);
 
 		std::unique_ptr<CommandBuffer> AllocateCommandBuffer() override;
 	};
