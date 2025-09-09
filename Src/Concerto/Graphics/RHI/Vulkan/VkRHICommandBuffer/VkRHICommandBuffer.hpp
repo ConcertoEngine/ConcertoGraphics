@@ -14,7 +14,7 @@ namespace cct::gfx::rhi
 	class CONCERTO_GRAPHICS_RHI_BASE_API VkRHICommandBuffer final: public rhi::CommandBuffer, public vk::CommandBuffer
 	{
 	public:
-		VkRHICommandBuffer(VkRHIDevice& device, vk::CommandPool& commandPool);
+		VkRHICommandBuffer(VkRHIDevice& device, vk::CommandPool& commandPool, CommandBufferUsage usage);
 
 		void Begin() override;
 		void End() override;

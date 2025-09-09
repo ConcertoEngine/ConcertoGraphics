@@ -26,7 +26,7 @@ namespace cct::gfx::rhi
 		std::unique_ptr<FrameBuffer> CreateFrameBuffer(UInt32 width, UInt32 height, const RenderPass& renderPass, const std::vector<std::unique_ptr<TextureView>>& attachments) override;
 		std::unique_ptr<MaterialBuilder> CreateMaterialBuilder(const Vector2u& windowExtent) override;
 		std::unique_ptr<TextureBuilder> CreateTextureBuilder() override;
-		std::unique_ptr<CommandPool> CreateCommandPool(rhi::QueueFamily family) override;
+		std::unique_ptr<CommandPool> CreateCommandPool(rhi::QueueFamily family, CommandBufferUsage usage) override;
 		std::unique_ptr<rhi::Buffer> CreateBuffer(rhi::BufferUsageFlags usage, UInt32 allocationSize, bool allowBufferMapping) override;
 		std::size_t GetMinimumUniformBufferOffsetAlignment() const override;
 		std::unique_ptr<GpuMesh> CreateMesh(const std::string& meshPath, rhi::MaterialBuilder& materialBuilder, const RenderPass& renderPass) override;

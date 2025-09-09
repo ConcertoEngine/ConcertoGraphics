@@ -56,7 +56,7 @@ namespace cct::gfx::rhi
 		return nullptr;
 	}
 
-	std::unique_ptr<CommandPool> Dx12RHIDevice::CreateCommandPool(rhi::QueueFamily family)
+	std::unique_ptr<CommandPool> Dx12RHIDevice::CreateCommandPool(rhi::QueueFamily family, CommandBufferUsage usage)
 	{
 		return nullptr;
 	}

@@ -132,9 +132,9 @@ namespace cct::gfx::rhi
 		return std::make_unique<VkRHITextureBuilder>(*this, uploadContext, GetQueue(vk::Queue::Type::Graphics));
 	}
 
-	std::unique_ptr<CommandPool> VkRHIDevice::CreateCommandPool(rhi::QueueFamily family)
+	std::unique_ptr<CommandPool> VkRHIDevice::CreateCommandPool(rhi::QueueFamily family, CommandBufferUsage usage)
 	{
-		return std::make_unique<VkRHICommandPool>(*this, family);
+		return std::make_unique<VkRHICommandPool>(*this, family, usage);
 	}
 
 	std::unique_ptr<rhi::Buffer> VkRHIDevice::CreateBuffer(rhi::BufferUsageFlags usage, UInt32 allocationSize, bool allowBufferMapping)

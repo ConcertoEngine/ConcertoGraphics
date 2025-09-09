@@ -27,7 +27,7 @@ namespace cct::gfx::rhi
 	{
 		CreateRenderPass();
 		CreateFrameBuffers(device);
-		m_commandPool = device.CreateCommandPool(QueueFamily::Graphics);
+		m_commandPool = device.CreateCommandPool(QueueFamily::Graphics, CommandBufferUsage::Primary);
 		m_presentQueue = std::make_unique<vk::Queue>(device, device.GetQueueFamilyIndex(vk::Queue::Type::Graphics));
 		CreateFrames();
 	}
@@ -232,7 +232,7 @@ namespace cct::gfx::rhi
 	}
 
 	VkRHISwapChain::SwapChainFrame::SwapChainFrame(VkRHISwapChain& owner) :
-		m_commandBuffer(owner.GetCommandPool().AllocateCommandBuffer(CommandBufferUasge::Primary)),
+		m_commandBuffer(owner.GetCommandPool().AllocateCommandBuffer()),
 		m_renderFence(*owner.GetDevice()),
 		m_presentSemaphore(*owner.GetDevice()),
 		m_renderSemaphore(*owner.GetDevice()),

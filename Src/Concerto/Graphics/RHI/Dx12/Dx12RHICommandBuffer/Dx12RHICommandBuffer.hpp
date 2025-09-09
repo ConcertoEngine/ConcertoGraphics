@@ -5,13 +5,15 @@
 #ifndef CONCERTO_GRAPHICS_RHI_DX12_DX12RHICOMMANDBUFFER_HPP
 #define CONCERTO_GRAPHICS_RHI_DX12_DX12RHICOMMANDBUFFER_HPP
 
+#include "Concerto/Graphics/Backend/Dx12/Wrapper/CommandList/CommandList.hpp"
 #include "Concerto/Graphics/RHI/CommandBuffer.hpp"
 
 namespace cct::gfx::rhi
 {
-	class CONCERTO_GRAPHICS_RHI_BASE_API Dx12RHICommandBuffer : public rhi::CommandBuffer
+	class CONCERTO_GRAPHICS_RHI_BASE_API Dx12RHICommandBuffer : public rhi::CommandBuffer, public dx12::CommandList
 	{
 	public:
+		Dx12RHICommandBuffer(dx12::CommandAllocator& owner, D3D12_COMMAND_LIST_TYPE type);
 		Dx12RHICommandBuffer() = default;
 
 		void Begin() override;

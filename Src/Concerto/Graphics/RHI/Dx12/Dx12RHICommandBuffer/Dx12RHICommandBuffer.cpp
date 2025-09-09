@@ -6,6 +6,12 @@
 
 namespace cct::gfx::rhi
 {
+	Dx12RHICommandBuffer::Dx12RHICommandBuffer(dx12::CommandAllocator& owner, D3D12_COMMAND_LIST_TYPE type) :
+		rhi::CommandBuffer(),
+		dx12::CommandList(owner, type)
+	{
+	}
+
 	void Dx12RHICommandBuffer::Begin()
 	{
 	}
