@@ -71,6 +71,11 @@ namespace cct::gfx::dx12
 		return S_OK;
 	}
 
+	Queue& SwapChain::GetCommandQueue()
+	{
+		return m_directCommandQueue;
+	}
+
 	Vector2u SwapChain::GetExtent() const
 	{
 		return Vector2u{m_window->GetWidth(), m_window->GetHeight()};

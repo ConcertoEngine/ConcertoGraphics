@@ -33,6 +33,7 @@ namespace cct::gfx::dx12
 
 		HRESULT Create(Device& device, Window& window);
 
+		Queue& GetCommandQueue();
 		Vector2u GetExtent() const;
 	private:
 		Window* m_window;
