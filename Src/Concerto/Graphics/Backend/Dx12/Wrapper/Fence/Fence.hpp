@@ -24,10 +24,10 @@ namespace cct::gfx::dx12
 
 		HRESULT Create(Device& device, D3D12_FENCE_FLAGS flags = D3D12_FENCE_FLAG_NONE);
 
-		void Wait();
+		void Wait() const;
 	private:
 		HANDLE m_completionEvent;
-		UInt64 m_lastCompletedValue = 0;
+		mutable UInt64 m_lastCompletedValue = 0;
 	};
 } // cct::gfx::dx12
 

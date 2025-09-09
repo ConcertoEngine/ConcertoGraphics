@@ -32,8 +32,10 @@ namespace cct::gfx::dx12
 		return m_lastResult;
 	}
 
-	void Fence::Wait()
+	void Fence::Wait() const
 	{
+		CCT_ASSERT(m_handle, "Invalid object state, 'Create' must be called");
+
 		m_lastResult = m_handle->SetEventOnCompletion(++m_lastCompletedValue, m_completionEvent);
 		auto res = WaitForSingleObject(m_completionEvent, INFINITE);
 		CCT_ASSERT(res == WAIT_FAILED, "WaitForSingleObject failed, reason: {}", cct::Error::GetLastSystemErrorString());
