@@ -4,6 +4,8 @@
 
 #include "Concerto/Graphics/RHI/Dx12/Dx12RHICommandBuffer/Dx12RHICommandBuffer.hpp"
 
+#include "Concerto/Graphics/Backend/Dx12/Wrapper/CommandAllocator/CommandAllocator.hpp"
+
 namespace cct::gfx::rhi
 {
 	Dx12RHICommandBuffer::Dx12RHICommandBuffer(dx12::CommandAllocator& owner, D3D12_COMMAND_LIST_TYPE type) :
@@ -14,10 +16,12 @@ namespace cct::gfx::rhi
 
 	void Dx12RHICommandBuffer::Begin()
 	{
+		dx12::CommandList::Reset();
 	}
 
 	void Dx12RHICommandBuffer::End()
 	{
+		HRESULT [[maybe_unused]] result = Close();
 	}
 
 	void Dx12RHICommandBuffer::Submit()
@@ -26,6 +30,7 @@ namespace cct::gfx::rhi
 
 	void Dx12RHICommandBuffer::Reset()
 	{
+
 	}
 
 	void Dx12RHICommandBuffer::SetViewport(const Viewport& viewport)
