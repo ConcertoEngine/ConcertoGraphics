@@ -44,4 +44,11 @@ namespace cct::gfx::dx12
 		CCT_ASSERT(SUCCEEDED(m_lastResult), "ID3D12GraphicsCommandList::Close failed HRESULT={}", m_lastResult);
 		return m_lastResult;
 	}
+
+	HRESULT CommandList::Reset() const
+	{
+		m_lastResult = m_handle->Reset(m_owner->Get(), nullptr);
+		CCT_ASSERT(SUCCEEDED(m_lastResult), "ID3D12GraphicsCommandList::Reset failed HRESULT={}", m_lastResult);
+		return m_lastResult;
+	}
 } // namespace cct::gfx::dx12

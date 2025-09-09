@@ -28,6 +28,7 @@ namespace cct::gfx::dx12
 
 		CommandAllocator& GetCommandAllocator() const;
 		HRESULT Close() const;
+		HRESULT Reset() const;
 	private:
 		CommandAllocator* m_owner;
 	};
