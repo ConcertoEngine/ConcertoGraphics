@@ -25,6 +25,7 @@ namespace cct::gfx::dx12
 		HRESULT Create(Device& device, D3D12_FENCE_FLAGS flags = D3D12_FENCE_FLAG_NONE);
 
 		void Wait() const;
+		UInt64 GetCompletedValue() const;
 	private:
 		HANDLE m_completionEvent;
 		mutable UInt64 m_lastCompletedValue = 0;
