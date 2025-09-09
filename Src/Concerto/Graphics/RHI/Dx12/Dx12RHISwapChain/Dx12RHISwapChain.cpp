@@ -9,13 +9,15 @@ namespace cct::gfx::rhi
 {
 	Dx12RHISwapChain::Dx12RHISwapChain(rhi::Dx12RHIDevice& device, Window& window, PixelFormat pixelFormat, PixelFormat depthPixelFormat) :
 		rhi::SwapChain(pixelFormat, depthPixelFormat),
-		dx12::SwapChain(device, window)
+		dx12::SwapChain(device, window),
+		m_renderPass(std::make_unique<RenderPass>())
 	{
+		
 	}
 
 	RenderPass* Dx12RHISwapChain::GetRenderPass()
 	{
-		return nullptr;
+		return m_renderPass.get();
 	}
 
 	Vector2u Dx12RHISwapChain::GetExtent() const
@@ -35,5 +37,42 @@ namespace cct::gfx::rhi
 
 	void Dx12RHISwapChain::WaitAll() const
 	{
+	}
+
+	Dx12RHISwapChain::SwapChainFrame::SwapChainFrame(Dx12RHISwapChain& owner): m_renderFence()
+	{
+	}
+
+	void Dx12RHISwapChain::SwapChainFrame::Present()
+	{
+	}
+
+	rhi::CommandBuffer& Dx12RHISwapChain::SwapChainFrame::GetCommandBuffer()
+	{
+		throw;
+	}
+
+	std::size_t Dx12RHISwapChain::SwapChainFrame::GetCurrentFrameIndex()
+	{
+		return 0;
+	}
+
+	rhi::FrameBuffer& Dx12RHISwapChain::SwapChainFrame::GetFrameBuffer()
+	{
+		throw;
+	}
+
+	void Dx12RHISwapChain::SwapChainFrame::SetNextImageIndex(UInt32 imageIndex)
+	{
+	}
+
+	void Dx12RHISwapChain::SwapChainFrame::Wait() const
+	{
+		m_renderFence.Wait();
+	}
+
+	const dx12::Fence& Dx12RHISwapChain::SwapChainFrame::GetRenderFence() const
+	{
+		return m_renderFence;
 	}
 }
